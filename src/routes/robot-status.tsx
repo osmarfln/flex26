@@ -339,14 +339,27 @@ function RobotStatus() {
             icon={<Clock className="w-5 h-5 text-yellow-500" />}
             value={
               lastSync?.finished_at
-                ? format(new Date(lastSync.finished_at), "HH:mm:ss", { locale: ptBR })
+                ? new Intl.DateTimeFormat("pt-BR", {
+                    timeZone: "America/Sao_Paulo",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                    hourCycle: "h23",
+                  }).format(new Date(lastSync.finished_at))
                 : "--:--:--"
             }
             sub={
               lastSync?.finished_at
-                ? format(new Date(lastSync.finished_at), "dd/MM/yyyy · EEEE", { locale: ptBR })
+                ? `${new Intl.DateTimeFormat("pt-BR", {
+                    timeZone: "America/Sao_Paulo",
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                    weekday: "long",
+                  }).format(new Date(lastSync.finished_at))} · Horário de Brasília`
                 : undefined
             }
+
           />
           <Kpi
             title="Registros Hoje"
