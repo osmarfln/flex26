@@ -26,6 +26,17 @@ export const Route = createFileRoute('/api/public/sync-results')({
           console.log(`[SYNC] Request received. Date: ${dateParam}, Days: ${daysToSync}`);
 
           
+          // Fecha execuções travadas (sem finished_at) de tentativas anteriores
+          await supabase
+            .from('sync_logs')
+            .update({
+              status: 'error',
+              finished_at: new Date().toISOString(),
+              error_message: 'Execução interrompida antes de finalizar',
+            })
+            .eq('status', 'running')
+            .lt('started_at', new Date(Date.now() - 10 * 60 * 1000).toISOString());
+
           // Log sync attempt
           const { data: logEntry } = await supabase
             .from('sync_logs')
