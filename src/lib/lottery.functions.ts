@@ -236,7 +236,7 @@ export const getGroupDelayStats = createServerFn({ method: "GET" })
               foundInThisResult = true;
               totalFreq++;
               const pos = (pIdx + 1) as 1 | 2 | 3 | 4 | 5;
-              if (positionFreq) positionFreq[pos]++;
+              (positionFreq as any)[pos]++;
               const timeType = res.time_type;
               if (timeType) {
                 hourlyFreq[timeType] = (hourlyFreq[timeType] || 0) + 1;
