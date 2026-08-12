@@ -121,20 +121,23 @@ function Index() {
   const GreetingIcon = greeting.icon;
 
   return (
-    <div className="min-h-screen bg-[#0B0F19] text-white font-sans selection:bg-yellow-500/30 overflow-x-hidden">
+    <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/30 overflow-x-hidden">
       {/* Background Decorative Element */}
-      <div className="fixed top-0 right-0 w-[600px] h-[600px] bg-yellow-500/5 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+      <div className="fixed top-0 right-0 w-[600px] h-[600px] bg-primary/5 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
 
       {/* Top Header */}
-      <header className="border-b border-white/5 bg-[#0B0F19]/80 backdrop-blur-xl sticky top-0 z-50">
+      <header className="border-b border-white/5 bg-background/60 backdrop-blur-2xl sticky top-0 z-50 transition-all">
         <div className="container mx-auto px-4 md:px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-8">
-            <Link to="/" className="flex flex-col">
+            <Link to="/" className="flex flex-col group">
               <span className="flex items-center gap-2">
-                <Sparkles className="h-6 w-6 text-yellow-500 fill-yellow-500" />
-                <span className="text-2xl font-black tracking-tighter uppercase italic">Flex Gerenciador</span>
+                <div className="relative">
+                  <Sparkles className="h-6 w-6 text-primary fill-primary animate-pulse" />
+                  <div className="absolute inset-0 bg-primary/20 blur-md rounded-full scale-150 -z-10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </div>
+                <span className="text-2xl font-black tracking-tighter uppercase italic group-hover:text-primary transition-colors">Flex Gerenciador</span>
               </span>
-              <span className="text-[10px] text-yellow-500/60 font-bold tracking-[0.2em] -mt-1 ml-8">VEM COM A GENTE</span>
+              <span className="text-[10px] text-primary/60 font-bold tracking-[0.2em] -mt-1 ml-8 group-hover:tracking-[0.25em] transition-all">VEM COM A GENTE</span>
             </Link>
             
             <nav className="hidden lg:flex items-center gap-8 ml-8">
@@ -175,8 +178,8 @@ function Index() {
       <main className="container mx-auto px-4 md:px-6 py-12 relative">
         {/* Floating Butterfly Graphic */}
         <div className="absolute top-0 right-0 hidden xl:block opacity-10 translate-x-1/4 -translate-y-12">
-           <svg width="400" height="400" viewBox="0 0 24 24" fill="none" className="text-yellow-500">
-             <path d="M12 21.5C12 21.5 10 16.5 4 15.5C4 15.5 1 14.5 1 10.5C1 6.5 4 4.5 8 4.5C12 4.5 12 8.5 12 8.5M12 21.5C12 21.5 14 16.5 20 15.5C20 15.5 23 14.5 23 10.5C23 6.5 20 4.5 16 4.5C12 4.5 12 8.5 12 8.5" stroke="currentColor" strokeWidth="0.5" />
+           <svg width="400" height="400" viewBox="0 0 24 24" fill="none" className="text-primary">
+             <path d="M12 21.5C12 21.5 10 16.5 4 15.5C4 15.5 1 14.5 1 10.5C1 6.5 4 4.5 8 4.5C12 4.5 12 8.5 12 8.5M12 21.5C12 21.5 14 16.5 20 15.5C20 15.5 23 14.5 23 10.5C23 6.5 20 4.5 16 4.5C12 4.5 12 8.5 12 8.5" stroke="currentColor" strokeWidth="0.5" fill="currentColor" fillOpacity="0.05" />
            </svg>
         </div>
 
@@ -188,8 +191,8 @@ function Index() {
               animate={{ opacity: 1, y: 0 }}
               className="flex items-center gap-4 mb-6"
             >
-              <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-2xl">
-                <GreetingIcon className="w-8 h-8 text-yellow-500" />
+              <div className="p-4 bg-primary/5 border border-primary/10 rounded-2xl backdrop-blur-md">
+                <GreetingIcon className="w-8 h-8 text-primary shadow-[0_0_15px_rgba(var(--primary),0.2)]" />
               </div>
               <div>
                 <h2 className="text-2xl font-black italic tracking-tighter uppercase leading-none">{greeting.text}!</h2>
@@ -224,7 +227,7 @@ function Index() {
               </div>
 
               <Link to="/historico">
-                <Button className="h-[54px] px-10 bg-yellow-500 hover:bg-yellow-400 text-[#0B0F19] font-black uppercase tracking-tighter rounded-xl gap-2 shadow-lg shadow-yellow-500/10 active:scale-95 transition-all">
+                <Button className="h-[54px] px-10 bg-primary hover:bg-primary/90 text-primary-foreground font-black uppercase tracking-tighter rounded-xl gap-2 shadow-lg shadow-primary/10 active:scale-95 transition-all">
                   <Search className="w-5 h-5" /> Buscar resultados
                 </Button>
               </Link>
@@ -259,17 +262,17 @@ function Index() {
                   const isLatest = game && sortedGames[0]?.id === game.id;
                   
                   return (
-                    <Card key={schedule.type} className={`bg-[#0D121F] border-white/10 rounded-2xl overflow-hidden group hover:border-yellow-500/40 transition-all relative ${!game ? 'opacity-60' : ''}`}>
+                    <Card key={schedule.type} className={`dashboard-card rounded-3xl overflow-hidden group hover:border-primary/40 transition-all duration-500 relative ${!game ? 'opacity-70 bg-white/[0.02]' : 'bg-card'}`}>
                       {isLatest && (
-                        <div className="absolute inset-0 border border-yellow-500/20 rounded-2xl pointer-events-none" />
+                        <div className="absolute inset-0 border-2 border-primary/20 rounded-3xl pointer-events-none z-10" />
                       )}
-                      <CardHeader className="p-5 pb-2">
+                      <CardHeader className="p-6 pb-2">
                         <div className="flex justify-between items-start mb-4">
-                          <CardTitle className="text-xl font-black italic tracking-tighter uppercase">
+                          <CardTitle className="text-xl font-black italic tracking-tighter uppercase group-hover:text-primary transition-colors">
                             {schedule.type} RIO — {schedule.time}hs
                           </CardTitle>
                           {isLatest && (
-                            <div className="px-2 py-1 bg-yellow-500 text-[#0B0F19] text-[9px] font-black uppercase rounded shadow-lg shadow-yellow-500/20">
+                            <div className="px-3 py-1 bg-primary text-primary-foreground text-[10px] font-black uppercase rounded-lg shadow-xl shadow-primary/20">
                               Mais Recente
                             </div>
                           )}
@@ -294,13 +297,13 @@ function Index() {
                               ))
                             )}
                           </div>
-                          <div className="flex flex-col items-center justify-center bg-white/[0.02] rounded-xl p-4 border border-white/5 relative">
-                            <div className="w-16 h-16 mb-2 text-yellow-500 flex items-center justify-center text-4xl">
-                               {game ? (ANIMAL_GROUPS.find(a => a.id === game.animal_group)?.icon || <Sparkles className="w-8 h-8 opacity-20" />) : <Clock className="w-8 h-8 opacity-20 text-red-500" />}
+                          <div className="flex flex-col items-center justify-center bg-white/[0.03] rounded-2xl p-4 border border-white/5 relative group-hover:bg-white/[0.05] transition-all">
+                            <div className="w-16 h-16 mb-2 text-primary flex items-center justify-center text-4xl group-hover:scale-110 transition-transform duration-500">
+                               {game ? (ANIMAL_GROUPS.find(a => a.id === game.animal_group)?.icon || <Sparkles className="w-8 h-8 opacity-20" />) : <Clock className="w-8 h-8 opacity-20 text-white/20" />}
                             </div>
                             <p className="text-[10px] text-white/40 font-bold uppercase tracking-wider mb-1">Grupo</p>
-                            <p className={`text-3xl font-black tracking-tighter leading-none ${game ? 'text-yellow-500' : 'text-red-500/40'}`}>{game?.animal_group || '--'}</p>
-                            <p className={`text-[11px] font-bold mt-2 uppercase tracking-tight ${game ? 'text-white/80' : 'text-red-500 italic'}`}>{game?.animal || 'Aguardando'}</p>
+                            <p className={`text-3xl font-black tracking-tighter leading-none ${game ? 'text-primary' : 'text-white/10'}`}>{game?.animal_group || '--'}</p>
+                            <p className={`text-[11px] font-bold mt-2 uppercase tracking-tight ${game ? 'text-white/80' : 'text-white/20 italic'}`}>{game?.animal || 'Aguardando'}</p>
                           </div>
                         </div>
                       </CardContent>
@@ -329,7 +332,7 @@ function Index() {
             <div className="hidden md:flex gap-4">
                <div className="text-right">
                   <p className="text-[10px] text-white/40 font-black uppercase tracking-widest">Bicho em Alta</p>
-                  <p className="text-lg font-black text-yellow-500 italic uppercase">
+                  <p className="text-lg font-black text-primary italic uppercase">
                     {stats?.mostFrequentTens?.[0] ? 
                       ANIMAL_GROUPS.find(a => {
                         const ten = stats?.mostFrequentTens?.[0]?.ten;
@@ -444,13 +447,13 @@ function Index() {
                   <div className="absolute inset-0 bg-yellow-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-sm font-mono font-bold text-white/40">{time}</span>
-                    <Clock className="w-3.5 h-3.5 text-yellow-500/50" />
+                    <Clock className="w-3.5 h-3.5 text-primary/50" />
                   </div>
                   <div className="text-center">
                     <div className="text-4xl mb-3">{ANIMAL_GROUPS.find(a => a.id === data.group)?.icon}</div>
-                    <h3 className="text-sm font-black uppercase italic tracking-tighter group-hover:text-yellow-500 transition-colors">{data.animal}</h3>
+                    <h3 className="text-sm font-black uppercase italic tracking-tighter group-hover:text-primary transition-colors">{data.animal}</h3>
                     <div className="mt-4 flex flex-col items-center">
-                       <span className="text-xl font-black text-yellow-500 leading-none">{data.delayed.split(' ')[0]}</span>
+                       <span className="text-xl font-black text-primary leading-none">{data.delayed.split(' ')[0]}</span>
                        <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest mt-1">Dias de atraso</span>
                     </div>
                   </div>
@@ -462,11 +465,11 @@ function Index() {
 
         {/* Groups Table */}
         <div className="grid grid-cols-1 gap-8" id="grupos">
-          <Card className="bg-[#0D121F] border-white/10 rounded-2xl overflow-hidden shadow-xl">
+          <Card className="dashboard-card overflow-hidden shadow-xl">
             <CardHeader className="p-6 border-b border-white/5 bg-white/[0.01]">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3 text-white/60">
-                  <Hash className="w-5 h-5 text-yellow-500" />
+                  <Hash className="w-5 h-5 text-primary" />
                   <CardTitle className="text-sm font-black uppercase tracking-[0.2em]">Tabela de Grupos</CardTitle>
                 </div>
                 <Badge variant="outline" className="text-[10px] uppercase font-black border-white/10 text-white/40 italic">25 Grupos Oficiais</Badge>
@@ -475,10 +478,10 @@ function Index() {
             <CardContent className="p-6">
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 xl:grid-cols-5 gap-3">
                 {ANIMAL_GROUPS.map((animal) => (
-                  <div key={animal.id} className="p-4 bg-white/[0.02] border border-white/5 rounded-xl hover:border-yellow-500/40 transition-all group flex items-center gap-4 cursor-default">
+                  <div key={animal.id} className="p-4 bg-white/[0.02] border border-white/5 rounded-xl hover:border-primary/40 transition-all group flex items-center gap-4 cursor-default">
                     <div className="text-2xl opacity-40 group-hover:opacity-100 group-hover:scale-110 transition-all">{animal.icon}</div>
                     <div className="flex flex-col">
-                      <span className="text-[10px] font-mono text-yellow-500 font-black tracking-tighter uppercase">{animal.id}</span>
+                      <span className="text-[10px] font-mono text-primary font-black tracking-tighter uppercase">{animal.id}</span>
                       <span className="text-xs font-black uppercase tracking-tight text-white/50 group-hover:text-white transition-colors italic">{animal.name}</span>
                     </div>
                   </div>
@@ -489,15 +492,15 @@ function Index() {
         </div>
         {/* Ranking e Ciclos */}
         <div className="grid grid-cols-1 gap-8 mb-16">
-          <Card className="bg-[#0D121F] border-white/10 rounded-2xl overflow-hidden shadow-xl">
+          <Card className="dashboard-card overflow-hidden shadow-xl">
             <CardHeader className="p-6 border-b border-white/5 bg-white/[0.01]">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3 text-white/60">
-                  <Trophy className="w-5 h-5 text-yellow-500" />
+                  <Trophy className="w-5 h-5 text-primary" />
                   <CardTitle className="text-sm font-black uppercase tracking-[0.2em]">Ranking de Atrasos e Ciclos</CardTitle>
                 </div>
                 <Link to="/estatisticas">
-                  <Button variant="ghost" size="sm" className="text-[10px] uppercase font-black text-yellow-500 hover:text-yellow-400 hover:bg-yellow-500/10 gap-2">
+                  <Button variant="ghost" size="sm" className="text-[10px] uppercase font-black text-primary hover:text-primary-foreground hover:bg-primary/10 gap-2">
                     Ver Análise Completa <ArrowRight className="w-3 h-3" />
                   </Button>
                 </Link>
@@ -530,7 +533,7 @@ function Index() {
                       <tr key={item.group} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors group">
                         <td className="p-4 font-black text-white/20 italic">{idx + 1}º</td>
                         <td className="p-4">
-                          <span className="font-mono text-lg font-black text-yellow-500">
+                          <span className="font-mono text-lg font-black text-primary">
                             {/* Simulação da dezena baseada no grupo para o ranking rápido na home */}
                             {String(parseInt(item.group) * 4).padStart(2, '0')}
                           </span>
@@ -550,8 +553,8 @@ function Index() {
                         </td>
                         <td className="p-4">
                           <span className={`text-[10px] font-black uppercase px-2 py-1 rounded ${
-                            item.days > 20 ? 'bg-red-500/10 text-red-500' : 
-                            item.days > 10 ? 'bg-yellow-500/10 text-yellow-500' : 
+                            item.days > 20 ? 'bg-orange-500/10 text-orange-500' : 
+                            item.days > 10 ? 'bg-primary/10 text-primary' : 
                             'bg-emerald-500/10 text-emerald-500'
                           }`}>
                             {item.days > 20 ? 'Crítico' : item.days > 10 ? 'Elevado' : 'Normal'}
@@ -572,7 +575,7 @@ function Index() {
       <footer className="border-t border-white/5 py-16 bg-[#080B14] mt-12 relative overflow-hidden">
         <div className="container mx-auto px-4 md:px-6 grid grid-cols-1 md:grid-cols-3 gap-12 items-center relative z-10">
           <div className="flex items-center gap-4 text-white/40 text-xs font-bold leading-relaxed">
-            <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-yellow-500/60">
+            <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-primary/60">
               <Info className="w-6 h-6" />
             </div>
             <p>Conteúdo exclusivamente informativo. <br /> <span className="text-white/60">Não realizamos apostas.</span></p>
@@ -585,7 +588,7 @@ function Index() {
 
           <div className="flex items-center justify-end gap-4 text-white/40 text-xs font-bold leading-relaxed text-right">
             <p>Jogo do Bicho é tradição, <br /> <span className="text-white/60">informação é responsabilidade.</span></p>
-            <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-yellow-500/60">
+            <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-primary/60">
               <ShieldCheck className="w-6 h-6" />
             </div>
           </div>

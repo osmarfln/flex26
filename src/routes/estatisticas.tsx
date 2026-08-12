@@ -150,17 +150,17 @@ function EstatisticasPage() {
   }, [stats, cruzData]);
 
   return (
-    <div className="min-h-screen bg-[#0B0F19] text-white font-sans selection:bg-yellow-500/30 overflow-x-hidden">
+    <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/30 overflow-x-hidden">
       {/* Top Header */}
-      <header className="border-b border-white/5 bg-[#0B0F19]/80 backdrop-blur-xl sticky top-0 z-50">
+      <header className="border-b border-white/5 bg-background/60 backdrop-blur-2xl sticky top-0 z-50">
         <div className="container mx-auto px-4 md:px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link to="/" className="p-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all group">
-              <ArrowLeft className="w-5 h-5 text-white/40 group-hover:text-yellow-500 transition-colors" />
+              <ArrowLeft className="w-5 h-5 text-white/40 group-hover:text-primary transition-colors" />
             </Link>
             <div className="flex flex-col">
-              <span className="text-lg font-black tracking-tighter uppercase italic leading-none">Flex Gerenciador</span>
-              <span className="text-[9px] text-yellow-500/60 font-bold tracking-[0.2em]">CENTRAL DE ESTATÍSTICAS</span>
+              <span className="text-lg font-black tracking-tighter uppercase italic leading-none group-hover:text-primary transition-colors">Flex Gerenciador</span>
+              <span className="text-[9px] text-primary/60 font-bold tracking-[0.2em]">CENTRAL DE ESTATÍSTICAS</span>
             </div>
           </div>
 
@@ -178,8 +178,8 @@ function EstatisticasPage() {
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
             <div>
               <div className="flex items-center gap-4 mb-4">
-                <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-2xl">
-                  <BarChart3 className="w-8 h-8 text-yellow-500" />
+                <div className="p-3 bg-primary/10 border border-primary/20 rounded-2xl shadow-[0_0_20px_rgba(var(--primary),0.1)]">
+                  <BarChart3 className="w-8 h-8 text-primary" />
                 </div>
                 <div>
                   <h1 className="text-4xl font-black italic tracking-tighter uppercase">Análise Premium</h1>
@@ -195,7 +195,7 @@ function EstatisticasPage() {
             <div className="flex gap-3">
                <div className="px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-center min-w-[140px]">
                   <p className="text-[10px] text-white/40 font-black uppercase tracking-widest mb-1">Precisão</p>
-                  <p className="text-2xl font-black text-yellow-500">94.2%</p>
+                  <p className="text-2xl font-black text-primary">94.2%</p>
                </div>
                <div className="px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-center min-w-[140px]">
                   <p className="text-[10px] text-white/40 font-black uppercase tracking-widest mb-1">Processamento</p>
@@ -208,9 +208,9 @@ function EstatisticasPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-16">
              <Card 
                onClick={() => setActiveTab('quentes')}
-               className={`bg-[#0D121F] border-white/10 rounded-2xl p-6 transition-all cursor-pointer group ${activeTab === 'quentes' ? 'border-yellow-500/50 ring-1 ring-yellow-500/20' : 'hover:border-yellow-500/30'}`}
+               className={`dashboard-card p-6 transition-all cursor-pointer group ${activeTab === 'quentes' ? 'border-primary/50 ring-1 ring-primary/20 shadow-lg shadow-primary/5' : 'hover:border-primary/30'}`}
              >
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'quentes' ? 'bg-yellow-500 text-[#0B0F19]' : 'bg-yellow-500/10 text-yellow-500'}`}>
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'quentes' ? 'bg-primary text-primary-foreground' : 'bg-primary/10 text-primary'}`}>
                    <Target className="w-6 h-6" />
                 </div>
                 <h3 className="text-xl font-black italic uppercase mb-2">Dezenas Quentes</h3>
@@ -219,9 +219,9 @@ function EstatisticasPage() {
 
              <Card 
                onClick={() => setActiveTab('atrasados')}
-               className={`bg-[#0D121F] border-white/10 rounded-2xl p-6 transition-all cursor-pointer group ${activeTab === 'atrasados' ? 'border-blue-500/50 ring-1 ring-blue-500/20' : 'hover:border-blue-500/30'}`}
+               className={`dashboard-card p-6 transition-all cursor-pointer group ${activeTab === 'atrasados' ? 'border-blue-500/50 ring-1 ring-blue-500/20 shadow-lg shadow-blue-500/5' : 'hover:border-blue-500/30'}`}
              >
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'atrasados' ? 'bg-blue-500 text-[#0B0F19]' : 'bg-blue-500/10 text-blue-400'}`}>
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'atrasados' ? 'bg-blue-500 text-white' : 'bg-blue-500/10 text-blue-400'}`}>
                    <Zap className="w-6 h-6" />
                 </div>
                 <h3 className="text-xl font-black italic uppercase mb-2">Grupos em Atraso</h3>
@@ -230,9 +230,9 @@ function EstatisticasPage() {
 
              <Card 
                onClick={() => setActiveTab('logica-grupos')}
-               className={`bg-[#0D121F] border-white/10 rounded-2xl p-6 transition-all cursor-pointer group ${activeTab === 'logica-grupos' ? 'border-emerald-500/50 ring-1 ring-emerald-500/20' : 'hover:border-emerald-500/30'}`}
+               className={`dashboard-card p-6 transition-all cursor-pointer group ${activeTab === 'logica-grupos' ? 'border-emerald-500/50 ring-1 ring-emerald-500/20 shadow-lg shadow-emerald-500/5' : 'hover:border-emerald-500/30'}`}
              >
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'logica-grupos' ? 'bg-emerald-500 text-[#0B0F19]' : 'bg-emerald-500/10 text-emerald-400'}`}>
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'logica-grupos' ? 'bg-emerald-500 text-white' : 'bg-emerald-500/10 text-emerald-400'}`}>
                    <LayoutGrid className="w-6 h-6" />
                 </div>
                 <h3 className="text-xl font-black italic uppercase mb-2">Lógica Grupos</h3>
@@ -243,7 +243,7 @@ function EstatisticasPage() {
                onClick={() => setActiveTab('ranking-completo')}
                className={`bg-[#0D121F] border-white/10 rounded-2xl p-6 transition-all cursor-pointer group ${activeTab === 'ranking-completo' ? 'border-purple-500/50 ring-1 ring-purple-500/20' : 'hover:border-purple-500/30'}`}
              >
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'ranking-completo' ? 'bg-purple-500 text-[#0B0F19]' : 'bg-purple-500/10 text-purple-400'}`}>
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'ranking-completo' ? 'bg-primary text-primary-foreground' : 'bg-primary/10 text-primary'}`}>
                    <Trophy className="w-6 h-6" />
                 </div>
                 <h3 className="text-xl font-black italic uppercase mb-2">Ranking Geral</h3>
@@ -254,7 +254,7 @@ function EstatisticasPage() {
                onClick={() => setActiveTab('repeticoes')}
                className={`bg-[#0D121F] border-white/10 rounded-2xl p-6 transition-all cursor-pointer group ${activeTab === 'repeticoes' ? 'border-blue-400/50 ring-1 ring-blue-400/20' : 'hover:border-blue-400/30'}`}
              >
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'repeticoes' ? 'bg-blue-400 text-[#0B0F19]' : 'bg-blue-400/10 text-blue-400'}`}>
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'repeticoes' ? 'bg-primary text-primary-foreground' : 'bg-primary/10 text-primary'}`}>
                    <Repeat className="w-6 h-6" />
                 </div>
                 <h3 className="text-xl font-black italic uppercase mb-2">Repetições</h3>
@@ -265,7 +265,7 @@ function EstatisticasPage() {
                onClick={() => setActiveTab('palpites')}
                className={`bg-[#0D121F] border-white/10 rounded-2xl p-6 transition-all cursor-pointer group ${activeTab === 'palpites' ? 'border-orange-500/50 ring-1 ring-orange-500/20' : 'hover:border-orange-500/30'}`}
              >
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'palpites' ? 'bg-orange-500 text-[#0B0F19]' : 'bg-orange-500/10 text-orange-500'}`}>
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'palpites' ? 'bg-primary text-primary-foreground' : 'bg-primary/10 text-primary'}`}>
                    <BrainCircuit className="w-6 h-6" />
                 </div>
                 <h3 className="text-xl font-black italic uppercase mb-2">Palpites IA</h3>
@@ -297,8 +297,8 @@ function EstatisticasPage() {
                       stats?.mostFrequentTens.map((item, i) => {
                         const animal = getAnimalByTen(item.ten);
                         return (
-                          <Card key={i} className="bg-white/5 border-white/10 p-4 text-center hover:border-yellow-500/50 transition-all">
-                            <span className="text-4xl font-black text-yellow-500 mb-2 block">{item.ten}</span>
+                          <Card key={i} className="dashboard-card p-4 text-center hover:border-primary/50 transition-all bg-white/[0.03]">
+                            <span className="text-4xl font-black text-primary mb-2 block drop-shadow-[0_0_10px_rgba(var(--primary),0.3)]">{item.ten}</span>
                             <p className="text-xs font-bold uppercase text-white/40">{item.count} sorteios</p>
                             <div className="mt-2 flex items-center justify-center gap-2">
                               <span className="text-lg">{animal?.icon}</span>
@@ -322,15 +322,15 @@ function EstatisticasPage() {
                 >
                   <div className="flex items-center gap-3 mb-4">
                     <Clock className="w-6 h-6 text-blue-500" />
-                    <h2 className="text-2xl font-black italic uppercase">Atrasados (Sem 1º Prêmio)</h2>
+                    <h2 className="text-2xl font-black italic uppercase group-hover:text-primary transition-colors">Atrasados (Sem 1º Prêmio)</h2>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {stats?.mostDelayedGroups.map((group, i) => (
-                      <Card key={i} className="bg-white/5 border-white/10 p-6 flex items-center justify-between">
+                      <Card key={i} className="dashboard-card p-6 flex items-center justify-between group transition-all duration-500">
                         <div className="flex items-center gap-4">
                           <span className="text-4xl">{ANIMAL_GROUPS.find(a => a.id === group.group)?.icon}</span>
                           <div>
-                            <h4 className="text-xl font-black italic uppercase text-blue-400">{group.animal}</h4>
+                            <h4 className="text-xl font-black italic uppercase text-primary">{group.animal}</h4>
                             <p className="text-xs font-bold text-white/40 uppercase">Grupo {group.group}</p>
                           </div>
                         </div>
@@ -768,22 +768,22 @@ function EstatisticasPage() {
                   ) : repetitionStats ? (
                     <>
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <Card className="bg-[#0D121F] border-white/10 rounded-2xl p-6">
+                        <Card className="dashboard-card p-6 bg-white/[0.03]">
                           <span className="text-[10px] font-bold text-white/20 uppercase block mb-1">Repetição de Dezena</span>
                           <div className="text-3xl font-black text-white">{repetitionStats.tenNextDraw}</div>
                           <span className="text-[9px] font-bold text-emerald-500 uppercase">No concurso seguinte</span>
                         </Card>
-                        <Card className="bg-[#0D121F] border-white/10 rounded-2xl p-6">
+                        <Card className="dashboard-card p-6 bg-white/[0.03]">
                           <span className="text-[10px] font-bold text-white/20 uppercase block mb-1">Repetição de Grupo</span>
                           <div className="text-3xl font-black text-white">{repetitionStats.groupNextDraw}</div>
                           <span className="text-[9px] font-bold text-blue-400 uppercase">Qualquer posição</span>
                         </Card>
-                        <Card className="bg-[#0D121F] border-white/10 rounded-2xl p-6">
+                        <Card className="dashboard-card p-6 bg-white/[0.03]">
                           <span className="text-[10px] font-bold text-white/20 uppercase block mb-1">Máx. Consecutivas</span>
                           <div className="text-3xl font-black text-white">{repetitionStats.maxConsecutive}</div>
-                          <span className="text-[9px] font-bold text-yellow-500 uppercase">Sequência histórica</span>
+                          <span className="text-[9px] font-bold text-primary uppercase">Sequência histórica</span>
                         </Card>
-                        <Card className="bg-[#0D121F] border-white/10 rounded-2xl p-6">
+                        <Card className="dashboard-card p-6 bg-white/[0.03]">
                           <span className="text-[10px] font-bold text-white/20 uppercase block mb-1">Percentual Geral</span>
                           <div className="text-3xl font-black text-white">{repetitionStats.historicalPercent}%</div>
                           <span className="text-[9px] font-bold text-purple-500 uppercase">Taxa de ocorrência</span>
@@ -791,7 +791,7 @@ function EstatisticasPage() {
                       </div>
 
                       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        <Card className="bg-[#0D121F] border-white/10 rounded-3xl p-8 relative overflow-hidden">
+                        <Card className="dashboard-card p-8 relative overflow-hidden bg-white/[0.03]">
                           <h3 className="text-lg font-black uppercase italic mb-8 flex items-center gap-2">
                             <History className="w-5 h-5 text-emerald-500" />
                             Logística de Repetições
@@ -800,7 +800,7 @@ function EstatisticasPage() {
                             {[
                               { label: "Repetição no mesmo horário", value: repetitionStats.sameTimeRepetition, color: "bg-emerald-500" },
                               { label: "Entre horários consecutivos", value: repetitionStats.consecutiveTimeRepetition, color: "bg-blue-400" },
-                              { label: "Entre posições diferentes", value: repetitionStats.differentPositionRepetition, color: "bg-yellow-500" },
+                              { label: "Entre posições diferentes", value: repetitionStats.differentPositionRepetition, color: "bg-primary" },
                               { label: "Animal repetido (1º Prêmio)", value: repetitionStats.animalNextDraw, color: "bg-purple-500" }
                             ].map((item, i) => (
                               <div key={i} className="space-y-2">
@@ -820,7 +820,7 @@ function EstatisticasPage() {
                           </div>
                         </Card>
 
-                        <Card className="bg-[#0D121F] border-white/10 rounded-3xl p-8">
+                        <Card className="dashboard-card p-8 bg-white/[0.03]">
                           <h3 className="text-lg font-black uppercase italic mb-8 flex items-center gap-2">
                             <Activity className="w-5 h-5 text-blue-400" />
                             Frequência por Horário
@@ -881,7 +881,7 @@ function EstatisticasPage() {
               <h2 className="text-2xl font-black italic uppercase tracking-tighter">Cruz do Dia - Base da Data</h2>
             </div>
             
-            <div className="bg-[#0D121F] border border-white/5 rounded-3xl p-8 md:p-12 relative overflow-hidden">
+            <div className="dashboard-card p-8 md:p-12 relative overflow-hidden bg-white/[0.03]">
                {/* Background Decoration */}
               <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 blur-[120px] rounded-full -mr-32 -mt-32" />
               <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/5 blur-[120px] rounded-full -ml-32 -mb-32" />
@@ -892,7 +892,7 @@ function EstatisticasPage() {
         </section>
       </main>
 
-      <footer className="border-t border-white/5 py-12 bg-[#080B14] text-center text-[10px] text-white/20 font-bold uppercase tracking-[0.2em]">
+      <footer className="border-t border-white/5 py-12 bg-background/80 text-center text-[10px] text-white/20 font-bold uppercase tracking-[0.2em]">
         Flex Gerenciador © 2026 • Ferramentas Estatísticas Avançadas
       </footer>
     </div>

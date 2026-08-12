@@ -51,38 +51,40 @@
 :root {
   --radius: 0.625rem;
 
-  /* Primary Theme: Dark Dashboard */
-  --background: oklch(0.12 0.02 240);          /* Deep navy-black */
-  --foreground: oklch(0.98 0.01 240);          /* Off-white */
+  /* Primary Theme: Premium Dark Dashboard */
+  --background: oklch(0.12 0.015 250);         /* Deep graphite/navy mix */
+  --foreground: oklch(0.98 0.005 250);         /* Clean off-white */
   
-  --card: oklch(0.16 0.02 240 / 0.8);          /* Lighter navy translucent */
-  --card-foreground: oklch(0.98 0.01 240);
+  --card: oklch(0.15 0.02 250 / 0.6);          /* Glassmorphism base */
+  --card-foreground: oklch(0.98 0.005 250);
   
-  --popover: oklch(0.16 0.02 240);
-  --popover-foreground: oklch(0.98 0.01 240);
+  --popover: oklch(0.14 0.02 250);
+  --popover-foreground: oklch(0.98 0.005 250);
 
-  /* Primary = Golden Yellow */
-  --primary: oklch(0.8 0.16 85);
-  --primary-foreground: oklch(0.12 0.02 240);
+  /* Refined Gold Theme */
+  --primary: oklch(0.75 0.12 85);              /* Elegant Gold */
+  --primary-foreground: oklch(0.1 0.015 250);
 
-  --secondary: oklch(0.25 0.02 240);
-  --secondary-foreground: oklch(0.98 0.01 240);
+  --secondary: oklch(0.22 0.02 250);
+  --secondary-foreground: oklch(0.98 0.005 250);
   
-  --muted: oklch(0.2 0.02 240);
-  --muted-foreground: oklch(0.6 0.02 240);
+  --muted: oklch(0.18 0.015 250);
+  --muted-foreground: oklch(0.55 0.015 250);
   
-  --accent: oklch(0.8 0.16 85 / 0.1);
-  --accent-foreground: oklch(0.8 0.16 85);
+  --accent: oklch(0.75 0.12 85 / 0.15);
+  --accent-foreground: oklch(0.75 0.12 85);
 
-  --destructive: oklch(0.55 0.2 28);
-  --destructive-foreground: oklch(0.98 0.01 240);
+  --success: oklch(0.7 0.15 150);              /* Green for confirmation */
+  --warning: oklch(0.8 0.15 85);               /* Yellow for attention */
+  --destructive: oklch(0.55 0.15 25);          /* Red ONLY for errors/divergence */
+  --destructive-foreground: oklch(0.98 0.005 250);
   
-  --border: oklch(1 0 0 / 12%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.8 0.16 85);
+  --border: oklch(1 0 0 / 8%);
+  --input: oklch(1 0 0 / 10%);
+  --ring: oklch(0.75 0.12 85);
 
-  --chart-1: oklch(0.8 0.16 85);
-  --chart-2: oklch(0.6 0.02 240);
+  --chart-1: oklch(0.75 0.12 85);
+  --chart-2: oklch(0.5 0.015 250);
 }
 
 @layer base {
