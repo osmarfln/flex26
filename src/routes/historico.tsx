@@ -71,16 +71,16 @@ function Historico() {
 
 
   return (
-    <div className="min-h-screen bg-[#0B0F19] text-white font-sans selection:bg-yellow-500/30 overflow-x-hidden">
+    <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/30 overflow-x-hidden">
       {/* Top Header */}
-      <header className="border-b border-white/5 bg-[#0B0F19]/80 backdrop-blur-xl sticky top-0 z-50">
+      <header className="border-b border-white/5 bg-background/60 backdrop-blur-2xl sticky top-0 z-50">
         <div className="container mx-auto px-4 md:px-6 h-20 flex items-center justify-between">
           <Link to="/" className="p-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all group mr-4">
-            <ArrowLeft className="w-5 h-5 text-white/40 group-hover:text-yellow-500 transition-colors" />
+            <ArrowLeft className="w-5 h-5 text-white/40 group-hover:text-primary transition-colors" />
           </Link>
           <div className="flex flex-col flex-1">
-            <span className="text-lg font-black tracking-tighter uppercase italic leading-none">Flex Gerenciador</span>
-            <span className="text-[9px] text-yellow-500/60 font-bold tracking-[0.2em]">HISTÓRICO RIO</span>
+            <span className="text-lg font-black tracking-tighter uppercase italic leading-none group-hover:text-primary transition-colors">Flex Gerenciador</span>
+            <span className="text-[9px] text-primary/60 font-bold tracking-[0.2em]">HISTÓRICO RIO</span>
           </div>
 
           <div className="flex items-center gap-4">
@@ -92,8 +92,8 @@ function Historico() {
       <main className="container mx-auto px-4 md:px-6 py-12">
         <section className="mb-12">
           <div className="flex items-center gap-4 mb-6">
-            <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-2xl">
-              <HistoryIcon className="w-8 h-8 text-yellow-500" />
+            <div className="p-3 bg-primary/10 border border-primary/20 rounded-2xl shadow-[0_0_20px_rgba(var(--primary),0.1)]">
+              <HistoryIcon className="w-8 h-8 text-primary" />
             </div>
             <div>
               <h1 className="text-3xl font-black italic tracking-tighter uppercase">Histórico de Resultados</h1>
@@ -101,11 +101,11 @@ function Historico() {
             </div>
           </div>
 
-          <Card className="bg-[#0D121F] border-white/10 p-6 rounded-2xl mb-8">
+          <Card className="dashboard-card p-6 mb-8">
             <div className="flex flex-wrap gap-4 items-end">
               <div className="flex-1 min-w-[200px]">
                 <label className="text-[10px] text-white/40 font-bold uppercase tracking-wider mb-2 block">Selecione a Data</label>
-                <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl hover:border-yellow-500/30 transition-all">
+                <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl hover:border-primary/30 transition-all">
                   <Calendar className="w-5 h-5 text-white/40" />
                   <input 
                     type="date" 
@@ -118,7 +118,7 @@ function Historico() {
               
               <Button 
                 onClick={() => refetch()}
-                className="h-[52px] px-8 bg-yellow-500 hover:bg-yellow-400 text-[#0B0F19] font-black uppercase tracking-tighter rounded-xl gap-2 active:scale-95 transition-all"
+                className="h-[52px] px-8 bg-primary hover:bg-primary/90 text-primary-foreground font-black uppercase tracking-tighter rounded-xl gap-2 active:scale-95 transition-all shadow-lg shadow-primary/10"
               >
                 <Search className="w-5 h-5" /> Filtrar
               </Button>
@@ -142,7 +142,7 @@ function Historico() {
                 variant="outline"
                 className="h-[52px] px-6 border-white/10 bg-white/5 hover:bg-white/10 text-white font-bold uppercase text-[10px] tracking-widest rounded-xl gap-2 transition-all"
               >
-                <Sparkles className="w-4 h-4 text-yellow-500" /> Sincronizar Tudo
+                <Sparkles className="w-4 h-4 text-primary" /> Sincronizar Tudo
               </Button>
             </div>
           </Card>
@@ -166,7 +166,7 @@ function Historico() {
                 animate={{ opacity: 1, scale: 1 }}
                 key={res.id}
               >
-                <Card className="bg-[#0D121F] border-white/10 rounded-2xl overflow-hidden hover:border-yellow-500/40 transition-all group">
+                <Card className="dashboard-card overflow-hidden hover:border-primary/40 transition-all group bg-card">
                   <CardHeader className="p-5 pb-2 bg-white/[0.01] border-b border-white/5">
                     <div className="flex justify-between items-start">
                       <div>
@@ -180,7 +180,7 @@ function Historico() {
                       </div>
                       <div className="flex flex-col items-end">
                         <div className="flex items-center gap-1.5 px-2 py-1 bg-white/5 rounded-md border border-white/5">
-                          <Clock className="w-3 h-3 text-yellow-500" />
+                          <Clock className="w-3 h-3 text-primary" />
                           <span className="text-[10px] font-mono font-black text-white">
                             {res.time_value || (
                               res.time_type === 'PPT' ? '09:20' :
@@ -209,7 +209,7 @@ function Historico() {
                       <div className="flex flex-col items-center justify-center bg-white/[0.02] rounded-xl p-4 border border-white/5">
                         <div className="text-4xl mb-2">{ANIMAL_GROUPS[res.animal_group || ""] || "✨"}</div>
                         <p className="text-[9px] text-white/40 font-bold uppercase tracking-wider mb-1">Grupo</p>
-                        <p className="text-2xl font-black text-yellow-500 tracking-tighter leading-none">{res.animal_group || '--'}</p>
+                        <p className="text-2xl font-black text-primary tracking-tighter leading-none">{res.animal_group || '--'}</p>
                         <p className="text-[10px] font-bold mt-2 text-white/80 uppercase tracking-tight">{res.animal || '...'}</p>
                       </div>
                     </div>
