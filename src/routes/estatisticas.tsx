@@ -200,7 +200,7 @@ function EstatisticasPage() {
           </div>
 
           {/* Tools Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-16">
              <Card 
                onClick={() => setActiveTab('quentes')}
                className={`bg-[#0D121F] border-white/10 rounded-2xl p-6 transition-all cursor-pointer group ${activeTab === 'quentes' ? 'border-yellow-500/50 ring-1 ring-yellow-500/20' : 'hover:border-yellow-500/30'}`}
@@ -224,6 +224,17 @@ function EstatisticasPage() {
              </Card>
 
              <Card 
+               onClick={() => setActiveTab('logica-grupos')}
+               className={`bg-[#0D121F] border-white/10 rounded-2xl p-6 transition-all cursor-pointer group ${activeTab === 'logica-grupos' ? 'border-emerald-500/50 ring-1 ring-emerald-500/20' : 'hover:border-emerald-500/30'}`}
+             >
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'logica-grupos' ? 'bg-emerald-500 text-[#0B0F19]' : 'bg-emerald-500/10 text-emerald-400'}`}>
+                   <LayoutGrid className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-black italic uppercase mb-2">Lógica Grupos</h3>
+                <p className="text-sm text-white/40 font-medium leading-snug">Logística avançada dos 25 grupos: atrasos, medianas e frequências.</p>
+             </Card>
+
+             <Card 
                onClick={() => setActiveTab('ranking-completo')}
                className={`bg-[#0D121F] border-white/10 rounded-2xl p-6 transition-all cursor-pointer group ${activeTab === 'ranking-completo' ? 'border-purple-500/50 ring-1 ring-purple-500/20' : 'hover:border-purple-500/30'}`}
              >
@@ -236,9 +247,9 @@ function EstatisticasPage() {
 
              <Card 
                onClick={() => setActiveTab('palpites')}
-               className={`bg-[#0D121F] border-white/10 rounded-2xl p-6 transition-all cursor-pointer group ${activeTab === 'palpites' ? 'border-emerald-500/50 ring-1 ring-emerald-500/20' : 'hover:border-emerald-500/30'}`}
+               className={`bg-[#0D121F] border-white/10 rounded-2xl p-6 transition-all cursor-pointer group ${activeTab === 'palpites' ? 'border-orange-500/50 ring-1 ring-orange-500/20' : 'hover:border-orange-500/30'}`}
              >
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'palpites' ? 'bg-emerald-500 text-[#0B0F19]' : 'bg-emerald-500/10 text-emerald-500'}`}>
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'palpites' ? 'bg-orange-500 text-[#0B0F19]' : 'bg-orange-500/10 text-orange-500'}`}>
                    <BrainCircuit className="w-6 h-6" />
                 </div>
                 <h3 className="text-xl font-black italic uppercase mb-2">Palpites IA</h3>
