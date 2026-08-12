@@ -74,6 +74,42 @@ function EstatisticasPage() {
   // Recalcula todas as análises a cada novo resultado publicado
   const { lastUpdate } = useLotteryRealtime("estatisticas-db-changes");
 
+  // Sincronização manual + recálculo imediato
+  const queryClient = useQueryClient();
+  const triggerSync = useServerFn(runSyncNow);
+  const [syncMessage, setSyncMessage] = useState<string | null>(null);
+  const [syncStep, setSyncStep] = useState<string | null>(null);
+  const syncMutation = useMutation({
+    mutationFn: async () => {
+      setSyncStep("Buscando novos resultados na origem...");
+      const res: any = await triggerSync();
+      setSyncStep("Recalculando dezenas atrasadas, grupos e bicho em alta...");
+      await queryClient.invalidateQueries();
+      await queryClient.refetchQueries({ type: "active" });
+      return res;
+    },
+    onSuccess: (res: any) => {
+      setSyncStep(null);
+      setSyncMessage(
+        res?.ok
+          ? `Dados validados e recalculados (${res.synced ?? 0} registros verificados).`
+          : `Falha na sincronização: ${res?.error ?? "erro desconhecido"}`,
+      );
+    },
+    onError: (err: any) => {
+      setSyncStep(null);
+      setSyncMessage(`Falha na sincronização: ${err?.message ?? "erro"}`);
+    },
+  });
+  const handleSyncNow = () => {
+    setSyncMessage(null);
+    syncMutation.mutate();
+  };
+  const recalculating =
+    syncMutation.isPending ||
+    statsLoadingRef.current;
+
+
 
 
 
