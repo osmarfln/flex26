@@ -322,7 +322,111 @@ function EstatisticasPage() {
                   </div>
                 </motion.div>
               )}
+              {activeTab === 'visao-geral' && (
+                <motion.div
+                  key="visao-geral"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="py-12 text-center border-2 border-dashed border-white/10 rounded-2xl"
+                >
+                  <LayoutGrid className="w-12 h-12 mx-auto mb-4 opacity-20" />
+                  <p className="text-white/40 font-bold uppercase tracking-widest">Visão Geral da Análise Histórica em processamento...</p>
+                </motion.div>
+              )}
+
+              {activeTab === 'dezenas' && (
+                <motion.div
+                  key="dezenas"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="py-12 text-center border-2 border-dashed border-white/10 rounded-2xl"
+                >
+                  <Hash className="w-12 h-12 mx-auto mb-4 opacity-20" />
+                  <p className="text-white/40 font-bold uppercase tracking-widest">Análise detalhada de Dezenas em processamento...</p>
+                </motion.div>
+              )}
+
+              {activeTab === 'grupos' && (
+                <motion.div
+                  key="grupos"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="py-12 text-center border-2 border-dashed border-white/10 rounded-2xl"
+                >
+                  <Users className="w-12 h-12 mx-auto mb-4 opacity-20" />
+                  <p className="text-white/40 font-bold uppercase tracking-widest">Análise de Grupos e Bichos em processamento...</p>
+                </motion.div>
+              )}
+
+              {activeTab === 'frequencias' && (
+                <motion.div
+                  key="frequencias"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="py-12 text-center border-2 border-dashed border-white/10 rounded-2xl"
+                >
+                  <TrendingUp className="w-12 h-12 mx-auto mb-4 opacity-20" />
+                  <p className="text-white/40 font-bold uppercase tracking-widest">Mapas de Frequência em processamento...</p>
+                </motion.div>
+              )}
+
+              {activeTab === 'repeticoes' && (
+                <motion.div
+                  key="repeticoes"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="py-12 text-center border-2 border-dashed border-white/10 rounded-2xl"
+                >
+                  <Repeat className="w-12 h-12 mx-auto mb-4 opacity-20" />
+                  <p className="text-white/40 font-bold uppercase tracking-widest">Análise de Repetições em processamento...</p>
+                </motion.div>
+              )}
+
+              {activeTab === 'comparar' && (
+                <motion.div
+                  key="comparar"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="py-12 text-center border-2 border-dashed border-white/10 rounded-2xl"
+                >
+                  <ArrowLeftRight className="w-12 h-12 mx-auto mb-4 opacity-20" />
+                  <p className="text-white/40 font-bold uppercase tracking-widest">Ferramenta de Comparação em processamento...</p>
+                </motion.div>
+              )}
+
+              {activeTab === 'historico' && (
+                <motion.div
+                  key="historico"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="py-12 text-center border-2 border-dashed border-white/10 rounded-2xl"
+                >
+                  <FileText className="w-12 h-12 mx-auto mb-4 opacity-20" />
+                  <p className="text-white/40 font-bold uppercase tracking-widest">Histórico Completo em processamento...</p>
+                </motion.div>
+              )}
+
+              {activeTab === 'importar' && (
+                <motion.div
+                  key="importar"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="py-12 text-center border-2 border-dashed border-white/10 rounded-2xl"
+                >
+                  <Upload className="w-12 h-12 mx-auto mb-4 opacity-20" />
+                  <p className="text-white/40 font-bold uppercase tracking-widest">Módulo de Importação em processamento...</p>
+                </motion.div>
+              )}
             </AnimatePresence>
+
           </section>
 
           {/* Cruz do Dia Section */}
