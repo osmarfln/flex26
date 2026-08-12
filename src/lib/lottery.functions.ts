@@ -235,7 +235,8 @@ export const getGroupDelayStats = createServerFn({ method: "GET" })
             if (calculatedGroup === groupId) {
               foundInThisResult = true;
               totalFreq++;
-              positionFreq[pIdx + 1 as keyof typeof positionFreq]++;
+              const pos = (pIdx + 1) as 1 | 2 | 3 | 4 | 5;
+              positionFreq[pos]++;
               hourlyFreq[res.time_type] = (hourlyFreq[res.time_type] || 0) + 1;
             }
           }
