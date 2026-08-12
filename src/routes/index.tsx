@@ -43,6 +43,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useLotteryRealtime } from "@/hooks/useLotteryRealtime";
+import { brasiliaDateISO } from "@/lib/draw-order";
 
 
 export const Route = createFileRoute("/")({
@@ -88,7 +89,7 @@ function Index() {
   }, []);
 
 
-  const today = format(new Date(), "yyyy-MM-dd");
+  const today = brasiliaDateISO();
 
   const { data: games, isLoading: isLoadingGames, refetch } = useQuery({
     queryKey: ["homepage-games", today],
@@ -266,7 +267,7 @@ function Index() {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[
-                  { type: 'PTT', time: '09:00' },
+                  { type: 'PPT', time: '09:00' },
                   { type: 'PTM', time: '11:00' },
                   { type: 'PT', time: '14:00' },
                   { type: 'PTV', time: '16:00' },
@@ -274,7 +275,9 @@ function Index() {
                   { type: 'COR', time: '21:00' }
                 ].map((schedule) => {
                   const sortedGames = [...(games || [])].sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
-                  const game = sortedGames.find((g: any) => g.time_type.includes(schedule.type));
+                  const game = sortedGames.find(
+                    (g: any) => String(g.time_type).toUpperCase().trim() === schedule.type,
+                  );
                   const isLatest = game && sortedGames[0]?.id === game.id;
                   
                   return (
