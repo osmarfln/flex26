@@ -35,34 +35,43 @@ function EstatisticasPage() {
 
   const [cruzData, setCruzData] = useState<string[]>([]);
   
+  // Todas as análises recalculam a cada novo resultado (sem cache velho)
+  const live = { staleTime: 0, gcTime: 0, refetchOnWindowFocus: true, refetchOnMount: true } as const;
+
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ["stats-page"],
     queryFn: () => getStats(),
+    ...live,
   });
 
   const { data: recentResults, isLoading: resultsLoading } = useQuery({
     queryKey: ["recent-results-stats"],
     queryFn: () => getResults({ data: { limit: 100, offset: 0 } }),
+    ...live,
   });
 
   const { data: delayStats, isLoading: delayStatsLoading } = useQuery({
     queryKey: ["ten-delay-stats"],
     queryFn: () => getTenDelayStats(),
+    ...live,
   });
 
   const { data: groupDelayStats, isLoading: groupDelayStatsLoading } = useQuery({
     queryKey: ["group-delay-stats"],
     queryFn: () => getGroupDelayStats(),
+    ...live,
   });
 
 
   const { data: repetitionStats, isLoading: repetitionLoading } = useQuery({
     queryKey: ["repetition-stats"],
     queryFn: () => getRepetitionStats(),
+    ...live,
   });
 
   // Recalcula todas as análises a cada novo resultado publicado
-  useLotteryRealtime("estatisticas-db-changes");
+  const { lastUpdate } = useLotteryRealtime("estatisticas-db-changes");
+
 
 
 
