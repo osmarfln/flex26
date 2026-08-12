@@ -56,6 +56,7 @@ export const Route = createFileRoute('/api/public/sync-results')({
             
             if (response.ok) {
               const html = await response.text();
+              console.log(`HTML recebido (${html.length} chars). Snippet: ${html.substring(0, 500).replace(/\n/g, ' ')}`);
               const results = parseRioResults(html, dateStr);
               
               for (const res of results) {
