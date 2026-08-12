@@ -192,7 +192,7 @@ function Index() {
 
 
 
-      <main className="container mx-auto px-4 md:px-6 py-12 relative">
+      <main className="container mx-auto px-3 sm:px-4 md:px-6 py-6 md:py-12 relative">
         {/* Floating Butterfly Graphic */}
         <div className="absolute top-0 right-0 hidden xl:block opacity-10 translate-x-1/4 -translate-y-12">
            <svg width="400" height="400" viewBox="0 0 24 24" fill="none" className="text-primary">
