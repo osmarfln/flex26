@@ -839,7 +839,7 @@ function EstatisticasPage() {
                                       />
                                       <span className="absolute -top-6 text-[10px] font-black text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity">
                                         {d.count}
-                                      </div>
+                                      </span>
                                     </div>
                                     <span className="text-[10px] font-black uppercase italic text-white/30 group-hover:text-white transition-colors">
                                       {d.time}
