@@ -32,7 +32,7 @@ const ANIMAL_GROUPS = [
 ];
 
 function EstatisticasPage() {
-  const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'palpites' | 'logica-atraso' | 'ranking-completo' | 'logica-grupos'>('logica-atraso');
+  const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'palpites' | 'logica-atraso' | 'ranking-completo' | 'logica-grupos' | 'repeticoes'>('logica-atraso');
   const [cruzData, setCruzData] = useState<string[]>([]);
   
   const { data: stats, isLoading: statsLoading } = useQuery({
