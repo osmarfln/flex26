@@ -237,8 +237,10 @@ export const getGroupDelayStats = createServerFn({ method: "GET" })
               totalFreq++;
               const pos = (pIdx + 1) as 1 | 2 | 3 | 4 | 5;
               positionFreq[pos]++;
-              hourlyFreq[res.time_type] = (hourlyFreq[res.time_type] || 0) + 1;
-            }
+              const timeType = res.time_type;
+              if (timeType) {
+                hourlyFreq[timeType] = (hourlyFreq[timeType] || 0) + 1;
+              }
           }
         });
 
