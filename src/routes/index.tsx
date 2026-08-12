@@ -116,10 +116,10 @@ function Index() {
         { event: 'INSERT', schema: 'public', table: 'lottery_results' },
         () => {
           refetch();
-          refetchStats();
         }
       )
       .subscribe();
+
 
     return () => {
       supabase.removeChannel(channel);
