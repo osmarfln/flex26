@@ -24,7 +24,9 @@ export const Route = createFileRoute('/api/public/sync-results')({
           const dateParam = body.date || new Date().toISOString().split('T')[0];
           const daysToSync = body.daysToSync || 1;
           
-          const { data: logEntry } = await supabase
+          console.log(`[SYNC] Starting sync for ${dateParam}, days: ${daysToSync}`);
+          
+          const { data: logEntry, error: logError } = await supabase
             .from('sync_logs')
             .insert({ 
               status: 'running', 
@@ -33,6 +35,8 @@ export const Route = createFileRoute('/api/public/sync-results')({
             })
             .select()
             .single();
+
+          if (logError) console.error('[SYNC] Log entry error:', logError);
 
           let totalSynced = 0;
           
@@ -43,6 +47,7 @@ export const Route = createFileRoute('/api/public/sync-results')({
             const dateStr = isoString.split('T')[0]!;
             
             const apiUrl = `${EXTERNAL_REST_URL}/draw_results?draw_date=eq.${dateStr}&select=*`;
+            console.log(`[SYNC] Fetching from external: ${apiUrl}`);
             
             const response = await fetch(apiUrl, {
               headers: {
@@ -51,8 +56,11 @@ export const Route = createFileRoute('/api/public/sync-results')({
               }
             });
             
+            console.log(`[SYNC] External API Status: ${response.status}`);
+            
             if (response.ok) {
               const externalResults = await response.json();
+              console.log(`[SYNC] Received ${Array.isArray(externalResults) ? externalResults.length : 0} results from external.`);
               
               if (Array.isArray(externalResults) && externalResults.length > 0) {
                 for (const res of externalResults) {
@@ -68,6 +76,7 @@ export const Route = createFileRoute('/api/public/sync-results')({
                     ? String(res.prize_1_group).padStart(2, '0') 
                     : null;
 
+                  console.log(`[SYNC] Upserting: ${res.draw_date} ${res.draw_time}`);
                   const { error: upsertError } = await supabase
                     .from('lottery_results')
                     .upsert({
@@ -79,11 +88,20 @@ export const Route = createFileRoute('/api/public/sync-results')({
                       animal_group: groupStr
                     }, { onConflict: 'date,time_type' });
                   
-                  if (!upsertError) totalSynced++;
+                  if (upsertError) {
+                    console.error('[SYNC] Upsert error:', upsertError);
+                  } else {
+                    totalSynced++;
+                  }
                 }
               }
+            } else {
+              const errText = await response.text();
+              console.error(`[SYNC] External API Error: ${errText}`);
             }
           }
+
+          console.log(`[SYNC] Total synced: ${totalSynced}`);
 
           if (logEntry) {
             await supabase
@@ -97,7 +115,7 @@ export const Route = createFileRoute('/api/public/sync-results')({
           });
 
         } catch (error: any) {
-          console.error('Sync error:', error);
+          console.error('[SYNC] Fatal error:', error);
           return new Response(JSON.stringify({ success: false, error: error.message }), { 
             status: 500, 
             headers: { 'Content-Type': 'application/json' } 
