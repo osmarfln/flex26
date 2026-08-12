@@ -266,6 +266,9 @@ export const getRepetitionStats = createServerFn({ method: "GET" })
     if (error) throw error;
     if (!results || results.length < 2) return null;
 
+    const lastResult = results[0];
+    const firstResultInSample = results[results.length - 1];
+
     const repetitionStats = {
       tenNextDraw: 0,
       groupNextDraw: 0,
@@ -276,7 +279,7 @@ export const getRepetitionStats = createServerFn({ method: "GET" })
       maxConsecutive: 0,
       historicalPercent: 0,
       sampleSize: results.length,
-      periodAnalyzed: `${results[results.length - 1]?.date ? new Date(results[results.length - 1].date).toLocaleDateString('pt-BR') : ''} - ${results[0]?.date ? new Date(results[0].date).toLocaleDateString('pt-BR') : ''}`,
+      periodAnalyzed: `${firstResultInSample?.date ? new Date(firstResultInSample.date).toLocaleDateString('pt-BR') : ''} - ${lastResult?.date ? new Date(lastResult.date).toLocaleDateString('pt-BR') : ''}`,
       timeRepetitionData: [] as { time: string, count: number }[],
     };
 
