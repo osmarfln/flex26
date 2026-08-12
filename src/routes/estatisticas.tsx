@@ -64,7 +64,9 @@ function EstatisticasPage() {
     queryFn: () => getRepetitionStats(),
   });
 
-  const isLoading = statsLoading || resultsLoading;
+  const isLoading = statsLoading || resultsLoading || delayStatsLoading || groupDelayStatsLoading;
+  const tenStats = delayStats;
+
 
   const getAnimalByTen = (ten: string) => {
     const tenInt = parseInt(ten);
