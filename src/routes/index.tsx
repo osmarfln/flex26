@@ -437,9 +437,8 @@ function Index() {
           </div>
 
           <div className="flex items-center justify-between mb-8">
-
              <div>
-               <h2 className="text-3xl font-black italic tracking-tighter uppercase">Análise de Atraso por Horário</h2>
+               <h2 className="text-3xl font-black italic tracking-tighter uppercase">Análise de Atraso dos Grupos</h2>
                <p className="text-white/40 text-sm font-medium mt-1 uppercase tracking-widest">Monitoramento inteligente baseado em dados históricos</p>
              </div>
              <div className="hidden md:flex gap-2">
@@ -448,28 +447,29 @@ function Index() {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-             {Object.entries(stats?.delayedBySchedule || {}).map(([time, data]: [string, any]) => (
+             {groupStats?.slice(0, 6).map((data: any) => (
                 <motion.div 
-                  key={time}
+                  key={data.groupId}
                   whileHover={{ y: -5 }}
                   className="bg-[#0D121F] border border-white/10 p-5 rounded-2xl relative group overflow-hidden"
                 >
                   <div className="absolute inset-0 bg-yellow-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="flex items-center justify-between mb-4">
-                    <span className="text-sm font-mono font-bold text-white/40">{time}</span>
+                    <span className="text-sm font-mono font-bold text-white/40">G{data.groupId}</span>
                     <Clock className="w-3.5 h-3.5 text-primary/50" />
                   </div>
                   <div className="text-center">
-                    <div className="text-4xl mb-3">{ANIMAL_GROUPS.find(a => a.id === data.group)?.icon}</div>
+                    <div className="text-4xl mb-3">{ANIMAL_GROUPS.find(a => a.id === data.groupId)?.icon}</div>
                     <h3 className="text-sm font-black uppercase italic tracking-tighter group-hover:text-primary transition-colors">{data.animal}</h3>
                     <div className="mt-4 flex flex-col items-center">
-                       <span className="text-xl font-black text-primary leading-none">{data.delayed.split(' ')[0]}</span>
+                       <span className="text-xl font-black text-primary leading-none">{data.currentDelay}</span>
                        <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest mt-1">Dias de atraso</span>
                     </div>
                   </div>
                 </motion.div>
              ))}
           </div>
+
         </section>
 
 
