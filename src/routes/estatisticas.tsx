@@ -827,8 +827,8 @@ function EstatisticasPage() {
                           </h3>
                           <div className="h-[200px] flex items-end justify-between gap-2">
                             {repetitionStats.timeRepetitionData.length > 0 ? (
-                              repetitionStats.timeRepetitionData.map((d, i) => {
-                                const maxCount = Math.max(...repetitionStats.timeRepetitionData.map(x => x.count), 1);
+                              repetitionStats.timeRepetitionData.map((d: any, i: number) => {
+                                const maxCount = Math.max(...repetitionStats.timeRepetitionData.map((x: any) => x.count), 1);
                                 return (
                                   <div key={i} className="flex-1 flex flex-col items-center gap-3 group">
                                     <div className="w-full relative flex flex-col items-center justify-end h-full">
