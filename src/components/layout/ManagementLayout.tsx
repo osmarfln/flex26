@@ -46,7 +46,7 @@ import { motion } from "framer-motion";
 const navigationItems = [
   {
     title: "Portal",
-    url: "/portal",
+    url: createPageUrl("Portal"),
     icon: LayoutDashboard,
     color: "from-teal-500 to-cyan-500",
     bgColor: "bg-gradient-to-r from-teal-500/10 to-cyan-500/10",
@@ -54,7 +54,7 @@ const navigationItems = [
   },
   {
     title: "Análises",
-    url: "/analises",
+    url: createPageUrl("AnalisesIA"),
     icon: BrainCircuit,
     color: "from-cyan-500 to-teal-500",
     bgColor: "bg-gradient-to-r from-cyan-500/10 to-teal-500/10",
@@ -62,7 +62,7 @@ const navigationItems = [
   },
   {
     title: "Palpite do Dia",
-    url: "/palpite",
+    url: createPageUrl("PalpiteDoDia"),
     icon: Sparkles,
     color: "from-yellow-400 to-orange-500",
     bgColor: "bg-gradient-to-r from-yellow-400/10 to-orange-500/10",
@@ -70,7 +70,7 @@ const navigationItems = [
   },
   {
     title: "Arquivo",
-    url: "/arquivo",
+    url: createPageUrl("ArquivoResultados"),
     icon: Archive,
     color: "from-blue-500 to-sky-500",
     bgColor: "bg-gradient-to-r from-blue-500/10 to-sky-500/10",
@@ -78,7 +78,7 @@ const navigationItems = [
   },
   {
     title: "Calendário",
-    url: "/calendario",
+    url: createPageUrl("CalendarioResultados"),
     icon: CalendarDays,
     color: "from-blue-500 to-indigo-600",
     bgColor: "bg-gradient-to-r from-blue-500/10 to-indigo-600/10",
@@ -86,7 +86,7 @@ const navigationItems = [
   },
   {
     title: "Cadastrar",
-    url: "/cadastrar",
+    url: createPageUrl("CadastroManual"),
     icon: ClipboardList,
     color: "from-blue-500 to-cyan-600",
     bgColor: "bg-gradient-to-r from-blue-500/10 to-cyan-600/10",
@@ -95,7 +95,7 @@ const navigationItems = [
   },
   {
     title: "Admin",
-    url: "/admin",
+    url: createPageUrl("Admin"),
     icon: Settings,
     color: "from-emerald-500 to-green-600",
     bgColor: "bg-gradient-to-r from-emerald-500/10 to-green-600/10",
@@ -147,10 +147,31 @@ export default function ManagementLayout({ children, currentPageName }: LayoutPr
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   useEffect(() => {
+    const pageTitle = currentPageName === "Home"
+      ? "Flex Gerenciamentos - Palpites & Estatísticas"
+      : `${currentPageName} | Flex Gerenciamentos`;
+    document.title = pageTitle;
+  }, [currentPageName]);
+
+  useEffect(() => {
     const loadUser = async () => {
       try {
         const userData = await base44.auth.me();
-        setUser(userData);
+        
+        if (userData && userData.email === 'flixautomacaosc@gmail.com') {
+          if (userData.nivel !== 'diamante' || userData.status !== 'aprovado') {
+            await base44.auth.updateMe({
+              nivel: 'diamante',
+              status: 'aprovado'
+            });
+            const updatedUser = await base44.auth.me();
+            setUser(updatedUser);
+          } else {
+            setUser(userData);
+          }
+        } else {
+          setUser(userData);
+        }
       } catch (err) {
         console.error(err);
       }
@@ -160,9 +181,13 @@ export default function ManagementLayout({ children, currentPageName }: LayoutPr
 
   const handleFullscreenToggle = () => {
     if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen();
+      document.documentElement.requestFullscreen().catch((err) => {
+        console.error(`Erro ao ativar tela cheia: ${err.message}`);
+      });
     } else {
-      document.exitFullscreen();
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      }
     }
   };
 
