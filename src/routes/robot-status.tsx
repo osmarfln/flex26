@@ -169,6 +169,93 @@ function RobotStatus() {
           </div>
         )}
 
+        {/* Conferência horário a horário contra a base de origem */}
+        <Card className="bg-[#0D121F] border-white/10 rounded-3xl mb-8">
+          <CardHeader className="flex flex-row items-center justify-between gap-3 flex-wrap">
+            <div>
+              <CardTitle className="text-base font-black uppercase italic">
+                Sincronização horário a horário
+              </CardTitle>
+              <p className="text-[11px] text-white/40 uppercase tracking-widest mt-1">
+                {matrix?.date
+                  ? `Dia ${format(new Date(`${matrix.date}T12:00:00`), "dd/MM/yyyy (EEEE)", { locale: ptBR })}`
+                  : "Carregando..."}
+                {matrix?.generatedAt
+                  ? ` • conferido às ${formatBrasilia(matrix.generatedAt)}`
+                  : ""}
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <Badge
+                className={`rounded-lg font-bold ${
+                  matrix?.sourceOnline
+                    ? "bg-emerald-500/15 text-emerald-400"
+                    : "bg-red-500/15 text-red-400"
+                }`}
+              >
+                {matrix?.sourceOnline ? "Fonte online" : "Fonte indisponível"}
+              </Badge>
+              <button
+                onClick={handleSyncNow}
+                disabled={syncMutation.isPending}
+                className="px-4 py-2 rounded-xl bg-yellow-500/15 border border-yellow-500/30 text-yellow-400 text-xs font-black uppercase hover:bg-yellow-500/25 transition-all disabled:opacity-50 flex items-center gap-2"
+              >
+                <RefreshCw className={`w-4 h-4 ${syncMutation.isPending ? "animate-spin" : ""}`} />
+                Sincronizar agora
+              </button>
+            </div>
+          </CardHeader>
+          <CardContent className="p-4 md:p-6 pt-0">
+            {syncMessage && (
+              <p className="mb-4 text-xs font-bold text-emerald-400">{syncMessage}</p>
+            )}
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs md:text-sm min-w-[640px]">
+                <thead>
+                  <tr className="text-white/40 uppercase text-[10px] tracking-widest">
+                    <th className="py-2 pr-3">Horário</th>
+                    <th className="py-2 pr-3">Hora</th>
+                    <th className="py-2 pr-3">1º prêmio (plataforma)</th>
+                    <th className="py-2 pr-3">1º prêmio (origem)</th>
+                    <th className="py-2 pr-3">Bicho</th>
+                    <th className="py-2 pr-3">Captado às</th>
+                    <th className="py-2">Situação</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(matrix?.rows ?? []).map((row: any) => (
+                    <tr key={row.timeType} className="border-t border-white/5">
+                      <td className="py-3 pr-3 font-black">{row.label}</td>
+                      <td className="py-3 pr-3 text-white/50">{row.timeValue}</td>
+                      <td className="py-3 pr-3 font-mono font-bold text-primary">
+                        {row.ourFirstPrize ?? "—"}
+                      </td>
+                      <td className="py-3 pr-3 font-mono text-white/60">
+                        {row.sourceFirstPrize ?? "—"}
+                      </td>
+                      <td className="py-3 pr-3 text-white/60">{row.animal ?? "—"}</td>
+                      <td className="py-3 pr-3 text-white/40">
+                        {row.capturedAt ? formatBrasilia(row.capturedAt) : "—"}
+                      </td>
+                      <td className="py-3">
+                        <Badge className={`rounded-lg font-bold ${STATUS_STYLE[row.status]}`}>
+                          {STATUS_LABEL[row.status]}
+                        </Badge>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="mt-4 text-[11px] text-white/30 leading-relaxed">
+              Conferência automática: cada horário é comparado com a base de origem. "Aguardando"
+              significa que o sorteio ainda não foi publicado; "Pendente" indica que já existe na
+              origem e entrará na próxima execução do robô (a cada 10 minutos).
+            </p>
+          </CardContent>
+        </Card>
+
+
         {/* KPIs */}
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
           <Kpi
