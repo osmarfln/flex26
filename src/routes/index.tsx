@@ -73,6 +73,7 @@ function getGreeting() {
 }
 
 function Index() {
+  const queryClient = useQueryClient();
   const [greeting, setGreeting] = useState(getGreeting());
   const [currentTime, setCurrentTime] = useState(new Date());
 
@@ -84,7 +85,6 @@ function Index() {
     return () => clearInterval(timer);
   }, []);
 
-  const queryClient = useQueryClient();
   const today = format(new Date(), "yyyy-MM-dd");
 
   const { data: games, isLoading: isLoadingGames, refetch } = useQuery({
