@@ -77,12 +77,12 @@ function Index() {
 
   const { data: games, isLoading: isLoadingGames, refetch } = useQuery({
     queryKey: ["homepage-games"],
-    queryFn: () => base44.games.list(),
+    queryFn: () => getResults({ limit: 6 }),
   });
 
   const { data: stats, isLoading: isLoadingStats } = useQuery({
     queryKey: ["homepage-stats"],
-    queryFn: () => base44.games.getStats(),
+    queryFn: () => getStats(),
   });
 
   const GreetingIcon = greeting.icon;
