@@ -10,7 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
 import { getStats, getResults, getTenDelayStats, getGroupDelayStats, getRepetitionStats } from "@/lib/lottery.functions";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { useState, useMemo, useEffect } from "react";
 import { format, subDays, differenceInDays } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -31,6 +32,7 @@ export const Route = createFileRoute("/estatisticas")({
 function EstatisticasPage() {
   const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'palpites' | 'logica-atraso' | 'ranking-completo' | 'logica-grupos' | 'repeticoes'>('quentes');
 
+  const queryClient = useQueryClient();
   const [cruzData, setCruzData] = useState<string[]>([]);
   
   const { data: stats, isLoading: statsLoading } = useQuery({
@@ -58,6 +60,26 @@ function EstatisticasPage() {
     queryKey: ["repetition-stats"],
     queryFn: () => getRepetitionStats(),
   });
+
+  // Recalcula todas as análises a cada novo resultado publicado
+  useEffect(() => {
+    const channel = supabase
+      .channel('estatisticas-db-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'lottery_results' },
+        () => {
+          ["stats-page", "recent-results-stats", "ten-delay-stats", "group-delay-stats", "repetition-stats"].forEach(
+            (key) => queryClient.invalidateQueries({ queryKey: [key] })
+          );
+        }
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
+
 
   const isLoading = statsLoading || resultsLoading || delayStatsLoading || groupDelayStatsLoading;
   const tenStats = delayStats;
