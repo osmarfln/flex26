@@ -84,12 +84,13 @@ export const getStats = createServerFn({ method: "GET" })
     const mostDelayedGroups = Object.keys(ANIMAL_GROUPS)
       .map(group => {
         const lastDate = lastSeen[group];
-        const days = lastDate ? Math.floor((new Date().getTime() - new Date(lastDate).getTime()) / (1000 * 60 * 60 * 24)) : 99;
+        const lastDateObj = lastDate ? new Date(lastDate) : null;
+        const days = lastDateObj ? Math.floor((new Date().getTime() - lastDateObj.getTime()) / (1000 * 60 * 60 * 24)) : 99;
         return {
           group,
           animal: ANIMAL_GROUPS[group].name,
           days,
-          lastSeen: lastDate ? new Date(lastDate).toLocaleDateString('pt-BR') : "Nunca"
+          lastSeen: lastDateObj ? lastDateObj.toLocaleDateString('pt-BR') : "Nunca"
         };
       })
       .sort((a, b) => b.days - a.days)
@@ -103,13 +104,16 @@ export const getStats = createServerFn({ method: "GET" })
     const delayedBySchedule: Record<string, any> = {};
     Object.keys(scheduleDelay).forEach(time => {
       const entry = scheduleDelay[time];
-      const days = Math.floor((new Date().getTime() - new Date(entry.date).getTime()) / (1000 * 60 * 60 * 24));
-      const groupInfo = ANIMAL_GROUPS[entry.group];
-      delayedBySchedule[time] = {
-        group: entry.group,
-        animal: groupInfo ? groupInfo.name : "Desconhecido",
-        delayed: `${days} dias`
-      };
+      if (entry) {
+        const entryDate = new Date(entry.date);
+        const days = Math.floor((new Date().getTime() - entryDate.getTime()) / (1000 * 60 * 60 * 24));
+        const groupInfo = ANIMAL_GROUPS[entry.group];
+        delayedBySchedule[time] = {
+          group: entry.group,
+          animal: groupInfo ? groupInfo.name : "Desconhecido",
+          delayed: `${days} dias`
+        };
+      }
     });
 
     return {
