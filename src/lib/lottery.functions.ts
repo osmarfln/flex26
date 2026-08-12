@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
+import { ANIMAL_GROUPS_MAP, getGroupFromTen as tenToGroup } from "@/lib/animals";
 
 // Tipos para os resultados
 export interface LotteryResult {
@@ -14,13 +15,7 @@ export interface LotteryResult {
   created_at: string;
 }
 
-const ANIMAL_GROUPS_DATA: Record<string, { name: string, icon: string }> = {
-  "01": { name: "Avestruz", icon: "🦩" }, "02": { name: "Águia", icon: "🦅" }, "03": { name: "Burro", icon: "🫏" }, "04": { name: "Borboleta", icon: "🦋" }, "05": { name: "Cachorro", icon: "🐕" },
-  "06": { name: "Cabra", icon: "🐐" }, "07": { name: "Leão", icon: "🦁" }, "08": { name: "Macaco", icon: "🐒" }, "09": { name: "Cobra", icon: "🐍" }, "10": { name: "Coelho", icon: "🐰" },
-  "11": { name: "Cavalo", icon: "🐎" }, "12": { name: "Elefante", icon: "🐘" }, "13": { name: "Galo", icon: "🐓" }, "14": { name: "Gato", icon: "🐈" }, "15": { name: "Jacaré", icon: "🐊" },
-  "16": { name: "Leopardo", icon: "🐆" }, "17": { name: "Porco", icon: "🐖" }, "18": { name: "Coruja", icon: "🦉" }, "19": { name: "Pavão", icon: "🦚" }, "20": { name: "Peru", icon: "🦃" },
-  "21": { name: "Touro", icon: "🐂" }, "22": { name: "Tigre", icon: "🐅" }, "23": { name: "Urso", icon: "🐻" }, "24": { name: "Veado", icon: "🦌" }, "25": { name: "Vaca", icon: "🐄" },
-};
+const ANIMAL_GROUPS_DATA = ANIMAL_GROUPS_MAP;
 
 export const getResults = createServerFn({ method: "GET" })
   .validator((data: unknown) => z.object({
@@ -234,7 +229,7 @@ export const getGroupDelayStats = createServerFn({ method: "GET" })
         r.results?.slice(0, 5).some((prize: string) => {
           const ten = prize.slice(-2);
           const tenInt = parseInt(ten);
-          return !isNaN(tenInt) && String(Math.floor((tenInt === 0 ? 100 : tenInt - 1) / 4) + 1).padStart(2, '0') === groupId;
+          return !isNaN(tenInt) && tenToGroup(ten) === groupId;
         })
       ).length;
 
@@ -253,7 +248,7 @@ export const getGroupDelayStats = createServerFn({ method: "GET" })
           const ten = prize.slice(-2);
           const tenInt = parseInt(ten);
           if (!isNaN(tenInt)) {
-            const calculatedGroup = String(Math.floor((tenInt === 0 ? 100 : tenInt - 1) / 4) + 1).padStart(2, '0');
+            const calculatedGroup = tenToGroup(ten);
             if (calculatedGroup === groupId) {
               foundInThisResult = true;
               totalFreq++;
@@ -354,11 +349,7 @@ export const getRepetitionStats = createServerFn({ method: "GET" })
     };
 
 
-    const getGroupFromTen = (ten: string) => {
-      const tenInt = parseInt(ten);
-      if (isNaN(tenInt)) return null;
-      return String(Math.floor((tenInt === 0 ? 100 : tenInt - 1) / 4) + 1).padStart(2, '0');
-    };
+    const getGroupFromTen = (ten: string) => tenToGroup(ten) || null;
 
     let totalRepetitions = 0;
     const timeRepMap: Record<string, number> = {};
@@ -393,6 +384,8 @@ export const getRepetitionStats = createServerFn({ method: "GET" })
             value: ten,
             group,
             animal,
+            icon: ANIMAL_GROUPS_MAP[group || '']?.icon || '',
+            groupDezenas: ANIMAL_GROUPS_MAP[group || '']?.dezenas || [],
             currentDate: current.date,
             currentTime: current.time_type,
             nextDate: next.date,
@@ -426,6 +419,8 @@ export const getRepetitionStats = createServerFn({ method: "GET" })
                 value: ten,
                 group,
                 animal,
+                icon: ANIMAL_GROUPS_MAP[group || '']?.icon || '',
+                groupDezenas: ANIMAL_GROUPS_MAP[group || '']?.dezenas || [],
                 currentDate: current.date,
                 currentTime: current.time_type,
                 prevDate: prevSameTime.date,

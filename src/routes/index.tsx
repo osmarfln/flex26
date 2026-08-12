@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { ANIMAL_GROUPS } from "@/lib/animals";
 import { getResults, getTenDelayStats, getGroupDelayStats } from "@/lib/lottery.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
@@ -62,13 +63,6 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const ANIMAL_GROUPS = [
-  { id: "01", name: "Avestruz", icon: "🦩" }, { id: "02", name: "Águia", icon: "🦅" }, { id: "03", name: "Burro", icon: "🫏" }, { id: "04", name: "Borboleta", icon: "🦋" }, { id: "05", name: "Cachorro", icon: "🐕" },
-  { id: "06", name: "Cabra", icon: "🐐" }, { id: "07", name: "Leão", icon: "🦁" }, { id: "08", name: "Macaco", icon: "🐒" }, { id: "09", name: "Cobra", icon: "🐍" }, { id: "10", name: "Coelho", icon: "🐰" },
-  { id: "11", name: "Cavalo", icon: "🐎" }, { id: "12", name: "Elefante", icon: "🐘" }, { id: "13", name: "Galo", icon: "🐓" }, { id: "14", name: "Gato", icon: "🐈" }, { id: "15", name: "Jacaré", icon: "🐊" },
-  { id: "16", name: "Leopardo", icon: "🐆" }, { id: "17", name: "Porco", icon: "🐖" }, { id: "18", name: "Coruja", icon: "🦉" }, { id: "19", name: "Pavão", icon: "🦚" }, { id: "20", name: "Peru", icon: "🦃" },
-  { id: "21", name: "Touro", icon: "🐂" }, { id: "22", name: "Tigre", icon: "🐅" }, { id: "23", name: "Urso", icon: "🐻" }, { id: "24", name: "Veado", icon: "🦌" }, { id: "25", name: "Vaca", icon: "🐄" },
-];
 
 function getGreeting() {
   const hour = new Date().getHours();
@@ -161,9 +155,6 @@ function Index() {
                 <Activity className="w-4 h-4" /> Robô
               </Link>
 
-              <a href="#resultados" className="text-xs md:text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2 whitespace-nowrap">
-                <TrendingUp className="w-4 h-4" /> Resultados
-              </a>
               <Link to="/estatisticas" className="text-xs md:text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2 whitespace-nowrap">
                 <BarChart3 className="w-4 h-4" /> Estatísticas
               </Link>

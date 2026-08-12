@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { ANIMAL_GROUPS, getAnimalByTen } from "@/lib/animals";
 import { ArrowLeft, BarChart3, Calculator, Sparkles, TrendingUp, Zap, Target, BrainCircuit, History, Flame, Clock, LayoutGrid, Hash, Users, Repeat, ArrowLeftRight, FileText, Upload, Calendar, AlertCircle, Database, CheckCircle2, XCircle, Activity, Timer, ChevronRight, Trophy } from "lucide-react";
 import { CruzDoDia } from "@/components/CruzDoDia";
 import { AvisoObrigatorio } from "@/components/AvisoObrigatorio";
@@ -25,13 +26,6 @@ export const Route = createFileRoute("/estatisticas")({
   component: EstatisticasPage,
 });
 
-const ANIMAL_GROUPS = [
-  { id: "01", name: "Avestruz", icon: "🦩" }, { id: "02", name: "Águia", icon: "🦅" }, { id: "03", name: "Burro", icon: "🫏" }, { id: "04", name: "Borboleta", icon: "🦋" }, { id: "05", name: "Cachorro", icon: "🐕" },
-  { id: "06", name: "Cabra", icon: "🐐" }, { id: "07", name: "Leão", icon: "🦁" }, { id: "08", name: "Macaco", icon: "🐒" }, { id: "09", name: "Cobra", icon: "🐍" }, { id: "10", name: "Coelho", icon: "🐰" },
-  { id: "11", name: "Cavalo", icon: "🐎" }, { id: "12", name: "Elefante", icon: "🐘" }, { id: "13", name: "Galo", icon: "🐓" }, { id: "14", name: "Gato", icon: "🐈" }, { id: "15", name: "Jacaré", icon: "🐊" },
-  { id: "16", name: "Leopardo", icon: "🐆" }, { id: "17", name: "Porco", icon: "🐖" }, { id: "18", name: "Coruja", icon: "🦉" }, { id: "19", name: "Pavão", icon: "🦚" }, { id: "20", name: "Peru", icon: "🦃" },
-  { id: "21", name: "Touro", icon: "🐂" }, { id: "22", name: "Tigre", icon: "🐅" }, { id: "23", name: "Urso", icon: "🐻" }, { id: "24", name: "Veado", icon: "🦌" }, { id: "25", name: "Vaca", icon: "🐄" },
-];
 
 function EstatisticasPage() {
   const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'palpites' | 'logica-atraso' | 'ranking-completo' | 'logica-grupos' | 'repeticoes'>('quentes');
@@ -910,7 +904,9 @@ function EstatisticasPage() {
                                 <tr className="border-b border-white/5 text-[10px] font-black uppercase text-white/40 tracking-widest">
                                   <th className="pb-4 px-2">Tipo</th>
                                   <th className="pb-4 px-2">Dezena</th>
+                                  <th className="pb-4 px-2">Grupo</th>
                                   <th className="pb-4 px-2">Bicho</th>
+                                  <th className="pb-4 px-2">Dezenas do Grupo</th>
                                   <th className="pb-4 px-2">Posição</th>
                                   <th className="pb-4 px-2">Horário/Data</th>
                                   <th className="pb-4 px-2 text-right">Repetiu em</th>
@@ -925,10 +921,18 @@ function EstatisticasPage() {
                                       </Badge>
                                     </td>
                                     <td className="py-4 px-2 text-primary text-sm font-black">{rep.value}</td>
+                                    <td className="py-4 px-2 text-white/40 font-mono">{getAnimalByTen(rep.value)?.id || rep.group}</td>
                                     <td className="py-4 px-2 text-white/60">
                                       <span className="flex items-center gap-2">
-                                        {ANIMAL_GROUPS.find(a => a.id === rep.group)?.icon}
-                                        {rep.animal}
+                                        <span className="text-base">{rep.icon || getAnimalByTen(rep.value)?.icon}</span>
+                                        {getAnimalByTen(rep.value)?.name || rep.animal}
+                                      </span>
+                                    </td>
+                                    <td className="py-4 px-2">
+                                      <span className="flex gap-1 flex-wrap">
+                                        {(rep.groupDezenas?.length ? rep.groupDezenas : getAnimalByTen(rep.value)?.dezenas || []).map((d: string) => (
+                                          <span key={d} className={`px-1.5 py-0.5 rounded-md text-[9px] font-black font-mono ${d === rep.value ? 'bg-primary/20 text-primary' : 'bg-white/5 text-white/30'}`}>{d}</span>
+                                        ))}
                                       </span>
                                     </td>
                                     <td className="py-4 px-2 text-white/40">
