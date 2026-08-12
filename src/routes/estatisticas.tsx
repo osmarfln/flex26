@@ -150,17 +150,17 @@ function EstatisticasPage() {
   }, [stats, cruzData]);
 
   return (
-    <div className="min-h-screen bg-[#0B0F19] text-white font-sans selection:bg-yellow-500/30 overflow-x-hidden">
+    <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/30 overflow-x-hidden">
       {/* Top Header */}
-      <header className="border-b border-white/5 bg-[#0B0F19]/80 backdrop-blur-xl sticky top-0 z-50">
+      <header className="border-b border-white/5 bg-background/60 backdrop-blur-2xl sticky top-0 z-50">
         <div className="container mx-auto px-4 md:px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link to="/" className="p-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all group">
-              <ArrowLeft className="w-5 h-5 text-white/40 group-hover:text-yellow-500 transition-colors" />
+              <ArrowLeft className="w-5 h-5 text-white/40 group-hover:text-primary transition-colors" />
             </Link>
             <div className="flex flex-col">
-              <span className="text-lg font-black tracking-tighter uppercase italic leading-none">Flex Gerenciador</span>
-              <span className="text-[9px] text-yellow-500/60 font-bold tracking-[0.2em]">CENTRAL DE ESTATÍSTICAS</span>
+              <span className="text-lg font-black tracking-tighter uppercase italic leading-none group-hover:text-primary transition-colors">Flex Gerenciador</span>
+              <span className="text-[9px] text-primary/60 font-bold tracking-[0.2em]">CENTRAL DE ESTATÍSTICAS</span>
             </div>
           </div>
 
@@ -178,8 +178,8 @@ function EstatisticasPage() {
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
             <div>
               <div className="flex items-center gap-4 mb-4">
-                <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-2xl">
-                  <BarChart3 className="w-8 h-8 text-yellow-500" />
+                <div className="p-3 bg-primary/10 border border-primary/20 rounded-2xl shadow-[0_0_20px_rgba(var(--primary),0.1)]">
+                  <BarChart3 className="w-8 h-8 text-primary" />
                 </div>
                 <div>
                   <h1 className="text-4xl font-black italic tracking-tighter uppercase">Análise Premium</h1>
@@ -195,7 +195,7 @@ function EstatisticasPage() {
             <div className="flex gap-3">
                <div className="px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-center min-w-[140px]">
                   <p className="text-[10px] text-white/40 font-black uppercase tracking-widest mb-1">Precisão</p>
-                  <p className="text-2xl font-black text-yellow-500">94.2%</p>
+                  <p className="text-2xl font-black text-primary">94.2%</p>
                </div>
                <div className="px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-center min-w-[140px]">
                   <p className="text-[10px] text-white/40 font-black uppercase tracking-widest mb-1">Processamento</p>
@@ -208,9 +208,9 @@ function EstatisticasPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-16">
              <Card 
                onClick={() => setActiveTab('quentes')}
-               className={`bg-[#0D121F] border-white/10 rounded-2xl p-6 transition-all cursor-pointer group ${activeTab === 'quentes' ? 'border-yellow-500/50 ring-1 ring-yellow-500/20' : 'hover:border-yellow-500/30'}`}
+               className={`dashboard-card p-6 transition-all cursor-pointer group ${activeTab === 'quentes' ? 'border-primary/50 ring-1 ring-primary/20 shadow-lg shadow-primary/5' : 'hover:border-primary/30'}`}
              >
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'quentes' ? 'bg-yellow-500 text-[#0B0F19]' : 'bg-yellow-500/10 text-yellow-500'}`}>
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'quentes' ? 'bg-primary text-primary-foreground' : 'bg-primary/10 text-primary'}`}>
                    <Target className="w-6 h-6" />
                 </div>
                 <h3 className="text-xl font-black italic uppercase mb-2">Dezenas Quentes</h3>
@@ -219,9 +219,9 @@ function EstatisticasPage() {
 
              <Card 
                onClick={() => setActiveTab('atrasados')}
-               className={`bg-[#0D121F] border-white/10 rounded-2xl p-6 transition-all cursor-pointer group ${activeTab === 'atrasados' ? 'border-blue-500/50 ring-1 ring-blue-500/20' : 'hover:border-blue-500/30'}`}
+               className={`dashboard-card p-6 transition-all cursor-pointer group ${activeTab === 'atrasados' ? 'border-blue-500/50 ring-1 ring-blue-500/20 shadow-lg shadow-blue-500/5' : 'hover:border-blue-500/30'}`}
              >
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'atrasados' ? 'bg-blue-500 text-[#0B0F19]' : 'bg-blue-500/10 text-blue-400'}`}>
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'atrasados' ? 'bg-blue-500 text-white' : 'bg-blue-500/10 text-blue-400'}`}>
                    <Zap className="w-6 h-6" />
                 </div>
                 <h3 className="text-xl font-black italic uppercase mb-2">Grupos em Atraso</h3>
@@ -230,9 +230,9 @@ function EstatisticasPage() {
 
              <Card 
                onClick={() => setActiveTab('logica-grupos')}
-               className={`bg-[#0D121F] border-white/10 rounded-2xl p-6 transition-all cursor-pointer group ${activeTab === 'logica-grupos' ? 'border-emerald-500/50 ring-1 ring-emerald-500/20' : 'hover:border-emerald-500/30'}`}
+               className={`dashboard-card p-6 transition-all cursor-pointer group ${activeTab === 'logica-grupos' ? 'border-emerald-500/50 ring-1 ring-emerald-500/20 shadow-lg shadow-emerald-500/5' : 'hover:border-emerald-500/30'}`}
              >
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'logica-grupos' ? 'bg-emerald-500 text-[#0B0F19]' : 'bg-emerald-500/10 text-emerald-400'}`}>
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'logica-grupos' ? 'bg-emerald-500 text-white' : 'bg-emerald-500/10 text-emerald-400'}`}>
                    <LayoutGrid className="w-6 h-6" />
                 </div>
                 <h3 className="text-xl font-black italic uppercase mb-2">Lógica Grupos</h3>
