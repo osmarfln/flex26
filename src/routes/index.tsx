@@ -369,8 +369,103 @@ function Index() {
         </div>
 
         {/* Stats Section with Modern Charts */}
-        <section className="mb-16" id="estatisticas">
+        {/* Statistics Content Section */}
+        <section className="mb-16 scroll-mt-24" id="estatisticas">
           <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-yellow-500 flex items-center justify-center text-[#0B0F19]">
+                <BarChart3 className="w-6 h-6" />
+              </div>
+              <div>
+                <h2 className="text-3xl font-black italic tracking-tighter uppercase">Análise Premium de Atrasos</h2>
+                <p className="text-white/40 text-sm font-medium mt-1 uppercase tracking-widest">Inteligência aplicada aos resultados históricos</p>
+              </div>
+            </div>
+            <div className="hidden md:flex gap-4">
+               <div className="text-right">
+                  <p className="text-[10px] text-white/40 font-black uppercase tracking-widest">Bicho em Alta</p>
+                  <p className="text-lg font-black text-yellow-500 italic uppercase">
+                    {stats?.mostFrequentTens?.[0] ? 
+                      ANIMAL_GROUPS.find(a => 
+                        a.id === String(Math.floor((parseInt(stats.mostFrequentTens[0].ten) === 0 ? 100 : parseInt(stats.mostFrequentTens[0].ten) - 1) / 4) + 1).padStart(2, '0')
+                      )?.name || 'Carregando...' 
+                    : 'Processando...'}
+                  </p>
+               </div>
+               <div className="w-px h-10 bg-white/10" />
+               <div className="text-right">
+                  <p className="text-[10px] text-white/40 font-black uppercase tracking-widest">Grupo Atrasado</p>
+                  <p className="text-lg font-black text-white italic uppercase">{stats?.mostDelayedGroups?.[0]?.animal || '---'}</p>
+               </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            <Card className="bg-[#0D121F] border-white/10 rounded-2xl overflow-hidden group hover:border-yellow-500/30 transition-all">
+              <CardHeader className="bg-yellow-500/5 p-4 border-b border-white/5 flex flex-row items-center justify-between">
+                <CardTitle className="text-xs font-black uppercase tracking-widest">Dezenas Quentes</CardTitle>
+                <Flame className="w-4 h-4 text-yellow-500" />
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="flex flex-wrap gap-4">
+                  {stats?.mostFrequentTens?.map((item: any) => (
+                    <div key={item.ten} className="flex flex-col items-center gap-2 group/item">
+                      <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center font-mono text-2xl font-black text-white group-hover/item:border-yellow-500/50 group-hover/item:text-yellow-500 transition-all relative">
+                        {item.ten}
+                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-[#0B0F19]" />
+                      </div>
+                      <span className="text-[10px] font-black text-white/30 uppercase">{item.count} sorteios</span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-[#0D121F] border-white/10 rounded-2xl overflow-hidden group hover:border-yellow-500/30 transition-all">
+              <CardHeader className="bg-yellow-500/5 p-4 border-b border-white/5 flex flex-row items-center justify-between">
+                <CardTitle className="text-xs font-black uppercase tracking-widest">Grupos Atrasados</CardTitle>
+                <Clock className="w-4 h-4 text-yellow-500" />
+              </CardHeader>
+              <CardContent className="p-6 space-y-4">
+                {stats?.mostDelayedGroups?.slice(0, 3).map((item: any) => (
+                  <div key={item.group} className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5">
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">{ANIMAL_GROUPS.find(a => a.id === item.group)?.icon}</span>
+                      <span className="text-sm font-black uppercase italic">{item.animal}</span>
+                    </div>
+                    <span className="text-lg font-black text-yellow-500">{item.days}d</span>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            <Card className="bg-[#0D121F] border-white/10 rounded-2xl overflow-hidden group hover:border-yellow-500/30 transition-all">
+              <CardHeader className="bg-yellow-500/5 p-4 border-b border-white/5 flex flex-row items-center justify-between">
+                <CardTitle className="text-xs font-black uppercase tracking-widest">Bicho em Alta</CardTitle>
+                <TrendingUp className="w-4 h-4 text-yellow-500" />
+              </CardHeader>
+              <CardContent className="p-6">
+                {stats?.mostFrequentTens?.[0] && (
+                  <div className="flex flex-col items-center justify-center text-center">
+                    <div className="text-7xl mb-4 animate-bounce">
+                      {ANIMAL_GROUPS.find(a => 
+                        a.id === String(Math.floor((parseInt(stats.mostFrequentTens[0].ten) === 0 ? 100 : parseInt(stats.mostFrequentTens[0].ten) - 1) / 4) + 1).padStart(2, '0')
+                      )?.icon}
+                    </div>
+                    <h3 className="text-2xl font-black italic uppercase tracking-tighter text-yellow-500">
+                      {ANIMAL_GROUPS.find(a => 
+                        a.id === String(Math.floor((parseInt(stats.mostFrequentTens[0].ten) === 0 ? 100 : parseInt(stats.mostFrequentTens[0].ten) - 1) / 4) + 1).padStart(2, '0')
+                      )?.name}
+                    </h3>
+                    <p className="text-[10px] text-white/40 font-bold uppercase tracking-[0.2em] mt-2">Tendência Máxima para hoje</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="flex items-center justify-between mb-8">
+
              <div>
                <h2 className="text-3xl font-black italic tracking-tighter uppercase">Análise de Atraso por Horário</h2>
                <p className="text-white/40 text-sm font-medium mt-1 uppercase tracking-widest">Monitoramento inteligente baseado em dados históricos</p>
