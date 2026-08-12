@@ -278,7 +278,7 @@ export const getGroupDelayStats = createServerFn({ method: "GET" })
 
       stats.push({
         groupId,
-        animal: ANIMAL_GROUPS[groupId]?.name || "Desconhecido",
+        animal: ANIMAL_GROUPS[groupId] ? ANIMAL_GROUPS[groupId].name : "Desconhecido",
         currentDelay,
         lastOccurrenceDate,
         avgDelay: Number(avgDelay.toFixed(2)),
