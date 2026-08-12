@@ -150,40 +150,42 @@ function Index() {
               <span className="text-[10px] text-primary/60 font-bold tracking-[0.2em] -mt-1 ml-8 group-hover:tracking-[0.25em] transition-all">VEM COM A GENTE</span>
             </Link>
             
-            <nav className="hidden lg:flex items-center gap-8 ml-8">
-              <Link to="/" className="text-sm font-bold border-b-2 border-yellow-500 pb-1 flex items-center gap-2">
+            <nav className="flex items-center gap-4 md:gap-8 ml-4 md:ml-8 overflow-x-auto no-scrollbar py-2">
+              <Link to="/" className="text-xs md:text-sm font-bold border-b-2 border-yellow-500 pb-1 flex items-center gap-2 whitespace-nowrap">
                 <Users className="w-4 h-4" /> Início
               </Link>
-              <Link to="/historico" className="text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2">
+              <Link to="/historico" className="text-xs md:text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2 whitespace-nowrap">
                 <History className="w-4 h-4" /> Histórico
               </Link>
-              <Link to="/robot-status" className="text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2">
+              <Link to="/robot-status" className="text-xs md:text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2 whitespace-nowrap">
                 <Activity className="w-4 h-4" /> Robô
               </Link>
 
-              <a href="#resultados" className="text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2">
+              <a href="#resultados" className="text-xs md:text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2 whitespace-nowrap">
                 <TrendingUp className="w-4 h-4" /> Resultados
               </a>
-              <Link to="/estatisticas" className="text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2">
+              <Link to="/estatisticas" className="text-xs md:text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2 whitespace-nowrap">
                 <BarChart3 className="w-4 h-4" /> Estatísticas
               </Link>
             </nav>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 md:gap-4 ml-4">
             <Button 
               variant="outline" 
               size="sm" 
-              className="rounded-lg border-white/10 bg-white/5 text-xs font-bold gap-2 hover:bg-white/10"
+              className="rounded-lg border-white/10 bg-white/5 text-[10px] md:text-xs font-bold gap-2 hover:bg-white/10"
               onClick={() => refetch()}
             >
-              <RefreshCw className="w-3.5 h-3.5" /> Atualizar
+              <RefreshCw className="w-3 h-3 md:w-3.5 md:h-3.5" /> 
+              <span className="hidden xs:inline">Atualizar</span>
               <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             </Button>
-            <Link to="/portal" className="text-xs font-bold text-white/40 hover:text-white transition-colors">Portal</Link>
+            <Link to="/portal" className="text-[10px] md:text-xs font-bold text-white/40 hover:text-white transition-colors">Portal</Link>
           </div>
         </div>
       </header>
+
 
       <main className="container mx-auto px-4 md:px-6 py-12 relative">
         {/* Floating Butterfly Graphic */}
@@ -211,7 +213,8 @@ function Index() {
             </motion.div>
 
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-4 italic">Resultados Rio</h1>
-            <p className="text-white/40 text-lg mb-8 font-medium">Resultados diários automatizados via robô de soresultados.info</p>
+            <p className="text-white/40 text-lg mb-8 font-medium">Resultados diários automatizados via robô</p>
+
 
             <div className="flex flex-wrap gap-4 items-center mb-6">
               <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl min-w-[200px] hover:border-yellow-500/30 transition-all cursor-pointer">
