@@ -46,6 +46,27 @@ function Historico() {
     queryFn: () => getResults({ data: { date, offset, limit } }),
   });
 
+  useEffect(() => {
+    const channel = supabase
+      .channel('history-db-changes')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'lottery_results' },
+        (payload: any) => {
+          // Só atualiza se o novo resultado for da data selecionada
+          if (payload.new && payload.new.date === date) {
+            refetch();
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [date, refetch]);
+
+
   return (
     <div className="min-h-screen bg-[#0B0F19] text-white font-sans selection:bg-yellow-500/30 overflow-x-hidden">
       {/* Top Header */}
