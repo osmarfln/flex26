@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { getSyncStatus } from "@/lib/realtime.functions";
+import { useLotteryRealtime } from "@/hooks/useLotteryRealtime";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -64,6 +65,7 @@ const CHART_TOOLTIP = {
 };
 
 function RobotStatus() {
+  useLotteryRealtime("robot-status-db-changes");
   const { data: logs, isLoading, refetch, isError } = useQuery({
     queryKey: ["sync-logs"],
     queryFn: () => getSyncStatus(),

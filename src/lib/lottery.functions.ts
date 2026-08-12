@@ -2,6 +2,8 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { ANIMAL_GROUPS_MAP, getGroupFromTen as tenToGroup } from "@/lib/animals";
+import { sortDrawsDesc } from "@/lib/draw-order";
+
 
 // Tipos para os resultados
 export interface LotteryResult {
@@ -43,44 +45,65 @@ export const getResults = createServerFn({ method: "GET" })
 
 export const getStats = createServerFn({ method: "GET" })
   .handler(async () => {
-    const { data: results, error } = await supabase
+    const { data: rawResults, error } = await supabase
       .from("lottery_results")
       .select("*")
       .order("date", { ascending: false })
-      .limit(200);
+      .limit(300);
 
     if (error) throw error;
-    if (!results) return { mostDelayedGroups: [], mostFrequentTens: [], delayedBySchedule: {} };
+    if (!rawResults) return { mostDelayedGroups: [], mostFrequentTens: [], delayedBySchedule: {} };
+    const results = sortDrawsDesc(rawResults as any[]);
 
-    const lastSeen: Record<string, string> = {};
+
+    // Atraso medido em CONCURSOS (mesma métrica usada em Estatísticas)
+    const lastIndexByGroup: Record<string, number> = {};
+    const lastDateByGroup: Record<string, string> = {};
     const tenCounts: Record<string, number> = {};
-    const scheduleDelay: Record<string, { group: string, date: string }> = {};
+    const scheduleDelay: Record<string, { group: string; date: string; index: number }> = {};
 
-    results.forEach(res => {
-      const group = res.animal_group;
-      if (group) {
-        if (!lastSeen[group]) lastSeen[group] = res.date;
-        const firstPrize = res.results?.[0];
-        if (firstPrize && firstPrize.length >= 2) {
-          const ten = firstPrize.slice(-2);
-          tenCounts[ten] = (tenCounts[ten] || 0) + 1;
+    results.forEach((res: any, index: number) => {
+      const prizes: string[] = Array.isArray(res.results) ? res.results.slice(0, 5) : [];
+
+      prizes.forEach((prize: string) => {
+        if (!prize || prize.length < 2) return;
+        const group = tenToGroup(prize.slice(-2));
+        if (!group) return;
+        if (lastIndexByGroup[group] === undefined) {
+          lastIndexByGroup[group] = index;
+          lastDateByGroup[group] = res.date;
         }
-        const key = res.time_type;
-        if (key && !scheduleDelay[key]) scheduleDelay[key] = { group, date: res.date };
+      });
+
+      const firstPrize = prizes[0];
+      if (firstPrize && firstPrize.length >= 2) {
+        const ten = firstPrize.slice(-2);
+        tenCounts[ten] = (tenCounts[ten] || 0) + 1;
+      }
+
+      const key = res.time_type;
+      const firstGroup = firstPrize && firstPrize.length >= 2 ? tenToGroup(firstPrize.slice(-2)) : null;
+      if (key && firstGroup && !scheduleDelay[key]) {
+        scheduleDelay[key] = { group: firstGroup, date: res.date, index };
       }
     });
 
+    const formatDate = (iso?: string) => {
+      if (!iso) return "Nunca";
+      const [y, m, d] = iso.split("-");
+      return `${d}/${m}/${y}`;
+    };
+
     const mostDelayedGroups = Object.keys(ANIMAL_GROUPS_DATA)
       .map(group => {
-        const lastDate = lastSeen[group];
-        const lastDateObj = lastDate ? new Date(lastDate) : null;
-        const days = lastDateObj ? Math.floor((new Date().getTime() - lastDateObj.getTime()) / (1000 * 60 * 60 * 24)) : 99;
+        const idx = lastIndexByGroup[group];
+        const days = idx === undefined ? results.length : idx;
         const animalInfo = ANIMAL_GROUPS_DATA[group];
         return {
           group,
           animal: animalInfo ? animalInfo.name : "Desconhecido",
           days,
-          lastSeen: lastDateObj ? lastDateObj.toLocaleDateString('pt-BR') : "Nunca"
+          lastSeen: formatDate(lastDateByGroup[group])
         };
       })
       .sort((a, b) => b.days - a.days)
@@ -95,13 +118,12 @@ export const getStats = createServerFn({ method: "GET" })
     Object.keys(scheduleDelay).forEach(time => {
       const entry = scheduleDelay[time];
       if (entry) {
-        const entryDate = new Date(entry.date);
-        const days = Math.floor((new Date().getTime() - entryDate.getTime()) / (1000 * 60 * 60 * 24));
         const groupInfo = ANIMAL_GROUPS_DATA[entry.group];
         delayedBySchedule[time] = {
           group: entry.group,
           animal: groupInfo ? groupInfo.name : "Desconhecido",
-          delayed: `${days} dias`
+          delayed: `${entry.index} concursos`,
+          lastSeen: formatDate(entry.date)
         };
       }
     });
@@ -109,16 +131,19 @@ export const getStats = createServerFn({ method: "GET" })
     return { mostDelayedGroups, mostFrequentTens, delayedBySchedule };
   });
 
+
 export const getTenDelayStats = createServerFn({ method: "GET" })
   .handler(async () => {
-    const { data: results, error } = await supabase
+    const { data: rawRows, error } = await supabase
       .from("lottery_results")
       .select("results, date, time_type")
       .order("date", { ascending: false })
       .limit(600); // Need more data for comparative periods (300 current + 300 previous)
 
     if (error) throw error;
-    if (!results) return [];
+    if (!rawRows) return [];
+    const results = sortDrawsDesc(rawRows);
+
 
     const stats: any[] = [];
     const allTens = Array.from({ length: 100 }, (_, i) => String(i).padStart(2, '0'));
@@ -201,14 +226,16 @@ export const getTenDelayStats = createServerFn({ method: "GET" })
 
 export const getGroupDelayStats = createServerFn({ method: "GET" })
   .handler(async () => {
-    const { data: results, error } = await supabase
+    const { data: rawRows, error } = await supabase
       .from("lottery_results")
       .select("results, date, time_type, animal_group")
       .order("date", { ascending: false })
       .limit(600);
 
     if (error) throw error;
-    if (!results) return [];
+    if (!rawRows) return [];
+    const results = sortDrawsDesc(rawRows);
+
 
     const stats: any[] = [];
     const allGroups = Array.from({ length: 25 }, (_, i) => String(i + 1).padStart(2, '0'));
@@ -242,9 +269,10 @@ export const getGroupDelayStats = createServerFn({ method: "GET" })
       
       const periodComparison = prevFreq300 > 0 ? ((freq300 - prevFreq300) / prevFreq300) * 100 : (freq300 > 0 ? 100 : 0);
 
-      results.forEach((res, index) => {
+      results.forEach((res: any, index: number) => {
         let foundInThisResult = false;
-        res.results?.slice(0, 5).forEach((prize, pIdx) => {
+        res.results?.slice(0, 5).forEach((prize: string, pIdx: number) => {
+
           const ten = prize.slice(-2);
           const tenInt = parseInt(ten);
           if (!isNaN(tenInt)) {
@@ -321,14 +349,16 @@ export const getGroupDelayStats = createServerFn({ method: "GET" })
 
 export const getRepetitionStats = createServerFn({ method: "GET" })
   .handler(async () => {
-    const { data: results, error } = await supabase
+    const { data: rawRows, error } = await supabase
       .from("lottery_results")
       .select("results, date, time_type, animal_group")
       .order("date", { ascending: false })
       .limit(300);
 
     if (error) throw error;
-    if (!results || results.length < 2) return null;
+    if (!rawRows || rawRows.length < 2) return null;
+    const results = sortDrawsDesc(rawRows);
+
 
     const lastResult = results[0];
     const firstResultInSample = results[results.length - 1];
