@@ -122,8 +122,31 @@ function Historico() {
               >
                 <Search className="w-5 h-5" /> Filtrar
               </Button>
+
+              <Button 
+                onClick={async () => {
+                  try {
+                    const res = await fetch('/api/public/sync-results', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ syncAll: true })
+                    });
+                    if (res.ok) {
+                      alert('Sincronização completa iniciada com sucesso!');
+                      refetch();
+                    }
+                  } catch (e) {
+                    console.error(e);
+                  }
+                }}
+                variant="outline"
+                className="h-[52px] px-6 border-white/10 bg-white/5 hover:bg-white/10 text-white font-bold uppercase text-[10px] tracking-widest rounded-xl gap-2 transition-all"
+              >
+                <Sparkles className="w-4 h-4 text-yellow-500" /> Sincronizar Tudo
+              </Button>
             </div>
           </Card>
+
         </section>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
