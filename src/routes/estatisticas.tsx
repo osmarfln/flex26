@@ -333,21 +333,22 @@ function EstatisticasPage() {
                     <h2 className="text-2xl font-black italic uppercase group-hover:text-primary transition-colors">Atrasados (Sem 1º Prêmio)</h2>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {stats?.mostDelayedGroups.map((group, i) => (
+                    {groupDelayStats?.slice(0, 10).map((group: any, i: number) => (
                       <Card key={i} className="dashboard-card p-6 flex items-center justify-between group transition-all duration-500">
                         <div className="flex items-center gap-4">
-                          <span className="text-4xl">{ANIMAL_GROUPS.find(a => a.id === group.group)?.icon}</span>
+                          <span className="text-4xl">{ANIMAL_GROUPS.find(a => a.id === group.groupId)?.icon}</span>
                           <div>
                             <h4 className="text-xl font-black italic uppercase text-primary">{group.animal}</h4>
-                            <p className="text-xs font-bold text-white/40 uppercase">Grupo {group.group}</p>
+                            <p className="text-xs font-bold text-white/40 uppercase">Grupo {group.groupId}</p>
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className="text-2xl font-black text-white">{group.days} dias</p>
-                          <p className="text-[10px] font-bold text-white/20 uppercase">Visto em: {group.lastSeen}</p>
+                          <p className="text-2xl font-black text-white">{group.currentDelay} sorteios</p>
+                          <p className="text-[10px] font-bold text-white/20 uppercase">{group.classification}</p>
                         </div>
                       </Card>
                     ))}
+
                   </div>
                 </motion.div>
               )}
