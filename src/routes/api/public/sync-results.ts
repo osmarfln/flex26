@@ -49,7 +49,7 @@ export const Route = createFileRoute('/api/public/sync-results')({
             console.log(`Fetching results for ${dateStr} from external API...`);
             
             const { data: externalResults, error: externalError } = await externalSupabase
-              .from('rio_results')
+              .from('draw_results')
               .select('*')
               .eq('draw_date', dateStr);
             
@@ -61,18 +61,28 @@ export const Route = createFileRoute('/api/public/sync-results')({
             if (externalResults && externalResults.length > 0) {
               for (const res of externalResults) {
                 // Map external schema to our schema
-                // External: draw_date, draw_time, p1, p2, p3, p4, p5, animal, animal_group, etc.
-                const mappedResults = [res.p1, res.p2, res.p3, res.p4, res.p5].filter(p => !!p);
+                const results = [
+                  res.prize_1_milhar,
+                  res.prize_2_milhar,
+                  res.prize_3_milhar,
+                  res.prize_4_milhar,
+                  res.prize_5_milhar
+                ].filter(p => !!p);
                 
+                // Formatar grupo como string com 2 dígitos
+                const groupStr = res.prize_1_group !== null && res.prize_1_group !== undefined 
+                  ? String(res.prize_1_group).padStart(2, '0') 
+                  : null;
+
                 const { error: upsertError } = await supabase
                   .from('lottery_results')
                   .upsert({
                     date: res.draw_date,
-                    time_type: res.draw_time_label || res.draw_time,
-                    time_value: res.draw_time,
-                    results: mappedResults,
-                    animal: res.animal,
-                    animal_group: res.animal_group
+                    time_type: res.draw_time,
+                    time_value: null, // Opcional, o external usa apenas a label
+                    results: results,
+                    animal: res.prize_1_bicho,
+                    animal_group: groupStr
                   }, { onConflict: 'date,time_type' });
                 
                 if (!upsertError) totalSynced++;
