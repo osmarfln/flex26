@@ -207,9 +207,15 @@ function EstatisticasPage() {
                <div className="px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-center min-w-[140px]">
                   <p className="text-[10px] text-white/40 font-black uppercase tracking-widest mb-1">Processamento</p>
                   <p className="text-2xl font-black text-blue-400">REALTIME</p>
+                  <p className="text-[10px] text-emerald-400 font-bold mt-1">
+                    {lastUpdate
+                      ? `Recalculado ${lastUpdate.toLocaleTimeString("pt-BR", { timeZone: "America/Sao_Paulo", hourCycle: "h23" })}`
+                      : "Aguardando novo resultado"}
+                  </p>
                </div>
             </div>
           </div>
+
 
           {/* Tools Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-16">
