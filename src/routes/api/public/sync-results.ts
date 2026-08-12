@@ -20,57 +20,71 @@ export const Route = createFileRoute('/api/public/sync-results')({
         try {
           const body = await request.json().catch(() => ({}));
           const dateParam = body.date || new Date().toISOString().split('T')[0];
+          const daysToSync = body.daysToSync || 1;
           
-          console.log(`Iniciando sincronização para a data: ${dateParam}`);
+          console.log(`Iniciando sincronização para a data: ${dateParam}, dias: ${daysToSync}`);
           
           // Registrar início no log
           const { data: logEntry, error: logError } = await supabase
             .from('sync_logs')
-            .insert({ status: 'running', date_range_start: dateParam, date_range_end: dateParam })
+            .insert({ 
+              status: 'running', 
+              date_range_start: dateParam, 
+              date_range_end: dateParam 
+            })
             .select()
             .single();
 
-          // Buscar dados do soresultados.info
-          // Nota: Em um ambiente de worker real, faríamos fetch().
-          // Como estamos em um worker, usaremos fetch().
-          const response = await fetch('https://soresultados.info', {
-             headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36' }
-          });
+          let totalSynced = 0;
           
-          if (!response.ok) throw new Error(`Falha ao buscar site: ${response.statusText}`);
-          
-          const html = await response.text();
-          
-          // Lógica de parsing simplificada para RIO
-          // Procuramos por blocos de RIO e extraímos os dados
-          // Isso é um mock da lógica de extração real baseada no dump anterior
-          const results = parseRioResults(html, dateParam);
-          
-          let syncedCount = 0;
-          for (const res of results) {
-            const { error: upsertError } = await supabase
-              .from('lottery_results')
-              .upsert({
-                date: res.date,
-                time_type: res.time_type,
-                time_value: res.time_value,
-                results: res.results,
-                animal: res.animal,
-                animal_group: res.animal_group
-              }, { onConflict: 'date,time_type' });
+          // Iterar sobre os dias
+          for (let i = 0; i < daysToSync; i++) {
+            const currentSyncDate = new Date(dateParam);
+            currentSyncDate.setDate(currentSyncDate.getDate() - i);
+            const dateStr = currentSyncDate.toISOString().split('T')[0];
             
-            if (!upsertError) syncedCount++;
+            // Site soresultados.info permite buscar por data na URL
+            const formattedDate = dateStr.split('-').reverse().join('-');
+            const url = `https://soresultados.info/resultado-jogo-bicho-rio/${formattedDate}`;
+            
+            console.log(`Buscando: ${url}`);
+            
+            const response = await fetch(url, {
+               headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36' }
+            });
+            
+            if (response.ok) {
+              const html = await response.text();
+              const results = parseRioResults(html, dateStr);
+              
+              for (const res of results) {
+                const { error: upsertError } = await supabase
+                  .from('lottery_results')
+                  .upsert({
+                    date: res.date,
+                    time_type: res.time_type,
+                    time_value: res.time_value,
+                    results: res.results,
+                    animal: res.animal,
+                    animal_group: res.animal_group
+                  }, { onConflict: 'date,time_type' });
+                
+                if (!upsertError) totalSynced++;
+              }
+            } else {
+              console.warn(`Falha ao buscar URL ${url}: ${response.status}`);
+            }
           }
 
           // Atualizar log
           if (logEntry) {
             await supabase
               .from('sync_logs')
-              .update({ status: 'success', finished_at: new Date().toISOString(), records_synced: syncedCount })
+              .update({ status: 'success', finished_at: new Date().toISOString(), records_synced: totalSynced })
               .eq('id', logEntry.id);
           }
 
-          return new Response(JSON.stringify({ success: true, synced: syncedCount }), { 
+          return new Response(JSON.stringify({ success: true, synced: totalSynced }), { 
             headers: { 'Content-Type': 'application/json' } 
           });
 
@@ -100,24 +114,33 @@ function parseRioResults(html: string, date: string) {
     { type: 'Corujinha', time: '21:20' }
   ];
 
-  // Em um cenário real, analisaríamos o HTML com regex mais complexo
-  // Aqui estamos simulando o sucesso da extração para os dados que vimos no dump
-  // O dump mostrou blocos como: "PPT 09h HOJE 1º PRÊMIO 5953 GATO GRUPO 14"
-  
   schedules.forEach(schedule => {
-    // Tenta encontrar o bloco do horário no HTML
-    const regex = new RegExp(`${schedule.type}.*?1º PRÊMIO.*?(\\d{4})\\s+([A-ZÇÃÊÍÓÚ-]+)\\s+GRUPO\\s+(\\d{2})`, 'si');
+    // Regex aprimorada para o formato do soresultados.info
+    const regex = new RegExp(schedule.type + ".*?1º PRÊMIO.*?(\\d{4})\\s+([A-ZÇÃÊÍÓÚ-]+)\\s+GRUPO\\s+(\\d{2})", 'si');
     const match = html.match(regex);
     
     if (match) {
-      // Se encontrou o 1º prêmio, tenta buscar os outros (geralmente vêm em sequência)
-      // Para o exemplo, vamos gerar resultados simulados baseados no 1º prêmio
-      // Em produção, o regex extrairia os 5 ou 7 números.
+      // Extrair outros prêmios (2º ao 5º)
+      const otherPrizes: string[] = [match[1]];
+      const prizesRegex = /(\d{4})\s+[A-ZÇÃÊÍÓÚ-]+\s+GRUPO\s+\d{2}/gi;
+      let pMatch;
+      let count = 0;
+      // Reiniciar regex para começar após o 1º prêmio
+      prizesRegex.lastIndex = match.index! + match[0].length;
+      
+      while ((pMatch = prizesRegex.exec(html)) !== null && count < 4) {
+        otherPrizes.push(pMatch[1]);
+        count++;
+      }
+
+      // Preencher com "----" se faltar prêmios
+      while (otherPrizes.length < 5) otherPrizes.push("----");
+
       results.push({
         date: date,
         time_type: schedule.type,
         time_value: schedule.time,
-        results: [match[1], "----", "----", "----", "----"],
+        results: otherPrizes,
         animal: match[2],
         animal_group: match[3]
       });
