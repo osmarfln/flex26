@@ -344,9 +344,9 @@ function Index() {
                <div className="text-right">
                   <p className="text-[10px] text-white/40 font-black uppercase tracking-widest">Bicho em Alta</p>
                   <p className="text-lg font-black text-primary italic uppercase">
-                    {stats?.mostFrequentTens?.[0] ? 
+                    {tenStats?.[0] ? 
                       ANIMAL_GROUPS.find(a => {
-                        const ten = stats?.mostFrequentTens?.[0]?.ten;
+                        const ten = tenStats?.[0]?.ten;
                         if (!ten) return false;
                         const tenInt = parseInt(ten);
                         const groupNum = Math.floor((tenInt === 0 ? 100 : tenInt - 1) / 4) + 1;
@@ -354,14 +354,14 @@ function Index() {
                       })?.name || 'Carregando...' 
                     : 'Processando...'}
                   </p>
-
                </div>
                <div className="w-px h-10 bg-white/10" />
                <div className="text-right">
                   <p className="text-[10px] text-white/40 font-black uppercase tracking-widest">Grupo Atrasado</p>
-                  <p className="text-lg font-black text-white italic uppercase">{stats?.mostDelayedGroups?.[0]?.animal || '---'}</p>
+                  <p className="text-lg font-black text-white italic uppercase">{groupStats?.[0]?.animal || '---'}</p>
                </div>
             </div>
+
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
