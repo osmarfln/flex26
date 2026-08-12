@@ -386,11 +386,16 @@ function Index() {
                   <p className="text-[10px] text-white/40 font-black uppercase tracking-widest">Bicho em Alta</p>
                   <p className="text-lg font-black text-yellow-500 italic uppercase">
                     {stats?.mostFrequentTens?.[0] ? 
-                      ANIMAL_GROUPS.find(a => 
-                        a.id === String(Math.floor((parseInt(stats.mostFrequentTens[0].ten) === 0 ? 100 : parseInt(stats.mostFrequentTens[0].ten) - 1) / 4) + 1).padStart(2, '0')
-                      )?.name || 'Carregando...' 
+                      ANIMAL_GROUPS.find(a => {
+                        const ten = stats?.mostFrequentTens?.[0]?.ten;
+                        if (!ten) return false;
+                        const tenInt = parseInt(ten);
+                        const groupNum = Math.floor((tenInt === 0 ? 100 : tenInt - 1) / 4) + 1;
+                        return a.id === String(groupNum).padStart(2, '0');
+                      })?.name || 'Carregando...' 
                     : 'Processando...'}
                   </p>
+
                </div>
                <div className="w-px h-10 bg-white/10" />
                <div className="text-right">
