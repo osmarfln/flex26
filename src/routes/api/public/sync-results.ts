@@ -17,10 +17,11 @@ export const Route = createFileRoute('/api/public/sync-results')({
 
         // Use local service role client to bypass RLS for syncing if possible, or just the anon key provided
         const supabase = createClient(
-          process.env['VITE_SUPABASE_URL']!,
-          authHeader,
+          process.env['VITE_SUPABASE_URL'] || '',
+          authHeader || process.env['VITE_SUPABASE_PUBLISHABLE_KEY'] || '',
           { auth: { persistSession: false } }
         );
+
 
         try {
           const body = (await request.json().catch(() => ({}))) as any;
