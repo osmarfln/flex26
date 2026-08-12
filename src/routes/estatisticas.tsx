@@ -768,22 +768,22 @@ function EstatisticasPage() {
                   ) : repetitionStats ? (
                     <>
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <Card className="bg-[#0D121F] border-white/10 rounded-2xl p-6">
+                        <Card className="dashboard-card p-6 bg-white/[0.03]">
                           <span className="text-[10px] font-bold text-white/20 uppercase block mb-1">Repetição de Dezena</span>
                           <div className="text-3xl font-black text-white">{repetitionStats.tenNextDraw}</div>
                           <span className="text-[9px] font-bold text-emerald-500 uppercase">No concurso seguinte</span>
                         </Card>
-                        <Card className="bg-[#0D121F] border-white/10 rounded-2xl p-6">
+                        <Card className="dashboard-card p-6 bg-white/[0.03]">
                           <span className="text-[10px] font-bold text-white/20 uppercase block mb-1">Repetição de Grupo</span>
                           <div className="text-3xl font-black text-white">{repetitionStats.groupNextDraw}</div>
                           <span className="text-[9px] font-bold text-blue-400 uppercase">Qualquer posição</span>
                         </Card>
-                        <Card className="bg-[#0D121F] border-white/10 rounded-2xl p-6">
+                        <Card className="dashboard-card p-6 bg-white/[0.03]">
                           <span className="text-[10px] font-bold text-white/20 uppercase block mb-1">Máx. Consecutivas</span>
                           <div className="text-3xl font-black text-white">{repetitionStats.maxConsecutive}</div>
-                          <span className="text-[9px] font-bold text-yellow-500 uppercase">Sequência histórica</span>
+                          <span className="text-[9px] font-bold text-primary uppercase">Sequência histórica</span>
                         </Card>
-                        <Card className="bg-[#0D121F] border-white/10 rounded-2xl p-6">
+                        <Card className="dashboard-card p-6 bg-white/[0.03]">
                           <span className="text-[10px] font-bold text-white/20 uppercase block mb-1">Percentual Geral</span>
                           <div className="text-3xl font-black text-white">{repetitionStats.historicalPercent}%</div>
                           <span className="text-[9px] font-bold text-purple-500 uppercase">Taxa de ocorrência</span>
@@ -791,7 +791,7 @@ function EstatisticasPage() {
                       </div>
 
                       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        <Card className="bg-[#0D121F] border-white/10 rounded-3xl p-8 relative overflow-hidden">
+                        <Card className="dashboard-card p-8 relative overflow-hidden bg-white/[0.03]">
                           <h3 className="text-lg font-black uppercase italic mb-8 flex items-center gap-2">
                             <History className="w-5 h-5 text-emerald-500" />
                             Logística de Repetições
@@ -800,7 +800,7 @@ function EstatisticasPage() {
                             {[
                               { label: "Repetição no mesmo horário", value: repetitionStats.sameTimeRepetition, color: "bg-emerald-500" },
                               { label: "Entre horários consecutivos", value: repetitionStats.consecutiveTimeRepetition, color: "bg-blue-400" },
-                              { label: "Entre posições diferentes", value: repetitionStats.differentPositionRepetition, color: "bg-yellow-500" },
+                              { label: "Entre posições diferentes", value: repetitionStats.differentPositionRepetition, color: "bg-primary" },
                               { label: "Animal repetido (1º Prêmio)", value: repetitionStats.animalNextDraw, color: "bg-purple-500" }
                             ].map((item, i) => (
                               <div key={i} className="space-y-2">
@@ -820,7 +820,7 @@ function EstatisticasPage() {
                           </div>
                         </Card>
 
-                        <Card className="bg-[#0D121F] border-white/10 rounded-3xl p-8">
+                        <Card className="dashboard-card p-8 bg-white/[0.03]">
                           <h3 className="text-lg font-black uppercase italic mb-8 flex items-center gap-2">
                             <Activity className="w-5 h-5 text-blue-400" />
                             Frequência por Horário
@@ -881,7 +881,7 @@ function EstatisticasPage() {
               <h2 className="text-2xl font-black italic uppercase tracking-tighter">Cruz do Dia - Base da Data</h2>
             </div>
             
-            <div className="bg-[#0D121F] border border-white/5 rounded-3xl p-8 md:p-12 relative overflow-hidden">
+            <div className="dashboard-card p-8 md:p-12 relative overflow-hidden bg-white/[0.03]">
                {/* Background Decoration */}
               <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 blur-[120px] rounded-full -mr-32 -mt-32" />
               <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/5 blur-[120px] rounded-full -ml-32 -mb-32" />
@@ -892,7 +892,7 @@ function EstatisticasPage() {
         </section>
       </main>
 
-      <footer className="border-t border-white/5 py-12 bg-[#080B14] text-center text-[10px] text-white/20 font-bold uppercase tracking-[0.2em]">
+      <footer className="border-t border-white/5 py-12 bg-background/80 text-center text-[10px] text-white/20 font-bold uppercase tracking-[0.2em]">
         Flex Gerenciador © 2026 • Ferramentas Estatísticas Avançadas
       </footer>
     </div>
