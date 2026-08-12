@@ -29,8 +29,10 @@ import {
   Sun,
   Moon,
   Sunset,
-  Activity
+  Activity,
+  Calculator as CalcIcon
 } from "lucide-react";
+import { CruzDoDia } from "@/components/CruzDoDia";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -152,6 +154,9 @@ function Index() {
               <a href="#estatisticas" className="text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2">
                 <BarChart3 className="w-4 h-4" /> Estatísticas
               </a>
+              <a href="#cruz-do-dia" className="text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2">
+                <CalcIcon className="w-4 h-4" /> Cruz do Dia
+              </a>
               <a href="#grupos" className="text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2">
                 <Hash className="w-4 h-4" /> Grupos
               </a>
@@ -248,13 +253,13 @@ function Index() {
                   {format(currentTime, "EEEE, dd 'de' MMMM", { locale: ptBR })}
                 </div>
                 <div className="w-full py-2 bg-white/5 rounded-xl border border-white/10 text-[11px] font-bold">
-                  {new Date().getHours() < 9 ? 'Aguardando PTT (09:00)' : 
-                   new Date().getHours() < 11 ? 'Próximo: PTM (11:00)' :
-                   new Date().getHours() < 14 ? 'Próximo: PT (14:00)' :
-                   new Date().getHours() < 16 ? 'Próximo: PTV (16:00)' :
-                   new Date().getHours() < 18 ? 'Próximo: PTN (18:00)' :
-                   new Date().getHours() < 21 ? 'Próximo: COR (21:00)' :
-                   'Painel Zera em breve (00:00)'}
+                  {format(currentTime, "HH:mm:ss")}
+                </div>
+                <div className="text-[8px] font-bold text-white/40 uppercase tracking-[0.3em] mb-3">
+                  {format(currentTime, "EEEE, dd 'de' MMMM", { locale: ptBR })}
+                </div>
+                <div className="w-full py-2 bg-white/5 rounded-xl border border-white/10 text-[11px] font-bold text-white/60">
+                  Horário Oficial Rio
                 </div>
               </CardContent>
             </Card>
@@ -484,6 +489,11 @@ function Index() {
                 </motion.div>
              ))}
           </div>
+        </section>
+
+        {/* Cruz do Dia Section */}
+        <section className="mb-24 scroll-mt-24" id="cruz-do-dia">
+          <CruzDoDia />
         </section>
 
         {/* Groups Table */}
