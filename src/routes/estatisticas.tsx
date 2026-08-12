@@ -689,7 +689,7 @@ function EstatisticasPage() {
                         }
 
                         return (
-                          <Card key={item.groupId} className="bg-[#0D121F] border-white/10 rounded-2xl p-6 hover:border-yellow-500/30 transition-all group relative overflow-hidden">
+                          <Card key={item.groupId} className="bg-[#0D121F] border-white/10 rounded-2xl p-6 hover:border-yellow-500/30 transition-all group relative overflow-hidden flex flex-col">
                             <div className="flex items-center justify-between mb-6">
                               <div className="flex items-center gap-3">
                                 <div className="text-3xl font-black text-white group-hover:text-yellow-500 transition-colors">{animal?.icon}</div>
@@ -698,33 +698,52 @@ function EstatisticasPage() {
                                   <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest">Grupo {item.groupId}</span>
                                 </div>
                               </div>
-                              <div className={`px-2 py-1 rounded text-[8px] font-black uppercase ${bgColorClass} ${colorClass} ${borderColorClass} border`}>
-                                {item.classification}
+                              <div className="flex flex-col items-end gap-1">
+                                <div className={`px-2 py-1 rounded text-[8px] font-black uppercase ${bgColorClass} ${colorClass} ${borderColorClass} border`}>
+                                  {item.classification}
+                                </div>
+                                <span className="text-[7px] font-black text-white/20 uppercase tracking-tighter">Percentil: {item.percentile}%</span>
                               </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-y-3 gap-x-4 mb-4">
+                            <div className="grid grid-cols-2 gap-y-3 gap-x-4 mb-6">
                               <div className="flex flex-col">
                                 <span className="text-[8px] font-bold text-white/20 uppercase">Atraso Atual</span>
                                 <span className="text-sm font-black text-white">{item.currentDelay}</span>
                               </div>
                               <div className="flex flex-col">
-                                <span className="text-[8px] font-bold text-white/20 uppercase">Índice Rel.</span>
+                                <span className="text-[8px] font-bold text-white/20 uppercase">Índice Atraso</span>
                                 <span className={`text-sm font-black ${colorClass}`}>{item.relativeIndex}</span>
                               </div>
                               <div className="flex flex-col">
-                                <span className="text-[8px] font-bold text-white/20 uppercase">Mediana</span>
-                                <span className="text-sm font-black text-white/40">{item.medianDelay}</span>
+                                <span className="text-[8px] font-bold text-white/20 uppercase">Regularidade</span>
+                                <span className={`text-[10px] font-black uppercase ${item.regularity === 'Alta' ? 'text-emerald-500' : item.regularity === 'Baixa' ? 'text-red-500' : 'text-blue-500'}`}>
+                                  {item.regularity}
+                                </span>
                               </div>
                               <div className="flex flex-col">
-                                <span className="text-[8px] font-bold text-white/20 uppercase">Frequência</span>
-                                <span className="text-sm font-black text-white/40">{item.frequency}</span>
+                                <span className="text-[8px] font-bold text-white/20 uppercase">Comparação</span>
+                                <span className={`text-[10px] font-black ${item.periodComparison > 0 ? 'text-emerald-500' : 'text-red-500'}`}>
+                                  {item.periodComparison > 0 ? '+' : ''}{item.periodComparison}%
+                                </span>
                               </div>
                             </div>
 
-                            <div className="space-y-4 pt-4 border-t border-white/5">
+                            <div className="space-y-4 pt-4 border-t border-white/5 mt-auto">
                               <div>
-                                <span className="text-[8px] font-bold text-white/20 uppercase block mb-2">Frequência por Posição</span>
+                                <span className="text-[7px] font-black text-white/20 uppercase tracking-widest block mb-2">Frequência Multi-Período</span>
+                                <div className="flex justify-between gap-1">
+                                  {[10, 30, 50, 100, 300].map(n => (
+                                    <div key={n} className="flex-1 flex flex-col items-center bg-white/[0.02] rounded py-1 border border-white/5">
+                                      <span className="text-[8px] font-black text-white/80">{item.freqs[n]}</span>
+                                      <span className="text-[6px] font-bold text-white/20 uppercase">{n}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                              
+                              <div>
+                                <span className="text-[7px] font-black text-white/20 uppercase tracking-widest block mb-2">Frequência por Posição</span>
                                 <div className="flex justify-between items-end h-8 gap-1">
                                   {[1, 2, 3, 4, 5].map(pos => {
                                     const val = item.positionFreq[pos] || 0;
@@ -745,12 +764,13 @@ function EstatisticasPage() {
                                 </div>
                               </div>
                               
-                              <div className="flex justify-between items-center text-[9px]">
-                                <span className="font-bold text-white/30 uppercase">Última Vez</span>
-                                <span className="font-black text-white/60">{item.lastOccurrenceDate ? format(new Date(item.lastOccurrenceDate), "dd/MM/yy") : "---"}</span>
+                              <div className="flex justify-between items-center text-[8px] font-bold text-white/20 uppercase">
+                                <span>Última: {item.lastOccurrenceDate ? format(new Date(item.lastOccurrenceDate), "dd/MM/yy") : "---"}</span>
+                                <span>Mediana: {item.medianDelay}</span>
                               </div>
                             </div>
                           </Card>
+
                         );
                       })
                     )}
