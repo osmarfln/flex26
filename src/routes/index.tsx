@@ -207,7 +207,7 @@ function Index() {
                   <CardHeader className="p-5 pb-2">
                     <div className="flex justify-between items-start mb-4">
                       <CardTitle className="text-xl font-black italic tracking-tighter uppercase">
-                        {game.type} RIO — {game.time}hs
+                        {game.time_type} RIO — {game.time_value || '--:--'}hs
                       </CardTitle>
                       {game.status === 'live' && (
                         <div className="px-2 py-1 bg-yellow-500 text-[#0B0F19] text-[9px] font-black uppercase rounded shadow-lg shadow-yellow-500/20">
