@@ -13,8 +13,18 @@ export function DigitalClock() {
     return () => clearInterval(timer);
   }, []);
 
-  // Stable placeholder before hydration to avoid mismatch
-  const time = now ? format(now, "HH:mm:ss") : "--:--:--";
+  // Stable placeholder before hydration to avoid mismatch.
+  // Sempre 24h no fuso oficial de Brasília (00:00 -> 23:59).
+  const time = now
+    ? new Intl.DateTimeFormat("pt-BR", {
+        timeZone: "America/Sao_Paulo",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+        hourCycle: "h23",
+      }).format(now)
+    : "--:--:--";
   const dateLine = now
     ? format(now, "EEEE, dd 'de' MMMM 'de' yyyy", { locale: ptBR })
     : "Carregando...";
