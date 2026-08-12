@@ -84,7 +84,75 @@ function EstatisticasPage() {
       </header>
 
       <main className="container mx-auto px-4 md:px-6 py-12">
+        {/* Análise Histórica Menu */}
+        <section className="mb-12">
+          <div className="flex items-center gap-3 mb-6">
+            <History className="w-6 h-6 text-yellow-500" />
+            <h2 className="text-xl font-black italic uppercase">Análise Histórica</h2>
+          </div>
+          
+          <div className="flex flex-wrap gap-2 mb-8 bg-white/5 p-2 rounded-2xl border border-white/10">
+            <button 
+              onClick={() => setActiveTab('visao-geral')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'visao-geral' ? 'bg-yellow-500 text-[#0B0F19]' : 'hover:bg-white/5 text-white/40'}`}
+            >
+              <LayoutGrid className="w-4 h-4" />
+              Visão Geral
+            </button>
+            <button 
+              onClick={() => setActiveTab('dezenas')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'dezenas' ? 'bg-yellow-500 text-[#0B0F19]' : 'hover:bg-white/5 text-white/40'}`}
+            >
+              <Hash className="w-4 h-4" />
+              Dezenas
+            </button>
+            <button 
+              onClick={() => setActiveTab('grupos')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'grupos' ? 'bg-yellow-500 text-[#0B0F19]' : 'hover:bg-white/5 text-white/40'}`}
+            >
+              <Users className="w-4 h-4" />
+              Grupos
+            </button>
+            <button 
+              onClick={() => setActiveTab('frequencias')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'frequencias' ? 'bg-yellow-500 text-[#0B0F19]' : 'hover:bg-white/5 text-white/40'}`}
+            >
+              <TrendingUp className="w-4 h-4" />
+              Frequências
+            </button>
+            <button 
+              onClick={() => setActiveTab('repeticoes')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'repeticoes' ? 'bg-yellow-500 text-[#0B0F19]' : 'hover:bg-white/5 text-white/40'}`}
+            >
+              <Repeat className="w-4 h-4" />
+              Repetições
+            </button>
+            <button 
+              onClick={() => setActiveTab('comparar')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'comparar' ? 'bg-yellow-500 text-[#0B0F19]' : 'hover:bg-white/5 text-white/40'}`}
+            >
+              <ArrowLeftRight className="w-4 h-4" />
+              Comparar Períodos
+            </button>
+            <button 
+              onClick={() => setActiveTab('historico')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'historico' ? 'bg-yellow-500 text-[#0B0F19]' : 'hover:bg-white/5 text-white/40'}`}
+            >
+              <FileText className="w-4 h-4" />
+              Histórico
+            </button>
+            <button 
+              onClick={() => setActiveTab('importar')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'importar' ? 'bg-yellow-500 text-[#0B0F19]' : 'hover:bg-white/5 text-white/40'}`}
+            >
+              <Upload className="w-4 h-4" />
+              Importar Resultados
+            </button>
+          </div>
+        </section>
+
         {/* Header Section */}
+
         <section className="mb-12">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
             <div>
