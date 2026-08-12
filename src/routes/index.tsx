@@ -465,10 +465,6 @@ function Index() {
           </div>
         </section>
 
-        {/* Cruz do Dia Section */}
-        <section className="mb-24 scroll-mt-24" id="cruz-do-dia">
-          <CruzDoDia />
-        </section>
 
         {/* Groups Table */}
         <div className="grid grid-cols-1 gap-8" id="grupos">
