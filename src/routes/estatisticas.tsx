@@ -41,7 +41,7 @@ function EstatisticasPage() {
 
   const { data: recentResults, isLoading: resultsLoading } = useQuery({
     queryKey: ["recent-results-stats"],
-    queryFn: () => getResults({ limit: 100, offset: 0 }),
+    queryFn: () => getResults({ data: { limit: 100, offset: 0 } }),
   });
 
   const { data: delayStats, isLoading: delayStatsLoading } = useQuery({
