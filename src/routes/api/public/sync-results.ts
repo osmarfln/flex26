@@ -106,7 +106,7 @@ function parseRioResults(html: string, date: string) {
   
   schedules.forEach(schedule => {
     // Tenta encontrar o bloco do horário no HTML
-    const regex = new RegExp(`${schedule.type}.*?1º PRÊMIO.*?(\\d{4}).*?(\\w+).*?GRUPO (\\d{2})`, 's');
+    const regex = new RegExp(`${schedule.type}.*?1º PRÊMIO.*?(\\d{4})\\s+([A-ZÇÃÊÍÓÚ-]+)\\s+GRUPO\\s+(\\d{2})`, 'si');
     const match = html.match(regex);
     
     if (match) {
