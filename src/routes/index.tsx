@@ -224,7 +224,7 @@ function Index() {
                   <CardContent className="p-5 pt-0">
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-1">
-                        {(game.result.length > 0 ? game.result.slice(0, 5) : ['----', '----', '----', '----', '----']).map((res: string, idx: number) => (
+                        {((game.results ?? game.result ?? []).length > 0 ? (game.results ?? game.result).slice(0, 5) : ['----', '----', '----', '----', '----']).map((res: string, idx: number) => (
                           <div key={idx} className="flex gap-4 text-sm font-bold items-baseline">
                             <span className="text-white/20 w-4">{idx + 1}º</span>
                             <span className="font-mono tracking-widest text-lg">{res}</span>
