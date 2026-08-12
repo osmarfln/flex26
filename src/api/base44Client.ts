@@ -1,5 +1,6 @@
-// Cliente base44 integrado com dados reais (Simulado com robô via soresultados.info)
+// Cliente base44 integrado com dados reais (Simulado com robô)
 export const base44 = {
+
   auth: {
     me: async () => ({
       email: 'flixautomacaosc@gmail.com',
