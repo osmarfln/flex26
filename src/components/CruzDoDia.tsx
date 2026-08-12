@@ -39,6 +39,7 @@ export function CruzDoDia({ onCalculate }: { onCalculate?: (dezenas: string[]) =
       quadruplo,
       dezenas
     });
+    if (onCalculate) onCalculate(dezenas);
   };
 
   const useCurrentDay = () => {
