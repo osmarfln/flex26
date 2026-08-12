@@ -41,7 +41,7 @@ function Historico() {
 
   const { data: results, isLoading, refetch } = useQuery({
     queryKey: ["history-results", date, offset],
-    queryFn: () => getResults({ date, offset, limit }),
+    queryFn: () => getResults({ data: { date, offset, limit } }),
   });
 
   return (
