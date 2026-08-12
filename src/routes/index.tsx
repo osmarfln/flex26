@@ -151,9 +151,9 @@ function Index() {
               <a href="#resultados" className="text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2">
                 <TrendingUp className="w-4 h-4" /> Resultados
               </a>
-              <a href="#estatisticas" className="text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2">
+              <Link to="/estatisticas" className="text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2">
                 <BarChart3 className="w-4 h-4" /> Estatísticas
-              </a>
+              </Link>
             </nav>
           </div>
 
