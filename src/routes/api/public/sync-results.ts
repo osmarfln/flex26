@@ -94,8 +94,10 @@ export const Route = createFileRoute('/api/public/sync-results')({
                     time_value: null,
                     results: results,
                     animal: res.prize_1_bicho,
-                    animal_group: groupStr
+                    animal_group: groupStr,
+                    created_at: new Date().toISOString()
                   }, { onConflict: 'date,time_type' });
+
                 
                 totalSynced++;
               }
