@@ -14,7 +14,7 @@ export interface LotteryResult {
   created_at: string;
 }
 
-const ANIMAL_GROUPS: Record<string, { name: string, icon: string }> = {
+const ANIMAL_GROUPS_DATA: Record<string, { name: string, icon: string }> = {
   "01": { name: "Avestruz", icon: "🦩" }, "02": { name: "Águia", icon: "🦅" }, "03": { name: "Burro", icon: "🫏" }, "04": { name: "Borboleta", icon: "🦋" }, "05": { name: "Cachorro", icon: "🐕" },
   "06": { name: "Cabra", icon: "🐐" }, "07": { name: "Leão", icon: "🦁" }, "08": { name: "Macaco", icon: "🐒" }, "09": { name: "Cobra", icon: "🐍" }, "10": { name: "Coelho", icon: "🐰" },
   "11": { name: "Cavalo", icon: "🐎" }, "12": { name: "Elefante", icon: "🐘" }, "13": { name: "Galo", icon: "🐓" }, "14": { name: "Gato", icon: "🐈" }, "15": { name: "Jacaré", icon: "🐊" },
@@ -48,7 +48,6 @@ export const getResults = createServerFn({ method: "GET" })
 
 export const getStats = createServerFn({ method: "GET" })
   .handler(async () => {
-    // Buscar últimos 30 dias de resultados para calcular estatísticas
     const { data: results, error } = await supabase
       .from("lottery_results")
       .select("*")
@@ -58,7 +57,6 @@ export const getStats = createServerFn({ method: "GET" })
     if (error) throw error;
     if (!results) return { mostDelayedGroups: [], mostFrequentTens: [], delayedBySchedule: {} };
 
-    // Calcular atrasos
     const lastSeen: Record<string, string> = {};
     const tenCounts: Record<string, number> = {};
     const scheduleDelay: Record<string, { group: string, date: string }> = {};
@@ -67,26 +65,22 @@ export const getStats = createServerFn({ method: "GET" })
       const group = res.animal_group;
       if (group) {
         if (!lastSeen[group]) lastSeen[group] = res.date;
-        
-        // Dezenas (últimos 2 dígitos do 1º prêmio)
-        const firstPrize = res.results[0];
+        const firstPrize = res.results?.[0];
         if (firstPrize && firstPrize.length >= 2) {
           const ten = firstPrize.slice(-2);
           tenCounts[ten] = (tenCounts[ten] || 0) + 1;
         }
-
-        // Atraso por horário
         const key = res.time_type;
-        if (!scheduleDelay[key]) scheduleDelay[key] = { group, date: res.date };
+        if (key && !scheduleDelay[key]) scheduleDelay[key] = { group, date: res.date };
       }
     });
 
-    const mostDelayedGroups = Object.keys(ANIMAL_GROUPS)
+    const mostDelayedGroups = Object.keys(ANIMAL_GROUPS_DATA)
       .map(group => {
         const lastDate = lastSeen[group];
         const lastDateObj = lastDate ? new Date(lastDate) : null;
         const days = lastDateObj ? Math.floor((new Date().getTime() - lastDateObj.getTime()) / (1000 * 60 * 60 * 24)) : 99;
-        const animalInfo = ANIMAL_GROUPS[group];
+        const animalInfo = ANIMAL_GROUPS_DATA[group];
         return {
           group,
           animal: animalInfo ? animalInfo.name : "Desconhecido",
@@ -108,7 +102,7 @@ export const getStats = createServerFn({ method: "GET" })
       if (entry) {
         const entryDate = new Date(entry.date);
         const days = Math.floor((new Date().getTime() - entryDate.getTime()) / (1000 * 60 * 60 * 24));
-        const groupInfo = ANIMAL_GROUPS[entry.group];
+        const groupInfo = ANIMAL_GROUPS_DATA[entry.group];
         delayedBySchedule[time] = {
           group: entry.group,
           animal: groupInfo ? groupInfo.name : "Desconhecido",
@@ -117,11 +111,7 @@ export const getStats = createServerFn({ method: "GET" })
       }
     });
 
-    return {
-      mostDelayedGroups,
-      mostFrequentTens,
-      delayedBySchedule
-    };
+    return { mostDelayedGroups, mostFrequentTens, delayedBySchedule };
   });
 
 export const getTenDelayStats = createServerFn({ method: "GET" })
@@ -144,35 +134,21 @@ export const getTenDelayStats = createServerFn({ method: "GET" })
       let lastIndex = -1;
 
       results.forEach((res, index) => {
-        const firstPrize = res.results[0];
+        const firstPrize = res.results?.[0];
         const drawnTen = firstPrize?.slice(-2);
-
         if (drawnTen === ten) {
-          if (currentDelay === -1) {
-            currentDelay = index;
-          }
-          
-          if (lastIndex !== -1) {
-            intervals.push(index - lastIndex);
-          }
+          if (currentDelay === -1) currentDelay = index;
+          if (lastIndex !== -1) intervals.push(index - lastIndex);
           lastIndex = index;
         }
       });
 
       if (currentDelay === -1) currentDelay = 500;
-      
-      const avgDelay = intervals.length > 0 
-        ? intervals.reduce((a, b) => a + b, 0) / intervals.length 
-        : 100;
-
+      const avgDelay = intervals.length > 0 ? intervals.reduce((a, b) => a + b, 0) / intervals.length : 100;
       const sortedIntervals = [...intervals].sort((a, b) => a - b);
-      const medianDelay = sortedIntervals.length > 0
-        ? sortedIntervals[Math.floor(sortedIntervals.length / 2)]
-        : 100;
-
+      const medianDelay = sortedIntervals.length > 0 ? sortedIntervals[Math.floor(sortedIntervals.length / 2)] : 100;
       const maxDelay = intervals.length > 0 ? Math.max(...intervals) : currentDelay;
       const minDelay = intervals.length > 0 ? Math.min(...intervals) : currentDelay;
-      
       const relativeIndex = currentDelay / avgDelay;
 
       let classification = "Dentro da média";
@@ -215,63 +191,42 @@ export const getGroupDelayStats = createServerFn({ method: "GET" })
       let lastOccurrenceDate: string | null = null;
       const intervals: number[] = [];
       let lastIndex = -1;
-      
       const hourlyFreq: Record<string, number> = {};
       const positionFreq: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
       let totalFreq = 0;
 
       results.forEach((res, index) => {
-        // Um grupo pode aparecer em qualquer uma das 5 posições
-        // Mas o "animal_group" principal do registro refere-se ao 1º prêmio
-        // Para a lógica de grupos completa, verificamos todas as dezenas sorteadas
-        
         let foundInThisResult = false;
-        res.results.slice(0, 5).forEach((prize, pIdx) => {
+        res.results?.slice(0, 5).forEach((prize, pIdx) => {
           const ten = prize.slice(-2);
           const tenInt = parseInt(ten);
           if (!isNaN(tenInt)) {
             const calculatedGroup = String(Math.floor((tenInt === 0 ? 100 : tenInt - 1) / 4) + 1).padStart(2, '0');
-            
             if (calculatedGroup === groupId) {
               foundInThisResult = true;
               totalFreq++;
               const pos = (pIdx + 1) as 1 | 2 | 3 | 4 | 5;
               (positionFreq as any)[pos]++;
-              const timeType = res.time_type;
-              if (timeType) {
-                hourlyFreq[timeType] = (hourlyFreq[timeType] || 0) + 1;
-              }
+              if (res.time_type) hourlyFreq[res.time_type] = (hourlyFreq[res.time_type] || 0) + 1;
             }
           }
         });
-
         if (foundInThisResult) {
           if (currentDelay === -1) {
             currentDelay = index;
             lastOccurrenceDate = res.date;
           }
-          
-          if (lastIndex !== -1) {
-            intervals.push(index - lastIndex);
-          }
+          if (lastIndex !== -1) intervals.push(index - lastIndex);
           lastIndex = index;
         }
       });
 
       if (currentDelay === -1) currentDelay = 500;
-      
-      const avgDelay = intervals.length > 0 
-        ? intervals.reduce((a, b) => a + b, 0) / intervals.length 
-        : 50;
-
+      const avgDelay = intervals.length > 0 ? intervals.reduce((a, b) => a + b, 0) / intervals.length : 50;
       const sortedIntervals = [...intervals].sort((a, b) => a - b);
-      const medianDelay = sortedIntervals.length > 0
-        ? sortedIntervals[Math.floor(sortedIntervals.length / 2)]
-        : 50;
-
+      const medianDelay = sortedIntervals.length > 0 ? sortedIntervals[Math.floor(sortedIntervals.length / 2)] : 50;
       const maxDelay = intervals.length > 0 ? Math.max(...intervals) : currentDelay;
       const minDelay = intervals.length > 0 ? Math.min(...intervals) : currentDelay;
-      
       const relativeIndex = currentDelay / avgDelay;
 
       let classification = "Dentro da média";
@@ -282,7 +237,7 @@ export const getGroupDelayStats = createServerFn({ method: "GET" })
 
       stats.push({
         groupId,
-        animal: ANIMAL_GROUPS[groupId] ? ANIMAL_GROUPS[groupId].name : "Desconhecido",
+        animal: ANIMAL_GROUPS_DATA[groupId] ? ANIMAL_GROUPS_DATA[groupId].name : "Desconhecido",
         currentDelay,
         lastOccurrenceDate,
         avgDelay: Number(avgDelay.toFixed(2)),
@@ -298,4 +253,92 @@ export const getGroupDelayStats = createServerFn({ method: "GET" })
     });
 
     return stats.sort((a, b) => b.currentDelay - a.currentDelay);
+  });
+
+export const getRepetitionStats = createServerFn({ method: "GET" })
+  .handler(async () => {
+    const { data: results, error } = await supabase
+      .from("lottery_results")
+      .select("results, date, time_type, animal_group")
+      .order("date", { ascending: false })
+      .limit(300);
+
+    if (error) throw error;
+    if (!results || results.length < 2) return null;
+
+    const lastResult = results[0];
+    const firstResultInSample = results[results.length - 1];
+
+    const repetitionStats = {
+      tenNextDraw: 0,
+      groupNextDraw: 0,
+      animalNextDraw: 0,
+      sameTimeRepetition: 0,
+      consecutiveTimeRepetition: 0,
+      differentPositionRepetition: 0,
+      maxConsecutive: 0,
+      historicalPercent: 0,
+      sampleSize: results.length,
+      periodAnalyzed: `${firstResultInSample?.date ? new Date(firstResultInSample.date).toLocaleDateString('pt-BR') : ''} - ${lastResult?.date ? new Date(lastResult.date).toLocaleDateString('pt-BR') : ''}`,
+      timeRepetitionData: [] as { time: string, count: number }[],
+    };
+
+    const getGroupFromTen = (ten: string) => {
+      const tenInt = parseInt(ten);
+      if (isNaN(tenInt)) return null;
+      return String(Math.floor((tenInt === 0 ? 100 : tenInt - 1) / 4) + 1).padStart(2, '0');
+    };
+
+    let totalRepetitions = 0;
+    const timeRepMap: Record<string, number> = {};
+    let currentConsecutive = 0;
+
+    for (let i = 0; i < results.length - 1; i++) {
+      const current = results[i];
+      const next = results[i + 1];
+      if (!current || !next) continue;
+
+      const currentTens = current.results?.slice(0, 5).map(r => r.slice(-2)) || [];
+      const nextTens = next.results?.slice(0, 5).map(r => r.slice(-2)) || [];
+      const currentGroups = currentTens.map(t => getGroupFromTen(t));
+      const nextGroups = nextTens.map(t => getGroupFromTen(t));
+
+      const commonTens = currentTens.filter(t => nextTens.includes(t));
+      if (commonTens.length > 0) {
+        repetitionStats.tenNextDraw++;
+        totalRepetitions++;
+        currentConsecutive++;
+        repetitionStats.maxConsecutive = Math.max(repetitionStats.maxConsecutive, currentConsecutive);
+      } else {
+        currentConsecutive = 0;
+      }
+
+      if (currentGroups.filter(g => g && nextGroups.includes(g)).length > 0) repetitionStats.groupNextDraw++;
+      if (current.animal_group && current.animal_group === next.animal_group) repetitionStats.animalNextDraw++;
+
+      const currentType = current.time_type;
+      if (currentType) {
+        const prevSameTime = results.slice(i + 1).find(r => r.time_type === currentType);
+        if (prevSameTime) {
+          const prevTens = prevSameTime.results?.slice(0, 5).map(r => r.slice(-2)) || [];
+          if (currentTens.some(t => prevTens.includes(t))) {
+            repetitionStats.sameTimeRepetition++;
+            timeRepMap[currentType] = (timeRepMap[currentType] || 0) + 1;
+          }
+        }
+      }
+
+      if (currentTens.some(t => nextTens.includes(t))) repetitionStats.consecutiveTimeRepetition++;
+
+      let diffPos = false;
+      currentTens.forEach((t, idx) => {
+        if (nextTens.includes(t) && nextTens.indexOf(t) !== idx) diffPos = true;
+      });
+      if (diffPos) repetitionStats.differentPositionRepetition++;
+    }
+
+    repetitionStats.historicalPercent = Number(((totalRepetitions / (results.length - 1)) * 100).toFixed(2));
+    repetitionStats.timeRepetitionData = Object.entries(timeRepMap).map(([time, count]) => ({ time, count }));
+
+    return repetitionStats;
   });

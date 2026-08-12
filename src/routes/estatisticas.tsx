@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
-import { getStats, getResults, getTenDelayStats, getGroupDelayStats } from "@/lib/lottery.functions";
+import { getStats, getResults, getTenDelayStats, getGroupDelayStats, getRepetitionStats } from "@/lib/lottery.functions";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useMemo, useEffect } from "react";
 import { format, subDays, differenceInDays } from "date-fns";
@@ -32,7 +32,7 @@ const ANIMAL_GROUPS = [
 ];
 
 function EstatisticasPage() {
-  const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'palpites' | 'logica-atraso' | 'ranking-completo' | 'logica-grupos'>('logica-atraso');
+  const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'palpites' | 'logica-atraso' | 'ranking-completo' | 'logica-grupos' | 'repeticoes'>('logica-atraso');
   const [cruzData, setCruzData] = useState<string[]>([]);
   
   const { data: stats, isLoading: statsLoading } = useQuery({
@@ -55,6 +55,11 @@ function EstatisticasPage() {
     queryFn: () => getGroupDelayStats(),
   });
 
+
+  const { data: repetitionStats, isLoading: repetitionLoading } = useQuery({
+    queryKey: ["repetition-stats"],
+    queryFn: () => getRepetitionStats(),
+  });
 
   const isLoading = statsLoading || resultsLoading;
 
@@ -243,6 +248,17 @@ function EstatisticasPage() {
                 </div>
                 <h3 className="text-xl font-black italic uppercase mb-2">Ranking Geral</h3>
                 <p className="text-sm text-white/40 font-medium leading-snug">Visão completa de atrasos, percentis e ciclos de todos os bichos.</p>
+             </Card>
+
+             <Card 
+               onClick={() => setActiveTab('repeticoes')}
+               className={`bg-[#0D121F] border-white/10 rounded-2xl p-6 transition-all cursor-pointer group ${activeTab === 'repeticoes' ? 'border-blue-400/50 ring-1 ring-blue-400/20' : 'hover:border-blue-400/30'}`}
+             >
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'repeticoes' ? 'bg-blue-400 text-[#0B0F19]' : 'bg-blue-400/10 text-blue-400'}`}>
+                   <Repeat className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-black italic uppercase mb-2">Repetições</h3>
+                <p className="text-sm text-white/40 font-medium leading-snug">Análise de tendências repetitivas entre concursos e horários.</p>
              </Card>
 
              <Card 
@@ -720,6 +736,137 @@ function EstatisticasPage() {
                       })
                     )}
                   </div>
+                </motion.div>
+              )}
+
+              {activeTab === 'repeticoes' && (
+                <motion.div
+                  key="repeticoes"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="space-y-8"
+                >
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <Repeat className="w-6 h-6 text-blue-400" />
+                      <h2 className="text-2xl font-black italic uppercase">Análise de Repetições</h2>
+                    </div>
+                    {repetitionStats && (
+                      <div className="text-[10px] font-bold text-white/20 uppercase tracking-widest bg-white/5 px-4 py-2 rounded-full border border-white/10">
+                        Período: {repetitionStats.periodAnalyzed}
+                      </div>
+                    )}
+                  </div>
+
+                  {repetitionLoading ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                      {Array.from({ length: 4 }).map((_, i) => (
+                        <div key={i} className="h-32 bg-white/5 animate-pulse rounded-2xl border border-white/10" />
+                      ))}
+                    </div>
+                  ) : repetitionStats ? (
+                    <>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <Card className="bg-[#0D121F] border-white/10 rounded-2xl p-6">
+                          <span className="text-[10px] font-bold text-white/20 uppercase block mb-1">Repetição de Dezena</span>
+                          <div className="text-3xl font-black text-white">{repetitionStats.tenNextDraw}</div>
+                          <span className="text-[9px] font-bold text-emerald-500 uppercase">No concurso seguinte</span>
+                        </Card>
+                        <Card className="bg-[#0D121F] border-white/10 rounded-2xl p-6">
+                          <span className="text-[10px] font-bold text-white/20 uppercase block mb-1">Repetição de Grupo</span>
+                          <div className="text-3xl font-black text-white">{repetitionStats.groupNextDraw}</div>
+                          <span className="text-[9px] font-bold text-blue-400 uppercase">Qualquer posição</span>
+                        </Card>
+                        <Card className="bg-[#0D121F] border-white/10 rounded-2xl p-6">
+                          <span className="text-[10px] font-bold text-white/20 uppercase block mb-1">Máx. Consecutivas</span>
+                          <div className="text-3xl font-black text-white">{repetitionStats.maxConsecutive}</div>
+                          <span className="text-[9px] font-bold text-yellow-500 uppercase">Sequência histórica</span>
+                        </Card>
+                        <Card className="bg-[#0D121F] border-white/10 rounded-2xl p-6">
+                          <span className="text-[10px] font-bold text-white/20 uppercase block mb-1">Percentual Geral</span>
+                          <div className="text-3xl font-black text-white">{repetitionStats.historicalPercent}%</div>
+                          <span className="text-[9px] font-bold text-purple-500 uppercase">Taxa de ocorrência</span>
+                        </Card>
+                      </div>
+
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <Card className="bg-[#0D121F] border-white/10 rounded-3xl p-8 relative overflow-hidden">
+                          <h3 className="text-lg font-black uppercase italic mb-8 flex items-center gap-2">
+                            <History className="w-5 h-5 text-emerald-500" />
+                            Logística de Repetições
+                          </h3>
+                          <div className="space-y-6">
+                            {[
+                              { label: "Repetição no mesmo horário", value: repetitionStats.sameTimeRepetition, color: "bg-emerald-500" },
+                              { label: "Entre horários consecutivos", value: repetitionStats.consecutiveTimeRepetition, color: "bg-blue-400" },
+                              { label: "Entre posições diferentes", value: repetitionStats.differentPositionRepetition, color: "bg-yellow-500" },
+                              { label: "Animal repetido (1º Prêmio)", value: repetitionStats.animalNextDraw, color: "bg-purple-500" }
+                            ].map((item, i) => (
+                              <div key={i} className="space-y-2">
+                                <div className="flex justify-between text-xs font-bold uppercase tracking-tighter">
+                                  <span className="text-white/40">{item.label}</span>
+                                  <span className="text-white">{item.value} <span className="text-white/20 font-medium">vezes</span></span>
+                                </div>
+                                <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                                  <motion.div 
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${Math.min((item.value / repetitionStats.sampleSize) * 200, 100)}%` }}
+                                    className={`h-full ${item.color}`}
+                                  />
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </Card>
+
+                        <Card className="bg-[#0D121F] border-white/10 rounded-3xl p-8">
+                          <h3 className="text-lg font-black uppercase italic mb-8 flex items-center gap-2">
+                            <Activity className="w-5 h-5 text-blue-400" />
+                            Frequência por Horário
+                          </h3>
+                          <div className="h-[200px] flex items-end justify-between gap-2">
+                            {repetitionStats.timeRepetitionData.length > 0 ? (
+                              repetitionStats.timeRepetitionData.map((d: any, i: number) => {
+                                const maxCount = Math.max(...repetitionStats.timeRepetitionData.map((x: any) => x.count), 1);
+                                return (
+                                  <div key={i} className="flex-1 flex flex-col items-center gap-3 group">
+                                    <div className="w-full relative flex flex-col items-center justify-end h-full">
+                                      <motion.div 
+                                        initial={{ height: 0 }}
+                                        animate={{ height: `${(d.count / maxCount) * 100}%` }}
+                                        className="w-full bg-blue-400/20 group-hover:bg-blue-400/40 border-t-2 border-blue-400 transition-all rounded-t-lg"
+                                      />
+                                      <span className="absolute -top-6 text-[10px] font-black text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        {d.count}
+                                      </span>
+                                    </div>
+                                    <span className="text-[10px] font-black uppercase italic text-white/30 group-hover:text-white transition-colors">
+                                      {d.time}
+                                    </span>
+                                  </div>
+                                );
+                              })
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-white/10 font-bold uppercase text-[10px]">
+                                Sem dados suficientes
+                              </div>
+                            )}
+                          </div>
+                        </Card>
+                      </div>
+
+                      <div className="bg-emerald-500/5 border border-emerald-500/10 rounded-2xl p-6 flex gap-4">
+                        <AlertCircle className="w-6 h-6 text-emerald-500 shrink-0" />
+                        <div className="space-y-1">
+                          <p className="text-xs font-bold text-emerald-500 uppercase tracking-wider">Metodologia de Análise</p>
+                          <p className="text-xs text-white/40 leading-relaxed">
+                            Análise baseada em uma amostra de <strong>{repetitionStats.sampleSize} concursos</strong>. As repetições são calculadas comparando o concurso atual com o imediatamente anterior (cronológico) e com o histórico do mesmo horário.
+                          </p>
+                        </div>
+                      </div>
+                    </>
+                  ) : null}
                 </motion.div>
               )}
 
