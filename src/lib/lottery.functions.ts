@@ -241,6 +241,7 @@ export const getGroupDelayStats = createServerFn({ method: "GET" })
               if (timeType) {
                 hourlyFreq[timeType] = (hourlyFreq[timeType] || 0) + 1;
               }
+            }
           }
         });
 
