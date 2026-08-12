@@ -16,7 +16,7 @@ export const Route = createFileRoute('/portal/jogos')({
 });
 
 function JogosManagementPage() {
-  const { lastUpdate } = useLotteryRealtime();
+  const { lastUpdate } = useLotteryRealtime("portal-jogos-db-changes");
   const fetchResults = useServerFn(getResults);
   const today = brasiliaDateISO();
 
