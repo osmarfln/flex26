@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { SiteHeader } from "@/components/layout/SiteHeader";
 import { getSyncStatus } from "@/lib/realtime.functions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -123,24 +124,17 @@ function RobotStatus() {
   const activeHours = byHour.filter((h) => h.execucoes > 0);
 
   return (
-    <div className="min-h-screen bg-[#0B0F19] text-white p-4 md:p-12">
-      <div className="max-w-6xl mx-auto">
-        <header className="flex items-center justify-between gap-4 mb-8">
-          <div className="flex items-center gap-4 md:gap-6">
-            <Link
-              to="/"
-              className="p-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all group shrink-0"
-            >
-              <ArrowLeft className="w-5 h-5 text-white/40 group-hover:text-yellow-500 transition-colors" />
-            </Link>
-            <div>
-              <h1 className="text-2xl md:text-3xl font-black italic tracking-tighter uppercase">
-                Status do Robô
-              </h1>
-              <p className="text-white/40 text-[10px] md:text-sm mt-1 uppercase tracking-widest">
-                Monitoramento de sincronização em tempo real
-              </p>
-            </div>
+    <div className="min-h-screen bg-[#0B0F19] text-white">
+      <SiteHeader subtitle="STATUS DO ROBÔ" showBack />
+      <div className="max-w-6xl mx-auto p-3 sm:p-4 md:p-12">
+        <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 mb-8">
+          <div className="min-w-0">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-black italic tracking-tighter uppercase truncate">
+              Status do Robô
+            </h1>
+            <p className="text-white/40 text-[10px] md:text-sm mt-1 uppercase tracking-widest">
+              Monitoramento de sincronização em tempo real
+            </p>
           </div>
           <button
             onClick={() => refetch()}
@@ -150,6 +144,7 @@ function RobotStatus() {
             <RefreshCw className={`w-5 h-5 ${isLoading ? "animate-spin" : ""}`} />
           </button>
         </header>
+
 
         {/* Para que serve */}
         <Card className="bg-[#0D121F] border-white/10 rounded-3xl mb-8">
