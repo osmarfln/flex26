@@ -18,14 +18,14 @@ export const Route = createFileRoute('/api/public/sync-results')({
         );
 
         try {
-          const body = await request.json().catch(() => ({}));
+          const body = (await request.json().catch(() => ({}))) as any;
           const dateParam = body.date || new Date().toISOString().split('T')[0];
           const daysToSync = body.daysToSync || 1;
           
           console.log(`Iniciando sincronização para a data: ${dateParam}, dias: ${daysToSync}`);
           
           // Registrar início no log
-          const { data: logEntry, error: logError } = await supabase
+          const { data: logEntry } = await supabase
             .from('sync_logs')
             .insert({ 
               status: 'running', 
@@ -119,17 +119,17 @@ function parseRioResults(html: string, date: string) {
     const regex = new RegExp(schedule.type + ".*?1º PRÊMIO.*?(\\d{4})\\s+([A-ZÇÃÊÍÓÚ-]+)\\s+GRUPO\\s+(\\d{2})", 'si');
     const match = html.match(regex);
     
-    if (match) {
+    if (match && match.index !== undefined) {
       // Extrair outros prêmios (2º ao 5º)
-      const otherPrizes: string[] = [match[1]];
+      const otherPrizes: string[] = [match[1] || '----'];
       const prizesRegex = /(\d{4})\s+[A-ZÇÃÊÍÓÚ-]+\s+GRUPO\s+\d{2}/gi;
       let pMatch;
       let count = 0;
       // Reiniciar regex para começar após o 1º prêmio
-      prizesRegex.lastIndex = match.index! + match[0].length;
+      prizesRegex.lastIndex = match.index + match[0].length;
       
       while ((pMatch = prizesRegex.exec(html)) !== null && count < 4) {
-        otherPrizes.push(pMatch[1]);
+        otherPrizes.push(pMatch[1] || '----');
         count++;
       }
 
@@ -141,8 +141,8 @@ function parseRioResults(html: string, date: string) {
         time_type: schedule.type,
         time_value: schedule.time,
         results: otherPrizes,
-        animal: match[2],
-        animal_group: match[3]
+        animal: match[2] || 'Aguardando',
+        animal_group: match[3] || '--'
       });
     }
   });
