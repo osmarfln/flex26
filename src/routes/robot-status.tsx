@@ -125,6 +125,10 @@ function RobotStatus() {
           </CardContent>
         </Card>
       </div>
+      <footer className="mt-12 text-center text-[10px] text-white/20 font-bold uppercase tracking-[0.2em]">
+        Flex Gerenciador © 2026 • Resultados diários automatizados via robô ai automatizado sem interveção humana
+      </footer>
     </div>
+
   );
 }
