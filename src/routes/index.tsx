@@ -154,9 +154,9 @@ function Index() {
               <a href="#estatisticas" className="text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2">
                 <BarChart3 className="w-4 h-4" /> Estatísticas
               </a>
-              <a href="#cruz-do-dia" className="text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2">
+              <Link to="/cruz-do-dia" className="text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2">
                 <CalcIcon className="w-4 h-4" /> Cruz do Dia
-              </a>
+              </Link>
               <a href="#grupos" className="text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2">
                 <Hash className="w-4 h-4" /> Grupos
               </a>
@@ -465,10 +465,6 @@ function Index() {
           </div>
         </section>
 
-        {/* Cruz do Dia Section */}
-        <section className="mb-24 scroll-mt-24" id="cruz-do-dia">
-          <CruzDoDia />
-        </section>
 
         {/* Groups Table */}
         <div className="grid grid-cols-1 gap-8" id="grupos">
