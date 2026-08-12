@@ -159,8 +159,8 @@ function Index() {
             </div>
           </motion.div>
 
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-4 italic">Resultados Todos os Dias</h1>
-          <p className="text-white/40 text-lg mb-8 font-medium">Consulte os resultados por banca, data e horário em tempo real</p>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-4 italic">Resultados Rio em Tempo Real</h1>
+          <p className="text-white/40 text-lg mb-8 font-medium">Resultados diários automatizados via robô de soresultados.info</p>
 
           <div className="flex flex-wrap gap-4 items-center mb-12">
             <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl min-w-[200px] hover:border-yellow-500/30 transition-all cursor-pointer">
@@ -396,7 +396,7 @@ function Index() {
            <div className="flex items-center gap-6">
               <span className="text-[8px] text-white/5 font-black uppercase tracking-widest">Plataforma Independente</span>
               <div className="h-4 w-px bg-white/5" />
-              <span className="text-[8px] text-white/5 font-black uppercase tracking-widest">Resultados Publicados sem comercial de terceiros</span>
+              <span className="text-[8px] text-white/5 font-black uppercase tracking-widest">Automação via Robô soresultados.info</span>
            </div>
         </div>
       </footer>
