@@ -73,9 +73,13 @@ function getGreeting() {
 
 function Index() {
   const [greeting, setGreeting] = useState(getGreeting());
+  const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
-    const timer = setInterval(() => setGreeting(getGreeting()), 60000);
+    const timer = setInterval(() => {
+      setGreeting(getGreeting());
+      setCurrentTime(new Date());
+    }, 1000);
     return () => clearInterval(timer);
   }, []);
 
@@ -84,10 +88,29 @@ function Index() {
     queryFn: () => getResults({ data: { limit: 6 } }),
   });
 
-  const { data: stats, isLoading: isLoadingStats } = useQuery({
+  const { data: stats, isLoading: isLoadingStats, refetch: refetchStats } = useQuery({
     queryKey: ["homepage-stats"],
     queryFn: () => getStats(),
   });
+
+  useEffect(() => {
+    const channel = supabase
+      .channel('schema-db-changes')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'lottery_results' },
+        () => {
+          refetch();
+          refetchStats();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [refetch, refetchStats]);
+
 
   const GreetingIcon = greeting.icon;
 
