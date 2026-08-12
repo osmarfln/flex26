@@ -123,3 +123,75 @@ export const getStats = createServerFn({ method: "GET" })
       delayedBySchedule
     };
   });
+
+export const getTenDelayStats = createServerFn({ method: "GET" })
+  .handler(async () => {
+    const { data: results, error } = await supabase
+      .from("lottery_results")
+      .select("results, date")
+      .order("date", { ascending: false })
+      .limit(500);
+
+    if (error) throw error;
+    if (!results) return [];
+
+    const stats: any[] = [];
+    const allTens = Array.from({ length: 100 }, (_, i) => String(i).padStart(2, '0'));
+
+    allTens.forEach(ten => {
+      let currentDelay = -1;
+      const intervals: number[] = [];
+      let lastIndex = -1;
+
+      results.forEach((res, index) => {
+        const firstPrize = res.results[0];
+        const drawnTen = firstPrize?.slice(-2);
+
+        if (drawnTen === ten) {
+          if (currentDelay === -1) {
+            currentDelay = index;
+          }
+          
+          if (lastIndex !== -1) {
+            intervals.push(index - lastIndex);
+          }
+          lastIndex = index;
+        }
+      });
+
+      if (currentDelay === -1) currentDelay = 500;
+      
+      const avgDelay = intervals.length > 0 
+        ? intervals.reduce((a, b) => a + b, 0) / intervals.length 
+        : 100;
+
+      const sortedIntervals = [...intervals].sort((a, b) => a - b);
+      const medianDelay = sortedIntervals.length > 0
+        ? sortedIntervals[Math.floor(sortedIntervals.length / 2)]
+        : 100;
+
+      const maxDelay = intervals.length > 0 ? Math.max(...intervals) : currentDelay;
+      const minDelay = intervals.length > 0 ? Math.min(...intervals) : currentDelay;
+      
+      const relativeIndex = currentDelay / avgDelay;
+
+      let classification = "Dentro da média";
+      if (relativeIndex < 0.75) classification = "Atraso baixo";
+      else if (relativeIndex >= 0.75 && relativeIndex <= 1.25) classification = "Dentro da média";
+      else if (relativeIndex > 1.25 && relativeIndex <= 2.00) classification = "Atraso elevado";
+      else if (relativeIndex > 2.00) classification = "Muito acima da média";
+
+      stats.push({
+        ten,
+        currentDelay,
+        avgDelay: Number(avgDelay.toFixed(2)),
+        medianDelay,
+        maxDelay,
+        minDelay,
+        relativeIndex: Number(relativeIndex.toFixed(2)),
+        classification
+      });
+    });
+
+    return stats.sort((a, b) => b.currentDelay - a.currentDelay);
+  });
