@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
-import { getStats, getResults, getTenDelayStats } from "@/lib/lottery.functions";
+import { getStats, getResults, getTenDelayStats, getGroupDelayStats } from "@/lib/lottery.functions";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useMemo, useEffect } from "react";
 import { format, subDays, differenceInDays } from "date-fns";
@@ -32,7 +32,7 @@ const ANIMAL_GROUPS = [
 ];
 
 function EstatisticasPage() {
-  const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'palpites' | 'logica-atraso' | 'ranking-completo'>('logica-atraso');
+  const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'palpites' | 'logica-atraso' | 'ranking-completo' | 'logica-grupos'>('logica-atraso');
   const [cruzData, setCruzData] = useState<string[]>([]);
   
   const { data: stats, isLoading: statsLoading } = useQuery({
@@ -48,6 +48,11 @@ function EstatisticasPage() {
   const { data: delayStats, isLoading: delayStatsLoading } = useQuery({
     queryKey: ["ten-delay-stats"],
     queryFn: () => getTenDelayStats(),
+  });
+
+  const { data: groupDelayStats, isLoading: groupDelayStatsLoading } = useQuery({
+    queryKey: ["group-delay-stats"],
+    queryFn: () => getGroupDelayStats(),
   });
 
 
@@ -195,7 +200,7 @@ function EstatisticasPage() {
           </div>
 
           {/* Tools Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-16">
              <Card 
                onClick={() => setActiveTab('quentes')}
                className={`bg-[#0D121F] border-white/10 rounded-2xl p-6 transition-all cursor-pointer group ${activeTab === 'quentes' ? 'border-yellow-500/50 ring-1 ring-yellow-500/20' : 'hover:border-yellow-500/30'}`}
@@ -219,6 +224,17 @@ function EstatisticasPage() {
              </Card>
 
              <Card 
+               onClick={() => setActiveTab('logica-grupos')}
+               className={`bg-[#0D121F] border-white/10 rounded-2xl p-6 transition-all cursor-pointer group ${activeTab === 'logica-grupos' ? 'border-emerald-500/50 ring-1 ring-emerald-500/20' : 'hover:border-emerald-500/30'}`}
+             >
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'logica-grupos' ? 'bg-emerald-500 text-[#0B0F19]' : 'bg-emerald-500/10 text-emerald-400'}`}>
+                   <LayoutGrid className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-black italic uppercase mb-2">Lógica Grupos</h3>
+                <p className="text-sm text-white/40 font-medium leading-snug">Logística avançada dos 25 grupos: atrasos, medianas e frequências.</p>
+             </Card>
+
+             <Card 
                onClick={() => setActiveTab('ranking-completo')}
                className={`bg-[#0D121F] border-white/10 rounded-2xl p-6 transition-all cursor-pointer group ${activeTab === 'ranking-completo' ? 'border-purple-500/50 ring-1 ring-purple-500/20' : 'hover:border-purple-500/30'}`}
              >
@@ -231,9 +247,9 @@ function EstatisticasPage() {
 
              <Card 
                onClick={() => setActiveTab('palpites')}
-               className={`bg-[#0D121F] border-white/10 rounded-2xl p-6 transition-all cursor-pointer group ${activeTab === 'palpites' ? 'border-emerald-500/50 ring-1 ring-emerald-500/20' : 'hover:border-emerald-500/30'}`}
+               className={`bg-[#0D121F] border-white/10 rounded-2xl p-6 transition-all cursor-pointer group ${activeTab === 'palpites' ? 'border-orange-500/50 ring-1 ring-orange-500/20' : 'hover:border-orange-500/30'}`}
              >
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'palpites' ? 'bg-emerald-500 text-[#0B0F19]' : 'bg-emerald-500/10 text-emerald-500'}`}>
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'palpites' ? 'bg-orange-500 text-[#0B0F19]' : 'bg-orange-500/10 text-orange-500'}`}>
                    <BrainCircuit className="w-6 h-6" />
                 </div>
                 <h3 className="text-xl font-black italic uppercase mb-2">Palpites IA</h3>
@@ -585,6 +601,118 @@ function EstatisticasPage() {
                               <div className="flex flex-col items-end">
                                 <span className="text-[8px] font-bold text-white/20 uppercase">Mín Hist.</span>
                                 <span className="text-[10px] font-black text-white/40">{item.minDelay}</span>
+                              </div>
+                            </div>
+                          </Card>
+                        );
+                      })
+                    )}
+                  </div>
+                </motion.div>
+              )}
+
+              {activeTab === 'logica-grupos' && (
+                <motion.div
+                  key="logica-grupos"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="space-y-8"
+                >
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <LayoutGrid className="w-6 h-6 text-emerald-500" />
+                      <h2 className="text-2xl font-black italic uppercase">Lógica dos Grupos</h2>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {groupDelayStatsLoading ? (
+                      Array.from({ length: 8 }).map((_, i) => (
+                        <div key={i} className="h-64 bg-white/5 animate-pulse rounded-2xl border border-white/10" />
+                      ))
+                    ) : (
+                      groupDelayStats?.map((item: any) => {
+                        const animal = ANIMAL_GROUPS.find(a => a.id === item.groupId);
+                        
+                        let colorClass = "text-emerald-500";
+                        let bgColorClass = "bg-emerald-500/10";
+                        let borderColorClass = "border-emerald-500/20";
+                        
+                        if (item.classification === "Muito acima da média") {
+                          colorClass = "text-red-500";
+                          bgColorClass = "bg-red-500/10";
+                          borderColorClass = "border-red-500/20";
+                        } else if (item.classification === "Atraso elevado") {
+                          colorClass = "text-yellow-500";
+                          bgColorClass = "bg-yellow-500/10";
+                          borderColorClass = "border-yellow-500/20";
+                        } else if (item.classification === "Dentro da média") {
+                          colorClass = "text-blue-500";
+                          bgColorClass = "bg-blue-500/10";
+                          borderColorClass = "border-blue-500/20";
+                        }
+
+                        return (
+                          <Card key={item.groupId} className="bg-[#0D121F] border-white/10 rounded-2xl p-6 hover:border-yellow-500/30 transition-all group relative overflow-hidden">
+                            <div className="flex items-center justify-between mb-6">
+                              <div className="flex items-center gap-3">
+                                <div className="text-3xl font-black text-white group-hover:text-yellow-500 transition-colors">{animal?.icon}</div>
+                                <div className="flex flex-col">
+                                  <span className="text-sm font-black uppercase italic text-white/80">{item.animal}</span>
+                                  <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest">Grupo {item.groupId}</span>
+                                </div>
+                              </div>
+                              <div className={`px-2 py-1 rounded text-[8px] font-black uppercase ${bgColorClass} ${colorClass} ${borderColorClass} border`}>
+                                {item.classification}
+                              </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-y-3 gap-x-4 mb-4">
+                              <div className="flex flex-col">
+                                <span className="text-[8px] font-bold text-white/20 uppercase">Atraso Atual</span>
+                                <span className="text-sm font-black text-white">{item.currentDelay}</span>
+                              </div>
+                              <div className="flex flex-col">
+                                <span className="text-[8px] font-bold text-white/20 uppercase">Índice Rel.</span>
+                                <span className={`text-sm font-black ${colorClass}`}>{item.relativeIndex}</span>
+                              </div>
+                              <div className="flex flex-col">
+                                <span className="text-[8px] font-bold text-white/20 uppercase">Mediana</span>
+                                <span className="text-sm font-black text-white/40">{item.medianDelay}</span>
+                              </div>
+                              <div className="flex flex-col">
+                                <span className="text-[8px] font-bold text-white/20 uppercase">Frequência</span>
+                                <span className="text-sm font-black text-white/40">{item.frequency}</span>
+                              </div>
+                            </div>
+
+                            <div className="space-y-4 pt-4 border-t border-white/5">
+                              <div>
+                                <span className="text-[8px] font-bold text-white/20 uppercase block mb-2">Frequência por Posição</span>
+                                <div className="flex justify-between items-end h-8 gap-1">
+                                  {[1, 2, 3, 4, 5].map(pos => {
+                                    const val = item.positionFreq[pos] || 0;
+                                    const max = Math.max(...Object.values(item.positionFreq) as number[], 1);
+                                    const height = Math.max((val / max) * 100, 5);
+                                    return (
+                                      <div key={pos} className="flex-1 flex flex-col items-center gap-1">
+                                        <div className="w-full bg-white/5 rounded-sm relative overflow-hidden h-full">
+                                          <div 
+                                            className={`absolute bottom-0 left-0 w-full ${colorClass.replace('text-', 'bg-')}`} 
+                                            style={{ height: `${height}%` }}
+                                          />
+                                        </div>
+                                        <span className="text-[7px] font-black text-white/20">{pos}º</span>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                              
+                              <div className="flex justify-between items-center text-[9px]">
+                                <span className="font-bold text-white/30 uppercase">Última Vez</span>
+                                <span className="font-black text-white/60">{item.lastOccurrenceDate ? format(new Date(item.lastOccurrenceDate), "dd/MM/yy") : "---"}</span>
                               </div>
                             </div>
                           </Card>
