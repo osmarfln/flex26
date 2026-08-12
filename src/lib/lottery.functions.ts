@@ -86,9 +86,10 @@ export const getStats = createServerFn({ method: "GET" })
         const lastDate = lastSeen[group];
         const lastDateObj = lastDate ? new Date(lastDate) : null;
         const days = lastDateObj ? Math.floor((new Date().getTime() - lastDateObj.getTime()) / (1000 * 60 * 60 * 24)) : 99;
+        const animalInfo = ANIMAL_GROUPS[group];
         return {
           group,
-          animal: ANIMAL_GROUPS[group].name,
+          animal: animalInfo ? animalInfo.name : "Desconhecido",
           days,
           lastSeen: lastDateObj ? lastDateObj.toLocaleDateString('pt-BR') : "Nunca"
         };
