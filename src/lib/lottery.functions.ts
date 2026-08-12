@@ -350,7 +350,9 @@ export const getRepetitionStats = createServerFn({ method: "GET" })
       sampleSize: results.length,
       periodAnalyzed: `${firstResultInSample?.date ? new Date(firstResultInSample.date).toLocaleDateString('pt-BR') : ''} - ${lastResult?.date ? new Date(lastResult.date).toLocaleDateString('pt-BR') : ''}`,
       timeRepetitionData: [] as { time: string, count: number }[],
+      detailedRepetitions: [] as any[],
     };
+
 
     const getGroupFromTen = (ten: string) => {
       const tenInt = parseInt(ten);
