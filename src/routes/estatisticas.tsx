@@ -857,7 +857,7 @@ function EstatisticasPage() {
                       </div>
 
                       <div className="bg-emerald-500/5 border border-emerald-500/10 rounded-2xl p-6 flex gap-4">
-                        <Info className="w-6 h-6 text-emerald-500 shrink-0" />
+                        <AlertCircle className="w-6 h-6 text-emerald-500 shrink-0" />
                         <div className="space-y-1">
                           <p className="text-xs font-bold text-emerald-500 uppercase tracking-wider">Metodologia de Análise</p>
                           <p className="text-xs text-white/40 leading-relaxed">
