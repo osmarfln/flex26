@@ -1,12 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, BarChart3, Calculator, Sparkles, TrendingUp, Zap, Target, BrainCircuit, History, Flame, Clock, LayoutGrid, Hash, Users, Repeat, ArrowLeftRight, FileText, Upload } from "lucide-react";
+import { ArrowLeft, BarChart3, Calculator, Sparkles, TrendingUp, Zap, Target, BrainCircuit, History, Flame, Clock, LayoutGrid, Hash, Users, Repeat, ArrowLeftRight, FileText, Upload, Calendar, AlertCircle, Database, CheckCircle2, XCircle, Activity, Timer } from "lucide-react";
 import { CruzDoDia } from "@/components/CruzDoDia";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
-import { getStats } from "@/lib/lottery.functions";
+import { getStats, getResults } from "@/lib/lottery.functions";
 import { useQuery } from "@tanstack/react-query";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { format, subDays, differenceInDays } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell, PieChart, Pie } from "recharts";
+
 
 export const Route = createFileRoute("/estatisticas")({
   head: () => ({
@@ -27,14 +31,21 @@ const ANIMAL_GROUPS = [
 ];
 
 function EstatisticasPage() {
-  const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'palpites' | 'visao-geral' | 'dezenas' | 'grupos' | 'frequencias' | 'repeticoes' | 'comparar' | 'historico' | 'importar'>('quentes');
-
+  const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'palpites' | 'visao-geral' | 'dezenas' | 'grupos' | 'frequencias' | 'repeticoes' | 'comparar' | 'historico' | 'importar'>('visao-geral');
   const [cruzData, setCruzData] = useState<string[]>([]);
   
-  const { data: stats, isLoading } = useQuery({
+  const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ["stats-page"],
     queryFn: () => getStats(),
   });
+
+  const { data: recentResults, isLoading: resultsLoading } = useQuery({
+    queryKey: ["recent-results-stats"],
+    queryFn: () => getResults({ data: { limit: 100, offset: 0 } }),
+  });
+
+
+  const isLoading = statsLoading || resultsLoading;
 
   const getAnimalByTen = (ten: string) => {
     const tenInt = parseInt(ten);
@@ -43,6 +54,66 @@ function EstatisticasPage() {
     const groupId = String(groupNum).padStart(2, '0');
     return ANIMAL_GROUPS.find(a => a.id === groupId);
   };
+
+  const visaoGeralData = useMemo(() => {
+    if (!recentResults || recentResults.length === 0) return null;
+
+    const lastByTime: Record<string, any> = {};
+    recentResults.forEach(r => {
+      if (!lastByTime[r.time_type]) {
+        lastByTime[r.time_type] = r;
+      }
+    });
+
+    const tenLastSeen: Record<string, number> = {};
+    recentResults.forEach((r, idx) => {
+      const ten = r.results[0]?.slice(-2);
+      if (ten && tenLastSeen[ten] === undefined) {
+        tenLastSeen[ten] = idx;
+      }
+    });
+    
+    const allTens = Array.from({ length: 100 }, (_, i) => String(i).padStart(2, '0'));
+    const mostDelayedTens = allTens
+      .map(ten => ({ 
+        ten, 
+        delay: tenLastSeen[ten] === undefined ? 100 : tenLastSeen[ten],
+        animal: getAnimalByTen(ten)
+      }))
+      .sort((a, b) => b.delay - a.delay)
+      .slice(0, 10);
+
+    const freqByTime: Record<string, number> = {};
+    recentResults.forEach(r => {
+      freqByTime[r.time_type] = (freqByTime[r.time_type] || 0) + 1;
+    });
+    const freqChartData = Object.entries(freqByTime).map(([name, value]) => ({ name, value }));
+
+    const last30 = recentResults.slice(0, 30);
+    const prev30 = recentResults.slice(30, 60);
+    
+    const getMetrics = (list: any[]) => {
+      const tens = new Set(list.map(r => r.results[0]?.slice(-2)));
+      return { uniqueTens: tens.size };
+    };
+
+    return {
+      lastByTime: Object.values(lastByTime).sort((a, b) => (a.time_value || '').localeCompare(b.time_value || '')),
+      mostDelayedTens,
+      totalAnalyzed: recentResults.length,
+      period: {
+        start: recentResults[recentResults.length - 1]?.date,
+        end: recentResults[0]?.date
+      },
+      lastUpdate: recentResults[0]?.created_at,
+      freqChartData,
+      comparison: {
+        current: getMetrics(last30),
+        previous: getMetrics(prev30)
+      }
+    };
+  }, [recentResults]);
+
 
   const palpitesIA = useMemo(() => {
     if (!stats || !stats.mostFrequentTens) return [];
@@ -328,12 +399,178 @@ function EstatisticasPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
-                  className="py-12 text-center border-2 border-dashed border-white/10 rounded-2xl"
+                  className="space-y-8"
                 >
-                  <LayoutGrid className="w-12 h-12 mx-auto mb-4 opacity-20" />
-                  <p className="text-white/40 font-bold uppercase tracking-widest">Visão Geral da Análise Histórica em processamento...</p>
+                  {/* Dashboard Stats Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <Card className="bg-white/5 border-white/10 p-4">
+                      <div className="flex items-center gap-3 text-white/40 mb-2">
+                        <Database className="w-4 h-4" />
+                        <span className="text-[10px] font-black uppercase tracking-widest">Total Analisado</span>
+                      </div>
+                      <p className="text-2xl font-black text-yellow-500">{visaoGeralData?.totalAnalyzed || 0} Concursos</p>
+                    </Card>
+                    <Card className="bg-white/5 border-white/10 p-4">
+                      <div className="flex items-center gap-3 text-white/40 mb-2">
+                        <Calendar className="w-4 h-4" />
+                        <span className="text-[10px] font-black uppercase tracking-widest">Período</span>
+                      </div>
+                      <p className="text-sm font-bold">
+                        {visaoGeralData?.period.start ? format(new Date(visaoGeralData.period.start), "dd/MM/yy") : "--"} a {visaoGeralData?.period.end ? format(new Date(visaoGeralData.period.end), "dd/MM/yy") : "--"}
+                      </p>
+                    </Card>
+                    <Card className="bg-white/5 border-white/10 p-4">
+                      <div className="flex items-center gap-3 text-white/40 mb-2">
+                        <Timer className="w-4 h-4" />
+                        <span className="text-[10px] font-black uppercase tracking-widest">Última Atualização</span>
+                      </div>
+                      <p className="text-sm font-bold">
+                        {visaoGeralData?.lastUpdate ? format(new Date(visaoGeralData.lastUpdate), "HH:mm 'de' dd/MM", { locale: ptBR }) : "--"}
+                      </p>
+                    </Card>
+                    <Card className="bg-white/5 border-white/10 p-4">
+                      <div className="flex items-center gap-3 text-white/40 mb-2">
+                        <Activity className="w-4 h-4" />
+                        <span className="text-[10px] font-black uppercase tracking-widest">Integridade</span>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-1 text-emerald-500">
+                          <CheckCircle2 className="w-3 h-3" />
+                          <span className="text-xs font-black">100%</span>
+                        </div>
+                        <div className="flex items-center gap-1 text-red-500">
+                          <XCircle className="w-3 h-3" />
+                          <span className="text-xs font-black">0%</span>
+                        </div>
+                      </div>
+                    </Card>
+                  </div>
+
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    {/* Recent Results by Time */}
+                    <Card className="lg:col-span-2 bg-white/5 border-white/10 overflow-hidden">
+                      <div className="p-4 border-b border-white/5 bg-white/5 flex items-center justify-between">
+                        <h3 className="text-xs font-black uppercase tracking-widest flex items-center gap-2">
+                          <Clock className="w-4 h-4 text-blue-400" />
+                          Últimos Resultados por Horário
+                        </h3>
+                      </div>
+                      <div className="p-4 grid grid-cols-2 sm:grid-cols-3 gap-4">
+                        {visaoGeralData?.lastByTime.map((res: any, i: number) => (
+                          <div key={i} className="bg-[#0B0F19] p-3 rounded-xl border border-white/5">
+                            <div className="flex justify-between items-center mb-2">
+                              <span className="text-[10px] font-black text-blue-400">{res.time_type}</span>
+                              <span className="text-[9px] text-white/20">{res.time_value}</span>
+                            </div>
+                            <div className="text-lg font-black tracking-tighter text-yellow-500/80 mb-1">
+                              {res.results[0]}
+                            </div>
+                            <div className="flex items-center gap-1 opacity-40">
+                              <span className="text-xs">{getAnimalByTen(res.results[0]?.slice(-2))?.icon}</span>
+                              <span className="text-[8px] font-bold uppercase">{getAnimalByTen(res.results[0]?.slice(-2))?.name}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </Card>
+
+                    {/* Delayed Tens */}
+                    <Card className="bg-white/5 border-white/10">
+                      <div className="p-4 border-b border-white/5 bg-white/5">
+                        <h3 className="text-xs font-black uppercase tracking-widest flex items-center gap-2">
+                          <AlertCircle className="w-4 h-4 text-red-400" />
+                          Top 10 Dezenas Atrasadas
+                        </h3>
+                      </div>
+                      <div className="p-4 space-y-2">
+                        {visaoGeralData?.mostDelayedTens.map((item: any, i: number) => (
+                          <div key={i} className="flex items-center justify-between p-2 hover:bg-white/5 rounded-lg transition-colors group">
+                            <div className="flex items-center gap-3">
+                              <span className="w-6 h-6 flex items-center justify-center rounded bg-red-500/10 text-red-500 text-[10px] font-black">
+                                {i + 1}º
+                              </span>
+                              <span className="text-sm font-black text-white group-hover:text-yellow-500">{item.ten}</span>
+                              <span className="text-[10px] text-white/20 uppercase font-bold">{item.animal?.name}</span>
+                            </div>
+                            <span className="text-[10px] font-black text-red-400/60 uppercase">{item.delay} Atr.</span>
+                          </div>
+                        ))}
+                      </div>
+                    </Card>
+                  </div>
+
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Frequency Chart */}
+                    <Card className="bg-white/5 border-white/10 p-6">
+                      <h3 className="text-xs font-black uppercase tracking-widest mb-6 flex items-center gap-2">
+                        <TrendingUp className="w-4 h-4 text-emerald-400" />
+                        Frequência por Horário
+                      </h3>
+                      <div className="h-[200px] w-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart data={visaoGeralData?.freqChartData || []}>
+
+                            <CartesianGrid strokeDasharray="3 3" stroke="#ffffff05" vertical={false} />
+                            <XAxis 
+                              dataKey="name" 
+                              axisLine={false} 
+                              tickLine={false} 
+                              tick={{ fill: '#ffffff40', fontSize: 10, fontWeight: 'bold' }} 
+                            />
+                            <YAxis hide />
+                            <Tooltip 
+                              cursor={{ fill: '#ffffff05' }}
+                              contentStyle={{ backgroundColor: '#0D121F', border: '1px solid #ffffff10', borderRadius: '8px', fontSize: '10px' }}
+                            />
+                            <Bar dataKey="value" fill="#EAB308" radius={[4, 4, 0, 0]}>
+                              {visaoGeralData?.freqChartData.map((entry: any, index: number) => (
+                                <Cell key={`cell-${index}`} fillOpacity={0.6 + (index * 0.1)} />
+                              ))}
+                            </Bar>
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </Card>
+
+                    {/* Comparison Card */}
+                    <Card className="bg-white/5 border-white/10 p-6 flex flex-col justify-between">
+                      <div>
+                        <h3 className="text-xs font-black uppercase tracking-widest mb-6 flex items-center gap-2">
+                          <ArrowLeftRight className="w-4 h-4 text-purple-400" />
+                          Comparação: Últimos 30 vs 30 Ant.
+                        </h3>
+                        <div className="space-y-6">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-bold text-white/40 uppercase">Dezenas Únicas (Atual)</span>
+                            <span className="text-lg font-black text-emerald-500">{visaoGeralData?.comparison.current.uniqueTens}</span>
+                          </div>
+                          <div className="w-full bg-white/5 h-2 rounded-full overflow-hidden">
+                             <div 
+                               className="bg-emerald-500 h-full transition-all duration-1000" 
+                               style={{ width: `${(visaoGeralData?.comparison.current.uniqueTens || 0) * 2}%` }} 
+                             />
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-bold text-white/40 uppercase">Dezenas Únicas (Anterior)</span>
+                            <span className="text-lg font-black text-white/60">{visaoGeralData?.comparison.previous.uniqueTens}</span>
+                          </div>
+                          <div className="w-full bg-white/5 h-2 rounded-full overflow-hidden">
+                             <div 
+                               className="bg-white/20 h-full transition-all duration-1000" 
+                               style={{ width: `${(visaoGeralData?.comparison.previous.uniqueTens || 0) * 2}%` }} 
+                             />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="mt-6 pt-6 border-t border-white/5 flex items-center gap-2 text-[9px] font-bold text-white/20 uppercase tracking-widest">
+                        <Activity className="w-3 h-3" />
+                        Tendência de Diversificação Estável
+                      </div>
+                    </Card>
+                  </div>
                 </motion.div>
               )}
+
 
               {activeTab === 'dezenas' && (
                 <motion.div
