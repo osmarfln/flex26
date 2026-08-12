@@ -276,9 +276,7 @@ export const getRepetitionStats = createServerFn({ method: "GET" })
       maxConsecutive: 0,
       historicalPercent: 0,
       sampleSize: results.length,
-      const periodEnd = results[0]?.date ? new Date(results[0].date).toLocaleDateString('pt-BR') : '';
-      const periodStart = results[results.length - 1]?.date ? new Date(results[results.length - 1].date).toLocaleDateString('pt-BR') : '';
-      repetitionStats.periodAnalyzed = `${periodStart} - ${periodEnd}`;
+      periodAnalyzed: `${results[results.length - 1]?.date ? new Date(results[results.length - 1].date).toLocaleDateString('pt-BR') : ''} - ${results[0]?.date ? new Date(results[0].date).toLocaleDateString('pt-BR') : ''}`,
       timeRepetitionData: [] as { time: string, count: number }[],
     };
 
