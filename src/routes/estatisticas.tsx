@@ -59,6 +59,26 @@ function EstatisticasPage() {
     queryFn: () => getRepetitionStats(),
   });
 
+  // Recalcula todas as análises a cada novo resultado publicado
+  useEffect(() => {
+    const channel = supabase
+      .channel('estatisticas-db-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'lottery_results' },
+        () => {
+          ["stats-page", "recent-results-stats", "ten-delay-stats", "group-delay-stats", "repetition-stats"].forEach(
+            (key) => queryClient.invalidateQueries({ queryKey: [key] })
+          );
+        }
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
+
+
   const isLoading = statsLoading || resultsLoading || delayStatsLoading || groupDelayStatsLoading;
   const tenStats = delayStats;
 
