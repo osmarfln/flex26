@@ -1,7 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { useState } from "react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { getSyncStatus } from "@/lib/realtime.functions";
+import { getScheduleSyncMatrix, runSyncNow } from "@/lib/robot.functions";
 import { useLotteryRealtime } from "@/hooks/useLotteryRealtime";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -54,6 +57,33 @@ export const Route = createFileRoute("/robot-status")({
   }),
 });
 
+const STATUS_LABEL: Record<string, string> = {
+  sincronizado: "Sincronizado",
+  divergente: "Divergente",
+  pendente: "Pendente",
+  aguardando: "Aguardando",
+};
+
+const STATUS_STYLE: Record<string, string> = {
+  sincronizado: "bg-emerald-500/15 text-emerald-400",
+  divergente: "bg-red-500/15 text-red-400",
+  pendente: "bg-yellow-500/15 text-yellow-400",
+  aguardando: "bg-white/10 text-white/50",
+};
+
+/** Formata um instante ISO no horário oficial de Brasília. */
+function formatBrasilia(iso: string) {
+  return new Intl.DateTimeFormat("pt-BR", {
+    timeZone: "America/Sao_Paulo",
+    day: "2-digit",
+    month: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23",
+  }).format(new Date(iso));
+}
+
 const CHART_TOOLTIP = {
   contentStyle: {
     background: "#0D121F",
@@ -71,6 +101,33 @@ function RobotStatus() {
     queryFn: () => getSyncStatus(),
     refetchInterval: 15000,
   });
+
+  const queryClient = useQueryClient();
+  const [syncMessage, setSyncMessage] = useState<string | null>(null);
+
+  const { data: matrix } = useQuery({
+    queryKey: ["schedule-sync-matrix"],
+    queryFn: () => getScheduleSyncMatrix(),
+    refetchInterval: 30000,
+  });
+
+  const triggerSync = useServerFn(runSyncNow);
+  const syncMutation = useMutation({
+    mutationFn: () => triggerSync(),
+    onSuccess: (res: any) => {
+      setSyncMessage(
+        res?.ok
+          ? `Sincronização concluída: ${res.synced} registros verificados na origem.`
+          : `Falha na sincronização: ${res?.error ?? "erro desconhecido"}`,
+      );
+      queryClient.invalidateQueries();
+    },
+    onError: (err: any) => setSyncMessage(`Falha na sincronização: ${err?.message ?? "erro"}`),
+  });
+  const handleSyncNow = () => {
+    setSyncMessage(null);
+    syncMutation.mutate();
+  };
 
   const list: any[] = logs ?? [];
   const lastSync = list[0];
