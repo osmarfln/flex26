@@ -25,6 +25,8 @@ export const Route = createFileRoute('/api/public/sync-results')({
           const body = (await request.json().catch(() => ({}))) as any;
           const dateParam = body.date || new Date().toISOString().split('T')[0];
           const daysToSync = body.daysToSync || 1;
+          const syncAll = body.syncAll || false;
+
           
           console.log(`[SYNC] Request received. Date: ${dateParam}, Days: ${daysToSync}`);
           
