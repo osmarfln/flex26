@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { base44 } from "@/api/base44Client";
+import { getResults, getStats } from "@/lib/lottery.functions";
 import { useQuery } from "@tanstack/react-query";
 import { 
   Trophy, 
