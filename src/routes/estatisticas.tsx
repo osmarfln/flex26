@@ -299,12 +299,12 @@ function EstatisticasPage() {
                         <div key={i} className="h-32 bg-white/5 animate-pulse rounded-2xl" />
                       ))
                     ) : (
-                      stats?.mostFrequentTens.map((item, i) => {
+                      tenStats?.slice(0, 20).map((item: any, i: number) => {
                         const animal = getAnimalByTen(item.ten);
                         return (
                           <Card key={i} className="dashboard-card p-4 text-center hover:border-primary/50 transition-all bg-white/[0.03]">
                             <span className="text-4xl font-black text-primary mb-2 block drop-shadow-[0_0_10px_rgba(var(--primary),0.3)]">{item.ten}</span>
-                            <p className="text-xs font-bold uppercase text-white/40">{item.count} sorteios</p>
+                            <p className="text-xs font-bold uppercase text-white/40">{item.freqs[300]} sorteios (300)</p>
                             <div className="mt-2 flex items-center justify-center gap-2">
                               <span className="text-lg">{animal?.icon}</span>
                               <span className="text-[10px] font-black uppercase text-white/60">{animal?.name}</span>
@@ -312,6 +312,7 @@ function EstatisticasPage() {
                           </Card>
                         );
                       })
+
                     )}
                   </div>
                 </motion.div>
