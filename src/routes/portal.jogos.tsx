@@ -2,47 +2,57 @@ import { createFileRoute } from '@tanstack/react-router';
 import ManagementLayout from '@/components/layout/ManagementLayout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
-import { Trophy, Clock, PlayCircle, Settings2, Hash, Hash as NumbersIcon, Edit3, Trash2 } from 'lucide-react';
+import { useServerFn } from '@tanstack/react-start';
+import { Trophy, Clock, Hash as NumbersIcon } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { getResults } from '@/lib/lottery.functions';
+import { DRAW_SCHEDULE, brasiliaDateISO } from '@/lib/draw-order';
+import { getAnimalByGroup, getAnimalByTen } from '@/lib/animals';
+import { useLotteryRealtime } from '@/hooks/useLotteryRealtime';
 
 export const Route = createFileRoute('/portal/jogos')({
   component: JogosManagementPage,
 });
 
 function JogosManagementPage() {
-  const { data: games, isLoading } = useQuery({
-    queryKey: ['games-rio'],
-    queryFn: () => base44.games.list(),
+  const { lastUpdate } = useLotteryRealtime("portal-jogos-db-changes");
+  const fetchResults = useServerFn(getResults);
+  const today = brasiliaDateISO();
+
+  const { data: results, isLoading } = useQuery({
+    queryKey: ['portal-jogos', today, lastUpdate],
+    queryFn: () => fetchResults({ data: { date: today, limit: 50, offset: 0 } }),
+    staleTime: 0,
+    gcTime: 0,
   });
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'live':
-        return <Badge className="bg-red-500 hover:bg-red-600 animate-pulse"><PlayCircle className="w-3 h-3 mr-1" /> Ao Vivo</Badge>;
-      case 'scheduled':
-        return <Badge variant="secondary"><Clock className="w-3 h-3 mr-1" /> Agendado</Badge>;
-      case 'finished':
-        return <Badge variant="default" className="bg-emerald-500 hover:bg-emerald-600"><Trophy className="w-3 h-3 mr-1" /> Finalizado</Badge>;
-      default:
-        return <Badge variant="outline">{status}</Badge>;
-    }
-  };
+  const games = DRAW_SCHEDULE.map((slot) => {
+    const found = (results ?? []).find((r) => r.time_type === slot.timeType);
+    const prizes = found?.results ?? [];
+    const animal =
+      getAnimalByGroup(found?.animal_group) ??
+      (prizes[0] ? getAnimalByTen(prizes[0]) : undefined);
+    return {
+      id: slot.timeType,
+      type: slot.timeType,
+      label: slot.label,
+      time: found?.time_value || slot.timeValue,
+      status: prizes.length > 0 ? 'finished' : 'scheduled',
+      result: prizes,
+      animal: found?.animal || animal?.name || '',
+      group: found?.animal_group || animal?.id || '',
+    };
+  });
 
   return (
     <ManagementLayout currentPageName="Gerenciar Jogos - Rio">
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-bold text-foreground">Resultados Jogo do Bicho Rio</h2>
-            <p className="text-muted-foreground">Administre os sorteios diários da Flex Gerenciamentos.</p>
-          </div>
-          <Button className="bg-primary hover:bg-primary/90">
-            <Settings2 className="w-4 h-4 mr-2" />
-            Configurações da Banca
-          </Button>
+        <div>
+          <h2 className="text-2xl font-bold text-foreground">Resultados Jogo do Bicho Rio</h2>
+          <p className="text-muted-foreground">
+            Dados oficiais capturados pelo robô — {new Date(today + 'T12:00:00').toLocaleDateString('pt-BR')}
+          </p>
         </div>
 
         {isLoading ? (
@@ -53,7 +63,7 @@ function JogosManagementPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {games?.map((game: any) => (
+            {games.map((game) => (
               <motion.div
                 key={game.id}
                 initial={{ opacity: 0, scale: 0.95 }}
@@ -68,14 +78,20 @@ function JogosManagementPage() {
                           <NumbersIcon className="w-5 h-5" />
                           {game.type}
                         </CardTitle>
-                        <CardDescription>{game.time} - {game.date}</CardDescription>
+                        <CardDescription>{game.time} - {game.label}</CardDescription>
                       </div>
-                      {getStatusBadge(game.status)}
+                      {game.status === 'finished' ? (
+                        <Badge className="bg-emerald-500 hover:bg-emerald-600">
+                          <Trophy className="w-3 h-3 mr-1" /> Finalizado
+                        </Badge>
+                      ) : (
+                        <Badge variant="secondary"><Clock className="w-3 h-3 mr-1" /> Aguardando</Badge>
+                      )}
                     </div>
                   </CardHeader>
                   <CardContent className="pt-6">
                     <div className="space-y-4">
-                      {game.result && game.result.length > 0 ? (
+                      {game.result.length > 0 ? (
                         <div className="grid grid-cols-1 gap-2">
                           {game.result.slice(0, 5).map((res: string, idx: number) => (
                             <div key={idx} className="flex items-center justify-between bg-accent/50 p-2 rounded">
@@ -86,7 +102,7 @@ function JogosManagementPage() {
                         </div>
                       ) : (
                         <div className="h-[200px] flex items-center justify-center border-2 border-dashed rounded-lg">
-                          <p className="text-muted-foreground text-sm italic">Aguardando sorteio...</p>
+                          <p className="text-destructive text-sm italic animate-pulse">Aguardando resultado...</p>
                         </div>
                       )}
 
@@ -102,16 +118,6 @@ function JogosManagementPage() {
                           </div>
                         </div>
                       )}
-
-                      <div className="flex gap-2 pt-2">
-                        <Button variant="outline" className="flex-1 text-xs h-8">
-                          <Edit3 className="w-3 h-3 mr-1" />
-                          Editar
-                        </Button>
-                        <Button variant="ghost" className="text-destructive hover:text-destructive hover:bg-destructive/10 h-8 w-8 p-0">
-                          <Trash2 className="w-3 h-3" />
-                        </Button>
-                      </div>
                     </div>
                   </CardContent>
                 </Card>
