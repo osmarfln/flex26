@@ -267,70 +267,71 @@ function Index() {
           <div className="lg:col-span-12">
             {isLoadingGames ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {Array.from({ length: 3 }).map((_, i) => (
+                {Array.from({ length: 6 }).map((_, i) => (
                   <div key={i} className="h-64 rounded-2xl bg-white/5 animate-pulse border border-white/10" />
                 ))}
               </div>
-            ) : !games || games.length === 0 ? (
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="py-20 text-center bg-[#0D121F] border border-white/5 rounded-3xl"
-              >
-                <div className="w-20 h-20 bg-yellow-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Clock className="w-10 h-10 text-yellow-500" />
-                </div>
-                <h3 className="text-2xl font-black italic tracking-tighter uppercase mb-2">Painel Zerado</h3>
-                <p className="text-red-500 font-bold uppercase tracking-[0.2em] text-sm mb-8 flex items-center justify-center gap-2">
-                  Aguardando... <span className="animate-pulse">...</span>
-                </p>
-                <Link to="/historico">
-                  <Button variant="outline" className="border-white/10 bg-white/5 hover:bg-white/10 text-xs font-bold uppercase tracking-widest rounded-xl px-8 h-12">
-                    <History className="w-4 h-4 mr-2" /> Ver Histórico Completo
-                  </Button>
-                </Link>
-              </motion.div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {games.map((game: any) => (
-                  <Card key={game.id} className="bg-[#0D121F] border-white/10 rounded-2xl overflow-hidden group hover:border-yellow-500/40 transition-all relative">
-                    {game.status === 'live' && (
-                      <div className="absolute inset-0 border border-yellow-500/20 rounded-2xl pointer-events-none" />
-                    )}
-                    <CardHeader className="p-5 pb-2">
-                      <div className="flex justify-between items-start mb-4">
-                        <CardTitle className="text-xl font-black italic tracking-tighter uppercase">
-                          {game.time_type} RIO — {game.time_value || '--:--'}hs
-                        </CardTitle>
-                        {game.status === 'live' && (
-                          <div className="px-2 py-1 bg-yellow-500 text-[#0B0F19] text-[9px] font-black uppercase rounded shadow-lg shadow-yellow-500/20">
-                            Mais Recente
-                          </div>
-                        )}
-                      </div>
-                    </CardHeader>
-                    <CardContent className="p-5 pt-0">
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-1">
-                          {((game.results ?? game.result ?? []).length > 0 ? (game.results ?? game.result).slice(0, 5) : ['----', '----', '----', '----', '----']).map((res: string, idx: number) => (
-                            <div key={idx} className="flex gap-4 text-sm font-bold items-baseline">
-                              <span className="text-white/20 w-4">{idx + 1}º</span>
-                              <span className="font-mono tracking-widest text-lg">{res}</span>
+                {[
+                  { type: 'PTT', time: '09:00' },
+                  { type: 'PTM', time: '11:00' },
+                  { type: 'PT', time: '14:00' },
+                  { type: 'PTV', time: '16:00' },
+                  { type: 'PTN', time: '18:00' },
+                  { type: 'COR', time: '21:00' }
+                ].map((schedule) => {
+                  const game = games?.find((g: any) => g.time_type.includes(schedule.type));
+                  
+                  return (
+                    <Card key={schedule.type} className={`bg-[#0D121F] border-white/10 rounded-2xl overflow-hidden group hover:border-yellow-500/40 transition-all relative ${!game ? 'opacity-60' : ''}`}>
+                      {game?.status === 'live' && (
+                        <div className="absolute inset-0 border border-yellow-500/20 rounded-2xl pointer-events-none" />
+                      )}
+                      <CardHeader className="p-5 pb-2">
+                        <div className="flex justify-between items-start mb-4">
+                          <CardTitle className="text-xl font-black italic tracking-tighter uppercase">
+                            {schedule.type} RIO — {schedule.time}hs
+                          </CardTitle>
+                          {game?.status === 'live' && (
+                            <div className="px-2 py-1 bg-yellow-500 text-[#0B0F19] text-[9px] font-black uppercase rounded shadow-lg shadow-yellow-500/20">
+                              Mais Recente
                             </div>
-                          ))}
+                          )}
                         </div>
-                        <div className="flex flex-col items-center justify-center bg-white/[0.02] rounded-xl p-4 border border-white/5 relative">
-                          <div className="w-16 h-16 mb-2 text-yellow-500 flex items-center justify-center text-4xl">
-                             {ANIMAL_GROUPS.find(a => a.id === game.animal_group)?.icon || <Sparkles className="w-8 h-8 opacity-20" />}
+                      </CardHeader>
+                      <CardContent className="p-5 pt-0">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-1">
+                            {game ? (
+                              ((game.results ?? game.result ?? []).length > 0 ? (game.results ?? game.result).slice(0, 5) : ['----', '----', '----', '----', '----']).map((res: string, idx: number) => (
+                                <div key={idx} className="flex gap-4 text-sm font-bold items-baseline">
+                                  <span className="text-white/20 w-4">{idx + 1}º</span>
+                                  <span className="font-mono tracking-widest text-lg">{res}</span>
+                                </div>
+                              ))
+                            ) : (
+                              [1, 2, 3, 4, 5].map((idx) => (
+                                <div key={idx} className="flex gap-4 text-sm font-bold items-baseline">
+                                  <span className="text-white/20 w-4">{idx}º</span>
+                                  <span className="font-mono tracking-widest text-lg text-red-500 italic">Aguardando... <span className="animate-pulse">...</span></span>
+                                </div>
+                              ))
+                            )}
                           </div>
-                          <p className="text-[10px] text-white/40 font-bold uppercase tracking-wider mb-1">Grupo</p>
-                          <p className="text-3xl font-black text-yellow-500 tracking-tighter leading-none">{game.animal_group || '--'}</p>
-                          <p className="text-[11px] font-bold mt-2 text-white/80 uppercase tracking-tight">{game.animal || 'Aguardando'}</p>
+                          <div className="flex flex-col items-center justify-center bg-white/[0.02] rounded-xl p-4 border border-white/5 relative">
+                            <div className="w-16 h-16 mb-2 text-yellow-500 flex items-center justify-center text-4xl">
+                               {game ? (ANIMAL_GROUPS.find(a => a.id === game.animal_group)?.icon || <Sparkles className="w-8 h-8 opacity-20" />) : <Clock className="w-8 h-8 opacity-20 text-red-500" />}
+                            </div>
+                            <p className="text-[10px] text-white/40 font-bold uppercase tracking-wider mb-1">Grupo</p>
+                            <p className={`text-3xl font-black tracking-tighter leading-none ${game ? 'text-yellow-500' : 'text-red-500/40'}`}>{game?.animal_group || '--'}</p>
+                            <p className={`text-[11px] font-bold mt-2 uppercase tracking-tight ${game ? 'text-white/80' : 'text-red-500 italic'}`}>{game?.animal || 'Aguardando'}</p>
+                          </div>
                         </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                      </CardContent>
+                    </Card>
+                  );
+                })}
               </div>
             )}
           </div>
