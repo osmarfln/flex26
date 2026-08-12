@@ -281,11 +281,13 @@ function Index() {
                   { type: 'PTN', time: '18:00' },
                   { type: 'COR', time: '21:00' }
                 ].map((schedule) => {
-                  const game = games?.find((g: any) => g.time_type.includes(schedule.type));
+                  const sortedGames = [...(games || [])].sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
+                  const game = sortedGames.find((g: any) => g.time_type.includes(schedule.type));
+                  const isLatest = game && sortedGames[0]?.id === game.id;
                   
                   return (
                     <Card key={schedule.type} className={`bg-[#0D121F] border-white/10 rounded-2xl overflow-hidden group hover:border-yellow-500/40 transition-all relative ${!game ? 'opacity-60' : ''}`}>
-                      {game?.status === 'live' && (
+                      {isLatest && (
                         <div className="absolute inset-0 border border-yellow-500/20 rounded-2xl pointer-events-none" />
                       )}
                       <CardHeader className="p-5 pb-2">
@@ -293,7 +295,7 @@ function Index() {
                           <CardTitle className="text-xl font-black italic tracking-tighter uppercase">
                             {schedule.type} RIO — {schedule.time}hs
                           </CardTitle>
-                          {game?.status === 'live' && (
+                          {isLatest && (
                             <div className="px-2 py-1 bg-yellow-500 text-[#0B0F19] text-[9px] font-black uppercase rounded shadow-lg shadow-yellow-500/20">
                               Mais Recente
                             </div>
@@ -304,7 +306,7 @@ function Index() {
                         <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-1">
                             {game ? (
-                              ((game.results ?? game.result ?? []).length > 0 ? (game.results ?? game.result).slice(0, 5) : ['----', '----', '----', '----', '----']).map((res: string, idx: number) => (
+                              ((game.results || []).length > 0 ? game.results.slice(0, 5) : ['----', '----', '----', '----', '----']).map((res: string, idx: number) => (
                                 <div key={idx} className="flex gap-4 text-sm font-bold items-baseline">
                                   <span className="text-white/20 w-4">{idx + 1}º</span>
                                   <span className="font-mono tracking-widest text-lg">{res}</span>
