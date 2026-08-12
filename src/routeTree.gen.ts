@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CruzDoDiaRouteImport } from './routes/cruz-do-dia'
+import { Route as EstatisticasRouteImport } from './routes/estatisticas'
 import { Route as HistoricoRouteImport } from './routes/historico'
 import { Route as PortalRouteImport } from './routes/portal'
 import { Route as RobotStatusRouteImport } from './routes/robot-status'
@@ -25,6 +26,11 @@ const IndexRoute = IndexRouteImport.update({
 const CruzDoDiaRoute = CruzDoDiaRouteImport.update({
   id: '/cruz-do-dia',
   path: '/cruz-do-dia',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EstatisticasRoute = EstatisticasRouteImport.update({
+  id: '/estatisticas',
+  path: '/estatisticas',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HistoricoRoute = HistoricoRouteImport.update({
@@ -56,6 +62,7 @@ const ApiPublicSyncResultsRoute = ApiPublicSyncResultsRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/cruz-do-dia': typeof CruzDoDiaRoute
+  '/estatisticas': typeof EstatisticasRoute
   '/historico': typeof HistoricoRoute
   '/portal': typeof PortalRouteWithChildren
   '/robot-status': typeof RobotStatusRoute
@@ -65,6 +72,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/cruz-do-dia': typeof CruzDoDiaRoute
+  '/estatisticas': typeof EstatisticasRoute
   '/historico': typeof HistoricoRoute
   '/portal': typeof PortalRouteWithChildren
   '/robot-status': typeof RobotStatusRoute
@@ -75,6 +83,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/cruz-do-dia': typeof CruzDoDiaRoute
+  '/estatisticas': typeof EstatisticasRoute
   '/historico': typeof HistoricoRoute
   '/portal': typeof PortalRouteWithChildren
   '/robot-status': typeof RobotStatusRoute
@@ -86,6 +95,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/cruz-do-dia'
+    | '/estatisticas'
     | '/historico'
     | '/portal'
     | '/robot-status'
@@ -95,6 +105,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/cruz-do-dia'
+    | '/estatisticas'
     | '/historico'
     | '/portal'
     | '/robot-status'
@@ -104,6 +115,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/cruz-do-dia'
+    | '/estatisticas'
     | '/historico'
     | '/portal'
     | '/robot-status'
@@ -114,6 +126,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CruzDoDiaRoute: typeof CruzDoDiaRoute
+  EstatisticasRoute: typeof EstatisticasRoute
   HistoricoRoute: typeof HistoricoRoute
   PortalRoute: typeof PortalRouteWithChildren
   RobotStatusRoute: typeof RobotStatusRoute
@@ -134,6 +147,13 @@ declare module '@tanstack/react-router' {
       path: '/cruz-do-dia'
       fullPath: '/cruz-do-dia'
       preLoaderRoute: typeof CruzDoDiaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/estatisticas': {
+      id: '/estatisticas'
+      path: '/estatisticas'
+      fullPath: '/estatisticas'
+      preLoaderRoute: typeof EstatisticasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/historico': {
@@ -188,6 +208,7 @@ const PortalRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CruzDoDiaRoute: CruzDoDiaRoute,
+  EstatisticasRoute: EstatisticasRoute,
   HistoricoRoute: HistoricoRoute,
   PortalRoute: PortalRouteWithChildren,
   RobotStatusRoute: RobotStatusRoute,
