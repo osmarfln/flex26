@@ -1,9 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { getSyncStatus } from "@/lib/realtime.functions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { RefreshCw, CheckCircle2, XCircle, Clock, Activity } from "lucide-react";
+import { RefreshCw, CheckCircle2, XCircle, Clock, Activity, ArrowLeft } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -24,9 +24,14 @@ function RobotStatus() {
     <div className="min-h-screen bg-[#0B0F19] text-white p-6 md:p-12">
       <div className="max-w-4xl mx-auto">
         <header className="flex items-center justify-between mb-12">
-          <div>
-            <h1 className="text-3xl font-black italic tracking-tighter uppercase">Status do Robô</h1>
-            <p className="text-white/40 text-sm mt-1 uppercase tracking-widest">Monitoramento de sincronização em tempo real</p>
+          <div className="flex items-center gap-6">
+            <Link to="/" className="p-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all group">
+              <ArrowLeft className="w-5 h-5 text-white/40 group-hover:text-yellow-500 transition-colors" />
+            </Link>
+            <div>
+              <h1 className="text-3xl font-black italic tracking-tighter uppercase">Status do Robô</h1>
+              <p className="text-white/40 text-sm mt-1 uppercase tracking-widest">Monitoramento de sincronização em tempo real</p>
+            </div>
           </div>
           <button 
             onClick={() => refetch()}
