@@ -108,9 +108,16 @@ function Index() {
       .channel('schema-db-changes')
       .on(
         'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'lottery_results' },
+        { event: '*', schema: 'public', table: 'lottery_results' },
         () => {
+          // Cada novo resultado dispara um novo cálculo (atrasos, grupos, repetições)
           refetch();
+          queryClient.invalidateQueries({ queryKey: ["homepage-group-stats"] });
+          queryClient.invalidateQueries({ queryKey: ["homepage-ten-stats"] });
+          queryClient.invalidateQueries({ queryKey: ["ten-delay-stats"] });
+          queryClient.invalidateQueries({ queryKey: ["group-delay-stats"] });
+          queryClient.invalidateQueries({ queryKey: ["repetition-stats"] });
+          queryClient.invalidateQueries({ queryKey: ["stats-page"] });
         }
       )
       .subscribe();
@@ -119,7 +126,7 @@ function Index() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [refetch]);
+  }, [refetch, queryClient]);
 
 
 
