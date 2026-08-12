@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, BarChart3, Calculator, Sparkles, TrendingUp, Zap, Target, BrainCircuit, History, Flame, Clock } from "lucide-react";
+import { ArrowLeft, BarChart3, Calculator, Sparkles, TrendingUp, Zap, Target, BrainCircuit, History, Flame, Clock, LayoutGrid, Hash, Users, Repeat, ArrowLeftRight, FileText, Upload } from "lucide-react";
 import { CruzDoDia } from "@/components/CruzDoDia";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,7 +27,8 @@ const ANIMAL_GROUPS = [
 ];
 
 function EstatisticasPage() {
-  const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'palpites'>('quentes');
+  const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'palpites' | 'visao-geral' | 'dezenas' | 'grupos' | 'frequencias' | 'repeticoes' | 'comparar' | 'historico' | 'importar'>('quentes');
+
   const [cruzData, setCruzData] = useState<string[]>([]);
   
   const { data: stats, isLoading } = useQuery({
@@ -83,7 +84,75 @@ function EstatisticasPage() {
       </header>
 
       <main className="container mx-auto px-4 md:px-6 py-12">
+        {/* Análise Histórica Menu */}
+        <section className="mb-12">
+          <div className="flex items-center gap-3 mb-6">
+            <History className="w-6 h-6 text-yellow-500" />
+            <h2 className="text-xl font-black italic uppercase">Análise Histórica</h2>
+          </div>
+          
+          <div className="flex flex-wrap gap-2 mb-8 bg-white/5 p-2 rounded-2xl border border-white/10">
+            <button 
+              onClick={() => setActiveTab('visao-geral')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'visao-geral' ? 'bg-yellow-500 text-[#0B0F19]' : 'hover:bg-white/5 text-white/40'}`}
+            >
+              <LayoutGrid className="w-4 h-4" />
+              Visão Geral
+            </button>
+            <button 
+              onClick={() => setActiveTab('dezenas')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'dezenas' ? 'bg-yellow-500 text-[#0B0F19]' : 'hover:bg-white/5 text-white/40'}`}
+            >
+              <Hash className="w-4 h-4" />
+              Dezenas
+            </button>
+            <button 
+              onClick={() => setActiveTab('grupos')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'grupos' ? 'bg-yellow-500 text-[#0B0F19]' : 'hover:bg-white/5 text-white/40'}`}
+            >
+              <Users className="w-4 h-4" />
+              Grupos
+            </button>
+            <button 
+              onClick={() => setActiveTab('frequencias')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'frequencias' ? 'bg-yellow-500 text-[#0B0F19]' : 'hover:bg-white/5 text-white/40'}`}
+            >
+              <TrendingUp className="w-4 h-4" />
+              Frequências
+            </button>
+            <button 
+              onClick={() => setActiveTab('repeticoes')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'repeticoes' ? 'bg-yellow-500 text-[#0B0F19]' : 'hover:bg-white/5 text-white/40'}`}
+            >
+              <Repeat className="w-4 h-4" />
+              Repetições
+            </button>
+            <button 
+              onClick={() => setActiveTab('comparar')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'comparar' ? 'bg-yellow-500 text-[#0B0F19]' : 'hover:bg-white/5 text-white/40'}`}
+            >
+              <ArrowLeftRight className="w-4 h-4" />
+              Comparar Períodos
+            </button>
+            <button 
+              onClick={() => setActiveTab('historico')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'historico' ? 'bg-yellow-500 text-[#0B0F19]' : 'hover:bg-white/5 text-white/40'}`}
+            >
+              <FileText className="w-4 h-4" />
+              Histórico
+            </button>
+            <button 
+              onClick={() => setActiveTab('importar')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'importar' ? 'bg-yellow-500 text-[#0B0F19]' : 'hover:bg-white/5 text-white/40'}`}
+            >
+              <Upload className="w-4 h-4" />
+              Importar Resultados
+            </button>
+          </div>
+        </section>
+
         {/* Header Section */}
+
         <section className="mb-12">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
             <div>
@@ -253,7 +322,111 @@ function EstatisticasPage() {
                   </div>
                 </motion.div>
               )}
+              {activeTab === 'visao-geral' && (
+                <motion.div
+                  key="visao-geral"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="py-12 text-center border-2 border-dashed border-white/10 rounded-2xl"
+                >
+                  <LayoutGrid className="w-12 h-12 mx-auto mb-4 opacity-20" />
+                  <p className="text-white/40 font-bold uppercase tracking-widest">Visão Geral da Análise Histórica em processamento...</p>
+                </motion.div>
+              )}
+
+              {activeTab === 'dezenas' && (
+                <motion.div
+                  key="dezenas"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="py-12 text-center border-2 border-dashed border-white/10 rounded-2xl"
+                >
+                  <Hash className="w-12 h-12 mx-auto mb-4 opacity-20" />
+                  <p className="text-white/40 font-bold uppercase tracking-widest">Análise detalhada de Dezenas em processamento...</p>
+                </motion.div>
+              )}
+
+              {activeTab === 'grupos' && (
+                <motion.div
+                  key="grupos"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="py-12 text-center border-2 border-dashed border-white/10 rounded-2xl"
+                >
+                  <Users className="w-12 h-12 mx-auto mb-4 opacity-20" />
+                  <p className="text-white/40 font-bold uppercase tracking-widest">Análise de Grupos e Bichos em processamento...</p>
+                </motion.div>
+              )}
+
+              {activeTab === 'frequencias' && (
+                <motion.div
+                  key="frequencias"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="py-12 text-center border-2 border-dashed border-white/10 rounded-2xl"
+                >
+                  <TrendingUp className="w-12 h-12 mx-auto mb-4 opacity-20" />
+                  <p className="text-white/40 font-bold uppercase tracking-widest">Mapas de Frequência em processamento...</p>
+                </motion.div>
+              )}
+
+              {activeTab === 'repeticoes' && (
+                <motion.div
+                  key="repeticoes"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="py-12 text-center border-2 border-dashed border-white/10 rounded-2xl"
+                >
+                  <Repeat className="w-12 h-12 mx-auto mb-4 opacity-20" />
+                  <p className="text-white/40 font-bold uppercase tracking-widest">Análise de Repetições em processamento...</p>
+                </motion.div>
+              )}
+
+              {activeTab === 'comparar' && (
+                <motion.div
+                  key="comparar"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="py-12 text-center border-2 border-dashed border-white/10 rounded-2xl"
+                >
+                  <ArrowLeftRight className="w-12 h-12 mx-auto mb-4 opacity-20" />
+                  <p className="text-white/40 font-bold uppercase tracking-widest">Ferramenta de Comparação em processamento...</p>
+                </motion.div>
+              )}
+
+              {activeTab === 'historico' && (
+                <motion.div
+                  key="historico"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="py-12 text-center border-2 border-dashed border-white/10 rounded-2xl"
+                >
+                  <FileText className="w-12 h-12 mx-auto mb-4 opacity-20" />
+                  <p className="text-white/40 font-bold uppercase tracking-widest">Histórico Completo em processamento...</p>
+                </motion.div>
+              )}
+
+              {activeTab === 'importar' && (
+                <motion.div
+                  key="importar"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="py-12 text-center border-2 border-dashed border-white/10 rounded-2xl"
+                >
+                  <Upload className="w-12 h-12 mx-auto mb-4 opacity-20" />
+                  <p className="text-white/40 font-bold uppercase tracking-widest">Módulo de Importação em processamento...</p>
+                </motion.div>
+              )}
             </AnimatePresence>
+
           </section>
 
           {/* Cruz do Dia Section */}
