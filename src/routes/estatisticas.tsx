@@ -508,7 +508,8 @@ function EstatisticasPage() {
                       </h3>
                       <div className="h-[200px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
-                          <BarChart data={visaoGeralData?.freqChartData}>
+                          <BarChart data={visaoGeralData?.freqChartData || []}>
+
                             <CartesianGrid strokeDasharray="3 3" stroke="#ffffff05" vertical={false} />
                             <XAxis 
                               dataKey="name" 
