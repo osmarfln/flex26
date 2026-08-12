@@ -115,8 +115,10 @@ function RobotStatus() {
   list.forEach((l) => {
     if (!l.started_at) return;
     const h = new Date(l.started_at).getHours();
-    byHour[h].execucoes += 1;
-    byHour[h].registros += l.records_synced || 0;
+    const slot = byHour[h];
+    if (!slot) return;
+    slot.execucoes += 1;
+    slot.registros += l.records_synced || 0;
   });
   const activeHours = byHour.filter((h) => h.execucoes > 0);
 
@@ -438,7 +440,7 @@ function Kpi({
   title: string;
   icon: React.ReactNode;
   value: string;
-  sub?: string;
+  sub?: string | undefined;
 }) {
   return (
     <Card className="bg-[#0D121F] border-white/10 rounded-3xl">
