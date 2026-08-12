@@ -5,7 +5,6 @@ export const Route = createFileRoute('/api/public/sync-results')({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        // Authenticate with apikey
         const authHeader = request.headers.get('apikey') || request.headers.get('authorization')?.replace('Bearer ', '');
         if (!authHeader) {
           return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
@@ -22,9 +21,8 @@ export const Route = createFileRoute('/api/public/sync-results')({
           const dateParam = body.date || new Date().toISOString().split('T')[0];
           const daysToSync = body.daysToSync || 1;
           
-          console.log(`Iniciando sincronização para a data: ${dateParam}, dias: ${daysToSync}`);
+          console.log(`Syncing date: ${dateParam}, days: ${daysToSync}`);
           
-          // Registrar início no log
           const { data: logEntry } = await supabase
             .from('sync_logs')
             .insert({ 
@@ -37,26 +35,31 @@ export const Route = createFileRoute('/api/public/sync-results')({
 
           let totalSynced = 0;
           
-          // Iterar sobre os dias
           for (let i = 0; i < daysToSync; i++) {
             const currentSyncDate = new Date(dateParam);
             currentSyncDate.setDate(currentSyncDate.getDate() - i);
             const isoString = currentSyncDate.toISOString();
             const dateStr = isoString.split('T')[0]!;
             
-            // Site soresultados.info permite buscar por data na URL
             const formattedDate = dateStr.split('-').reverse().join('-');
-            const url = `https://soresultados.info/resultado-jogo-bicho-rio/${formattedDate}`;
+            // If it's today, we check the home page, otherwise the specific date URL
+            const isToday = dateStr === new Date().toISOString().split('T')[0];
+            const url = isToday 
+              ? 'https://soresultados.info/' 
+              : `https://soresultados.info/resultado-jogo-bicho-rio/${formattedDate}`;
             
-            console.log(`Buscando: ${url}`);
+            console.log(`Fetching: ${url}`);
             
             const response = await fetch(url, {
-               headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36' }
+               headers: { 
+                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+                 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+                 'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7'
+               }
             });
             
             if (response.ok) {
               const html = await response.text();
-              console.log(`HTML recebido (${html.length} chars). Snippet: ${html.substring(0, 500).replace(/\n/g, ' ')}`);
               const results = parseRioResults(html, dateStr);
               
               for (const res of results) {
@@ -73,12 +76,9 @@ export const Route = createFileRoute('/api/public/sync-results')({
                 
                 if (!upsertError) totalSynced++;
               }
-            } else {
-              console.warn(`Falha ao buscar URL ${url}: ${response.status}`);
             }
           }
 
-          // Atualizar log
           if (logEntry) {
             await supabase
               .from('sync_logs')
@@ -91,7 +91,7 @@ export const Route = createFileRoute('/api/public/sync-results')({
           });
 
         } catch (error: any) {
-          console.error('Erro no sync:', error);
+          console.error('Sync error:', error);
           return new Response(JSON.stringify({ success: false, error: error.message }), { 
             status: 500, 
             headers: { 'Content-Type': 'application/json' } 
@@ -102,11 +102,9 @@ export const Route = createFileRoute('/api/public/sync-results')({
   }
 })
 
-// Função auxiliar de parsing (Regex based para RIO)
 function parseRioResults(html: string, date: string) {
   const results: any[] = [];
   
-  // Mapeamento de horários comuns do RIO
   const schedules = [
     { type: 'PPT', time: '09:20' },
     { type: 'PTM', time: '11:20' },
@@ -117,25 +115,25 @@ function parseRioResults(html: string, date: string) {
   ];
 
   schedules.forEach(schedule => {
-    // Regex aprimorada para o formato do soresultados.info
-    const regex = new RegExp(schedule.type + ".*?1º PRÊMIO.*?(\\d{4})\\s+([A-ZÇÃÊÍÓÚ-]+)\\s+GRUPO\\s+(\\d{2})", 'si');
+    // Flexible regex for the draw block
+    const regex = new RegExp(schedule.type + "\\s+\\d{2}h.*?1º PRÊMIO\\s+(\\d{4})\\s+([A-ZÇÃÊÍÓÚ-]+)\\s+GRUPO\\s+(\\d{2})", 'si');
     const match = html.match(regex);
     
     if (match && match.index !== undefined) {
-      // Extrair outros prêmios (2º ao 5º)
       const otherPrizes: string[] = [match[1] || '----'];
-      const prizesRegex = /(\d{4})\s+[A-ZÇÃÊÍÓÚ-]+\s+GRUPO\s+\d{2}/gi;
-      let pMatch;
-      let count = 0;
-      // Reiniciar regex para começar após o 1º prêmio
+      
+      // Prizes regex to catch subsequent numbers
+      // We look for patterns like "2º G11 2243" or just the group and number sequence
+      const prizesRegex = /(\d+)º\s+G\d{2}\s+(\d{4})/gi;
       prizesRegex.lastIndex = match.index + match[0].length;
       
+      let pMatch;
+      let count = 0;
       while ((pMatch = prizesRegex.exec(html)) !== null && count < 4) {
-        otherPrizes.push(pMatch[1] || '----');
+        otherPrizes.push(pMatch[2] || '----');
         count++;
       }
 
-      // Preencher com "----" se faltar prêmios
       while (otherPrizes.length < 5) otherPrizes.push("----");
 
       results.push({
