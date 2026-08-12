@@ -237,33 +237,7 @@ function Index() {
             </div>
           </div>
 
-          <div className="lg:col-span-4">
-            <Card className="bg-[#0D121F] border-yellow-500/30 border-2 rounded-2xl overflow-hidden shadow-2xl shadow-yellow-500/5 sticky top-24 z-30">
-              <CardHeader className="p-4 bg-yellow-500/10 border-b border-yellow-500/20">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-yellow-500">Próximo Resultado</CardTitle>
-                  <div className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse" />
-                </div>
-              </CardHeader>
-              <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-                <div className="text-4xl font-black tracking-tighter mb-1 tabular-nums">
-                  {format(currentTime, "HH:mm:ss")}
-                </div>
-                <div className="text-[8px] font-bold text-white/40 uppercase tracking-[0.3em] mb-3">
-                  {format(currentTime, "EEEE, dd 'de' MMMM", { locale: ptBR })}
-                </div>
-                <div className="w-full py-2 bg-white/5 rounded-xl border border-white/10 text-[11px] font-bold">
-                  {format(currentTime, "HH:mm:ss")}
-                </div>
-                <div className="text-[8px] font-bold text-white/40 uppercase tracking-[0.3em] mb-3">
-                  {format(currentTime, "EEEE, dd 'de' MMMM", { locale: ptBR })}
-                </div>
-                <div className="w-full py-2 bg-white/5 rounded-xl border border-white/10 text-[11px] font-bold text-white/60">
-                  Horário Oficial Rio
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+          <div className="lg:col-span-4" />
         </section>
 
 
