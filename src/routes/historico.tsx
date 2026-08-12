@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ANIMAL_ICONS } from "@/lib/animals";
 import { getResults } from "@/lib/lottery.functions";
-import { supabase } from "@/integrations/supabase/client";
+import { useLotteryRealtime } from "@/hooks/useLotteryRealtime";
+
 import { useQuery } from "@tanstack/react-query";
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -47,25 +48,9 @@ function Historico() {
     queryFn: () => getResults({ data: { date, offset, limit } }),
   });
 
-  useEffect(() => {
-    const channel = supabase
-      .channel('history-db-changes')
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'lottery_results' },
-        (payload: any) => {
-          // Só atualiza se o novo resultado for da data selecionada
-          if (payload.new && payload.new.date === date) {
-            refetch();
-          }
-        }
-      )
-      .subscribe();
+  // Novos resultados entram automaticamente no histórico
+  useLotteryRealtime("history-db-changes");
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [date, refetch]);
 
 
   return (

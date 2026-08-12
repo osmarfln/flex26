@@ -10,8 +10,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
 import { getStats, getResults, getTenDelayStats, getGroupDelayStats, getRepetitionStats } from "@/lib/lottery.functions";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
+import { useLotteryRealtime } from "@/hooks/useLotteryRealtime";
+
 import { useState, useMemo, useEffect } from "react";
 import { format, subDays, differenceInDays } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -32,7 +33,6 @@ export const Route = createFileRoute("/estatisticas")({
 function EstatisticasPage() {
   const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'palpites' | 'logica-atraso' | 'ranking-completo' | 'logica-grupos' | 'repeticoes'>('quentes');
 
-  const queryClient = useQueryClient();
   const [cruzData, setCruzData] = useState<string[]>([]);
   
   const { data: stats, isLoading: statsLoading } = useQuery({
@@ -62,27 +62,19 @@ function EstatisticasPage() {
   });
 
   // Recalcula todas as análises a cada novo resultado publicado
-  useEffect(() => {
-    const channel = supabase
-      .channel('estatisticas-db-changes')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'lottery_results' },
-        () => {
-          ["stats-page", "recent-results-stats", "ten-delay-stats", "group-delay-stats", "repetition-stats"].forEach(
-            (key) => queryClient.invalidateQueries({ queryKey: [key] })
-          );
-        }
-      )
-      .subscribe();
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [queryClient]);
+  useLotteryRealtime("estatisticas-db-changes");
+
 
 
   const isLoading = statsLoading || resultsLoading || delayStatsLoading || groupDelayStatsLoading;
   const tenStats = delayStats;
+
+  // Dezenas mais quentes = maior frequência nos últimos 300 concursos
+  const hottestTens = useMemo(() => {
+    const list: any[] = (delayStats as any[]) ?? [];
+    return [...list].sort((a, b) => (b?.freqs?.[300] ?? 0) - (a?.freqs?.[300] ?? 0));
+  }, [delayStats]);
+
 
 
   const getAnimalByTen = (ten: string) => {
@@ -300,7 +292,7 @@ function EstatisticasPage() {
                         <div key={i} className="h-32 bg-white/5 animate-pulse rounded-2xl" />
                       ))
                     ) : (
-                      tenStats?.slice(0, 20).map((item: any, i: number) => {
+                      hottestTens.slice(0, 20).map((item: any, i: number) => {
                         const animal = getAnimalByTen(item.ten);
                         return (
                           <Card key={i} className="dashboard-card p-4 text-center hover:border-primary/50 transition-all bg-white/[0.03]">

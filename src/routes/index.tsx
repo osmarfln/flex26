@@ -1,11 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ANIMAL_GROUPS } from "@/lib/animals";
 import { getResults, getTenDelayStats, getGroupDelayStats } from "@/lib/lottery.functions";
-import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { 
   Trophy, 
   Clock, 
@@ -43,6 +42,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
+import { useLotteryRealtime } from "@/hooks/useLotteryRealtime";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -73,17 +74,19 @@ function getGreeting() {
 }
 
 function Index() {
-  const queryClient = useQueryClient();
-  const [greeting, setGreeting] = useState(getGreeting());
+  // Estado inicial estável para evitar divergência entre servidor e navegador
+  const [greeting, setGreeting] = useState<{ text: string; icon: typeof Coffee }>({ text: "Olá", icon: Sun });
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
+    setGreeting(getGreeting());
     const timer = setInterval(() => {
       setGreeting(getGreeting());
       setCurrentTime(new Date());
     }, 1000);
     return () => clearInterval(timer);
   }, []);
+
 
   const today = format(new Date(), "yyyy-MM-dd");
 
@@ -104,30 +107,9 @@ function Index() {
 
 
 
-  useEffect(() => {
-    const channel = supabase
-      .channel('schema-db-changes')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'lottery_results' },
-        () => {
-          // Cada novo resultado dispara um novo cálculo (atrasos, grupos, repetições)
-          refetch();
-          queryClient.invalidateQueries({ queryKey: ["homepage-group-stats"] });
-          queryClient.invalidateQueries({ queryKey: ["homepage-ten-stats"] });
-          queryClient.invalidateQueries({ queryKey: ["ten-delay-stats"] });
-          queryClient.invalidateQueries({ queryKey: ["group-delay-stats"] });
-          queryClient.invalidateQueries({ queryKey: ["repetition-stats"] });
-          queryClient.invalidateQueries({ queryKey: ["stats-page"] });
-        }
-      )
-      .subscribe();
+  // Cada novo resultado dispara um novo cálculo (atrasos, grupos, dezenas, repetições)
+  const { lastUpdate } = useLotteryRealtime("home-db-changes");
 
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [refetch, queryClient]);
 
 
 
@@ -183,6 +165,11 @@ function Index() {
           </nav>
 
           <div className="hidden md:flex items-center gap-2 md:gap-4 ml-auto">
+            {lastUpdate && (
+              <span className="text-[10px] font-bold text-emerald-400/80 uppercase tracking-wider">
+                Recalculado {format(lastUpdate, "HH:mm:ss")}
+              </span>
+            )}
             <Button 
               variant="outline" 
               size="sm" 
@@ -193,6 +180,7 @@ function Index() {
               <span>Atualizar</span>
               <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             </Button>
+
             <Link to="/portal" className="text-xs font-bold text-white/40 hover:text-white transition-colors">Portal</Link>
           </div>
         </div>
