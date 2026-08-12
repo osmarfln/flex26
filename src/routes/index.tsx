@@ -124,7 +124,8 @@ function Index() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [refetch, refetchStats]);
+  }, [refetch]);
+
 
 
   const GreetingIcon = greeting.icon;
