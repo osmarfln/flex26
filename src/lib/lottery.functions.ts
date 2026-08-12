@@ -210,13 +210,16 @@ export const getGroupDelayStats = createServerFn({ method: "GET" })
       .from("lottery_results")
       .select("results, date, time_type, animal_group")
       .order("date", { ascending: false })
-      .limit(500);
+      .limit(600);
 
     if (error) throw error;
     if (!results) return [];
 
     const stats: any[] = [];
     const allGroups = Array.from({ length: 25 }, (_, i) => String(i + 1).padStart(2, '0'));
+    
+    const current300 = results.slice(0, 300);
+    const previous300 = results.slice(300, 600);
 
     allGroups.forEach(groupId => {
       let currentDelay = -1;
@@ -226,6 +229,23 @@ export const getGroupDelayStats = createServerFn({ method: "GET" })
       const hourlyFreq: Record<string, number> = {};
       const positionFreq: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
       let totalFreq = 0;
+      
+      const countGroup = (list: any[]) => list.filter(r => 
+        r.results?.slice(0, 5).some((prize: string) => {
+          const ten = prize.slice(-2);
+          const tenInt = parseInt(ten);
+          return !isNaN(tenInt) && String(Math.floor((tenInt === 0 ? 100 : tenInt - 1) / 4) + 1).padStart(2, '0') === groupId;
+        })
+      ).length;
+
+      const freq10 = countGroup(current300.slice(0, 10));
+      const freq30 = countGroup(current300.slice(0, 30));
+      const freq50 = countGroup(current300.slice(0, 50));
+      const freq100 = countGroup(current300.slice(0, 100));
+      const freq300 = countGroup(current300);
+      const prevFreq300 = countGroup(previous300);
+      
+      const periodComparison = prevFreq300 > 0 ? ((freq300 - prevFreq300) / prevFreq300) * 100 : (freq300 > 0 ? 100 : 0);
 
       results.forEach((res, index) => {
         let foundInThisResult = false;
@@ -260,12 +280,13 @@ export const getGroupDelayStats = createServerFn({ method: "GET" })
       const maxDelay = intervals.length > 0 ? Math.max(...intervals) : currentDelay;
       const minDelay = intervals.length > 0 ? Math.min(...intervals) : currentDelay;
       const relativeIndex = currentDelay / avgDelay;
-
-      let classification = "Dentro da média";
-      if (relativeIndex < 0.75) classification = "Atraso baixo";
-      else if (relativeIndex >= 0.75 && relativeIndex <= 1.25) classification = "Dentro da média";
-      else if (relativeIndex > 1.25 && relativeIndex <= 2.00) classification = "Atraso elevado";
-      else if (relativeIndex > 2.00) classification = "Muito acima da média";
+      
+      const variance = intervals.length > 1 ? intervals.reduce((acc, val) => acc + Math.pow(val - avgDelay, 2), 0) / (intervals.length - 1) : 0;
+      const stdDev = Math.sqrt(variance);
+      const regularityScore = avgDelay > 0 ? stdDev / avgDelay : 1;
+      let regularity = "Média";
+      if (regularityScore < 0.5) regularity = "Alta";
+      else if (regularityScore > 1.2) regularity = "Baixa";
 
       stats.push({
         groupId,
@@ -278,14 +299,30 @@ export const getGroupDelayStats = createServerFn({ method: "GET" })
         minDelay,
         frequency: totalFreq,
         relativeIndex: Number(relativeIndex.toFixed(2)),
-        classification,
         hourlyFreq,
-        positionFreq
+        positionFreq,
+        freqs: { 10: freq10, 30: freq30, 50: freq50, 100: freq100, 300: freq300 },
+        regularity,
+        periodComparison: Number(periodComparison.toFixed(2))
       });
+    });
+
+    const sortedByDelay = [...stats].sort((a, b) => a.currentDelay - b.currentDelay);
+    stats.forEach(s => {
+      const rank = sortedByDelay.findIndex(x => x.groupId === s.groupId);
+      s.percentile = Number(((rank / 24) * 100).toFixed(0));
+
+      let classification = "Dentro da média";
+      if (s.relativeIndex < 0.75) classification = "Atraso baixo";
+      else if (s.relativeIndex >= 0.75 && s.relativeIndex <= 1.25) classification = "Dentro da média";
+      else if (s.relativeIndex > 1.25 && s.relativeIndex <= 2.00) classification = "Atraso elevado";
+      else if (s.relativeIndex > 2.00) classification = "Muito acima da média";
+      s.classification = classification;
     });
 
     return stats.sort((a, b) => b.currentDelay - a.currentDelay);
   });
+
 
 export const getRepetitionStats = createServerFn({ method: "GET" })
   .handler(async () => {
