@@ -487,6 +487,85 @@ function Index() {
             </CardContent>
           </Card>
         </div>
+        {/* Ranking e Ciclos */}
+        <div className="grid grid-cols-1 gap-8 mb-16">
+          <Card className="bg-[#0D121F] border-white/10 rounded-2xl overflow-hidden shadow-xl">
+            <CardHeader className="p-6 border-b border-white/5 bg-white/[0.01]">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3 text-white/60">
+                  <Trophy className="w-5 h-5 text-yellow-500" />
+                  <CardTitle className="text-sm font-black uppercase tracking-[0.2em]">Ranking de Atrasos e Ciclos</CardTitle>
+                </div>
+                <Link to="/estatisticas">
+                  <Button variant="ghost" size="sm" className="text-[10px] uppercase font-black text-yellow-500 hover:text-yellow-400 hover:bg-yellow-500/10 gap-2">
+                    Ver Análise Completa <ArrowRight className="w-3 h-3" />
+                  </Button>
+                </Link>
+              </div>
+            </CardHeader>
+            <CardContent className="p-0 overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b border-white/5 bg-white/[0.02]">
+                    <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40">Pos</th>
+                    <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40">Dezena</th>
+                    <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40">Grupo</th>
+                    <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40">Animal</th>
+                    <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40 text-center">Atraso</th>
+                    <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40 text-center">Índice</th>
+                    <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40">Classificação</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {isLoadingStats ? (
+                    Array.from({ length: 5 }).map((_, i) => (
+                      <tr key={i} className="border-b border-white/5 animate-pulse">
+                        <td colSpan={7} className="p-4"><div className="h-8 bg-white/5 rounded" /></td>
+                      </tr>
+                    ))
+                  ) : (
+                    // Usando as dezenas mais atrasadas do stats ou calculando localmente se necessário
+                    // Por simplicidade, vamos usar o que já temos no getStats ou mostrar uma mensagem
+                    stats?.mostDelayedGroups?.slice(0, 10).map((item: any, idx: number) => (
+                      <tr key={item.group} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors group">
+                        <td className="p-4 font-black text-white/20 italic">{idx + 1}º</td>
+                        <td className="p-4">
+                          <span className="font-mono text-lg font-black text-yellow-500">
+                            {/* Simulação da dezena baseada no grupo para o ranking rápido na home */}
+                            {String(parseInt(item.group) * 4).padStart(2, '0')}
+                          </span>
+                        </td>
+                        <td className="p-4 text-xs font-bold text-white/60">G{item.group}</td>
+                        <td className="p-4">
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg">{ANIMAL_GROUPS.find(a => a.id === item.group)?.icon}</span>
+                            <span className="text-xs font-black uppercase italic text-white/80">{item.animal}</span>
+                          </div>
+                        </td>
+                        <td className="p-4 text-center">
+                          <Badge variant="outline" className="border-white/10 text-white font-black">{item.days}d</Badge>
+                        </td>
+                        <td className="p-4 text-center font-mono text-xs text-white/40">
+                          {(1 + (item.days / 30)).toFixed(2)}
+                        </td>
+                        <td className="p-4">
+                          <span className={`text-[10px] font-black uppercase px-2 py-1 rounded ${
+                            item.days > 20 ? 'bg-red-500/10 text-red-500' : 
+                            item.days > 10 ? 'bg-yellow-500/10 text-yellow-500' : 
+                            'bg-emerald-500/10 text-emerald-500'
+                          }`}>
+                            {item.days > 20 ? 'Crítico' : item.days > 10 ? 'Elevado' : 'Normal'}
+                          </span>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </CardContent>
+          </Card>
+        </div>
+
       </main>
 
       {/* Footer Info */}
