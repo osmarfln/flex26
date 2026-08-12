@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { getSyncStatus } from "@/lib/realtime.functions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
