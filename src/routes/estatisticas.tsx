@@ -447,18 +447,6 @@ function EstatisticasPage() {
                 </motion.div>
               )}
 
-              {activeTab === 'importar' && (
-                <motion.div
-                  key="importar"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  className="py-12 text-center border-2 border-dashed border-white/10 rounded-2xl"
-                >
-                  <Upload className="w-12 h-12 mx-auto mb-4 opacity-20" />
-                  <p className="text-white/40 font-bold uppercase tracking-widest">Módulo de Importação em processamento...</p>
-                </motion.div>
-              )}
             </AnimatePresence>
 
           </section>
