@@ -180,54 +180,85 @@ function Index() {
         </div>
 
         {/* Welcome Section */}
-        <section className="mb-12 relative z-10">
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-4 mb-6"
-          >
-            <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-2xl">
-              <GreetingIcon className="w-8 h-8 text-yellow-500" />
-            </div>
-            <div>
-              <h2 className="text-2xl font-black italic tracking-tighter uppercase leading-none">{greeting.text}!</h2>
-              <p className="text-white/40 font-bold text-xs uppercase tracking-widest mt-1">Seja bem vindo ao nosso espaço fique a vontade</p>
-            </div>
-          </motion.div>
+        <section className="mb-12 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <div className="lg:col-span-8">
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex items-center gap-4 mb-6"
+            >
+              <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-2xl">
+                <GreetingIcon className="w-8 h-8 text-yellow-500" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-black italic tracking-tighter uppercase leading-none">{greeting.text}!</h2>
+                <p className="text-white/40 font-bold text-xs uppercase tracking-widest mt-1">Seja bem vindo ao nosso espaço fique a vontade</p>
+              </div>
+            </motion.div>
 
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-4 italic">Resultados Rio em Tempo Real</h1>
-          <p className="text-white/40 text-lg mb-8 font-medium">Resultados diários automatizados via robô de soresultados.info</p>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-4 italic">Resultados Rio em Tempo Real</h1>
+            <p className="text-white/40 text-lg mb-8 font-medium">Resultados diários automatizados via robô de soresultados.info</p>
 
-          <div className="flex flex-wrap gap-4 items-center mb-12">
-            <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl min-w-[200px] hover:border-yellow-500/30 transition-all cursor-pointer">
-              <Calendar className="w-5 h-5 text-white/40" />
-              <div className="flex-1">
-                <p className="text-[10px] text-white/40 font-bold uppercase tracking-wider">Data</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-bold">Hoje, {new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'long' })}</span>
-                  <ChevronDown className="w-4 h-4 text-white/40" />
+            <div className="flex flex-wrap gap-4 items-center mb-6">
+              <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl min-w-[200px] hover:border-yellow-500/30 transition-all cursor-pointer">
+                <Calendar className="w-5 h-5 text-white/40" />
+                <div className="flex-1">
+                  <p className="text-[10px] text-white/40 font-bold uppercase tracking-wider">Data</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-bold">{format(new Date(), "dd 'de' MMMM", { locale: ptBR })}</span>
+                    <ChevronDown className="w-4 h-4 text-white/40" />
+                  </div>
                 </div>
               </div>
-            </div>
-            
-            <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl min-w-[200px] hover:border-yellow-500/30 transition-all cursor-pointer">
-              <MapPin className="w-5 h-5 text-white/40" />
-              <div className="flex-1">
-                <p className="text-[10px] text-white/40 font-bold uppercase tracking-wider">Localidade</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-bold">Rio de Janeiro</span>
-                  <ChevronDown className="w-4 h-4 text-white/40" />
+              
+              <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl min-w-[200px] hover:border-yellow-500/30 transition-all cursor-pointer">
+                <MapPin className="w-5 h-5 text-white/40" />
+                <div className="flex-1">
+                  <p className="text-[10px] text-white/40 font-bold uppercase tracking-wider">Localidade</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-bold">Rio de Janeiro</span>
+                    <ChevronDown className="w-4 h-4 text-white/40" />
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <Link to="/historico">
-              <Button className="h-[54px] px-10 bg-yellow-500 hover:bg-yellow-400 text-[#0B0F19] font-black uppercase tracking-tighter rounded-xl gap-2 shadow-lg shadow-yellow-500/10 active:scale-95 transition-all">
-                <Search className="w-5 h-5" /> Buscar resultados
-              </Button>
-            </Link>
+              <Link to="/historico">
+                <Button className="h-[54px] px-10 bg-yellow-500 hover:bg-yellow-400 text-[#0B0F19] font-black uppercase tracking-tighter rounded-xl gap-2 shadow-lg shadow-yellow-500/10 active:scale-95 transition-all">
+                  <Search className="w-5 h-5" /> Buscar resultados
+                </Button>
+              </Link>
+            </div>
+          </div>
+
+          <div className="lg:col-span-4">
+            <Card className="bg-[#0D121F] border-yellow-500/30 border-2 rounded-2xl overflow-hidden shadow-2xl shadow-yellow-500/5">
+              <CardHeader className="p-4 bg-yellow-500/10 border-b border-yellow-500/20">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-xs font-black uppercase tracking-[0.2em] text-yellow-500">Próximo Resultado</CardTitle>
+                  <div className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse" />
+                </div>
+              </CardHeader>
+              <CardContent className="p-6 flex flex-col items-center justify-center text-center">
+                <div className="text-6xl font-black tracking-tighter mb-2 tabular-nums">
+                  {format(currentTime, "HH:mm:ss")}
+                </div>
+                <div className="text-[10px] font-bold text-white/40 uppercase tracking-[0.3em] mb-4">
+                  {format(currentTime, "EEEE, dd 'de' MMMM", { locale: ptBR })}
+                </div>
+                <div className="w-full py-3 bg-white/5 rounded-xl border border-white/10 text-sm font-bold">
+                  {new Date().getHours() < 9 ? 'Aguardando PTT (09:00)' : 
+                   new Date().getHours() < 11 ? 'Próximo: PTM (11:00)' :
+                   new Date().getHours() < 14 ? 'Próximo: PT (14:00)' :
+                   new Date().getHours() < 16 ? 'Próximo: PTV (16:00)' :
+                   new Date().getHours() < 18 ? 'Próximo: PTN (18:00)' :
+                   new Date().getHours() < 21 ? 'Próximo: COR (21:00)' :
+                   'Painel Zera em breve (00:00)'}
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </section>
+
 
         {/* Results Grid & Most Delayed Groups */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16" id="resultados">
