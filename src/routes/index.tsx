@@ -310,64 +310,8 @@ function Index() {
               ))
             )}
           </div>
-
-          {/* Most Delayed Sidebar */}
-          <div className="lg:col-span-4 space-y-6">
-            <Card className="bg-[#0D121F] border-white/10 rounded-2xl shadow-xl overflow-hidden">
-              <CardHeader className="p-6 border-b border-white/5 bg-white/[0.01]">
-                <div className="flex items-center gap-3 text-white/60">
-                  <AlertCircle className="w-5 h-5 text-yellow-500" />
-                  <CardTitle className="text-sm font-black uppercase tracking-[0.2em]">Bichos mais atrasados</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent className="p-6 space-y-4">
-                {isLoadingStats ? (
-                  Array.from({ length: 4 }).map((_, i) => <div key={i} className="h-12 bg-white/5 rounded-lg animate-pulse" />)
-                ) : (
-                  stats?.mostDelayedGroups?.map((item: any) => (
-                    <div key={item.group} className="flex items-center justify-between p-3 bg-white/[0.02] rounded-xl border border-white/5 hover:border-yellow-500/20 transition-all group">
-                      <div className="flex items-center gap-4">
-                        <div className="text-2xl opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all">
-                          {ANIMAL_GROUPS.find(a => a.id === item.group)?.icon}
-                        </div>
-                        <div>
-                          <p className="text-sm font-black uppercase italic leading-none">{item.animal}</p>
-                          <p className="text-[10px] text-white/30 font-bold mt-1 uppercase">Último: {item.lastSeen}</p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-lg font-black text-yellow-500 leading-none">{item.days}d</p>
-                        <p className="text-[9px] text-white/30 font-bold uppercase">Atraso</p>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </CardContent>
-            </Card>
-
-            <Card className="bg-[#0D121F] border-white/10 rounded-2xl shadow-xl overflow-hidden">
-              <CardHeader className="p-6 border-b border-white/5 bg-white/[0.01]">
-                <div className="flex items-center gap-3 text-white/60">
-                  <Flame className="w-5 h-5 text-yellow-500" />
-                  <CardTitle className="text-sm font-black uppercase tracking-[0.2em]">Dezenas frequentes</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent className="p-6">
-                <div className="flex flex-wrap gap-3">
-                  {stats?.mostFrequentTens?.map((item: any) => (
-                    <div key={item.ten} className="flex flex-col items-center gap-1">
-                      <div className="w-12 h-12 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center font-mono text-xl font-black text-yellow-500 group relative">
-                        {item.ten}
-                        {item.trend === 'up' && <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-[#0B0F19]" />}
-                      </div>
-                      <span className="text-[9px] font-black text-white/30 uppercase tracking-tighter">{item.count}x</span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
         </div>
+
 
         {/* Stats Section with Modern Charts */}
         {/* Statistics Content Section */}
