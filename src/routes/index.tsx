@@ -108,6 +108,9 @@ function Index() {
               <Link to="/" className="text-sm font-bold border-b-2 border-yellow-500 pb-1 flex items-center gap-2">
                 <Users className="w-4 h-4" /> Início
               </Link>
+              <Link to="/historico" className="text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2">
+                <History className="w-4 h-4" /> Histórico
+              </Link>
               <a href="#resultados" className="text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2">
                 <TrendingUp className="w-4 h-4" /> Resultados
               </a>
