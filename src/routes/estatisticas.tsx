@@ -107,7 +107,7 @@ function EstatisticasPage() {
   };
   const recalculating =
     syncMutation.isPending ||
-    statsLoadingRef.current;
+    statsLoading || resultsLoading || delayStatsLoading || groupDelayStatsLoading || repetitionLoading;
 
 
 
