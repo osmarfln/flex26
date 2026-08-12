@@ -898,15 +898,71 @@ function EstatisticasPage() {
                         </Card>
                       </div>
 
+                      <div className="grid grid-cols-1 gap-6">
+                        <Card className="dashboard-card p-8 bg-white/[0.03]">
+                          <h3 className="text-lg font-black uppercase italic mb-8 flex items-center gap-2">
+                            <LayoutGrid className="w-5 h-5 text-purple-500" />
+                            Histórico Detalhado de Repetições
+                          </h3>
+                          <div className="overflow-x-auto">
+                            <table className="w-full text-left">
+                              <thead>
+                                <tr className="border-b border-white/5 text-[10px] font-black uppercase text-white/40 tracking-widest">
+                                  <th className="pb-4 px-2">Tipo</th>
+                                  <th className="pb-4 px-2">Dezena</th>
+                                  <th className="pb-4 px-2">Bicho</th>
+                                  <th className="pb-4 px-2">Posição</th>
+                                  <th className="pb-4 px-2">Horário/Data</th>
+                                  <th className="pb-4 px-2 text-right">Repetiu em</th>
+                                </tr>
+                              </thead>
+                              <tbody className="text-xs font-bold divide-y divide-white/5">
+                                {repetitionStats.detailedRepetitions?.slice(0, 10).map((rep: any, idx: number) => (
+                                  <tr key={idx} className="group hover:bg-white/[0.02] transition-all">
+                                    <td className="py-4 px-2">
+                                      <Badge variant="outline" className={`text-[8px] font-black uppercase ${rep.type === 'consecutive' ? 'border-emerald-500/30 text-emerald-400' : 'border-blue-500/30 text-blue-400'}`}>
+                                        {rep.type === 'consecutive' ? 'Consecutivo' : 'Mesmo Horário'}
+                                      </Badge>
+                                    </td>
+                                    <td className="py-4 px-2 text-primary text-sm font-black">{rep.value}</td>
+                                    <td className="py-4 px-2 text-white/60">
+                                      <span className="flex items-center gap-2">
+                                        {ANIMAL_GROUPS.find(a => a.id === rep.group)?.icon}
+                                        {rep.animal}
+                                      </span>
+                                    </td>
+                                    <td className="py-4 px-2 text-white/40">
+                                      {rep.currentPos}º <ArrowLeftRight className="inline w-3 h-3 mx-1 opacity-40" /> {rep.nextPos || rep.prevPos}º
+                                    </td>
+                                    <td className="py-4 px-2 text-white/60">
+                                      {rep.currentTime} <span className="text-[10px] text-white/20 ml-1">{format(new Date(rep.currentDate), "dd/MM")}</span>
+                                    </td>
+                                    <td className="py-4 px-2 text-right text-white/60">
+                                      {rep.nextTime || rep.prevTime} <span className="text-[10px] text-white/20 ml-1">{format(new Date(rep.nextDate || rep.prevDate), "dd/MM")}</span>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                            {(!repetitionStats.detailedRepetitions || repetitionStats.detailedRepetitions.length === 0) && (
+                              <div className="py-12 text-center text-white/10 font-bold uppercase tracking-widest text-xs">
+                                Nenhuma repetição detectada na amostra
+                              </div>
+                            )}
+                          </div>
+                        </Card>
+                      </div>
+
                       <div className="bg-emerald-500/5 border border-emerald-500/10 rounded-2xl p-6 flex gap-4">
                         <AlertCircle className="w-6 h-6 text-emerald-500 shrink-0" />
                         <div className="space-y-1">
-                          <p className="text-xs font-bold text-emerald-500 uppercase tracking-wider">Metodologia de Análise</p>
+                          <p className="text-xs font-bold text-emerald-500 uppercase tracking-wider">Metodologia de Análise Matemática</p>
                           <p className="text-xs text-white/40 leading-relaxed">
-                            Análise baseada em uma amostra de <strong>{repetitionStats.sampleSize} concursos</strong>. As repetições são calculadas comparando o concurso atual com o imediatamente anterior (cronológico) e com o histórico do mesmo horário.
+                            Análise baseada em uma amostra de <strong>{repetitionStats.sampleSize} concursos</strong>. O sistema realiza a soma e cruzamento de dados buscando: repetições em horários idênticos (ex: PT com PT), repetições consecutivas (ex: PTM para PT) e mudanças de posição (ex: 1º prêmio repetindo no 5º).
                           </p>
                         </div>
                       </div>
+
                     </>
                   ) : null}
                 </motion.div>
