@@ -447,13 +447,13 @@ function Index() {
                   <div className="absolute inset-0 bg-yellow-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-sm font-mono font-bold text-white/40">{time}</span>
-                    <Clock className="w-3.5 h-3.5 text-yellow-500/50" />
+                    <Clock className="w-3.5 h-3.5 text-primary/50" />
                   </div>
                   <div className="text-center">
                     <div className="text-4xl mb-3">{ANIMAL_GROUPS.find(a => a.id === data.group)?.icon}</div>
-                    <h3 className="text-sm font-black uppercase italic tracking-tighter group-hover:text-yellow-500 transition-colors">{data.animal}</h3>
+                    <h3 className="text-sm font-black uppercase italic tracking-tighter group-hover:text-primary transition-colors">{data.animal}</h3>
                     <div className="mt-4 flex flex-col items-center">
-                       <span className="text-xl font-black text-yellow-500 leading-none">{data.delayed.split(' ')[0]}</span>
+                       <span className="text-xl font-black text-primary leading-none">{data.delayed.split(' ')[0]}</span>
                        <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest mt-1">Dias de atraso</span>
                     </div>
                   </div>
@@ -465,11 +465,11 @@ function Index() {
 
         {/* Groups Table */}
         <div className="grid grid-cols-1 gap-8" id="grupos">
-          <Card className="bg-[#0D121F] border-white/10 rounded-2xl overflow-hidden shadow-xl">
+          <Card className="dashboard-card overflow-hidden shadow-xl">
             <CardHeader className="p-6 border-b border-white/5 bg-white/[0.01]">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3 text-white/60">
-                  <Hash className="w-5 h-5 text-yellow-500" />
+                  <Hash className="w-5 h-5 text-primary" />
                   <CardTitle className="text-sm font-black uppercase tracking-[0.2em]">Tabela de Grupos</CardTitle>
                 </div>
                 <Badge variant="outline" className="text-[10px] uppercase font-black border-white/10 text-white/40 italic">25 Grupos Oficiais</Badge>
@@ -478,10 +478,10 @@ function Index() {
             <CardContent className="p-6">
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 xl:grid-cols-5 gap-3">
                 {ANIMAL_GROUPS.map((animal) => (
-                  <div key={animal.id} className="p-4 bg-white/[0.02] border border-white/5 rounded-xl hover:border-yellow-500/40 transition-all group flex items-center gap-4 cursor-default">
+                  <div key={animal.id} className="p-4 bg-white/[0.02] border border-white/5 rounded-xl hover:border-primary/40 transition-all group flex items-center gap-4 cursor-default">
                     <div className="text-2xl opacity-40 group-hover:opacity-100 group-hover:scale-110 transition-all">{animal.icon}</div>
                     <div className="flex flex-col">
-                      <span className="text-[10px] font-mono text-yellow-500 font-black tracking-tighter uppercase">{animal.id}</span>
+                      <span className="text-[10px] font-mono text-primary font-black tracking-tighter uppercase">{animal.id}</span>
                       <span className="text-xs font-black uppercase tracking-tight text-white/50 group-hover:text-white transition-colors italic">{animal.name}</span>
                     </div>
                   </div>
@@ -492,15 +492,15 @@ function Index() {
         </div>
         {/* Ranking e Ciclos */}
         <div className="grid grid-cols-1 gap-8 mb-16">
-          <Card className="bg-[#0D121F] border-white/10 rounded-2xl overflow-hidden shadow-xl">
+          <Card className="dashboard-card overflow-hidden shadow-xl">
             <CardHeader className="p-6 border-b border-white/5 bg-white/[0.01]">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3 text-white/60">
-                  <Trophy className="w-5 h-5 text-yellow-500" />
+                  <Trophy className="w-5 h-5 text-primary" />
                   <CardTitle className="text-sm font-black uppercase tracking-[0.2em]">Ranking de Atrasos e Ciclos</CardTitle>
                 </div>
                 <Link to="/estatisticas">
-                  <Button variant="ghost" size="sm" className="text-[10px] uppercase font-black text-yellow-500 hover:text-yellow-400 hover:bg-yellow-500/10 gap-2">
+                  <Button variant="ghost" size="sm" className="text-[10px] uppercase font-black text-primary hover:text-primary-foreground hover:bg-primary/10 gap-2">
                     Ver Análise Completa <ArrowRight className="w-3 h-3" />
                   </Button>
                 </Link>
@@ -533,7 +533,7 @@ function Index() {
                       <tr key={item.group} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors group">
                         <td className="p-4 font-black text-white/20 italic">{idx + 1}º</td>
                         <td className="p-4">
-                          <span className="font-mono text-lg font-black text-yellow-500">
+                          <span className="font-mono text-lg font-black text-primary">
                             {/* Simulação da dezena baseada no grupo para o ranking rápido na home */}
                             {String(parseInt(item.group) * 4).padStart(2, '0')}
                           </span>
@@ -553,8 +553,8 @@ function Index() {
                         </td>
                         <td className="p-4">
                           <span className={`text-[10px] font-black uppercase px-2 py-1 rounded ${
-                            item.days > 20 ? 'bg-red-500/10 text-red-500' : 
-                            item.days > 10 ? 'bg-yellow-500/10 text-yellow-500' : 
+                            item.days > 20 ? 'bg-orange-500/10 text-orange-500' : 
+                            item.days > 10 ? 'bg-primary/10 text-primary' : 
                             'bg-emerald-500/10 text-emerald-500'
                           }`}>
                             {item.days > 20 ? 'Crítico' : item.days > 10 ? 'Elevado' : 'Normal'}
