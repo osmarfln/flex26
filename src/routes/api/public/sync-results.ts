@@ -1,36 +1,30 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { createClient } from '@supabase/supabase-js'
 
 const EXTERNAL_REST_URL = 'https://tembxrechkrpabvrfrmk.supabase.co/rest/v1';
 const EXTERNAL_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRlbWJ4cmVjaGtycGFidnJmcm1rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzMzkzODYsImV4cCI6MjA5NjkxNTM4Nn0.-GjcGBLvDHqng5Rtgj32o2IVJOetcr_a9smJUity_Mc';
+
+// Data atual no fuso de Brasília (UTC-3), evita "virar o dia" antes da hora.
+function brasiliaToday(): string {
+  return new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString().split('T')[0]!;
+}
 
 export const Route = createFileRoute('/api/public/sync-results')({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        // Bypass auth check for debugging or use a secret if needed
-        const authHeader = request.headers.get('apikey') || request.headers.get('authorization')?.replace('Bearer ', '');
-        // if (!authHeader) {
-        //   return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
-        // }
-
-
-        // Use local service role client to bypass RLS for syncing if possible, or just the anon key provided
-        const supabase = createClient(
-          process.env['VITE_SUPABASE_URL'] || '',
-          authHeader || process.env['VITE_SUPABASE_PUBLISHABLE_KEY'] || '',
-          { auth: { persistSession: false } }
-        );
-
+        // Cliente de serviço no servidor: não depende de header enviado pelo cron.
+        const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
+        const supabase = supabaseAdmin as any;
 
         try {
           const body = (await request.json().catch(() => ({}))) as any;
-          const dateParam = body.date || new Date().toISOString().split('T')[0];
-          const daysToSync = body.daysToSync || 1;
+          const dateParam = body.date || brasiliaToday();
+          const daysToSync = body.daysToSync || 2;
           const syncAll = body.syncAll || false;
 
           
           console.log(`[SYNC] Request received. Date: ${dateParam}, Days: ${daysToSync}`);
+
           
           // Log sync attempt
           const { data: logEntry } = await supabase
