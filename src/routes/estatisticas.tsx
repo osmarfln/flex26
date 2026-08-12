@@ -904,7 +904,9 @@ function EstatisticasPage() {
                                 <tr className="border-b border-white/5 text-[10px] font-black uppercase text-white/40 tracking-widest">
                                   <th className="pb-4 px-2">Tipo</th>
                                   <th className="pb-4 px-2">Dezena</th>
+                                  <th className="pb-4 px-2">Grupo</th>
                                   <th className="pb-4 px-2">Bicho</th>
+                                  <th className="pb-4 px-2">Dezenas do Grupo</th>
                                   <th className="pb-4 px-2">Posição</th>
                                   <th className="pb-4 px-2">Horário/Data</th>
                                   <th className="pb-4 px-2 text-right">Repetiu em</th>
@@ -919,10 +921,18 @@ function EstatisticasPage() {
                                       </Badge>
                                     </td>
                                     <td className="py-4 px-2 text-primary text-sm font-black">{rep.value}</td>
+                                    <td className="py-4 px-2 text-white/40 font-mono">{getAnimalByTen(rep.value)?.id || rep.group}</td>
                                     <td className="py-4 px-2 text-white/60">
                                       <span className="flex items-center gap-2">
-                                        {ANIMAL_GROUPS.find(a => a.id === rep.group)?.icon}
-                                        {rep.animal}
+                                        <span className="text-base">{rep.icon || getAnimalByTen(rep.value)?.icon}</span>
+                                        {getAnimalByTen(rep.value)?.name || rep.animal}
+                                      </span>
+                                    </td>
+                                    <td className="py-4 px-2">
+                                      <span className="flex gap-1 flex-wrap">
+                                        {(rep.groupDezenas?.length ? rep.groupDezenas : getAnimalByTen(rep.value)?.dezenas || []).map((d: string) => (
+                                          <span key={d} className={`px-1.5 py-0.5 rounded-md text-[9px] font-black font-mono ${d === rep.value ? 'bg-primary/20 text-primary' : 'bg-white/5 text-white/30'}`}>{d}</span>
+                                        ))}
                                       </span>
                                     </td>
                                     <td className="py-4 px-2 text-white/40">
