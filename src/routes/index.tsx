@@ -140,7 +140,7 @@ function Index() {
                   <Sparkles className="h-5 w-5 md:h-6 md:w-6 text-primary fill-primary animate-pulse" />
                   <div className="absolute inset-0 bg-primary/20 blur-md rounded-full scale-150 -z-10 opacity-0 group-hover:opacity-100 transition-opacity" />
                 </div>
-                <span className="truncate text-lg sm:text-xl md:text-2xl font-black tracking-tighter uppercase italic group-hover:text-primary transition-colors">Flex Gerenciador</span>
+                <span className="truncate text-base sm:text-xl md:text-2xl font-black tracking-tighter uppercase italic group-hover:text-primary transition-colors">Flex Gerenciador</span>
               </span>
               <span className="text-[9px] md:text-[10px] text-primary/60 font-bold tracking-[0.2em] -mt-1 ml-7 md:ml-8 group-hover:tracking-[0.25em] transition-all">VEM COM A GENTE</span>
             </Link>
