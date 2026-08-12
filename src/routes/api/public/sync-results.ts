@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { createClient } from '@supabase/supabase-js'
 
-const EXTERNAL_SUPABASE_URL = 'https://tembxrechkrpabvrfrmk.supabase.co';
+const EXTERNAL_REST_URL = 'https://tembxrechkrpabvrfrmk.supabase.co/rest/v1';
 const EXTERNAL_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRlbWJ4cmVjaGtycGFidnJmcm1rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzMzkzODYsImV4cCI6MjA5NjkxNTM4Nn0.-GjcGBLvDHqng5Rtgj32o2IVJOetcr_a9smJUity_Mc';
 
 export const Route = createFileRoute('/api/public/sync-results')({
@@ -24,8 +24,6 @@ export const Route = createFileRoute('/api/public/sync-results')({
           const dateParam = body.date || new Date().toISOString().split('T')[0];
           const daysToSync = body.daysToSync || 1;
           
-          console.log(`Syncing from external API for date: ${dateParam}, days: ${daysToSync}`);
-          
           const { data: logEntry } = await supabase
             .from('sync_logs')
             .insert({ 
@@ -38,60 +36,52 @@ export const Route = createFileRoute('/api/public/sync-results')({
 
           let totalSynced = 0;
           
-          const externalSupabase = createClient(EXTERNAL_SUPABASE_URL, EXTERNAL_ANON_KEY);
-          
           for (let i = 0; i < daysToSync; i++) {
             const currentSyncDate = new Date(dateParam);
             currentSyncDate.setDate(currentSyncDate.getDate() - i);
             const isoString = currentSyncDate.toISOString();
             const dateStr = isoString.split('T')[0]!;
             
-            console.log(`Fetching results for ${dateStr} from external API...`);
+            const apiUrl = `${EXTERNAL_REST_URL}/draw_results?draw_date=eq.${dateStr}&select=*`;
             
-            const { data: externalResults, error: externalError } = await externalSupabase
-              .from('draw_results')
-              .select('*')
-              .eq('draw_date', dateStr);
+            const response = await fetch(apiUrl, {
+              headers: {
+                'apikey': EXTERNAL_ANON_KEY,
+                'Authorization': `Bearer ${EXTERNAL_ANON_KEY}`
+              }
+            });
             
-            if (externalError) {
-              console.error(`External fetch error for ${dateStr}:`, externalError);
-              continue;
-            }
+            if (response.ok) {
+              const externalResults = await response.json();
+              
+              if (Array.isArray(externalResults) && externalResults.length > 0) {
+                for (const res of externalResults) {
+                  const results = [
+                    res.prize_1_milhar,
+                    res.prize_2_milhar,
+                    res.prize_3_milhar,
+                    res.prize_4_milhar,
+                    res.prize_5_milhar
+                  ].filter(p => !!p);
+                  
+                  const groupStr = res.prize_1_group !== null && res.prize_1_group !== undefined 
+                    ? String(res.prize_1_group).padStart(2, '0') 
+                    : null;
 
-            if (externalResults && externalResults.length > 0) {
-              console.log(`Found ${externalResults.length} results from external API.`);
-              for (const res of externalResults) {
-                const results = [
-                  res.prize_1_milhar,
-                  res.prize_2_milhar,
-                  res.prize_3_milhar,
-                  res.prize_4_milhar,
-                  res.prize_5_milhar
-                ].filter(p => !!p);
-                
-                const groupStr = res.prize_1_group !== null && res.prize_1_group !== undefined 
-                  ? String(res.prize_1_group).padStart(2, '0') 
-                  : null;
-
-                const { error: upsertError } = await supabase
-                  .from('lottery_results')
-                  .upsert({
-                    date: res.draw_date,
-                    time_type: res.draw_time,
-                    time_value: null,
-                    results: results,
-                    animal: res.prize_1_bicho,
-                    animal_group: groupStr
-                  }, { onConflict: 'date,time_type' });
-                
-                if (upsertError) {
-                   console.error('Upsert error:', upsertError);
-                } else {
-                   totalSynced++;
+                  const { error: upsertError } = await supabase
+                    .from('lottery_results')
+                    .upsert({
+                      date: res.draw_date,
+                      time_type: res.draw_time,
+                      time_value: null,
+                      results: results,
+                      animal: res.prize_1_bicho,
+                      animal_group: groupStr
+                    }, { onConflict: 'date,time_type' });
+                  
+                  if (!upsertError) totalSynced++;
                 }
               }
-            } else {
-              console.log(`No results for ${dateStr}`);
             }
           }
 
