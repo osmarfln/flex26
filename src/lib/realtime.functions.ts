@@ -8,7 +8,7 @@ export const getSyncStatus = createServerFn({ method: "GET" })
       .from("sync_logs")
       .select("*")
       .order("started_at", { ascending: false })
-      .limit(20);
+      .limit(100);
 
     if (error) throw error;
     return data || [];
