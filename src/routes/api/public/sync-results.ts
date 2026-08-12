@@ -43,68 +43,118 @@ export const Route = createFileRoute('/api/public/sync-results')({
 
           let totalSynced = 0;
           
-          for (let i = 0; i < daysToSync; i++) {
-            const currentSyncDate = new Date(dateParam);
-            currentSyncDate.setDate(currentSyncDate.getDate() - i);
-            const isoString = currentSyncDate.toISOString();
-            const dateStr = isoString.split('T')[0]!;
-            
-            const apiUrl = `${EXTERNAL_REST_URL}/draw_results?draw_date=eq.${dateStr}&select=*`;
-            console.log(`[SYNC] Fetching from ${apiUrl}`);
-            
-            const response = await fetch(apiUrl, {
-              headers: {
-                'apikey': EXTERNAL_ANON_KEY,
-                'Authorization': `Bearer ${EXTERNAL_ANON_KEY}`
-              }
-            });
-            
-            if (response.ok) {
-              const externalResults = await response.json();
-              console.log(`[SYNC] Found ${Array.isArray(externalResults) ? externalResults.length : 0} records for ${dateStr}`);
-              
-              if (Array.isArray(externalResults) && externalResults.length > 0) {
-                for (const res of externalResults) {
-                  const results = [
-                    res.prize_1_milhar,
-                    res.prize_2_milhar,
-                    res.prize_3_milhar,
-                    res.prize_4_milhar,
-                    res.prize_5_milhar
-                  ].filter(p => !!p);
-                  
-                  const groupStr = res.prize_1_group !== null && res.prize_1_group !== undefined 
-                    ? String(res.prize_1_group).padStart(2, '0') 
-                    : null;
+          if (syncAll) {
+            console.log(`[SYNC] Starting FULL sync from external source`);
+            let offset = 0;
+            const batchSize = 1000;
+            let hasMore = true;
 
-                  console.log(`[SYNC] Upserting ${res.draw_date} ${res.draw_time}`);
-                  
-                  // Use direct supabase.from().upsert()
-                  const { data: upsertData, error: upsertError } = await supabase
-                    .from('lottery_results')
-                    .upsert({
-                      date: res.draw_date,
-                      time_type: res.draw_time,
-                      time_value: null,
-                      results: results,
-                      animal: res.prize_1_bicho,
-                      animal_group: groupStr
-                    }, { onConflict: 'date,time_type' })
-                    .select();
-                  
-                  if (upsertError) {
-                    console.error('[SYNC] Upsert error details:', JSON.stringify(upsertError));
-                  } else {
-                    console.log(`[SYNC] Successfully synced ${res.draw_date} ${res.draw_time}`);
+            while (hasMore) {
+              const apiUrl = `${EXTERNAL_REST_URL}/draw_results?select=*&order=draw_date.desc,draw_time.asc&limit=${batchSize}&offset=${offset}`;
+              console.log(`[SYNC] Fetching batch from offset ${offset}`);
+              
+              const response = await fetch(apiUrl, {
+                headers: {
+                  'apikey': EXTERNAL_ANON_KEY,
+                  'Authorization': `Bearer ${EXTERNAL_ANON_KEY}`
+                }
+              });
+
+              if (!response.ok) {
+                console.error(`[SYNC] Batch fetch failed: ${response.status}`);
+                break;
+              }
+
+              const externalResults = await response.json();
+              if (!Array.isArray(externalResults) || externalResults.length === 0) {
+                hasMore = false;
+                break;
+              }
+
+              for (const res of externalResults) {
+                const results = [
+                  res.prize_1_milhar,
+                  res.prize_2_milhar,
+                  res.prize_3_milhar,
+                  res.prize_4_milhar,
+                  res.prize_5_milhar
+                ].filter(p => !!p);
+                
+                const groupStr = res.prize_1_group !== null && res.prize_1_group !== undefined 
+                  ? String(res.prize_1_group).padStart(2, '0') 
+                  : null;
+
+                await supabase
+                  .from('lottery_results')
+                  .upsert({
+                    date: res.draw_date,
+                    time_type: res.draw_time,
+                    time_value: null,
+                    results: results,
+                    animal: res.prize_1_bicho,
+                    animal_group: groupStr
+                  }, { onConflict: 'date,time_type' });
+                
+                totalSynced++;
+              }
+
+              console.log(`[SYNC] Synced ${totalSynced} records so far...`);
+              offset += batchSize;
+              // Safety break for sandbox environment if taking too long
+              if (offset > 10000) break; 
+            }
+          } else {
+            for (let i = 0; i < daysToSync; i++) {
+              const currentSyncDate = new Date(dateParam);
+              currentSyncDate.setDate(currentSyncDate.getDate() - i);
+              const isoString = currentSyncDate.toISOString();
+              const dateStr = isoString.split('T')[0]!;
+              
+              const apiUrl = `${EXTERNAL_REST_URL}/draw_results?draw_date=eq.${dateStr}&select=*`;
+              console.log(`[SYNC] Fetching from ${apiUrl}`);
+              
+              const response = await fetch(apiUrl, {
+                headers: {
+                  'apikey': EXTERNAL_ANON_KEY,
+                  'Authorization': `Bearer ${EXTERNAL_ANON_KEY}`
+                }
+              });
+              
+              if (response.ok) {
+                const externalResults = await response.json();
+                
+                if (Array.isArray(externalResults) && externalResults.length > 0) {
+                  for (const res of externalResults) {
+                    const results = [
+                      res.prize_1_milhar,
+                      res.prize_2_milhar,
+                      res.prize_3_milhar,
+                      res.prize_4_milhar,
+                      res.prize_5_milhar
+                    ].filter(p => !!p);
+                    
+                    const groupStr = res.prize_1_group !== null && res.prize_1_group !== undefined 
+                      ? String(res.prize_1_group).padStart(2, '0') 
+                      : null;
+
+                    await supabase
+                      .from('lottery_results')
+                      .upsert({
+                        date: res.draw_date,
+                        time_type: res.draw_time,
+                        time_value: null,
+                        results: results,
+                        animal: res.prize_1_bicho,
+                        animal_group: groupStr
+                      }, { onConflict: 'date,time_type' });
+                    
                     totalSynced++;
                   }
                 }
               }
-            } else {
-              const errBody = await response.text();
-              console.error(`[SYNC] External API error: ${response.status} - ${errBody}`);
             }
           }
+
 
           if (logEntry) {
             await supabase
