@@ -453,15 +453,24 @@ function Index() {
                 {stats?.mostFrequentTens?.[0] && (
                   <div className="flex flex-col items-center justify-center text-center">
                     <div className="text-7xl mb-4 animate-bounce">
-                      {ANIMAL_GROUPS.find(a => 
-                        a.id === String(Math.floor((parseInt(stats.mostFrequentTens[0].ten) === 0 ? 100 : parseInt(stats.mostFrequentTens[0].ten) - 1) / 4) + 1).padStart(2, '0')
-                      )?.icon}
+                      {ANIMAL_GROUPS.find(a => {
+                        const ten = stats?.mostFrequentTens?.[0]?.ten;
+                        if (!ten) return false;
+                        const tenInt = parseInt(ten);
+                        const groupNum = Math.floor((tenInt === 0 ? 100 : tenInt - 1) / 4) + 1;
+                        return a.id === String(groupNum).padStart(2, '0');
+                      })?.icon}
                     </div>
                     <h3 className="text-2xl font-black italic uppercase tracking-tighter text-yellow-500">
-                      {ANIMAL_GROUPS.find(a => 
-                        a.id === String(Math.floor((parseInt(stats.mostFrequentTens[0].ten) === 0 ? 100 : parseInt(stats.mostFrequentTens[0].ten) - 1) / 4) + 1).padStart(2, '0')
-                      )?.name}
+                      {ANIMAL_GROUPS.find(a => {
+                        const ten = stats?.mostFrequentTens?.[0]?.ten;
+                        if (!ten) return false;
+                        const tenInt = parseInt(ten);
+                        const groupNum = Math.floor((tenInt === 0 ? 100 : tenInt - 1) / 4) + 1;
+                        return a.id === String(groupNum).padStart(2, '0');
+                      })?.name}
                     </h3>
+
                     <p className="text-[10px] text-white/40 font-bold uppercase tracking-[0.2em] mt-2">Tendência Máxima para hoje</p>
                   </div>
                 )}
