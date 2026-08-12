@@ -367,18 +367,17 @@ function Index() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             <Card className="bg-[#0D121F] border-white/10 rounded-2xl overflow-hidden group hover:border-yellow-500/30 transition-all">
               <CardHeader className="bg-yellow-500/5 p-4 border-b border-white/5 flex flex-row items-center justify-between">
-                <CardTitle className="text-xs font-black uppercase tracking-widest">Dezenas Quentes</CardTitle>
-                <Flame className="w-4 h-4 text-yellow-500" />
+                <CardTitle className="text-xs font-black uppercase tracking-widest">Dezenas Atrasadas</CardTitle>
+                <Clock className="w-4 h-4 text-yellow-500" />
               </CardHeader>
               <CardContent className="p-6">
                 <div className="flex flex-wrap gap-4">
-                  {stats?.mostFrequentTens?.map((item: any) => (
+                  {tenStats?.slice(0, 5).map((item: any) => (
                     <div key={item.ten} className="flex flex-col items-center gap-2 group/item">
                       <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center font-mono text-2xl font-black text-white group-hover/item:border-yellow-500/50 group-hover/item:text-yellow-500 transition-all relative">
                         {item.ten}
-                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-[#0B0F19]" />
                       </div>
-                      <span className="text-[10px] font-black text-white/30 uppercase">{item.count} sorteios</span>
+                      <span className="text-[10px] font-black text-white/30 uppercase">{item.currentDelay}d</span>
                     </div>
                   ))}
                 </div>
@@ -391,13 +390,13 @@ function Index() {
                 <Clock className="w-4 h-4 text-yellow-500" />
               </CardHeader>
               <CardContent className="p-6 space-y-4">
-                {stats?.mostDelayedGroups?.slice(0, 3).map((item: any) => (
-                  <div key={item.group} className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5">
+                {groupStats?.slice(0, 3).map((item: any) => (
+                  <div key={item.groupId} className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5">
                     <div className="flex items-center gap-3">
-                      <span className="text-2xl">{ANIMAL_GROUPS.find(a => a.id === item.group)?.icon}</span>
+                      <span className="text-2xl">{ANIMAL_GROUPS.find(a => a.id === item.groupId)?.icon}</span>
                       <span className="text-sm font-black uppercase italic">{item.animal}</span>
                     </div>
-                    <span className="text-lg font-black text-yellow-500">{item.days}d</span>
+                    <span className="text-lg font-black text-yellow-500">{item.currentDelay}d</span>
                   </div>
                 ))}
               </CardContent>
@@ -409,11 +408,11 @@ function Index() {
                 <TrendingUp className="w-4 h-4 text-yellow-500" />
               </CardHeader>
               <CardContent className="p-6">
-                {stats?.mostFrequentTens?.[0] && (
+                {tenStats?.[0] && (
                   <div className="flex flex-col items-center justify-center text-center">
                     <div className="text-7xl mb-4 animate-bounce">
                       {ANIMAL_GROUPS.find(a => {
-                        const ten = stats?.mostFrequentTens?.[0]?.ten;
+                        const ten = tenStats?.[0]?.ten;
                         if (!ten) return false;
                         const tenInt = parseInt(ten);
                         const groupNum = Math.floor((tenInt === 0 ? 100 : tenInt - 1) / 4) + 1;
@@ -422,19 +421,19 @@ function Index() {
                     </div>
                     <h3 className="text-2xl font-black italic uppercase tracking-tighter text-yellow-500">
                       {ANIMAL_GROUPS.find(a => {
-                        const ten = stats?.mostFrequentTens?.[0]?.ten;
+                        const ten = tenStats?.[0]?.ten;
                         if (!ten) return false;
                         const tenInt = parseInt(ten);
                         const groupNum = Math.floor((tenInt === 0 ? 100 : tenInt - 1) / 4) + 1;
                         return a.id === String(groupNum).padStart(2, '0');
                       })?.name}
                     </h3>
-
                     <p className="text-[10px] text-white/40 font-bold uppercase tracking-[0.2em] mt-2">Tendência Máxima para hoje</p>
                   </div>
                 )}
               </CardContent>
             </Card>
+
           </div>
 
           <div className="flex items-center justify-between mb-8">
