@@ -380,6 +380,27 @@ export const getRepetitionStats = createServerFn({ method: "GET" })
         totalRepetitions++;
         currentConsecutive++;
         repetitionStats.maxConsecutive = Math.max(repetitionStats.maxConsecutive, currentConsecutive);
+        
+        // Add detailed repetition info
+        commonTens.forEach(ten => {
+          const group = getGroupFromTen(ten);
+          const animal = group ? (ANIMAL_GROUPS_DATA[group]?.name || "Desconhecido") : "Desconhecido";
+          const currentPos = currentTens.indexOf(ten) + 1;
+          const nextPos = nextTens.indexOf(ten) + 1;
+          
+          repetitionStats.detailedRepetitions.push({
+            type: 'consecutive',
+            value: ten,
+            group,
+            animal,
+            currentDate: current.date,
+            currentTime: current.time_type,
+            nextDate: next.date,
+            nextTime: next.time_type,
+            currentPos,
+            nextPos
+          });
+        });
       } else {
         currentConsecutive = 0;
       }
@@ -392,9 +413,27 @@ export const getRepetitionStats = createServerFn({ method: "GET" })
         const prevSameTime = results.slice(i + 1).find(r => r.time_type === currentType);
         if (prevSameTime) {
           const prevTens = prevSameTime.results?.slice(0, 5).map(r => r.slice(-2)) || [];
-          if (currentTens.some(t => prevTens.includes(t))) {
+          const matchedTens = currentTens.filter(t => prevTens.includes(t));
+          if (matchedTens.length > 0) {
             repetitionStats.sameTimeRepetition++;
             timeRepMap[currentType] = (timeRepMap[currentType] || 0) + 1;
+            
+            matchedTens.forEach(ten => {
+              const group = getGroupFromTen(ten);
+              const animal = group ? (ANIMAL_GROUPS_DATA[group]?.name || "Desconhecido") : "Desconhecido";
+              repetitionStats.detailedRepetitions.push({
+                type: 'same-time',
+                value: ten,
+                group,
+                animal,
+                currentDate: current.date,
+                currentTime: current.time_type,
+                prevDate: prevSameTime.date,
+                prevTime: prevSameTime.time_type,
+                currentPos: currentTens.indexOf(ten) + 1,
+                prevPos: prevTens.indexOf(ten) + 1
+              });
+            });
           }
         }
       }
@@ -407,6 +446,7 @@ export const getRepetitionStats = createServerFn({ method: "GET" })
       });
       if (diffPos) repetitionStats.differentPositionRepetition++;
     }
+
 
     repetitionStats.historicalPercent = Number(((totalRepetitions / (results.length - 1)) * 100).toFixed(2));
     repetitionStats.timeRepetitionData = Object.entries(timeRepMap).map(([time, count]) => ({ time, count }));
