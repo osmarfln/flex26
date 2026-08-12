@@ -297,8 +297,8 @@ function EstatisticasPage() {
                       stats?.mostFrequentTens.map((item, i) => {
                         const animal = getAnimalByTen(item.ten);
                         return (
-                          <Card key={i} className="bg-white/5 border-white/10 p-4 text-center hover:border-yellow-500/50 transition-all">
-                            <span className="text-4xl font-black text-yellow-500 mb-2 block">{item.ten}</span>
+                          <Card key={i} className="dashboard-card p-4 text-center hover:border-primary/50 transition-all bg-white/[0.03]">
+                            <span className="text-4xl font-black text-primary mb-2 block drop-shadow-[0_0_10px_rgba(var(--primary),0.3)]">{item.ten}</span>
                             <p className="text-xs font-bold uppercase text-white/40">{item.count} sorteios</p>
                             <div className="mt-2 flex items-center justify-center gap-2">
                               <span className="text-lg">{animal?.icon}</span>
@@ -326,7 +326,7 @@ function EstatisticasPage() {
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {stats?.mostDelayedGroups.map((group, i) => (
-                      <Card key={i} className="bg-white/5 border-white/10 p-6 flex items-center justify-between">
+                      <Card key={i} className="dashboard-card p-6 flex items-center justify-between group transition-all duration-500">
                         <div className="flex items-center gap-4">
                           <span className="text-4xl">{ANIMAL_GROUPS.find(a => a.id === group.group)?.icon}</span>
                           <div>

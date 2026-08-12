@@ -332,7 +332,7 @@ function Index() {
             <div className="hidden md:flex gap-4">
                <div className="text-right">
                   <p className="text-[10px] text-white/40 font-black uppercase tracking-widest">Bicho em Alta</p>
-                  <p className="text-lg font-black text-yellow-500 italic uppercase">
+                  <p className="text-lg font-black text-primary italic uppercase">
                     {stats?.mostFrequentTens?.[0] ? 
                       ANIMAL_GROUPS.find(a => {
                         const ten = stats?.mostFrequentTens?.[0]?.ten;
