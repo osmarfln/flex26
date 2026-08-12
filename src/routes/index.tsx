@@ -538,42 +538,46 @@ function Index() {
                       </tr>
                     ))
                   ) : (
-                    // Usando as dezenas mais atrasadas do stats ou calculando localmente se necessário
-                    // Por simplicidade, vamos usar o que já temos no getStats ou mostrar uma mensagem
-                    stats?.mostDelayedGroups?.slice(0, 10).map((item: any, idx: number) => (
-                      <tr key={item.group} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors group">
-                        <td className="p-4 font-black text-white/20 italic">{idx + 1}º</td>
-                        <td className="p-4">
-                          <span className="font-mono text-lg font-black text-primary">
-                            {/* Simulação da dezena baseada no grupo para o ranking rápido na home */}
-                            {String(parseInt(item.group) * 4).padStart(2, '0')}
-                          </span>
-                        </td>
-                        <td className="p-4 text-xs font-bold text-white/60">G{item.group}</td>
-                        <td className="p-4">
-                          <div className="flex items-center gap-2">
-                            <span className="text-lg">{ANIMAL_GROUPS.find(a => a.id === item.group)?.icon}</span>
-                            <span className="text-xs font-black uppercase italic text-white/80">{item.animal}</span>
-                          </div>
-                        </td>
-                        <td className="p-4 text-center">
-                          <Badge variant="outline" className="border-white/10 text-white font-black">{item.days}d</Badge>
-                        </td>
-                        <td className="p-4 text-center font-mono text-xs text-white/40">
-                          {(1 + (item.days / 30)).toFixed(2)}
-                        </td>
-                        <td className="p-4">
-                          <span className={`text-[10px] font-black uppercase px-2 py-1 rounded ${
-                            item.days > 20 ? 'bg-orange-500/10 text-orange-500' : 
-                            item.days > 10 ? 'bg-primary/10 text-primary' : 
-                            'bg-emerald-500/10 text-emerald-500'
-                          }`}>
-                            {item.days > 20 ? 'Crítico' : item.days > 10 ? 'Elevado' : 'Normal'}
-                          </span>
-                        </td>
-                      </tr>
-                    ))
+                    tenStats?.slice(0, 10).map((item: any, idx: number) => {
+                      const tenInt = parseInt(item.ten);
+                      const groupNum = Math.floor((tenInt === 0 ? 100 : tenInt - 1) / 4) + 1;
+                      const animalData = ANIMAL_GROUPS.find(a => a.id === String(groupNum).padStart(2, '0'));
+                      
+                      return (
+                        <tr key={item.ten} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors group">
+                          <td className="p-4 font-black text-white/20 italic">{idx + 1}º</td>
+                          <td className="p-4">
+                            <span className="font-mono text-lg font-black text-primary">
+                              {item.ten}
+                            </span>
+                          </td>
+                          <td className="p-4 text-xs font-bold text-white/60">G{animalData?.id}</td>
+                          <td className="p-4">
+                            <div className="flex items-center gap-2">
+                              <span className="text-lg">{animalData?.icon}</span>
+                              <span className="text-xs font-black uppercase italic text-white/80">{animalData?.name}</span>
+                            </div>
+                          </td>
+                          <td className="p-4 text-center">
+                            <Badge variant="outline" className="border-white/10 text-white font-black">{item.currentDelay}d</Badge>
+                          </td>
+                          <td className="p-4 text-center font-mono text-xs text-white/40">
+                            {item.relativeIndex?.toFixed(2)}
+                          </td>
+                          <td className="p-4">
+                            <span className={`text-[10px] font-black uppercase px-2 py-1 rounded ${
+                              item.classification === 'Crítico' ? 'bg-orange-500/10 text-orange-500' : 
+                              item.classification === 'Elevado' ? 'bg-primary/10 text-primary' : 
+                              'bg-emerald-500/10 text-emerald-500'
+                            }`}>
+                              {item.classification}
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })
                   )}
+
                 </tbody>
               </table>
             </CardContent>
