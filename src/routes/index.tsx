@@ -134,7 +134,7 @@ function Index() {
             </div>
             <div className="flex gap-2">
               <Badge variant="outline" className="px-4 py-1">Hoje</Badge>
-              <Badge variant="ghost" className="px-4 py-1 text-muted-foreground">Ontem</Badge>
+              <Badge variant="secondary" className="px-4 py-1 text-muted-foreground">Ontem</Badge>
             </div>
           </div>
 
