@@ -22,6 +22,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { AvisoObrigatorio } from "@/components/AvisoObrigatorio";
+import { SiteHeader } from "@/components/layout/SiteHeader";
 
 
 export const Route = createFileRoute("/historico")({
