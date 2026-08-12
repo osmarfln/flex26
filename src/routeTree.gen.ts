@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as HistoricoRouteImport } from './routes/historico'
 import { Route as PortalRouteImport } from './routes/portal'
+import { Route as RobotStatusRouteImport } from './routes/robot-status'
 import { Route as PortalJogosRouteImport } from './routes/portal.jogos'
 import { Route as ApiPublicSyncResultsRouteImport } from './routes/api/public/sync-results'
 
@@ -30,6 +31,11 @@ const PortalRoute = PortalRouteImport.update({
   path: '/portal',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RobotStatusRoute = RobotStatusRouteImport.update({
+  id: '/robot-status',
+  path: '/robot-status',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PortalJogosRoute = PortalJogosRouteImport.update({
   id: '/jogos',
   path: '/jogos',
@@ -45,6 +51,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/historico': typeof HistoricoRoute
   '/portal': typeof PortalRouteWithChildren
+  '/robot-status': typeof RobotStatusRoute
   '/portal/jogos': typeof PortalJogosRoute
   '/api/public/sync-results': typeof ApiPublicSyncResultsRoute
 }
@@ -52,6 +59,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/historico': typeof HistoricoRoute
   '/portal': typeof PortalRouteWithChildren
+  '/robot-status': typeof RobotStatusRoute
   '/portal/jogos': typeof PortalJogosRoute
   '/api/public/sync-results': typeof ApiPublicSyncResultsRoute
 }
@@ -60,6 +68,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/historico': typeof HistoricoRoute
   '/portal': typeof PortalRouteWithChildren
+  '/robot-status': typeof RobotStatusRoute
   '/portal/jogos': typeof PortalJogosRoute
   '/api/public/sync-results': typeof ApiPublicSyncResultsRoute
 }
@@ -69,6 +78,7 @@ export interface FileRouteTypes {
     | '/'
     | '/historico'
     | '/portal'
+    | '/robot-status'
     | '/portal/jogos'
     | '/api/public/sync-results'
   fileRoutesByTo: FileRoutesByTo
@@ -76,6 +86,7 @@ export interface FileRouteTypes {
     | '/'
     | '/historico'
     | '/portal'
+    | '/robot-status'
     | '/portal/jogos'
     | '/api/public/sync-results'
   id:
@@ -83,6 +94,7 @@ export interface FileRouteTypes {
     | '/'
     | '/historico'
     | '/portal'
+    | '/robot-status'
     | '/portal/jogos'
     | '/api/public/sync-results'
   fileRoutesById: FileRoutesById
@@ -91,6 +103,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   HistoricoRoute: typeof HistoricoRoute
   PortalRoute: typeof PortalRouteWithChildren
+  RobotStatusRoute: typeof RobotStatusRoute
   ApiPublicSyncResultsRoute: typeof ApiPublicSyncResultsRoute
 }
 
@@ -115,6 +128,13 @@ declare module '@tanstack/react-router' {
       path: '/portal'
       fullPath: '/portal'
       preLoaderRoute: typeof PortalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/robot-status': {
+      id: '/robot-status'
+      path: '/robot-status'
+      fullPath: '/robot-status'
+      preLoaderRoute: typeof RobotStatusRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/portal/jogos': {
@@ -149,6 +169,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   HistoricoRoute: HistoricoRoute,
   PortalRoute: PortalRouteWithChildren,
+  RobotStatusRoute: RobotStatusRoute,
   ApiPublicSyncResultsRoute: ApiPublicSyncResultsRoute,
 }
 export const routeTree = rootRouteImport
