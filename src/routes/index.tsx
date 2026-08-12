@@ -96,10 +96,16 @@ function Index() {
     queryFn: () => getResults({ data: { limit: 10, date: today } }),
   });
 
-  const { data: stats, isLoading: isLoadingStats, refetch: refetchStats } = useQuery({
-    queryKey: ["homepage-stats"],
-    queryFn: () => getTenDelayStats(), // Use the more complete function
+  const { data: groupStats, isLoading: isLoadingStats } = useQuery({
+    queryKey: ["homepage-group-stats"],
+    queryFn: () => getGroupDelayStats(),
   });
+
+  const { data: tenStats } = useQuery({
+    queryKey: ["homepage-ten-stats"],
+    queryFn: () => getTenDelayStats(),
+  });
+
 
 
   useEffect(() => {
