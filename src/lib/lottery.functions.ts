@@ -299,3 +299,102 @@ export const getGroupDelayStats = createServerFn({ method: "GET" })
 
     return stats.sort((a, b) => b.currentDelay - a.currentDelay);
   });
+
+export const getRepetitionStats = createServerFn({ method: "GET" })
+  .handler(async () => {
+    // Buscar últimos 300 resultados para análise de repetição
+    const { data: results, error } = await supabase
+      .from("lottery_results")
+      .select("results, date, time_type, animal_group")
+      .order("date", { ascending: false })
+      .limit(300);
+
+    if (error) throw error;
+    if (!results || results.length < 2) return null;
+
+    const repetitionStats = {
+      tenNextDraw: 0,
+      groupNextDraw: 0,
+      animalNextDraw: 0,
+      sameTimeRepetition: 0,
+      consecutiveTimeRepetition: 0,
+      differentPositionRepetition: 0,
+      maxConsecutive: 0,
+      historicalPercent: 0,
+      sampleSize: results.length,
+      periodAnalyzed: `${new Date(results[results.length - 1].date).toLocaleDateString('pt-BR')} - ${new Date(results[0].date).toLocaleDateString('pt-BR')}`,
+      timeRepetitionData: [] as { time: string, count: number }[],
+    };
+
+    // Auxiliar para pegar grupo de uma dezena
+    const getGroupFromTen = (ten: string) => {
+      const tenInt = parseInt(ten);
+      if (isNaN(tenInt)) return null;
+      return String(Math.floor((tenInt === 0 ? 100 : tenInt - 1) / 4) + 1).padStart(2, '0');
+    };
+
+    let totalRepetitions = 0;
+    const timeRepMap: Record<string, number> = {};
+    let currentConsecutive = 0;
+
+    for (let i = 0; i < results.length - 1; i++) {
+      const current = results[i];
+      const next = results[i + 1]; // "Próximo" no sentido de ser o concurso anterior no tempo
+
+      const currentTens = current.results.slice(0, 5).map(r => r.slice(-2));
+      const nextTens = next.results.slice(0, 5).map(r => r.slice(-2));
+      
+      const currentGroups = currentTens.map(t => getGroupFromTen(t));
+      const nextGroups = nextTens.map(t => getGroupFromTen(t));
+
+      // 1. Dezena repetida no concurso seguinte (mesma posição ou qualquer posição)
+      const commonTens = currentTens.filter(t => nextTens.includes(t));
+      if (commonTens.length > 0) {
+        repetitionStats.tenNextDraw++;
+        totalRepetitions++;
+      }
+
+      // 2. Grupo repetido
+      const commonGroups = currentGroups.filter(g => nextGroups.includes(g));
+      if (commonGroups.length > 0) repetitionStats.groupNextDraw++;
+
+      // 3. Animal repetido (usando o animal_group principal do 1º prêmio)
+      if (current.animal_group === next.animal_group) repetitionStats.animalNextDraw++;
+
+      // 4. Repetição no mesmo horário (precisa buscar o resultado anterior do MESMO horário)
+      // Buscamos nos resultados carregados o anterior do mesmo time_type
+      const prevSameTime = results.slice(i + 1).find(r => r.time_type === current.time_type);
+      if (prevSameTime) {
+        const prevTens = prevSameTime.results.slice(0, 5).map(r => r.slice(-2));
+        if (currentTens.some(t => prevTens.includes(t))) {
+          repetitionStats.sameTimeRepetition++;
+          timeRepMap[current.time_type] = (timeRepMap[current.time_type] || 0) + 1;
+        }
+      }
+
+      // 5. Repetição entre horários consecutivos
+      if (currentTens.some(t => nextTens.includes(t))) {
+        repetitionStats.consecutiveTimeRepetition++;
+      }
+
+      // 6. Repetição entre posições diferentes
+      let diffPos = false;
+      currentTens.forEach((t, idx) => {
+        if (nextTens.includes(t) && nextTens.indexOf(t) !== idx) diffPos = true;
+      });
+      if (diffPos) repetitionStats.differentPositionRepetition++;
+
+      // Máximo consecutivas
+      if (commonTens.length > 0) {
+        currentConsecutive++;
+        repetitionStats.maxConsecutive = Math.max(repetitionStats.maxConsecutive, currentConsecutive);
+      } else {
+        currentConsecutive = 0;
+      }
+    }
+
+    repetitionStats.historicalPercent = Number(((totalRepetitions / (results.length - 1)) * 100).toFixed(2));
+    repetitionStats.timeRepetitionData = Object.entries(timeRepMap).map(([time, count]) => ({ time, count }));
+
+    return repetitionStats;
+  });
