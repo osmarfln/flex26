@@ -7,10 +7,10 @@ export interface LotteryResult {
   id: string;
   date: string;
   time_type: string;
-  time_value: string;
+  time_value: string | null;
   results: string[];
-  animal: string;
-  animal_group: string;
+  animal: string | null;
+  animal_group: string | null;
   created_at: string;
 }
 
@@ -23,11 +23,11 @@ const ANIMAL_GROUPS: Record<string, { name: string, icon: string }> = {
 };
 
 export const getResults = createServerFn({ method: "GET" })
-  .input(z.object({
+  .validator((data: unknown) => z.object({
     date: z.string().optional(),
     limit: z.number().optional().default(20),
     offset: z.number().optional().default(0)
-  }))
+  }).parse(data))
   .handler(async ({ data }) => {
     let query = supabase
       .from("lottery_results")
@@ -56,28 +56,29 @@ export const getStats = createServerFn({ method: "GET" })
       .limit(200);
 
     if (error) throw error;
+    if (!results) return { mostDelayedGroups: [], mostFrequentTens: [], delayedBySchedule: {} };
 
     // Calcular atrasos
     const lastSeen: Record<string, string> = {};
-    const counts: Record<string, number> = {};
     const tenCounts: Record<string, number> = {};
     const scheduleDelay: Record<string, { group: string, date: string }> = {};
 
     results.forEach(res => {
       const group = res.animal_group;
-      if (!lastSeen[group]) lastSeen[group] = res.date;
-      counts[group] = (counts[group] || 0) + 1;
-      
-      // Dezenas (últimos 2 dígitos do 1º prêmio)
-      const firstPrize = res.results[0];
-      if (firstPrize && firstPrize.length >= 2) {
-        const ten = firstPrize.slice(-2);
-        tenCounts[ten] = (tenCounts[ten] || 0) + 1;
-      }
+      if (group) {
+        if (!lastSeen[group]) lastSeen[group] = res.date;
+        
+        // Dezenas (últimos 2 dígitos do 1º prêmio)
+        const firstPrize = res.results[0];
+        if (firstPrize && firstPrize.length >= 2) {
+          const ten = firstPrize.slice(-2);
+          tenCounts[ten] = (tenCounts[ten] || 0) + 1;
+        }
 
-      // Atraso por horário
-      const key = res.time_type;
-      if (!scheduleDelay[key]) scheduleDelay[key] = { group, date: res.date };
+        // Atraso por horário
+        const key = res.time_type;
+        if (!scheduleDelay[key]) scheduleDelay[key] = { group, date: res.date };
+      }
     });
 
     const mostDelayedGroups = Object.keys(ANIMAL_GROUPS)
@@ -95,17 +96,18 @@ export const getStats = createServerFn({ method: "GET" })
       .slice(0, 5);
 
     const mostFrequentTens = Object.entries(tenCounts)
-      .map(([ten, count]) => ({ ten, count, trend: count > 3 ? "up" as const : "stable" as const }))
+      .map(([ten, count]) => ({ ten, count, trend: (count > 3 ? "up" : "stable") as "up" | "stable" | "down" }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 5);
 
     const delayedBySchedule: Record<string, any> = {};
     Object.keys(scheduleDelay).forEach(time => {
-      const data = scheduleDelay[time];
-      const days = Math.floor((new Date().getTime() - new Date(data.date).getTime()) / (1000 * 60 * 60 * 24));
+      const entry = scheduleDelay[time];
+      const days = Math.floor((new Date().getTime() - new Date(entry.date).getTime()) / (1000 * 60 * 60 * 24));
+      const groupInfo = ANIMAL_GROUPS[entry.group];
       delayedBySchedule[time] = {
-        group: data.group,
-        animal: ANIMAL_GROUPS[data.group].name,
+        group: entry.group,
+        animal: groupInfo ? groupInfo.name : "Desconhecido",
         delayed: `${days} dias`
       };
     });
