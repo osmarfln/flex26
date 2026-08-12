@@ -137,22 +137,20 @@ function EstatisticasPage() {
 
 
   const palpitesIA = useMemo(() => {
-    if (!stats || !stats.mostFrequentTens) return [];
+    if (!tenStats || tenStats.length === 0) return [];
     
-    // Lógica IA: Mistura de dezenas quentes com dezenas da cruz (se disponível)
-    const hotTens = stats.mostFrequentTens.map(t => t.ten);
-    
-    // Sugerir 4 palpites baseados na lógica solicitada
-    const combined = [...hotTens, ...cruzData];
-    const unique = Array.from(new Set(combined));
-    
-    return unique.slice(0, 4).map((ten, i) => ({
-      ten,
-      type: i % 2 === 0 ? "Frequência" : "Tendência",
-      strength: 85 + (i * 2),
-      animal: getAnimalByTen(ten)
-    }));
-  }, [stats, cruzData]);
+    // IA Logic: Most delayed tens from delayed groups
+    return tenStats
+      .filter((t: any) => t.classification === "Muito acima da média" || t.classification === "Atraso elevado")
+      .slice(0, 4)
+      .map((item: any, i: number) => ({
+        ten: item.ten,
+        type: i % 2 === 0 ? "Tendência" : "Atraso Crítico",
+        strength: 90 - (i * 2),
+        animal: getAnimalByTen(item.ten)
+      }));
+  }, [tenStats]);
+
 
   return (
     <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/30 overflow-x-hidden">
