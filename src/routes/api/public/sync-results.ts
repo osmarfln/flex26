@@ -38,13 +38,13 @@ export const Route = createFileRoute('/api/public/sync-results')({
 
           let totalSynced = 0;
           
-          // Fetch from external Supabase
           const externalSupabase = createClient(EXTERNAL_SUPABASE_URL, EXTERNAL_ANON_KEY);
           
           for (let i = 0; i < daysToSync; i++) {
             const currentSyncDate = new Date(dateParam);
             currentSyncDate.setDate(currentSyncDate.getDate() - i);
-            const dateStr = currentSyncDate.toISOString().split('T')[0]!;
+            const isoString = currentSyncDate.toISOString();
+            const dateStr = isoString.split('T')[0]!;
             
             console.log(`Fetching results for ${dateStr} from external API...`);
             
@@ -59,8 +59,8 @@ export const Route = createFileRoute('/api/public/sync-results')({
             }
 
             if (externalResults && externalResults.length > 0) {
+              console.log(`Found ${externalResults.length} results from external API.`);
               for (const res of externalResults) {
-                // Map external schema to our schema
                 const results = [
                   res.prize_1_milhar,
                   res.prize_2_milhar,
@@ -69,7 +69,6 @@ export const Route = createFileRoute('/api/public/sync-results')({
                   res.prize_5_milhar
                 ].filter(p => !!p);
                 
-                // Formatar grupo como string com 2 dígitos
                 const groupStr = res.prize_1_group !== null && res.prize_1_group !== undefined 
                   ? String(res.prize_1_group).padStart(2, '0') 
                   : null;
@@ -79,14 +78,20 @@ export const Route = createFileRoute('/api/public/sync-results')({
                   .upsert({
                     date: res.draw_date,
                     time_type: res.draw_time,
-                    time_value: null, // Opcional, o external usa apenas a label
+                    time_value: null,
                     results: results,
                     animal: res.prize_1_bicho,
                     animal_group: groupStr
                   }, { onConflict: 'date,time_type' });
                 
-                if (!upsertError) totalSynced++;
+                if (upsertError) {
+                   console.error('Upsert error:', upsertError);
+                } else {
+                   totalSynced++;
+                }
               }
+            } else {
+              console.log(`No results for ${dateStr}`);
             }
           }
 
