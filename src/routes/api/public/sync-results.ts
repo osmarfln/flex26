@@ -41,7 +41,8 @@ export const Route = createFileRoute('/api/public/sync-results')({
           for (let i = 0; i < daysToSync; i++) {
             const currentSyncDate = new Date(dateParam);
             currentSyncDate.setDate(currentSyncDate.getDate() - i);
-            const dateStr = currentSyncDate.toISOString().split('T')[0];
+            const isoString = currentSyncDate.toISOString();
+            const dateStr = isoString.split('T')[0]!;
             
             // Site soresultados.info permite buscar por data na URL
             const formattedDate = dateStr.split('-').reverse().join('-');
