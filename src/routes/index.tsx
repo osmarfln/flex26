@@ -224,7 +224,7 @@ function Index() {
                   <CardContent className="p-5 pt-0">
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-1">
-                        {(game.result.length > 0 ? game.result.slice(0, 5) : ['----', '----', '----', '----', '----']).map((res: string, idx: number) => (
+                        {((game.results ?? game.result ?? []).length > 0 ? (game.results ?? game.result).slice(0, 5) : ['----', '----', '----', '----', '----']).map((res: string, idx: number) => (
                           <div key={idx} className="flex gap-4 text-sm font-bold items-baseline">
                             <span className="text-white/20 w-4">{idx + 1}º</span>
                             <span className="font-mono tracking-widest text-lg">{res}</span>
@@ -259,7 +259,7 @@ function Index() {
                 {isLoadingStats ? (
                   Array.from({ length: 4 }).map((_, i) => <div key={i} className="h-12 bg-white/5 rounded-lg animate-pulse" />)
                 ) : (
-                  stats?.mostDelayedGroups.map((item: any) => (
+                  stats?.mostDelayedGroups?.map((item: any) => (
                     <div key={item.group} className="flex items-center justify-between p-3 bg-white/[0.02] rounded-xl border border-white/5 hover:border-yellow-500/20 transition-all group">
                       <div className="flex items-center gap-4">
                         <div className="text-2xl opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all">
@@ -289,7 +289,7 @@ function Index() {
               </CardHeader>
               <CardContent className="p-6">
                 <div className="flex flex-wrap gap-3">
-                  {stats?.mostFrequentTens.map((item: any) => (
+                  {stats?.mostFrequentTens?.map((item: any) => (
                     <div key={item.ten} className="flex flex-col items-center gap-1">
                       <div className="w-12 h-12 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center font-mono text-xl font-black text-yellow-500 group relative">
                         {item.ten}
