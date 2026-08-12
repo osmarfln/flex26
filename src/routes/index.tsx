@@ -98,8 +98,9 @@ function Index() {
 
   const { data: stats, isLoading: isLoadingStats, refetch: refetchStats } = useQuery({
     queryKey: ["homepage-stats"],
-    queryFn: () => getStats(),
+    queryFn: () => getTenDelayStats(), // Use the more complete function
   });
+
 
   useEffect(() => {
     const channel = supabase
