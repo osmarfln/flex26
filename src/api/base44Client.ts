@@ -11,12 +11,14 @@ export const base44 = {
   },
   games: {
     list: async () => [
-      { id: 1, homeTeam: "Flamengo", awayTeam: "Palmeiras", time: "20:00", date: "12/08/2026", status: "scheduled", league: "Série A" },
-      { id: 2, homeTeam: "Real Madrid", awayTeam: "Barcelona", time: "16:00", date: "12/08/2026", status: "live", score: "1-0", league: "La Liga" },
-      { id: 3, homeTeam: "Man City", awayTeam: "Liverpool", time: "14:30", date: "13/08/2026", status: "scheduled", league: "Premier League" },
+      { id: 1, type: "PTM", time: "11:00", date: "12/08/2026", status: "finished", result: ["1234", "5678", "9012", "3456", "7890"], animal: "Cachorro", group: "05" },
+      { id: 2, type: "PT", time: "14:00", date: "12/08/2026", status: "finished", result: ["4321", "8765", "2109", "6543", "0987"], animal: "Avestruz", group: "01" },
+      { id: 3, type: "PTV", time: "16:00", date: "12/08/2026", status: "live", result: ["----", "----", "----", "----", "----"], animal: "Pendente", group: "--" },
+      { id: 4, type: "PTN", time: "18:00", date: "12/08/2026", status: "scheduled", result: [], animal: "", group: "" },
+      { id: 5, type: "Corujinha", time: "21:00", date: "12/08/2026", status: "scheduled", result: [], animal: "", group: "" },
     ],
-    updateStatus: async (gameId: number, status: string) => {
-      console.log(`Atualizando jogo ${gameId} para ${status}`);
+    updateStatus: async (gameId: number, status: string, results?: string[]) => {
+      console.log(`Atualizando jogo ${gameId} para ${status} com resultados:`, results);
       return { success: true };
     }
   }
