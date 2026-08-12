@@ -243,7 +243,7 @@ function EstatisticasPage() {
                onClick={() => setActiveTab('ranking-completo')}
                className={`bg-[#0D121F] border-white/10 rounded-2xl p-6 transition-all cursor-pointer group ${activeTab === 'ranking-completo' ? 'border-purple-500/50 ring-1 ring-purple-500/20' : 'hover:border-purple-500/30'}`}
              >
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'ranking-completo' ? 'bg-purple-500 text-[#0B0F19]' : 'bg-purple-500/10 text-purple-400'}`}>
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'ranking-completo' ? 'bg-primary text-primary-foreground' : 'bg-primary/10 text-primary'}`}>
                    <Trophy className="w-6 h-6" />
                 </div>
                 <h3 className="text-xl font-black italic uppercase mb-2">Ranking Geral</h3>
@@ -254,7 +254,7 @@ function EstatisticasPage() {
                onClick={() => setActiveTab('repeticoes')}
                className={`bg-[#0D121F] border-white/10 rounded-2xl p-6 transition-all cursor-pointer group ${activeTab === 'repeticoes' ? 'border-blue-400/50 ring-1 ring-blue-400/20' : 'hover:border-blue-400/30'}`}
              >
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'repeticoes' ? 'bg-blue-400 text-[#0B0F19]' : 'bg-blue-400/10 text-blue-400'}`}>
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'repeticoes' ? 'bg-primary text-primary-foreground' : 'bg-primary/10 text-primary'}`}>
                    <Repeat className="w-6 h-6" />
                 </div>
                 <h3 className="text-xl font-black italic uppercase mb-2">Repetições</h3>
@@ -265,7 +265,7 @@ function EstatisticasPage() {
                onClick={() => setActiveTab('palpites')}
                className={`bg-[#0D121F] border-white/10 rounded-2xl p-6 transition-all cursor-pointer group ${activeTab === 'palpites' ? 'border-orange-500/50 ring-1 ring-orange-500/20' : 'hover:border-orange-500/30'}`}
              >
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'palpites' ? 'bg-orange-500 text-[#0B0F19]' : 'bg-orange-500/10 text-orange-500'}`}>
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'palpites' ? 'bg-primary text-primary-foreground' : 'bg-primary/10 text-primary'}`}>
                    <BrainCircuit className="w-6 h-6" />
                 </div>
                 <h3 className="text-xl font-black italic uppercase mb-2">Palpites IA</h3>
@@ -322,7 +322,7 @@ function EstatisticasPage() {
                 >
                   <div className="flex items-center gap-3 mb-4">
                     <Clock className="w-6 h-6 text-blue-500" />
-                    <h2 className="text-2xl font-black italic uppercase">Atrasados (Sem 1º Prêmio)</h2>
+                    <h2 className="text-2xl font-black italic uppercase group-hover:text-primary transition-colors">Atrasados (Sem 1º Prêmio)</h2>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {stats?.mostDelayedGroups.map((group, i) => (
@@ -330,7 +330,7 @@ function EstatisticasPage() {
                         <div className="flex items-center gap-4">
                           <span className="text-4xl">{ANIMAL_GROUPS.find(a => a.id === group.group)?.icon}</span>
                           <div>
-                            <h4 className="text-xl font-black italic uppercase text-blue-400">{group.animal}</h4>
+                            <h4 className="text-xl font-black italic uppercase text-primary">{group.animal}</h4>
                             <p className="text-xs font-bold text-white/40 uppercase">Grupo {group.group}</p>
                           </div>
                         </div>
