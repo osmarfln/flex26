@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { base44 } from "@/api/base44Client";
+import { getResults, getStats } from "@/lib/lottery.functions";
 import { useQuery } from "@tanstack/react-query";
 import { 
   Trophy, 
@@ -77,12 +77,12 @@ function Index() {
 
   const { data: games, isLoading: isLoadingGames, refetch } = useQuery({
     queryKey: ["homepage-games"],
-    queryFn: () => base44.games.list(),
+    queryFn: () => getResults({ data: { limit: 6 } }),
   });
 
   const { data: stats, isLoading: isLoadingStats } = useQuery({
     queryKey: ["homepage-stats"],
-    queryFn: () => base44.games.getStats(),
+    queryFn: () => getStats(),
   });
 
   const GreetingIcon = greeting.icon;
@@ -107,6 +107,9 @@ function Index() {
             <nav className="hidden lg:flex items-center gap-8 ml-8">
               <Link to="/" className="text-sm font-bold border-b-2 border-yellow-500 pb-1 flex items-center gap-2">
                 <Users className="w-4 h-4" /> Início
+              </Link>
+              <Link to="/historico" className="text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2">
+                <History className="w-4 h-4" /> Histórico
               </Link>
               <a href="#resultados" className="text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2">
                 <TrendingUp className="w-4 h-4" /> Resultados
@@ -185,9 +188,11 @@ function Index() {
               </div>
             </div>
 
-            <Button className="h-[54px] px-10 bg-yellow-500 hover:bg-yellow-400 text-[#0B0F19] font-black uppercase tracking-tighter rounded-xl gap-2 shadow-lg shadow-yellow-500/10 active:scale-95 transition-all">
-              <Search className="w-5 h-5" /> Buscar resultados
-            </Button>
+            <Link to="/historico">
+              <Button className="h-[54px] px-10 bg-yellow-500 hover:bg-yellow-400 text-[#0B0F19] font-black uppercase tracking-tighter rounded-xl gap-2 shadow-lg shadow-yellow-500/10 active:scale-95 transition-all">
+                <Search className="w-5 h-5" /> Buscar resultados
+              </Button>
+            </Link>
           </div>
         </section>
 
@@ -207,7 +212,7 @@ function Index() {
                   <CardHeader className="p-5 pb-2">
                     <div className="flex justify-between items-start mb-4">
                       <CardTitle className="text-xl font-black italic tracking-tighter uppercase">
-                        {game.type} RIO — {game.time}hs
+                        {game.time_type} RIO — {game.time_value || '--:--'}hs
                       </CardTitle>
                       {game.status === 'live' && (
                         <div className="px-2 py-1 bg-yellow-500 text-[#0B0F19] text-[9px] font-black uppercase rounded shadow-lg shadow-yellow-500/20">
@@ -228,10 +233,10 @@ function Index() {
                       </div>
                       <div className="flex flex-col items-center justify-center bg-white/[0.02] rounded-xl p-4 border border-white/5 relative">
                         <div className="w-16 h-16 mb-2 text-yellow-500 flex items-center justify-center text-4xl">
-                           {ANIMAL_GROUPS.find(a => a.id === game.group)?.icon || <Sparkles className="w-8 h-8 opacity-20" />}
+                           {ANIMAL_GROUPS.find(a => a.id === game.animal_group)?.icon || <Sparkles className="w-8 h-8 opacity-20" />}
                         </div>
                         <p className="text-[10px] text-white/40 font-bold uppercase tracking-wider mb-1">Grupo</p>
-                        <p className="text-3xl font-black text-yellow-500 tracking-tighter leading-none">{game.group || '--'}</p>
+                        <p className="text-3xl font-black text-yellow-500 tracking-tighter leading-none">{game.animal_group || '--'}</p>
                         <p className="text-[11px] font-bold mt-2 text-white/80 uppercase tracking-tight">{game.animal || 'Aguardando'}</p>
                       </div>
                     </div>
