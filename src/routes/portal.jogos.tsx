@@ -8,7 +8,7 @@ import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { Trophy, Clock, PlayCircle, Settings2 } from 'lucide-react';
 
-export const Route = createFileRoute('/portal/jogos' as any)({
+export const Route = createFileRoute('/portal/jogos')({
   component: JogosManagementPage,
 });
 
