@@ -198,7 +198,7 @@ function Index() {
               </div>
             </motion.div>
 
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-4 italic">Resultados Rio em Tempo Real</h1>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-4 italic">Resultados Rio</h1>
             <p className="text-white/40 text-lg mb-8 font-medium">Resultados diários automatizados via robô de soresultados.info</p>
 
             <div className="flex flex-wrap gap-4 items-center mb-6">
@@ -281,10 +281,8 @@ function Index() {
                   <Clock className="w-10 h-10 text-yellow-500" />
                 </div>
                 <h3 className="text-2xl font-black italic tracking-tighter uppercase mb-2">Painel Zerado</h3>
-                <p className="text-white/40 font-bold uppercase tracking-widest text-sm mb-8">
-                  {new Date().getHours() < 9 
-                    ? "Aguardando o primeiro sorteio do dia (PTT às 09:00)" 
-                    : "Nenhum resultado disponível para hoje até o momento"}
+                <p className="text-red-500 font-bold uppercase tracking-[0.2em] text-sm mb-8 flex items-center justify-center gap-2">
+                  Aguardando... <span className="animate-pulse">...</span>
                 </p>
                 <Link to="/historico">
                   <Button variant="outline" className="border-white/10 bg-white/5 hover:bg-white/10 text-xs font-bold uppercase tracking-widest rounded-xl px-8 h-12">
