@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import heroCoffee from "@/assets/hero-coffee.jpg";
 import pour from "@/assets/pour.jpg";
 import roaster from "@/assets/roaster.jpg";
@@ -65,13 +65,14 @@ function Index() {
             <li><a className="transition-colors hover:text-foreground" href="#origins">Origins</a></li>
             <li><a className="transition-colors hover:text-foreground" href="#craft">The craft</a></li>
             <li><a className="transition-colors hover:text-foreground" href="#visit">Visit</a></li>
+            <li><Link className="transition-colors hover:text-foreground" to="/portal">Portal</Link></li>
           </ul>
-          <a
-            href="#origins"
+          <Link
+            to="/portal"
             className="rounded-full bg-primary px-5 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
-            Shop beans
-          </a>
+            Gerenciar
+          </Link>
         </nav>
       </header>
 

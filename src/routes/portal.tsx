@@ -62,7 +62,7 @@ function PortalPage() {
                   </div>
                   <div className="flex-1">
                     <p className="text-sm font-medium">Nova análise gerada</p>
-                    <p className="text-xs text-muted-foreground">Há {i * 10} minutos atrás</p>
+                    <p className="text-xs text-muted-foreground">Há {i * 10} minutos</p>
                   </div>
                 </div>
               ))}
