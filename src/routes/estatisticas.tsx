@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ANIMAL_GROUPS, getAnimalByTen } from "@/lib/animals";
-import { ArrowLeft, BarChart3, Calculator, Sparkles, TrendingUp, Zap, Target, BrainCircuit, History, Flame, Clock, LayoutGrid, Hash, Users, Repeat, ArrowLeftRight, FileText, Upload, Calendar, AlertCircle, Database, CheckCircle2, XCircle, Activity, Timer, ChevronRight, Trophy } from "lucide-react";
+import { ArrowLeft, BarChart3, Calculator, Sparkles, TrendingUp, Zap, Target, BrainCircuit, History, Flame, Clock, LayoutGrid, Hash, Users, Repeat, ArrowLeftRight, FileText, Upload, Calendar, AlertCircle, Database, CheckCircle2, XCircle, Activity, Timer, ChevronRight, Trophy, RefreshCw, Loader2 } from "lucide-react";
 import { CruzDoDia } from "@/components/CruzDoDia";
 import { AvisoObrigatorio } from "@/components/AvisoObrigatorio";
 import { SiteHeader } from "@/components/layout/SiteHeader";
@@ -10,7 +10,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
 import { getStats, getResults, getTenDelayStats, getGroupDelayStats, getRepetitionStats } from "@/lib/lottery.functions";
-import { useQuery } from "@tanstack/react-query";
+import { runSyncNow } from "@/lib/robot.functions";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { useLotteryRealtime } from "@/hooks/useLotteryRealtime";
 
 import { useState, useMemo, useEffect } from "react";
@@ -71,6 +73,42 @@ function EstatisticasPage() {
 
   // Recalcula todas as análises a cada novo resultado publicado
   const { lastUpdate } = useLotteryRealtime("estatisticas-db-changes");
+
+  // Sincronização manual + recálculo imediato
+  const queryClient = useQueryClient();
+  const triggerSync = useServerFn(runSyncNow);
+  const [syncMessage, setSyncMessage] = useState<string | null>(null);
+  const [syncStep, setSyncStep] = useState<string | null>(null);
+  const syncMutation = useMutation({
+    mutationFn: async () => {
+      setSyncStep("Buscando novos resultados na origem...");
+      const res: any = await triggerSync();
+      setSyncStep("Recalculando dezenas atrasadas, grupos e bicho em alta...");
+      await queryClient.invalidateQueries();
+      await queryClient.refetchQueries({ type: "active" });
+      return res;
+    },
+    onSuccess: (res: any) => {
+      setSyncStep(null);
+      setSyncMessage(
+        res?.ok
+          ? `Dados validados e recalculados (${res.synced ?? 0} registros verificados).`
+          : `Falha na sincronização: ${res?.error ?? "erro desconhecido"}`,
+      );
+    },
+    onError: (err: any) => {
+      setSyncStep(null);
+      setSyncMessage(`Falha na sincronização: ${err?.message ?? "erro"}`);
+    },
+  });
+  const handleSyncNow = () => {
+    setSyncMessage(null);
+    syncMutation.mutate();
+  };
+  const recalculating =
+    syncMutation.isPending ||
+    statsLoading || resultsLoading || delayStatsLoading || groupDelayStatsLoading || repetitionLoading;
+
 
 
 
@@ -213,8 +251,34 @@ function EstatisticasPage() {
                       : "Aguardando novo resultado"}
                   </p>
                </div>
+
+               <div className="flex flex-col gap-2 justify-center">
+                  <button
+                    onClick={handleSyncNow}
+                    disabled={syncMutation.isPending}
+                    className="px-5 py-3 rounded-2xl bg-yellow-500/15 border border-yellow-500/30 text-yellow-400 text-xs font-black uppercase hover:bg-yellow-500/25 transition-all disabled:opacity-60 flex items-center gap-2"
+                  >
+                    <RefreshCw className={`w-4 h-4 ${syncMutation.isPending ? "animate-spin" : ""}`} />
+                    Sincronizar agora
+                  </button>
+                  {recalculating ? (
+                    <div className="flex items-center gap-2 text-[10px] font-bold text-blue-400">
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                      <span>{syncStep ?? "Recalculando análises..."}</span>
+                    </div>
+                  ) : syncMessage ? (
+                    <p className="text-[10px] font-bold text-emerald-400 max-w-[220px] leading-snug">{syncMessage}</p>
+                  ) : null}
+               </div>
             </div>
           </div>
+
+          {recalculating && (
+            <div className="mb-8 h-1 w-full overflow-hidden rounded-full bg-white/10">
+              <div className="h-full w-1/3 animate-[loading_1.2s_ease-in-out_infinite] rounded-full bg-gradient-to-r from-primary via-blue-400 to-primary" />
+            </div>
+          )}
+
 
 
           {/* Tools Grid */}
