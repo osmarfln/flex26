@@ -77,7 +77,7 @@ function Index() {
 
   const { data: games, isLoading: isLoadingGames, refetch } = useQuery({
     queryKey: ["homepage-games"],
-    queryFn: () => getResults({ limit: 6 }),
+    queryFn: () => getResults({ data: { limit: 6 } }),
   });
 
   const { data: stats, isLoading: isLoadingStats } = useQuery({
