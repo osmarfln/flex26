@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
-import { getStats, getResults, getTenDelayStats, getGroupDelayStats } from "@/lib/lottery.functions";
+import { getStats, getResults, getTenDelayStats, getGroupDelayStats, getRepetitionStats } from "@/lib/lottery.functions";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useMemo, useEffect } from "react";
 import { format, subDays, differenceInDays } from "date-fns";
