@@ -181,7 +181,17 @@ function Historico() {
                       <div className="flex flex-col items-end">
                         <div className="flex items-center gap-1.5 px-2 py-1 bg-white/5 rounded-md border border-white/5">
                           <Clock className="w-3 h-3 text-yellow-500" />
-                          <span className="text-[10px] font-mono font-black text-white">{res.time_value || '--:--'}</span>
+                          <span className="text-[10px] font-mono font-black text-white">
+                            {res.time_value || (
+                              res.time_type === 'PPT' ? '09:20' :
+                              res.time_type === 'PTM' ? '11:20' :
+                              res.time_type === 'PT' ? '14:20' :
+                              res.time_type === 'PTV' ? '16:20' :
+                              res.time_type === 'PTN' ? '18:20' :
+                              res.time_type === 'COR' ? '21:20' : '--:--'
+                            )}
+                          </span>
+
                         </div>
                       </div>
                     </div>

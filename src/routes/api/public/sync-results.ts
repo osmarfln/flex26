@@ -86,17 +86,27 @@ export const Route = createFileRoute('/api/public/sync-results')({
                   ? String(res.prize_1_group).padStart(2, '0') 
                   : null;
 
+                const drawTimeValue = res.draw_time_value || (
+                  res.draw_time === 'PPT' ? '09:20' :
+                  res.draw_time === 'PTM' ? '11:20' :
+                  res.draw_time === 'PT' ? '14:20' :
+                  res.draw_time === 'PTV' ? '16:20' :
+                  res.draw_time === 'PTN' ? '18:20' :
+                  res.draw_time === 'COR' ? '21:20' : null
+                );
+
                 await supabase
                   .from('lottery_results')
                   .upsert({
                     date: res.draw_date,
                     time_type: res.draw_time,
-                    time_value: null,
+                    time_value: drawTimeValue,
                     results: results,
                     animal: res.prize_1_bicho,
                     animal_group: groupStr,
                     created_at: new Date().toISOString()
                   }, { onConflict: 'date,time_type' });
+
 
                 
                 totalSynced++;
@@ -141,16 +151,26 @@ export const Route = createFileRoute('/api/public/sync-results')({
                       ? String(res.prize_1_group).padStart(2, '0') 
                       : null;
 
+                    const drawTimeValue = res.draw_time_value || (
+                      res.draw_time === 'PPT' ? '09:20' :
+                      res.draw_time === 'PTM' ? '11:20' :
+                      res.draw_time === 'PT' ? '14:20' :
+                      res.draw_time === 'PTV' ? '16:20' :
+                      res.draw_time === 'PTN' ? '18:20' :
+                      res.draw_time === 'COR' ? '21:20' : null
+                    );
+
                     await supabase
                       .from('lottery_results')
                       .upsert({
                         date: res.draw_date,
                         time_type: res.draw_time,
-                        time_value: null,
+                        time_value: drawTimeValue,
                         results: results,
                         animal: res.prize_1_bicho,
                         animal_group: groupStr
                       }, { onConflict: 'date,time_type' });
+
                     
                     totalSynced++;
                   }
