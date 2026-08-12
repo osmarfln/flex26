@@ -17,12 +17,20 @@ import {
   ArrowRight,
   ShieldCheck,
   Info,
-  PlayCircle
+  PlayCircle,
+  AlertCircle,
+  BarChart3,
+  Flame,
+  Coffee,
+  Sun,
+  Moon,
+  Sunset
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -52,11 +60,32 @@ const ANIMAL_GROUPS = [
   { id: "21", name: "Touro", icon: "🐂" }, { id: "22", name: "Tigre", icon: "🐅" }, { id: "23", name: "Urso", icon: "🐻" }, { id: "24", name: "Veado", icon: "🦌" }, { id: "25", name: "Vaca", icon: "🐄" },
 ];
 
+function getGreeting() {
+  const hour = new Date().getHours();
+  if (hour < 12) return { text: "Bom dia", icon: Coffee };
+  if (hour < 18) return { text: "Boa tarde", icon: Sun };
+  return { text: "Boa noite", icon: Moon };
+}
+
 function Index() {
-  const { data: games, isLoading, refetch } = useQuery({
+  const [greeting, setGreeting] = useState(getGreeting());
+
+  useEffect(() => {
+    const timer = setInterval(() => setGreeting(getGreeting()), 60000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const { data: games, isLoading: isLoadingGames, refetch } = useQuery({
     queryKey: ["homepage-games"],
     queryFn: () => base44.games.list(),
   });
+
+  const { data: stats, isLoading: isLoadingStats } = useQuery({
+    queryKey: ["homepage-stats"],
+    queryFn: () => base44.games.getStats(),
+  });
+
+  const GreetingIcon = greeting.icon;
 
   return (
     <div className="min-h-screen bg-[#0B0F19] text-white font-sans selection:bg-yellow-500/30 overflow-x-hidden">
@@ -82,8 +111,8 @@ function Index() {
               <a href="#resultados" className="text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2">
                 <TrendingUp className="w-4 h-4" /> Resultados
               </a>
-              <a href="#historico" className="text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2">
-                <History className="w-4 h-4" /> Histórico
+              <a href="#estatisticas" className="text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2">
+                <BarChart3 className="w-4 h-4" /> Estatísticas
               </a>
               <a href="#grupos" className="text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2">
                 <Hash className="w-4 h-4" /> Grupos
@@ -107,17 +136,31 @@ function Index() {
       </header>
 
       <main className="container mx-auto px-4 md:px-6 py-12 relative">
-        {/* Floating Butterfly Graphic from the image */}
-        <div className="absolute top-0 right-0 hidden xl:block opacity-20 translate-x-1/4 -translate-y-12">
+        {/* Floating Butterfly Graphic */}
+        <div className="absolute top-0 right-0 hidden xl:block opacity-10 translate-x-1/4 -translate-y-12">
            <svg width="400" height="400" viewBox="0 0 24 24" fill="none" className="text-yellow-500">
              <path d="M12 21.5C12 21.5 10 16.5 4 15.5C4 15.5 1 14.5 1 10.5C1 6.5 4 4.5 8 4.5C12 4.5 12 8.5 12 8.5M12 21.5C12 21.5 14 16.5 20 15.5C20 15.5 23 14.5 23 10.5C23 6.5 20 4.5 16 4.5C12 4.5 12 8.5 12 8.5" stroke="currentColor" strokeWidth="0.5" />
            </svg>
         </div>
 
-        {/* Hero Section */}
-        <section className="mb-12 relative">
+        {/* Welcome Section */}
+        <section className="mb-12 relative z-10">
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-center gap-4 mb-6"
+          >
+            <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-2xl">
+              <GreetingIcon className="w-8 h-8 text-yellow-500" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-black italic tracking-tighter uppercase leading-none">{greeting.text}!</h2>
+              <p className="text-white/40 font-bold text-xs uppercase tracking-widest mt-1">Seja bem vindo ao nosso espaço fique a vontade</p>
+            </div>
+          </motion.div>
+
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-4 italic">Resultados Todos os Dias</h1>
-          <p className="text-white/40 text-lg mb-8 font-medium">Consulte os resultados por banca, data e horário</p>
+          <p className="text-white/40 text-lg mb-8 font-medium">Consulte os resultados por banca, data e horário em tempo real</p>
 
           <div className="flex flex-wrap gap-4 items-center mb-12">
             <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl min-w-[200px] hover:border-yellow-500/30 transition-all cursor-pointer">
@@ -125,7 +168,7 @@ function Index() {
               <div className="flex-1">
                 <p className="text-[10px] text-white/40 font-bold uppercase tracking-wider">Data</p>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-bold">Hoje, 12 de agosto</span>
+                  <span className="text-sm font-bold">Hoje, {new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'long' })}</span>
                   <ChevronDown className="w-4 h-4 text-white/40" />
                 </div>
               </div>
@@ -142,29 +185,18 @@ function Index() {
               </div>
             </div>
 
-            <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl min-w-[200px] hover:border-yellow-500/30 transition-all cursor-pointer">
-              <Clock className="w-5 h-5 text-white/40" />
-              <div className="flex-1">
-                <p className="text-[10px] text-white/40 font-bold uppercase tracking-wider">Horário</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-bold">Todos os horários</span>
-                  <ChevronDown className="w-4 h-4 text-white/40" />
-                </div>
-              </div>
-            </div>
-
             <Button className="h-[54px] px-10 bg-yellow-500 hover:bg-yellow-400 text-[#0B0F19] font-black uppercase tracking-tighter rounded-xl gap-2 shadow-lg shadow-yellow-500/10 active:scale-95 transition-all">
               <Search className="w-5 h-5" /> Buscar resultados
             </Button>
           </div>
         </section>
 
-        {/* Results Grid & Sidebar */}
+        {/* Results Grid & Most Delayed Groups */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16" id="resultados">
-          <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {isLoading ? (
-              Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="h-80 rounded-2xl bg-white/5 animate-pulse border border-white/10" />
+          <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+            {isLoadingGames ? (
+              Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="h-64 rounded-2xl bg-white/5 animate-pulse border border-white/10" />
               ))
             ) : (
               games?.map((game: any) => (
@@ -203,110 +235,133 @@ function Index() {
                         <p className="text-[11px] font-bold mt-2 text-white/80 uppercase tracking-tight">{game.animal || 'Aguardando'}</p>
                       </div>
                     </div>
-                    <div className="mt-6 flex items-center gap-2 text-[10px] text-white/30 font-bold uppercase tracking-widest">
-                      <div className={`w-1.5 h-1.5 rounded-full ${game.status === 'finished' ? 'bg-emerald-500' : 'bg-yellow-500 animate-pulse'}`} />
-                      Atualizado às {game.time}
-                    </div>
                   </CardContent>
                 </Card>
               ))
             )}
           </div>
 
-          {/* History Sidebar */}
-          <div className="lg:col-span-4" id="historico">
-            <Card className="bg-[#0D121F] border-white/10 rounded-2xl h-full shadow-xl">
-              <CardHeader className="p-6 border-b border-white/5">
+          {/* Most Delayed Sidebar */}
+          <div className="lg:col-span-4 space-y-6">
+            <Card className="bg-[#0D121F] border-white/10 rounded-2xl shadow-xl overflow-hidden">
+              <CardHeader className="p-6 border-b border-white/5 bg-white/[0.01]">
                 <div className="flex items-center gap-3 text-white/60">
-                  <Clock className="w-5 h-5 text-yellow-500" />
-                  <CardTitle className="text-sm font-black uppercase tracking-[0.2em]">Últimos resultados</CardTitle>
+                  <AlertCircle className="w-5 h-5 text-yellow-500" />
+                  <CardTitle className="text-sm font-black uppercase tracking-[0.2em]">Bichos mais atrasados</CardTitle>
                 </div>
               </CardHeader>
-              <CardContent className="p-6 space-y-6">
-                {games?.map((game: any) => (
-                  <div key={game.id} className="flex items-center justify-between text-sm group cursor-pointer hover:bg-white/[0.02] -mx-2 px-2 py-1 rounded-lg transition-colors">
-                    <div className="flex items-center gap-4">
-                      <span className="text-white/30 font-mono font-bold">{game.time}</span>
-                      <span className="font-black italic tracking-tighter uppercase group-hover:text-yellow-500 transition-colors">{game.type} RIO</span>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <div className="flex flex-col items-end">
-                         <span className="text-[10px] text-white/30 font-bold uppercase tracking-tighter">Grupo <span className="text-yellow-500 ml-1">{game.group || '--'}</span></span>
-                         <span className="text-xs font-black text-white/80 uppercase italic">{game.animal || '---'}</span>
+              <CardContent className="p-6 space-y-4">
+                {isLoadingStats ? (
+                  Array.from({ length: 4 }).map((_, i) => <div key={i} className="h-12 bg-white/5 rounded-lg animate-pulse" />)
+                ) : (
+                  stats?.mostDelayedGroups.map((item: any) => (
+                    <div key={item.group} className="flex items-center justify-between p-3 bg-white/[0.02] rounded-xl border border-white/5 hover:border-yellow-500/20 transition-all group">
+                      <div className="flex items-center gap-4">
+                        <div className="text-2xl opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all">
+                          {ANIMAL_GROUPS.find(a => a.id === item.group)?.icon}
+                        </div>
+                        <div>
+                          <p className="text-sm font-black uppercase italic leading-none">{item.animal}</p>
+                          <p className="text-[10px] text-white/30 font-bold mt-1 uppercase">Último: {item.lastSeen}</p>
+                        </div>
                       </div>
-                      <span className="text-xl opacity-60 group-hover:opacity-100 transition-opacity">
-                         {ANIMAL_GROUPS.find(a => a.id === game.group)?.icon}
-                      </span>
+                      <div className="text-right">
+                        <p className="text-lg font-black text-yellow-500 leading-none">{item.days}d</p>
+                        <p className="text-[9px] text-white/30 font-bold uppercase">Atraso</p>
+                      </div>
                     </div>
-                  </div>
-                ))}
-                
-                <Button variant="outline" className="w-full mt-8 border-white/10 bg-white/5 hover:bg-white/10 hover:border-yellow-500/30 text-[10px] font-black uppercase italic tracking-[0.2em] py-7 rounded-xl transition-all">
-                  Ver histórico completo <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
+                  ))
+                )}
+              </CardContent>
+            </Card>
+
+            <Card className="bg-[#0D121F] border-white/10 rounded-2xl shadow-xl overflow-hidden">
+              <CardHeader className="p-6 border-b border-white/5 bg-white/[0.01]">
+                <div className="flex items-center gap-3 text-white/60">
+                  <Flame className="w-5 h-5 text-yellow-500" />
+                  <CardTitle className="text-sm font-black uppercase tracking-[0.2em]">Dezenas frequentes</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="flex flex-wrap gap-3">
+                  {stats?.mostFrequentTens.map((item: any) => (
+                    <div key={item.ten} className="flex flex-col items-center gap-1">
+                      <div className="w-12 h-12 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center font-mono text-xl font-black text-yellow-500 group relative">
+                        {item.ten}
+                        {item.trend === 'up' && <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-[#0B0F19]" />}
+                      </div>
+                      <span className="text-[9px] font-black text-white/30 uppercase tracking-tighter">{item.count}x</span>
+                    </div>
+                  ))}
+                </div>
               </CardContent>
             </Card>
           </div>
         </div>
 
-        {/* Groups Table & Stats */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8" id="grupos">
-          {/* Groups Grid */}
-          <div className="lg:col-span-8">
-            <Card className="bg-[#0D121F] border-white/10 rounded-2xl overflow-hidden shadow-xl">
-              <CardHeader className="p-6 border-b border-white/5 bg-white/[0.01]">
-                <div className="flex items-center gap-3 text-white/60">
-                  <Hash className="w-5 h-5 text-yellow-500" />
-                  <CardTitle className="text-sm font-black uppercase tracking-[0.2em]">Grupos do Jogo</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent className="p-6">
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3">
-                  {ANIMAL_GROUPS.map((animal) => (
-                    <div key={animal.id} className="p-3 bg-white/[0.02] border border-white/5 rounded-xl hover:border-yellow-500/40 transition-all group flex items-center gap-3 cursor-default">
-                      <div className="text-lg opacity-40 group-hover:opacity-100 group-hover:scale-110 transition-all">{animal.icon}</div>
-                      <div className="flex flex-col">
-                        <span className="text-[9px] font-mono text-yellow-500/60 font-black tracking-tighter uppercase">{animal.id}</span>
-                        <span className="text-[11px] font-black uppercase tracking-tight text-white/50 group-hover:text-white transition-colors italic">{animal.name}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+        {/* Stats Section with Modern Charts */}
+        <section className="mb-16" id="estatisticas">
+          <div className="flex items-center justify-between mb-8">
+             <div>
+               <h2 className="text-3xl font-black italic tracking-tighter uppercase">Análise de Atraso por Horário</h2>
+               <p className="text-white/40 text-sm font-medium mt-1 uppercase tracking-widest">Monitoramento inteligente baseado em dados históricos</p>
+             </div>
+             <div className="hidden md:flex gap-2">
+                <div className="p-2 bg-white/5 rounded-lg border border-white/10"><BarChart3 className="w-5 h-5 text-yellow-500" /></div>
+             </div>
           </div>
 
-          {/* Stats Graph */}
-          <div className="lg:col-span-4">
-             <Card className="bg-[#0D121F] border-white/10 rounded-2xl h-full shadow-xl">
-              <CardHeader className="p-6 border-b border-white/5 bg-white/[0.01]">
-                <div className="flex items-center gap-3 text-white/60">
-                  <TrendingUp className="w-5 h-5 text-yellow-500" />
-                  <CardTitle className="text-sm font-black uppercase tracking-[0.2em]">Resultados por horário</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent className="p-6">
-                <div className="h-64 flex items-end justify-between gap-3 px-2 pb-4">
-                  {[22, 21, 19, 20, 18, 16].map((val, i) => (
-                    <div key={i} className="flex-1 flex flex-col items-center gap-2 group">
-                      <span className="text-[10px] font-black text-yellow-500 opacity-0 group-hover:opacity-100 transition-opacity mb-1">{val}</span>
-                      <div 
-                        className="w-full bg-white/5 group-hover:bg-yellow-500/80 transition-all rounded-t-md relative overflow-hidden" 
-                        style={{ height: `${(val / 25) * 100}%` }}
-                      >
-                         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-                      </div>
-                      <span className="text-[10px] text-white/20 font-black mt-2 tracking-tighter uppercase">{["09h", "11h", "14h", "16h", "18h", "21h"][i]}</span>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+             {Object.entries(stats?.delayedBySchedule || {}).map(([time, data]: [string, any]) => (
+                <motion.div 
+                  key={time}
+                  whileHover={{ y: -5 }}
+                  className="bg-[#0D121F] border border-white/10 p-5 rounded-2xl relative group overflow-hidden"
+                >
+                  <div className="absolute inset-0 bg-yellow-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-sm font-mono font-bold text-white/40">{time}</span>
+                    <Clock className="w-3.5 h-3.5 text-yellow-500/50" />
+                  </div>
+                  <div className="text-center">
+                    <div className="text-4xl mb-3">{ANIMAL_GROUPS.find(a => a.id === data.group)?.icon}</div>
+                    <h3 className="text-sm font-black uppercase italic tracking-tighter group-hover:text-yellow-500 transition-colors">{data.animal}</h3>
+                    <div className="mt-4 flex flex-col items-center">
+                       <span className="text-xl font-black text-yellow-500 leading-none">{data.delayed.split(' ')[0]}</span>
+                       <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest mt-1">Dias de atraso</span>
                     </div>
-                  ))}
-                </div>
-                <div className="mt-8 pt-6 border-t border-white/5 flex items-center gap-3 text-[10px] font-black text-white/20 uppercase tracking-[0.2em]">
-                  <div className="w-4 h-4 bg-yellow-500/20 border border-yellow-500/20 rounded-sm" />
-                  Total de resultados
-                </div>
-              </CardContent>
-            </Card>
+                  </div>
+                </motion.div>
+             ))}
           </div>
+        </section>
+
+        {/* Groups Table */}
+        <div className="grid grid-cols-1 gap-8" id="grupos">
+          <Card className="bg-[#0D121F] border-white/10 rounded-2xl overflow-hidden shadow-xl">
+            <CardHeader className="p-6 border-b border-white/5 bg-white/[0.01]">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3 text-white/60">
+                  <Hash className="w-5 h-5 text-yellow-500" />
+                  <CardTitle className="text-sm font-black uppercase tracking-[0.2em]">Tabela de Grupos</CardTitle>
+                </div>
+                <Badge variant="outline" className="text-[10px] uppercase font-black border-white/10 text-white/40 italic">25 Grupos Oficiais</Badge>
+              </div>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 xl:grid-cols-5 gap-3">
+                {ANIMAL_GROUPS.map((animal) => (
+                  <div key={animal.id} className="p-4 bg-white/[0.02] border border-white/5 rounded-xl hover:border-yellow-500/40 transition-all group flex items-center gap-4 cursor-default">
+                    <div className="text-2xl opacity-40 group-hover:opacity-100 group-hover:scale-110 transition-all">{animal.icon}</div>
+                    <div className="flex flex-col">
+                      <span className="text-[10px] font-mono text-yellow-500 font-black tracking-tighter uppercase">{animal.id}</span>
+                      <span className="text-xs font-black uppercase tracking-tight text-white/50 group-hover:text-white transition-colors italic">{animal.name}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </main>
 
@@ -341,12 +396,13 @@ function Index() {
            <div className="flex items-center gap-6">
               <span className="text-[8px] text-white/5 font-black uppercase tracking-widest">Plataforma Independente</span>
               <div className="h-4 w-px bg-white/5" />
-              <span className="text-[8px] text-white/5 font-black uppercase tracking-widest">Resultados Publicados sem comercial</span>
+              <span className="text-[8px] text-white/5 font-black uppercase tracking-widest">Resultados Publicados sem comercial de terceiros</span>
            </div>
         </div>
       </footer>
     </div>
   );
 }
+
 
 
