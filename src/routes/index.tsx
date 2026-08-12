@@ -228,10 +228,10 @@ function Index() {
                       </div>
                       <div className="flex flex-col items-center justify-center bg-white/[0.02] rounded-xl p-4 border border-white/5 relative">
                         <div className="w-16 h-16 mb-2 text-yellow-500 flex items-center justify-center text-4xl">
-                           {ANIMAL_GROUPS.find(a => a.id === game.group)?.icon || <Sparkles className="w-8 h-8 opacity-20" />}
+                           {ANIMAL_GROUPS.find(a => a.id === game.animal_group)?.icon || <Sparkles className="w-8 h-8 opacity-20" />}
                         </div>
                         <p className="text-[10px] text-white/40 font-bold uppercase tracking-wider mb-1">Grupo</p>
-                        <p className="text-3xl font-black text-yellow-500 tracking-tighter leading-none">{game.group || '--'}</p>
+                        <p className="text-3xl font-black text-yellow-500 tracking-tighter leading-none">{game.animal_group || '--'}</p>
                         <p className="text-[11px] font-bold mt-2 text-white/80 uppercase tracking-tight">{game.animal || 'Aguardando'}</p>
                       </div>
                     </div>
