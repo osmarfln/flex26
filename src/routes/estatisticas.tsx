@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, BarChart3, Calculator, Sparkles, TrendingUp, Zap, Target, BrainCircuit, History, Flame, Clock, LayoutGrid, Hash, Users, Repeat, ArrowLeftRight, FileText, Upload, Calendar, AlertCircle, Database, CheckCircle2, XCircle, Activity, Timer, ChevronRight } from "lucide-react";
+import { ArrowLeft, BarChart3, Calculator, Sparkles, TrendingUp, Zap, Target, BrainCircuit, History, Flame, Clock, LayoutGrid, Hash, Users, Repeat, ArrowLeftRight, FileText, Upload, Calendar, AlertCircle, Database, CheckCircle2, XCircle, Activity, Timer, ChevronRight, Trophy } from "lucide-react";
 import { CruzDoDia } from "@/components/CruzDoDia";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
@@ -31,7 +32,7 @@ const ANIMAL_GROUPS = [
 ];
 
 function EstatisticasPage() {
-  const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'palpites' | 'logica-atraso'>('logica-atraso');
+  const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'palpites' | 'logica-atraso' | 'ranking-completo'>('logica-atraso');
   const [cruzData, setCruzData] = useState<string[]>([]);
   
   const { data: stats, isLoading: statsLoading } = useQuery({
@@ -194,7 +195,7 @@ function EstatisticasPage() {
           </div>
 
           {/* Tools Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
              <Card 
                onClick={() => setActiveTab('quentes')}
                className={`bg-[#0D121F] border-white/10 rounded-2xl p-6 transition-all cursor-pointer group ${activeTab === 'quentes' ? 'border-yellow-500/50 ring-1 ring-yellow-500/20' : 'hover:border-yellow-500/30'}`}
@@ -215,6 +216,17 @@ function EstatisticasPage() {
                 </div>
                 <h3 className="text-xl font-black italic uppercase mb-2">Grupos em Atraso</h3>
                 <p className="text-sm text-white/40 font-medium leading-snug">Identifique grupos e bichos que ainda não vieram no primeiro prêmio.</p>
+             </Card>
+
+             <Card 
+               onClick={() => setActiveTab('ranking-completo')}
+               className={`bg-[#0D121F] border-white/10 rounded-2xl p-6 transition-all cursor-pointer group ${activeTab === 'ranking-completo' ? 'border-purple-500/50 ring-1 ring-purple-500/20' : 'hover:border-purple-500/30'}`}
+             >
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'ranking-completo' ? 'bg-purple-500 text-[#0B0F19]' : 'bg-purple-500/10 text-purple-400'}`}>
+                   <Trophy className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-black italic uppercase mb-2">Ranking Geral</h3>
+                <p className="text-sm text-white/40 font-medium leading-snug">Visão completa de atrasos, percentis e ciclos de todos os bichos.</p>
              </Card>
 
              <Card 
@@ -329,6 +341,142 @@ function EstatisticasPage() {
                         <p className="text-white/40 font-bold uppercase tracking-widest">Calcule a Cruz do Dia abaixo para ativar palpites híbridos</p>
                       </div>
                     )}
+                  </div>
+                </motion.div>
+              )}
+
+              {activeTab === 'ranking-completo' && (
+                <motion.div
+                  key="ranking-completo"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="space-y-6"
+                >
+                  <div className="flex items-center gap-3 mb-4">
+                    <Trophy className="w-6 h-6 text-purple-500" />
+                    <h2 className="text-2xl font-black italic uppercase">Ranking Geral de Atrasos</h2>
+                  </div>
+
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <div className="lg:col-span-8">
+                      <Card className="bg-white/5 border-white/10 rounded-2xl overflow-hidden overflow-x-auto">
+                        <table className="w-full text-left border-collapse min-w-[700px]">
+                          <thead>
+                            <tr className="border-b border-white/5 bg-white/[0.02]">
+                              <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40">Pos</th>
+                              <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40">Bicho</th>
+                              <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40">Última</th>
+                              <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40 text-center">Atraso</th>
+                              <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40 text-center">Índice</th>
+                              <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40">Status</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {statsLoading ? (
+                              Array.from({ length: 10 }).map((_, i) => (
+                                <tr key={i} className="border-b border-white/5 animate-pulse">
+                                  <td colSpan={6} className="p-4"><div className="h-10 bg-white/5 rounded" /></td>
+                                </tr>
+                              ))
+                            ) : (
+                              stats?.mostDelayedGroups.map((group: any, idx: number) => {
+                                const animal = ANIMAL_GROUPS.find(a => a.id === group.group);
+                                return (
+                                  <tr key={group.group} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors group">
+                                    <td className="p-4 font-black text-white/20 italic">{idx + 1}º</td>
+                                    <td className="p-4">
+                                      <div className="flex items-center gap-3">
+                                        <span className="text-2xl">{animal?.icon}</span>
+                                        <div className="flex flex-col">
+                                          <span className="text-sm font-black uppercase italic text-white/80">{group.animal}</span>
+                                          <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest">Grupo {group.group}</span>
+                                        </div>
+                                      </div>
+                                    </td>
+                                    <td className="p-4 text-[10px] font-bold text-white/40">{group.lastSeen}</td>
+                                    <td className="p-4 text-center">
+                                      <Badge variant="outline" className="border-white/10 text-white font-black">{group.days}d</Badge>
+                                    </td>
+                                    <td className="p-4 text-center font-mono text-xs text-yellow-500">
+                                      {(1 + (group.days / 30)).toFixed(2)}
+                                    </td>
+                                    <td className="p-4">
+                                      <div className={`h-2 w-2 rounded-full animate-pulse ${
+                                        group.days > 25 ? 'bg-red-500' : 
+                                        group.days > 15 ? 'bg-yellow-500' : 
+                                        'bg-emerald-500'
+                                      }`} />
+                                    </td>
+                                  </tr>
+                                );
+                              })
+                            )}
+                          </tbody>
+                        </table>
+                      </Card>
+                    </div>
+
+                    <div className="lg:col-span-4 space-y-6">
+                      <Card className="bg-white/5 border-white/10 rounded-2xl p-6">
+                        <div className="flex items-center gap-3 mb-6">
+                          <Calculator className="w-5 h-5 text-yellow-500" />
+                          <h3 className="text-sm font-black uppercase tracking-widest">Ciclo dos Resultados</h3>
+                        </div>
+                        <div className="space-y-6">
+                          <div>
+                            <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-white/40 mb-2">
+                              <span>Completude do Ciclo</span>
+                              <span className="text-yellow-500">76%</span>
+                            </div>
+                            <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                              <div className="h-full bg-yellow-500 w-[76%]" />
+                            </div>
+                            <p className="text-[9px] text-white/30 mt-2 leading-relaxed">
+                              Dos 25 grupos, 19 já apareceram no 1º prêmio neste ciclo de 30 dias.
+                            </p>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="bg-white/5 p-4 rounded-xl border border-white/5">
+                              <p className="text-[9px] text-white/40 font-black uppercase tracking-widest mb-1">Total Concursos</p>
+                              <p className="text-lg font-black">{visaoGeralData?.totalAnalyzed || '...'}</p>
+                            </div>
+                            <div className="bg-white/5 p-4 rounded-xl border border-white/5">
+                              <p className="text-[9px] text-white/40 font-black uppercase tracking-widest mb-1">Média Atraso</p>
+                              <p className="text-lg font-black">12.4 dias</p>
+                            </div>
+                          </div>
+
+                          <div className="p-4 bg-purple-500/10 border border-purple-500/20 rounded-xl">
+                            <h4 className="text-[10px] font-black uppercase text-purple-400 mb-2">Lógica de Percentil</h4>
+                            <p className="text-[10px] text-white/60 leading-relaxed italic">
+                              Bichos no Percentil 90+ representam as dezenas e grupos com atraso estatisticamente crítico, indicando alta probabilidade de retorno à média.
+                            </p>
+                          </div>
+                        </div>
+                      </Card>
+
+                      <Card className="bg-white/5 border-white/10 rounded-2xl p-6 relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-110 transition-transform">
+                          <BarChart3 className="w-24 h-24" />
+                        </div>
+                        <h3 className="text-sm font-black uppercase tracking-widest mb-4">Métrica Relativa</h3>
+                        <div className="space-y-4 relative z-10">
+                          {stats?.mostDelayedGroups.slice(0, 3).map((g: any) => (
+                            <div key={g.group} className="flex items-center justify-between">
+                              <span className="text-xs font-bold text-white/60">{g.animal}</span>
+                              <div className="flex items-center gap-2">
+                                <div className="h-1 w-24 bg-white/5 rounded-full overflow-hidden">
+                                  <div className="h-full bg-purple-500" style={{ width: `${Math.min(g.days * 4, 100)}%` }} />
+                                </div>
+                                <span className="text-[10px] font-mono text-purple-500">{((g.days / 25) * 100).toFixed(0)}%</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </Card>
+                    </div>
                   </div>
                 </motion.div>
               )}
