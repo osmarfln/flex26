@@ -41,7 +41,7 @@ function EstatisticasPage() {
 
   const { data: recentResults, isLoading: resultsLoading } = useQuery({
     queryKey: ["recent-results-stats"],
-    queryFn: () => getResults({ limit: 100 }),
+    queryFn: () => getResults({ date: undefined, limit: 100, offset: 0 }),
   });
 
   const isLoading = statsLoading || resultsLoading;
@@ -101,10 +101,10 @@ function EstatisticasPage() {
       mostDelayedTens,
       totalAnalyzed: recentResults.length,
       period: {
-        start: recentResults[recentResults.length - 1].date,
-        end: recentResults[0].date
+        start: recentResults[recentResults.length - 1]?.date,
+        end: recentResults[0]?.date
       },
-      lastUpdate: recentResults[0].created_at,
+      lastUpdate: recentResults[0]?.created_at,
       freqChartData,
       comparison: {
         current: getMetrics(last30),
@@ -113,14 +113,6 @@ function EstatisticasPage() {
     };
   }, [recentResults]);
 
-
-  const getAnimalByTen = (ten: string) => {
-    const tenInt = parseInt(ten);
-    if (isNaN(tenInt)) return null;
-    const groupNum = Math.floor((tenInt === 0 ? 100 : tenInt - 1) / 4) + 1;
-    const groupId = String(groupNum).padStart(2, '0');
-    return ANIMAL_GROUPS.find(a => a.id === groupId);
-  };
 
   const palpitesIA = useMemo(() => {
     if (!stats || !stats.mostFrequentTens) return [];
