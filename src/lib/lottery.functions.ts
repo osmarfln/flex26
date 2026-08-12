@@ -195,3 +195,103 @@ export const getTenDelayStats = createServerFn({ method: "GET" })
 
     return stats.sort((a, b) => b.currentDelay - a.currentDelay);
   });
+
+export const getGroupDelayStats = createServerFn({ method: "GET" })
+  .handler(async () => {
+    const { data: results, error } = await supabase
+      .from("lottery_results")
+      .select("results, date, time_type, animal_group")
+      .order("date", { ascending: false })
+      .limit(500);
+
+    if (error) throw error;
+    if (!results) return [];
+
+    const stats: any[] = [];
+    const allGroups = Array.from({ length: 25 }, (_, i) => String(i + 1).padStart(2, '0'));
+
+    allGroups.forEach(groupId => {
+      let currentDelay = -1;
+      let lastOccurrenceDate: string | null = null;
+      const intervals: number[] = [];
+      let lastIndex = -1;
+      
+      const hourlyFreq: Record<string, number> = {};
+      const positionFreq: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+      let totalFreq = 0;
+
+      results.forEach((res, index) => {
+        // Um grupo pode aparecer em qualquer uma das 5 posições
+        // Mas o "animal_group" principal do registro refere-se ao 1º prêmio
+        // Para a lógica de grupos completa, verificamos todas as dezenas sorteadas
+        
+        let foundInThisResult = false;
+        res.results.slice(0, 5).forEach((prize, pIdx) => {
+          const ten = prize.slice(-2);
+          const tenInt = parseInt(ten);
+          if (!isNaN(tenInt)) {
+            const calculatedGroup = String(Math.floor((tenInt === 0 ? 100 : tenInt - 1) / 4) + 1).padStart(2, '0');
+            
+            if (calculatedGroup === groupId) {
+              foundInThisResult = true;
+              totalFreq++;
+              positionFreq[pIdx + 1 as keyof typeof positionFreq]++;
+              hourlyFreq[res.time_type] = (hourlyFreq[res.time_type] || 0) + 1;
+            }
+          }
+        });
+
+        if (foundInThisResult) {
+          if (currentDelay === -1) {
+            currentDelay = index;
+            lastOccurrenceDate = res.date;
+          }
+          
+          if (lastIndex !== -1) {
+            intervals.push(index - lastIndex);
+          }
+          lastIndex = index;
+        }
+      });
+
+      if (currentDelay === -1) currentDelay = 500;
+      
+      const avgDelay = intervals.length > 0 
+        ? intervals.reduce((a, b) => a + b, 0) / intervals.length 
+        : 50;
+
+      const sortedIntervals = [...intervals].sort((a, b) => a - b);
+      const medianDelay = sortedIntervals.length > 0
+        ? sortedIntervals[Math.floor(sortedIntervals.length / 2)]
+        : 50;
+
+      const maxDelay = intervals.length > 0 ? Math.max(...intervals) : currentDelay;
+      const minDelay = intervals.length > 0 ? Math.min(...intervals) : currentDelay;
+      
+      const relativeIndex = currentDelay / avgDelay;
+
+      let classification = "Dentro da média";
+      if (relativeIndex < 0.75) classification = "Atraso baixo";
+      else if (relativeIndex >= 0.75 && relativeIndex <= 1.25) classification = "Dentro da média";
+      else if (relativeIndex > 1.25 && relativeIndex <= 2.00) classification = "Atraso elevado";
+      else if (relativeIndex > 2.00) classification = "Muito acima da média";
+
+      stats.push({
+        groupId,
+        animal: ANIMAL_GROUPS[groupId]?.name || "Desconhecido",
+        currentDelay,
+        lastOccurrenceDate,
+        avgDelay: Number(avgDelay.toFixed(2)),
+        medianDelay,
+        maxDelay,
+        minDelay,
+        frequency: totalFreq,
+        relativeIndex: Number(relativeIndex.toFixed(2)),
+        classification,
+        hourlyFreq,
+        positionFreq
+      });
+    });
+
+    return stats.sort((a, b) => b.currentDelay - a.currentDelay);
+  });
