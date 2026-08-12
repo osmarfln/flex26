@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { getResults } from "@/lib/lottery.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
+import { format, parseISO } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 import { 
   Calendar, 
@@ -142,11 +144,22 @@ function Historico() {
               >
                 <Card className="bg-[#0D121F] border-white/10 rounded-2xl overflow-hidden hover:border-yellow-500/40 transition-all group">
                   <CardHeader className="p-5 pb-2 bg-white/[0.01] border-b border-white/5">
-                    <div className="flex justify-between items-center">
-                      <CardTitle className="text-lg font-black italic tracking-tighter uppercase">
-                        {res.time_type} RIO
-                      </CardTitle>
-                      <span className="text-[10px] font-mono font-bold text-white/40">{res.time_value || '--:--'}hs</span>
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <CardTitle className="text-lg font-black italic tracking-tighter uppercase mb-1">
+                          {res.time_type} RIO
+                        </CardTitle>
+                        <div className="flex items-center gap-2 text-[10px] text-white/40 font-bold uppercase">
+                          <Calendar className="w-3 h-3" />
+                          {res.date ? format(parseISO(res.date), "dd/MM/yyyy") : "Data não disponível"}
+                        </div>
+                      </div>
+                      <div className="flex flex-col items-end">
+                        <div className="flex items-center gap-1.5 px-2 py-1 bg-white/5 rounded-md border border-white/5">
+                          <Clock className="w-3 h-3 text-yellow-500" />
+                          <span className="text-[10px] font-mono font-black text-white">{res.time_value || '--:--'}</span>
+                        </div>
+                      </div>
                     </div>
                   </CardHeader>
                   <CardContent className="p-5">
