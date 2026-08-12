@@ -29,8 +29,10 @@ import {
   Sun,
   Moon,
   Sunset,
-  Activity
+  Activity,
+  Calculator as CalcIcon
 } from "lucide-react";
+import { CruzDoDia } from "@/components/CruzDoDia";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
