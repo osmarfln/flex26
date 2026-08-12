@@ -154,12 +154,6 @@ function Index() {
               <a href="#estatisticas" className="text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2">
                 <BarChart3 className="w-4 h-4" /> Estatísticas
               </a>
-              <Link to="/cruz-do-dia" className="text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2">
-                <CalcIcon className="w-4 h-4" /> Cruz do Dia
-              </Link>
-              <a href="#grupos" className="text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2">
-                <Hash className="w-4 h-4" /> Grupos
-              </a>
             </nav>
           </div>
 
