@@ -85,6 +85,15 @@ const navigationItems = [
     textColor: "text-blue-600"
   },
   {
+    title: "Gerenciar Jogos",
+    url: "/portal/jogos",
+    icon: Star,
+    color: "from-purple-500 to-indigo-600",
+    bgColor: "bg-gradient-to-r from-purple-500/10 to-indigo-600/10",
+    textColor: "text-purple-600",
+    diamanteOnly: true
+  },
+  {
     title: "Cadastrar",
     url: createPageUrl("CadastroManual"),
     icon: ClipboardList,

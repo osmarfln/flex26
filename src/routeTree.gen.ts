@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PortalRouteImport } from './routes/portal'
+import { Route as PortalJogosRouteImport } from './routes/portal.jogos'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,31 +23,39 @@ const PortalRoute = PortalRouteImport.update({
   path: '/portal',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PortalJogosRoute = PortalJogosRouteImport.update({
+  id: '/jogos',
+  path: '/jogos',
+  getParentRoute: () => PortalRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/portal': typeof PortalRoute
+  '/portal': typeof PortalRouteWithChildren
+  '/portal/jogos': typeof PortalJogosRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/portal': typeof PortalRoute
+  '/portal': typeof PortalRouteWithChildren
+  '/portal/jogos': typeof PortalJogosRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/portal': typeof PortalRoute
+  '/portal': typeof PortalRouteWithChildren
+  '/portal/jogos': typeof PortalJogosRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/portal'
+  fullPaths: '/' | '/portal' | '/portal/jogos'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/portal'
-  id: '__root__' | '/' | '/portal'
+  to: '/' | '/portal' | '/portal/jogos'
+  id: '__root__' | '/' | '/portal' | '/portal/jogos'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  PortalRoute: typeof PortalRoute
+  PortalRoute: typeof PortalRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -65,23 +74,31 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PortalRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/portal/jogos': {
+      id: '/portal/jogos'
+      path: '/jogos'
+      fullPath: '/portal/jogos'
+      preLoaderRoute: typeof PortalJogosRouteImport
+      parentRoute: typeof PortalRoute
+    }
   }
 }
 
+interface PortalRouteChildren {
+  PortalJogosRoute: typeof PortalJogosRoute
+}
+
+const PortalRouteChildren: PortalRouteChildren = {
+  PortalJogosRoute: PortalJogosRoute,
+}
+
+const PortalRouteWithChildren =
+  PortalRoute._addFileChildren(PortalRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  PortalRoute: PortalRoute,
+  PortalRoute: PortalRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
