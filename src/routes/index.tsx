@@ -188,9 +188,11 @@ function Index() {
               </div>
             </div>
 
-            <Button className="h-[54px] px-10 bg-yellow-500 hover:bg-yellow-400 text-[#0B0F19] font-black uppercase tracking-tighter rounded-xl gap-2 shadow-lg shadow-yellow-500/10 active:scale-95 transition-all">
-              <Search className="w-5 h-5" /> Buscar resultados
-            </Button>
+            <Link to="/historico">
+              <Button className="h-[54px] px-10 bg-yellow-500 hover:bg-yellow-400 text-[#0B0F19] font-black uppercase tracking-tighter rounded-xl gap-2 shadow-lg shadow-yellow-500/10 active:scale-95 transition-all">
+                <Search className="w-5 h-5" /> Buscar resultados
+              </Button>
+            </Link>
           </div>
         </section>
 
