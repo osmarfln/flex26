@@ -33,6 +33,8 @@ import {
   Calculator as CalcIcon
 } from "lucide-react";
 import { CruzDoDia } from "@/components/CruzDoDia";
+import { AvisoObrigatorio } from "@/components/AvisoObrigatorio";
+
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -319,6 +321,8 @@ function Index() {
         {/* Stats Section with Modern Charts */}
         {/* Statistics Content Section */}
         <section className="mb-16 scroll-mt-24" id="estatisticas">
+          <AvisoObrigatorio />
+
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-2xl bg-yellow-500 flex items-center justify-center text-[#0B0F19]">
