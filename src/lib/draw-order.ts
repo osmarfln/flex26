@@ -28,3 +28,18 @@ export function sortDrawsDesc<T extends { date: string; time_type?: string | nul
     return timePriority(b.time_type) - timePriority(a.time_type);
   });
 }
+
+/** Horários oficiais do Rio (RJ) publicados diariamente. */
+export const DRAW_SCHEDULE: { timeType: string; timeValue: string; label: string }[] = [
+  { timeType: "PPT", timeValue: "09:20", label: "PPT" },
+  { timeType: "PTM", timeValue: "11:20", label: "PTM" },
+  { timeType: "PT", timeValue: "14:20", label: "PT" },
+  { timeType: "PTV", timeValue: "16:20", label: "PTV" },
+  { timeType: "PTN", timeValue: "18:20", label: "PTN" },
+  { timeType: "COR", timeValue: "21:20", label: "COROADO" },
+];
+
+/** Data de hoje no fuso de Brasília (UTC-3) no formato YYYY-MM-DD. */
+export function brasiliaDateISO(d: Date = new Date()): string {
+  return new Date(d.getTime() - 3 * 60 * 60 * 1000).toISOString().split("T")[0]!;
+}
