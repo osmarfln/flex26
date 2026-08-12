@@ -229,7 +229,7 @@ export const getGroupDelayStats = createServerFn({ method: "GET" })
         r.results?.slice(0, 5).some((prize: string) => {
           const ten = prize.slice(-2);
           const tenInt = parseInt(ten);
-          return !isNaN(tenInt) && String(Math.floor((tenInt === 0 ? 100 : tenInt - 1) / 4) + 1).padStart(2, '0') === groupId;
+          return !isNaN(tenInt) && tenToGroup(ten) === groupId;
         })
       ).length;
 
@@ -248,7 +248,7 @@ export const getGroupDelayStats = createServerFn({ method: "GET" })
           const ten = prize.slice(-2);
           const tenInt = parseInt(ten);
           if (!isNaN(tenInt)) {
-            const calculatedGroup = String(Math.floor((tenInt === 0 ? 100 : tenInt - 1) / 4) + 1).padStart(2, '0');
+            const calculatedGroup = tenToGroup(ten);
             if (calculatedGroup === groupId) {
               foundInThisResult = true;
               totalFreq++;
@@ -349,11 +349,7 @@ export const getRepetitionStats = createServerFn({ method: "GET" })
     };
 
 
-    const getGroupFromTen = (ten: string) => {
-      const tenInt = parseInt(ten);
-      if (isNaN(tenInt)) return null;
-      return String(Math.floor((tenInt === 0 ? 100 : tenInt - 1) / 4) + 1).padStart(2, '0');
-    };
+    const getGroupFromTen = (ten: string) => tenToGroup(ten) || null;
 
     let totalRepetitions = 0;
     const timeRepMap: Record<string, number> = {};
