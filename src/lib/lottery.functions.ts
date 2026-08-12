@@ -118,9 +118,9 @@ export const getTenDelayStats = createServerFn({ method: "GET" })
   .handler(async () => {
     const { data: results, error } = await supabase
       .from("lottery_results")
-      .select("results, date")
+      .select("results, date, time_type")
       .order("date", { ascending: false })
-      .limit(500);
+      .limit(600); // Need more data for comparative periods (300 current + 300 previous)
 
     if (error) throw error;
     if (!results) return [];
@@ -128,10 +128,22 @@ export const getTenDelayStats = createServerFn({ method: "GET" })
     const stats: any[] = [];
     const allTens = Array.from({ length: 100 }, (_, i) => String(i).padStart(2, '0'));
 
+    const current300 = results.slice(0, 300);
+    const previous300 = results.slice(300, 600);
+
     allTens.forEach(ten => {
       let currentDelay = -1;
       const intervals: number[] = [];
       let lastIndex = -1;
+      
+      const freq10 = current300.slice(0, 10).filter(r => r.results?.[0]?.slice(-2) === ten).length;
+      const freq30 = current300.slice(0, 30).filter(r => r.results?.[0]?.slice(-2) === ten).length;
+      const freq50 = current300.slice(0, 50).filter(r => r.results?.[0]?.slice(-2) === ten).length;
+      const freq100 = current300.slice(0, 100).filter(r => r.results?.[0]?.slice(-2) === ten).length;
+      const freq300 = current300.filter(r => r.results?.[0]?.slice(-2) === ten).length;
+      
+      const prevFreq300 = previous300.filter(r => r.results?.[0]?.slice(-2) === ten).length;
+      const periodComparison = prevFreq300 > 0 ? ((freq300 - prevFreq300) / prevFreq300) * 100 : (freq300 > 0 ? 100 : 0);
 
       results.forEach((res, index) => {
         const firstPrize = res.results?.[0];
@@ -151,11 +163,14 @@ export const getTenDelayStats = createServerFn({ method: "GET" })
       const minDelay = intervals.length > 0 ? Math.min(...intervals) : currentDelay;
       const relativeIndex = currentDelay / avgDelay;
 
-      let classification = "Dentro da média";
-      if (relativeIndex < 0.75) classification = "Atraso baixo";
-      else if (relativeIndex >= 0.75 && relativeIndex <= 1.25) classification = "Dentro da média";
-      else if (relativeIndex > 1.25 && relativeIndex <= 2.00) classification = "Atraso elevado";
-      else if (relativeIndex > 2.00) classification = "Muito acima da média";
+      // Regularidade (Coeficiente de Variação Inverso do Atraso)
+      const variance = intervals.length > 1 ? intervals.reduce((acc, val) => acc + Math.pow(val - avgDelay, 2), 0) / (intervals.length - 1) : 0;
+      const stdDev = Math.sqrt(variance);
+      const regularityScore = avgDelay > 0 ? stdDev / avgDelay : 1;
+      
+      let regularity = "Média";
+      if (regularityScore < 0.5) regularity = "Alta";
+      else if (regularityScore > 1.2) regularity = "Baixa";
 
       stats.push({
         ten,
@@ -165,12 +180,29 @@ export const getTenDelayStats = createServerFn({ method: "GET" })
         maxDelay,
         minDelay,
         relativeIndex: Number(relativeIndex.toFixed(2)),
-        classification
+        freqs: { 10: freq10, 30: freq30, 50: freq50, 100: freq100, 300: freq300 },
+        regularity,
+        periodComparison: Number(periodComparison.toFixed(2))
       });
+    });
+
+    // Calculate percentiles
+    const sortedByDelay = [...stats].sort((a, b) => a.currentDelay - b.currentDelay);
+    stats.forEach(s => {
+      const rank = sortedByDelay.findIndex(x => x.ten === s.ten);
+      s.percentile = Number(((rank / 99) * 100).toFixed(0));
+      
+      let classification = "Dentro da média";
+      if (s.relativeIndex < 0.75) classification = "Atraso baixo";
+      else if (s.relativeIndex >= 0.75 && s.relativeIndex <= 1.25) classification = "Dentro da média";
+      else if (s.relativeIndex > 1.25 && s.relativeIndex <= 2.00) classification = "Atraso elevado";
+      else if (s.relativeIndex > 2.00) classification = "Muito acima da média";
+      s.classification = classification;
     });
 
     return stats.sort((a, b) => b.currentDelay - a.currentDelay);
   });
+
 
 export const getGroupDelayStats = createServerFn({ method: "GET" })
   .handler(async () => {
