@@ -194,7 +194,7 @@ function EstatisticasPage() {
           </div>
 
           {/* Tools Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
              <Card 
                onClick={() => setActiveTab('quentes')}
                className={`bg-[#0D121F] border-white/10 rounded-2xl p-6 transition-all cursor-pointer group ${activeTab === 'quentes' ? 'border-yellow-500/50 ring-1 ring-yellow-500/20' : 'hover:border-yellow-500/30'}`}
@@ -215,6 +215,17 @@ function EstatisticasPage() {
                 </div>
                 <h3 className="text-xl font-black italic uppercase mb-2">Grupos em Atraso</h3>
                 <p className="text-sm text-white/40 font-medium leading-snug">Identifique grupos e bichos que ainda não vieram no primeiro prêmio.</p>
+             </Card>
+
+             <Card 
+               onClick={() => setActiveTab('ranking-completo')}
+               className={`bg-[#0D121F] border-white/10 rounded-2xl p-6 transition-all cursor-pointer group ${activeTab === 'ranking-completo' ? 'border-purple-500/50 ring-1 ring-purple-500/20' : 'hover:border-purple-500/30'}`}
+             >
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'ranking-completo' ? 'bg-purple-500 text-[#0B0F19]' : 'bg-purple-500/10 text-purple-400'}`}>
+                   <Trophy className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-black italic uppercase mb-2">Ranking Geral</h3>
+                <p className="text-sm text-white/40 font-medium leading-snug">Visão completa de atrasos, percentis e ciclos de todos os bichos.</p>
              </Card>
 
              <Card 
