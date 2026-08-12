@@ -50,6 +50,11 @@ function EstatisticasPage() {
     queryFn: () => getTenDelayStats(),
   });
 
+  const { data: groupDelayStats, isLoading: groupDelayStatsLoading } = useQuery({
+    queryKey: ["group-delay-stats"],
+    queryFn: () => getGroupDelayStats(),
+  });
+
 
   const isLoading = statsLoading || resultsLoading;
 
