@@ -132,51 +132,64 @@ function Index() {
 
       {/* Top Header */}
       <header className="border-b border-white/5 bg-background/60 backdrop-blur-2xl sticky top-0 z-50 transition-all">
-        <div className="container mx-auto px-4 md:px-6 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-8">
-            <Link to="/" className="flex flex-col group">
-              <span className="flex items-center gap-2">
-                <div className="relative">
-                  <Sparkles className="h-6 w-6 text-primary fill-primary animate-pulse" />
+        <div className="container mx-auto px-3 sm:px-4 md:px-6 py-2 md:h-20 flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+          <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 md:flex md:items-center md:gap-8">
+            <Link to="/" className="flex min-w-0 flex-col group">
+              <span className="flex min-w-0 items-center gap-2">
+                <div className="relative shrink-0">
+                  <Sparkles className="h-5 w-5 md:h-6 md:w-6 text-primary fill-primary animate-pulse" />
                   <div className="absolute inset-0 bg-primary/20 blur-md rounded-full scale-150 -z-10 opacity-0 group-hover:opacity-100 transition-opacity" />
                 </div>
-                <span className="text-2xl font-black tracking-tighter uppercase italic group-hover:text-primary transition-colors">Flex Gerenciador</span>
+                <span className="truncate text-lg sm:text-xl md:text-2xl font-black tracking-tighter uppercase italic group-hover:text-primary transition-colors">Flex Gerenciador</span>
               </span>
-              <span className="text-[10px] text-primary/60 font-bold tracking-[0.2em] -mt-1 ml-8 group-hover:tracking-[0.25em] transition-all">VEM COM A GENTE</span>
+              <span className="text-[9px] md:text-[10px] text-primary/60 font-bold tracking-[0.2em] -mt-1 ml-7 md:ml-8 group-hover:tracking-[0.25em] transition-all">VEM COM A GENTE</span>
             </Link>
-            
-            <nav className="flex items-center gap-4 md:gap-8 ml-4 md:ml-8 overflow-x-auto no-scrollbar py-2">
-              <Link to="/" className="text-xs md:text-sm font-bold border-b-2 border-yellow-500 pb-1 flex items-center gap-2 whitespace-nowrap">
-                <Users className="w-4 h-4" /> Início
-              </Link>
-              <Link to="/historico" className="text-xs md:text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2 whitespace-nowrap">
-                <History className="w-4 h-4" /> Histórico
-              </Link>
-              <Link to="/robot-status" className="text-xs md:text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2 whitespace-nowrap">
-                <Activity className="w-4 h-4" /> Robô
-              </Link>
 
-              <Link to="/estatisticas" className="text-xs md:text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2 whitespace-nowrap">
-                <BarChart3 className="w-4 h-4" /> Estatísticas
-              </Link>
-            </nav>
+            <div className="flex shrink-0 items-center gap-2 md:hidden">
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-lg border-white/10 bg-white/5 text-[10px] font-bold gap-1.5 px-2 hover:bg-white/10"
+                onClick={() => refetch()}
+              >
+                <RefreshCw className="w-3 h-3" />
+                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              </Button>
+              <Link to="/portal" className="text-[10px] font-bold text-white/40 hover:text-white transition-colors">Portal</Link>
+            </div>
           </div>
 
-          <div className="flex items-center gap-2 md:gap-4 ml-4">
+          <nav className="-mx-3 flex items-center gap-3 overflow-x-auto no-scrollbar px-3 pb-1 md:mx-0 md:gap-8 md:px-0 md:pb-0 md:py-2">
+            <Link to="/" className="text-xs md:text-sm font-bold border-b-2 border-yellow-500 pb-1 flex items-center gap-1.5 md:gap-2 whitespace-nowrap shrink-0">
+              <Users className="w-4 h-4 shrink-0" /> Início
+            </Link>
+            <Link to="/historico" className="text-xs md:text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-1.5 md:gap-2 whitespace-nowrap shrink-0">
+              <History className="w-4 h-4 shrink-0" /> Histórico
+            </Link>
+            <Link to="/robot-status" className="text-xs md:text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-1.5 md:gap-2 whitespace-nowrap shrink-0">
+              <Activity className="w-4 h-4 shrink-0" /> Robô
+            </Link>
+            <Link to="/estatisticas" className="text-xs md:text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-1.5 md:gap-2 whitespace-nowrap shrink-0">
+              <BarChart3 className="w-4 h-4 shrink-0" /> Estatísticas
+            </Link>
+          </nav>
+
+          <div className="hidden md:flex items-center gap-2 md:gap-4 ml-auto">
             <Button 
               variant="outline" 
               size="sm" 
-              className="rounded-lg border-white/10 bg-white/5 text-[10px] md:text-xs font-bold gap-2 hover:bg-white/10"
+              className="rounded-lg border-white/10 bg-white/5 text-xs font-bold gap-2 hover:bg-white/10"
               onClick={() => refetch()}
             >
-              <RefreshCw className="w-3 h-3 md:w-3.5 md:h-3.5" /> 
-              <span className="hidden xs:inline">Atualizar</span>
+              <RefreshCw className="w-3.5 h-3.5" /> 
+              <span>Atualizar</span>
               <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             </Button>
-            <Link to="/portal" className="text-[10px] md:text-xs font-bold text-white/40 hover:text-white transition-colors">Portal</Link>
+            <Link to="/portal" className="text-xs font-bold text-white/40 hover:text-white transition-colors">Portal</Link>
           </div>
         </div>
       </header>
+
 
 
       <main className="container mx-auto px-4 md:px-6 py-12 relative">
