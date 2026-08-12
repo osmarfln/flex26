@@ -35,6 +35,7 @@ import {
 } from "lucide-react";
 import { CruzDoDia } from "@/components/CruzDoDia";
 import { AvisoObrigatorio } from "@/components/AvisoObrigatorio";
+import { DigitalClock } from "@/components/DigitalClock";
 
 
 import { Badge } from "@/components/ui/badge";
@@ -238,7 +239,9 @@ function Index() {
             </div>
           </div>
 
-          <div className="lg:col-span-4" />
+          <div className="lg:col-span-4">
+            <DigitalClock />
+          </div>
         </section>
 
 
