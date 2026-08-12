@@ -344,6 +344,80 @@ function EstatisticasPage() {
                 </motion.div>
               )}
 
+              {activeTab === 'ranking-completo' && (
+                <motion.div
+                  key="ranking-completo"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="space-y-6"
+                >
+                  <div className="flex items-center gap-3 mb-4">
+                    <Trophy className="w-6 h-6 text-purple-500" />
+                    <h2 className="text-2xl font-black italic uppercase">Ranking Geral de Atrasos</h2>
+                  </div>
+                  <Card className="bg-white/5 border-white/10 rounded-2xl overflow-hidden overflow-x-auto">
+                    <table className="w-full text-left border-collapse min-w-[800px]">
+                      <thead>
+                        <tr className="border-b border-white/5 bg-white/[0.02]">
+                          <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40">Pos</th>
+                          <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40">Bicho</th>
+                          <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40">Grupo</th>
+                          <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40">Dezenas</th>
+                          <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40 text-center">Última</th>
+                          <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40 text-center">Atraso</th>
+                          <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40 text-center">Índice</th>
+                          <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40">Classificação</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {statsLoading ? (
+                          Array.from({ length: 10 }).map((_, i) => (
+                            <tr key={i} className="border-b border-white/5 animate-pulse">
+                              <td colSpan={8} className="p-4"><div className="h-10 bg-white/5 rounded" /></td>
+                            </tr>
+                          ))
+                        ) : (
+                          stats?.mostDelayedGroups.map((group: any, idx: number) => {
+                            const animal = ANIMAL_GROUPS.find(a => a.id === group.group);
+                            const tens = Array.from({ length: 4 }, (_, i) => String((parseInt(group.group) - 1) * 4 + (i + 1)).replace('100', '00').padStart(2, '0')).join(', ');
+                            return (
+                              <tr key={group.group} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors group">
+                                <td className="p-4 font-black text-white/20 italic">{idx + 1}º</td>
+                                <td className="p-4">
+                                  <div className="flex items-center gap-3">
+                                    <span className="text-2xl group-hover:scale-110 transition-transform">{animal?.icon}</span>
+                                    <span className="text-sm font-black uppercase italic text-white/80">{group.animal}</span>
+                                  </div>
+                                </td>
+                                <td className="p-4 text-xs font-bold text-white/40">G{group.group}</td>
+                                <td className="p-4 font-mono text-[10px] text-yellow-500/60">{tens}</td>
+                                <td className="p-4 text-center text-[10px] font-bold text-white/40">{group.lastSeen}</td>
+                                <td className="p-4 text-center">
+                                  <Badge className="bg-white/5 border-white/10 text-white font-black">{group.days}d</Badge>
+                                </td>
+                                <td className="p-4 text-center font-mono text-xs text-yellow-500">
+                                  {(1 + (group.days / 30)).toFixed(2)}
+                                </td>
+                                <td className="p-4">
+                                  <span className={`text-[10px] font-black uppercase px-2 py-1 rounded ${
+                                    group.days > 25 ? 'bg-red-500/20 text-red-500 border border-red-500/20' : 
+                                    group.days > 15 ? 'bg-yellow-500/20 text-yellow-500 border border-yellow-500/20' : 
+                                    'bg-emerald-500/20 text-emerald-500 border border-emerald-500/20'
+                                  }`}>
+                                    {group.days > 25 ? 'Muito Crítico' : group.days > 15 ? 'Atraso Médio' : 'Frequente'}
+                                  </span>
+                                </td>
+                              </tr>
+                            );
+                          })
+                        )}
+                      </tbody>
+                    </table>
+                  </Card>
+                </motion.div>
+              )}
+
               {activeTab === 'logica-atraso' && (
                 <motion.div
                   key="logica-atraso"
