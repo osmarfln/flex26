@@ -1,5 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { getResults, getStats } from "@/lib/lottery.functions";
+import { supabase } from "@/integrations/supabase/client";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+
 import { useQuery } from "@tanstack/react-query";
 import { 
   Trophy, 
@@ -24,8 +28,10 @@ import {
   Coffee,
   Sun,
   Moon,
-  Sunset
+  Sunset,
+  Activity
 } from "lucide-react";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -69,9 +75,13 @@ function getGreeting() {
 
 function Index() {
   const [greeting, setGreeting] = useState(getGreeting());
+  const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
-    const timer = setInterval(() => setGreeting(getGreeting()), 60000);
+    const timer = setInterval(() => {
+      setGreeting(getGreeting());
+      setCurrentTime(new Date());
+    }, 1000);
     return () => clearInterval(timer);
   }, []);
 
@@ -80,10 +90,29 @@ function Index() {
     queryFn: () => getResults({ data: { limit: 6 } }),
   });
 
-  const { data: stats, isLoading: isLoadingStats } = useQuery({
+  const { data: stats, isLoading: isLoadingStats, refetch: refetchStats } = useQuery({
     queryKey: ["homepage-stats"],
     queryFn: () => getStats(),
   });
+
+  useEffect(() => {
+    const channel = supabase
+      .channel('schema-db-changes')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'lottery_results' },
+        () => {
+          refetch();
+          refetchStats();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [refetch, refetchStats]);
+
 
   const GreetingIcon = greeting.icon;
 
@@ -111,6 +140,10 @@ function Index() {
               <Link to="/historico" className="text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2">
                 <History className="w-4 h-4" /> Histórico
               </Link>
+              <Link to="/robot-status" className="text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2">
+                <Activity className="w-4 h-4" /> Robô
+              </Link>
+
               <a href="#resultados" className="text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2">
                 <TrendingUp className="w-4 h-4" /> Resultados
               </a>
@@ -147,63 +180,95 @@ function Index() {
         </div>
 
         {/* Welcome Section */}
-        <section className="mb-12 relative z-10">
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-4 mb-6"
-          >
-            <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-2xl">
-              <GreetingIcon className="w-8 h-8 text-yellow-500" />
-            </div>
-            <div>
-              <h2 className="text-2xl font-black italic tracking-tighter uppercase leading-none">{greeting.text}!</h2>
-              <p className="text-white/40 font-bold text-xs uppercase tracking-widest mt-1">Seja bem vindo ao nosso espaço fique a vontade</p>
-            </div>
-          </motion.div>
+        <section className="mb-12 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <div className="lg:col-span-8">
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex items-center gap-4 mb-6"
+            >
+              <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-2xl">
+                <GreetingIcon className="w-8 h-8 text-yellow-500" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-black italic tracking-tighter uppercase leading-none">{greeting.text}!</h2>
+                <p className="text-white/40 font-bold text-xs uppercase tracking-widest mt-1">Seja bem vindo ao nosso espaço fique a vontade</p>
+              </div>
+            </motion.div>
 
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-4 italic">Resultados Rio em Tempo Real</h1>
-          <p className="text-white/40 text-lg mb-8 font-medium">Resultados diários automatizados via robô de soresultados.info</p>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-4 italic">Resultados Rio em Tempo Real</h1>
+            <p className="text-white/40 text-lg mb-8 font-medium">Resultados diários automatizados via robô de soresultados.info</p>
 
-          <div className="flex flex-wrap gap-4 items-center mb-12">
-            <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl min-w-[200px] hover:border-yellow-500/30 transition-all cursor-pointer">
-              <Calendar className="w-5 h-5 text-white/40" />
-              <div className="flex-1">
-                <p className="text-[10px] text-white/40 font-bold uppercase tracking-wider">Data</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-bold">Hoje, {new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'long' })}</span>
-                  <ChevronDown className="w-4 h-4 text-white/40" />
+            <div className="flex flex-wrap gap-4 items-center mb-6">
+              <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl min-w-[200px] hover:border-yellow-500/30 transition-all cursor-pointer">
+                <Calendar className="w-5 h-5 text-white/40" />
+                <div className="flex-1">
+                  <p className="text-[10px] text-white/40 font-bold uppercase tracking-wider">Data</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-bold">{format(new Date(), "dd 'de' MMMM", { locale: ptBR })}</span>
+                    <ChevronDown className="w-4 h-4 text-white/40" />
+                  </div>
                 </div>
               </div>
-            </div>
-            
-            <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl min-w-[200px] hover:border-yellow-500/30 transition-all cursor-pointer">
-              <MapPin className="w-5 h-5 text-white/40" />
-              <div className="flex-1">
-                <p className="text-[10px] text-white/40 font-bold uppercase tracking-wider">Localidade</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-bold">Rio de Janeiro</span>
-                  <ChevronDown className="w-4 h-4 text-white/40" />
+              
+              <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl min-w-[200px] hover:border-yellow-500/30 transition-all cursor-pointer">
+                <MapPin className="w-5 h-5 text-white/40" />
+                <div className="flex-1">
+                  <p className="text-[10px] text-white/40 font-bold uppercase tracking-wider">Localidade</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-bold">Rio de Janeiro</span>
+                    <ChevronDown className="w-4 h-4 text-white/40" />
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <Link to="/historico">
-              <Button className="h-[54px] px-10 bg-yellow-500 hover:bg-yellow-400 text-[#0B0F19] font-black uppercase tracking-tighter rounded-xl gap-2 shadow-lg shadow-yellow-500/10 active:scale-95 transition-all">
-                <Search className="w-5 h-5" /> Buscar resultados
-              </Button>
-            </Link>
+              <Link to="/historico">
+                <Button className="h-[54px] px-10 bg-yellow-500 hover:bg-yellow-400 text-[#0B0F19] font-black uppercase tracking-tighter rounded-xl gap-2 shadow-lg shadow-yellow-500/10 active:scale-95 transition-all">
+                  <Search className="w-5 h-5" /> Buscar resultados
+                </Button>
+              </Link>
+            </div>
+          </div>
+
+          <div className="lg:col-span-4">
+            <Card className="bg-[#0D121F] border-yellow-500/30 border-2 rounded-2xl overflow-hidden shadow-2xl shadow-yellow-500/5">
+              <CardHeader className="p-4 bg-yellow-500/10 border-b border-yellow-500/20">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-xs font-black uppercase tracking-[0.2em] text-yellow-500">Próximo Resultado</CardTitle>
+                  <div className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse" />
+                </div>
+              </CardHeader>
+              <CardContent className="p-6 flex flex-col items-center justify-center text-center">
+                <div className="text-6xl font-black tracking-tighter mb-2 tabular-nums">
+                  {format(currentTime, "HH:mm:ss")}
+                </div>
+                <div className="text-[10px] font-bold text-white/40 uppercase tracking-[0.3em] mb-4">
+                  {format(currentTime, "EEEE, dd 'de' MMMM", { locale: ptBR })}
+                </div>
+                <div className="w-full py-3 bg-white/5 rounded-xl border border-white/10 text-sm font-bold">
+                  {new Date().getHours() < 9 ? 'Aguardando PTT (09:00)' : 
+                   new Date().getHours() < 11 ? 'Próximo: PTM (11:00)' :
+                   new Date().getHours() < 14 ? 'Próximo: PT (14:00)' :
+                   new Date().getHours() < 16 ? 'Próximo: PTV (16:00)' :
+                   new Date().getHours() < 18 ? 'Próximo: PTN (18:00)' :
+                   new Date().getHours() < 21 ? 'Próximo: COR (21:00)' :
+                   'Painel Zera em breve (00:00)'}
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </section>
 
+
         {/* Results Grid & Most Delayed Groups */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16" id="resultados">
-          <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="lg:col-span-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {isLoadingGames ? (
-              Array.from({ length: 4 }).map((_, i) => (
+              Array.from({ length: 6 }).map((_, i) => (
                 <div key={i} className="h-64 rounded-2xl bg-white/5 animate-pulse border border-white/10" />
               ))
             ) : (
+
               games?.map((game: any) => (
                 <Card key={game.id} className="bg-[#0D121F] border-white/10 rounded-2xl overflow-hidden group hover:border-yellow-500/40 transition-all relative">
                   {game.status === 'live' && (
@@ -245,68 +310,121 @@ function Index() {
               ))
             )}
           </div>
+        </div>
 
-          {/* Most Delayed Sidebar */}
-          <div className="lg:col-span-4 space-y-6">
-            <Card className="bg-[#0D121F] border-white/10 rounded-2xl shadow-xl overflow-hidden">
-              <CardHeader className="p-6 border-b border-white/5 bg-white/[0.01]">
-                <div className="flex items-center gap-3 text-white/60">
-                  <AlertCircle className="w-5 h-5 text-yellow-500" />
-                  <CardTitle className="text-sm font-black uppercase tracking-[0.2em]">Bichos mais atrasados</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent className="p-6 space-y-4">
-                {isLoadingStats ? (
-                  Array.from({ length: 4 }).map((_, i) => <div key={i} className="h-12 bg-white/5 rounded-lg animate-pulse" />)
-                ) : (
-                  stats?.mostDelayedGroups?.map((item: any) => (
-                    <div key={item.group} className="flex items-center justify-between p-3 bg-white/[0.02] rounded-xl border border-white/5 hover:border-yellow-500/20 transition-all group">
-                      <div className="flex items-center gap-4">
-                        <div className="text-2xl opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all">
-                          {ANIMAL_GROUPS.find(a => a.id === item.group)?.icon}
-                        </div>
-                        <div>
-                          <p className="text-sm font-black uppercase italic leading-none">{item.animal}</p>
-                          <p className="text-[10px] text-white/30 font-bold mt-1 uppercase">Último: {item.lastSeen}</p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-lg font-black text-yellow-500 leading-none">{item.days}d</p>
-                        <p className="text-[9px] text-white/30 font-bold uppercase">Atraso</p>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </CardContent>
-            </Card>
 
-            <Card className="bg-[#0D121F] border-white/10 rounded-2xl shadow-xl overflow-hidden">
-              <CardHeader className="p-6 border-b border-white/5 bg-white/[0.01]">
-                <div className="flex items-center gap-3 text-white/60">
-                  <Flame className="w-5 h-5 text-yellow-500" />
-                  <CardTitle className="text-sm font-black uppercase tracking-[0.2em]">Dezenas frequentes</CardTitle>
-                </div>
+        {/* Stats Section with Modern Charts */}
+        {/* Statistics Content Section */}
+        <section className="mb-16 scroll-mt-24" id="estatisticas">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-yellow-500 flex items-center justify-center text-[#0B0F19]">
+                <BarChart3 className="w-6 h-6" />
+              </div>
+              <div>
+                <h2 className="text-3xl font-black italic tracking-tighter uppercase">Análise Premium de Atrasos</h2>
+                <p className="text-white/40 text-sm font-medium mt-1 uppercase tracking-widest">Inteligência aplicada aos resultados históricos</p>
+              </div>
+            </div>
+            <div className="hidden md:flex gap-4">
+               <div className="text-right">
+                  <p className="text-[10px] text-white/40 font-black uppercase tracking-widest">Bicho em Alta</p>
+                  <p className="text-lg font-black text-yellow-500 italic uppercase">
+                    {stats?.mostFrequentTens?.[0] ? 
+                      ANIMAL_GROUPS.find(a => {
+                        const ten = stats?.mostFrequentTens?.[0]?.ten;
+                        if (!ten) return false;
+                        const tenInt = parseInt(ten);
+                        const groupNum = Math.floor((tenInt === 0 ? 100 : tenInt - 1) / 4) + 1;
+                        return a.id === String(groupNum).padStart(2, '0');
+                      })?.name || 'Carregando...' 
+                    : 'Processando...'}
+                  </p>
+
+               </div>
+               <div className="w-px h-10 bg-white/10" />
+               <div className="text-right">
+                  <p className="text-[10px] text-white/40 font-black uppercase tracking-widest">Grupo Atrasado</p>
+                  <p className="text-lg font-black text-white italic uppercase">{stats?.mostDelayedGroups?.[0]?.animal || '---'}</p>
+               </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            <Card className="bg-[#0D121F] border-white/10 rounded-2xl overflow-hidden group hover:border-yellow-500/30 transition-all">
+              <CardHeader className="bg-yellow-500/5 p-4 border-b border-white/5 flex flex-row items-center justify-between">
+                <CardTitle className="text-xs font-black uppercase tracking-widest">Dezenas Quentes</CardTitle>
+                <Flame className="w-4 h-4 text-yellow-500" />
               </CardHeader>
               <CardContent className="p-6">
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-wrap gap-4">
                   {stats?.mostFrequentTens?.map((item: any) => (
-                    <div key={item.ten} className="flex flex-col items-center gap-1">
-                      <div className="w-12 h-12 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center font-mono text-xl font-black text-yellow-500 group relative">
+                    <div key={item.ten} className="flex flex-col items-center gap-2 group/item">
+                      <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center font-mono text-2xl font-black text-white group-hover/item:border-yellow-500/50 group-hover/item:text-yellow-500 transition-all relative">
                         {item.ten}
-                        {item.trend === 'up' && <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-[#0B0F19]" />}
+                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-[#0B0F19]" />
                       </div>
-                      <span className="text-[9px] font-black text-white/30 uppercase tracking-tighter">{item.count}x</span>
+                      <span className="text-[10px] font-black text-white/30 uppercase">{item.count} sorteios</span>
                     </div>
                   ))}
                 </div>
               </CardContent>
             </Card>
-          </div>
-        </div>
 
-        {/* Stats Section with Modern Charts */}
-        <section className="mb-16" id="estatisticas">
+            <Card className="bg-[#0D121F] border-white/10 rounded-2xl overflow-hidden group hover:border-yellow-500/30 transition-all">
+              <CardHeader className="bg-yellow-500/5 p-4 border-b border-white/5 flex flex-row items-center justify-between">
+                <CardTitle className="text-xs font-black uppercase tracking-widest">Grupos Atrasados</CardTitle>
+                <Clock className="w-4 h-4 text-yellow-500" />
+              </CardHeader>
+              <CardContent className="p-6 space-y-4">
+                {stats?.mostDelayedGroups?.slice(0, 3).map((item: any) => (
+                  <div key={item.group} className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5">
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">{ANIMAL_GROUPS.find(a => a.id === item.group)?.icon}</span>
+                      <span className="text-sm font-black uppercase italic">{item.animal}</span>
+                    </div>
+                    <span className="text-lg font-black text-yellow-500">{item.days}d</span>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            <Card className="bg-[#0D121F] border-white/10 rounded-2xl overflow-hidden group hover:border-yellow-500/30 transition-all">
+              <CardHeader className="bg-yellow-500/5 p-4 border-b border-white/5 flex flex-row items-center justify-between">
+                <CardTitle className="text-xs font-black uppercase tracking-widest">Bicho em Alta</CardTitle>
+                <TrendingUp className="w-4 h-4 text-yellow-500" />
+              </CardHeader>
+              <CardContent className="p-6">
+                {stats?.mostFrequentTens?.[0] && (
+                  <div className="flex flex-col items-center justify-center text-center">
+                    <div className="text-7xl mb-4 animate-bounce">
+                      {ANIMAL_GROUPS.find(a => {
+                        const ten = stats?.mostFrequentTens?.[0]?.ten;
+                        if (!ten) return false;
+                        const tenInt = parseInt(ten);
+                        const groupNum = Math.floor((tenInt === 0 ? 100 : tenInt - 1) / 4) + 1;
+                        return a.id === String(groupNum).padStart(2, '0');
+                      })?.icon}
+                    </div>
+                    <h3 className="text-2xl font-black italic uppercase tracking-tighter text-yellow-500">
+                      {ANIMAL_GROUPS.find(a => {
+                        const ten = stats?.mostFrequentTens?.[0]?.ten;
+                        if (!ten) return false;
+                        const tenInt = parseInt(ten);
+                        const groupNum = Math.floor((tenInt === 0 ? 100 : tenInt - 1) / 4) + 1;
+                        return a.id === String(groupNum).padStart(2, '0');
+                      })?.name}
+                    </h3>
+
+                    <p className="text-[10px] text-white/40 font-bold uppercase tracking-[0.2em] mt-2">Tendência Máxima para hoje</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
           <div className="flex items-center justify-between mb-8">
+
              <div>
                <h2 className="text-3xl font-black italic tracking-tighter uppercase">Análise de Atraso por Horário</h2>
                <p className="text-white/40 text-sm font-medium mt-1 uppercase tracking-widest">Monitoramento inteligente baseado em dados históricos</p>
