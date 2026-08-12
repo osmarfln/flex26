@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Calculator, Sparkles, Hash, RefreshCw, Calendar } from "lucide-react";
 import { motion } from "framer-motion";
 
-export function CruzDoDia() {
+export function CruzDoDia({ onCalculate }: { onCalculate?: (dezenas: string[]) => void }) {
   const [day, setDay] = useState<string>(new Date().getDate().toString());
   const [calculatedValues, setCalculatedValues] = useState<{
     day: number;
@@ -39,6 +39,7 @@ export function CruzDoDia() {
       quadruplo,
       dezenas
     });
+    if (onCalculate) onCalculate(dezenas);
   };
 
   const useCurrentDay = () => {
