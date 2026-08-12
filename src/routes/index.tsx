@@ -227,7 +227,7 @@ function Index() {
               </div>
 
               <Link to="/historico">
-                <Button className="h-[54px] px-10 bg-yellow-500 hover:bg-yellow-400 text-[#0B0F19] font-black uppercase tracking-tighter rounded-xl gap-2 shadow-lg shadow-yellow-500/10 active:scale-95 transition-all">
+                <Button className="h-[54px] px-10 bg-primary hover:bg-primary/90 text-primary-foreground font-black uppercase tracking-tighter rounded-xl gap-2 shadow-lg shadow-primary/10 active:scale-95 transition-all">
                   <Search className="w-5 h-5" /> Buscar resultados
                 </Button>
               </Link>
@@ -575,7 +575,7 @@ function Index() {
       <footer className="border-t border-white/5 py-16 bg-[#080B14] mt-12 relative overflow-hidden">
         <div className="container mx-auto px-4 md:px-6 grid grid-cols-1 md:grid-cols-3 gap-12 items-center relative z-10">
           <div className="flex items-center gap-4 text-white/40 text-xs font-bold leading-relaxed">
-            <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-yellow-500/60">
+            <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-primary/60">
               <Info className="w-6 h-6" />
             </div>
             <p>Conteúdo exclusivamente informativo. <br /> <span className="text-white/60">Não realizamos apostas.</span></p>
@@ -588,7 +588,7 @@ function Index() {
 
           <div className="flex items-center justify-end gap-4 text-white/40 text-xs font-bold leading-relaxed text-right">
             <p>Jogo do Bicho é tradição, <br /> <span className="text-white/60">informação é responsabilidade.</span></p>
-            <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-yellow-500/60">
+            <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-primary/60">
               <ShieldCheck className="w-6 h-6" />
             </div>
           </div>
