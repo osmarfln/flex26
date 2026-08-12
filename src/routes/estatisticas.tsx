@@ -31,14 +31,88 @@ const ANIMAL_GROUPS = [
 ];
 
 function EstatisticasPage() {
-  const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'palpites' | 'visao-geral' | 'dezenas' | 'grupos' | 'frequencias' | 'repeticoes' | 'comparar' | 'historico' | 'importar'>('quentes');
-
+  const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'palpites' | 'visao-geral' | 'dezenas' | 'grupos' | 'frequencias' | 'repeticoes' | 'comparar' | 'historico' | 'importar'>('visao-geral');
   const [cruzData, setCruzData] = useState<string[]>([]);
   
-  const { data: stats, isLoading } = useQuery({
+  const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ["stats-page"],
     queryFn: () => getStats(),
   });
+
+  const { data: recentResults, isLoading: resultsLoading } = useQuery({
+    queryKey: ["recent-results-stats"],
+    queryFn: () => getResults({ limit: 100 }),
+  });
+
+  const isLoading = statsLoading || resultsLoading;
+
+  const getAnimalByTen = (ten: string) => {
+    const tenInt = parseInt(ten);
+    if (isNaN(tenInt)) return null;
+    const groupNum = Math.floor((tenInt === 0 ? 100 : tenInt - 1) / 4) + 1;
+    const groupId = String(groupNum).padStart(2, '0');
+    return ANIMAL_GROUPS.find(a => a.id === groupId);
+  };
+
+  const visaoGeralData = useMemo(() => {
+    if (!recentResults || recentResults.length === 0) return null;
+
+    const lastByTime: Record<string, any> = {};
+    recentResults.forEach(r => {
+      if (!lastByTime[r.time_type]) {
+        lastByTime[r.time_type] = r;
+      }
+    });
+
+    const tenLastSeen: Record<string, number> = {};
+    recentResults.forEach((r, idx) => {
+      const ten = r.results[0]?.slice(-2);
+      if (ten && tenLastSeen[ten] === undefined) {
+        tenLastSeen[ten] = idx;
+      }
+    });
+    
+    const allTens = Array.from({ length: 100 }, (_, i) => String(i).padStart(2, '0'));
+    const mostDelayedTens = allTens
+      .map(ten => ({ 
+        ten, 
+        delay: tenLastSeen[ten] === undefined ? 100 : tenLastSeen[ten],
+        animal: getAnimalByTen(ten)
+      }))
+      .sort((a, b) => b.delay - a.delay)
+      .slice(0, 10);
+
+    const freqByTime: Record<string, number> = {};
+    recentResults.forEach(r => {
+      freqByTime[r.time_type] = (freqByTime[r.time_type] || 0) + 1;
+    });
+    const freqChartData = Object.entries(freqByTime).map(([name, value]) => ({ name, value }));
+
+    const last30 = recentResults.slice(0, 30);
+    const prev30 = recentResults.slice(30, 60);
+    
+    const getMetrics = (list: any[]) => {
+      const tens = new Set(list.map(r => r.results[0]?.slice(-2)));
+      return { uniqueTens: tens.size };
+    };
+
+    return {
+      lastByTime: Object.values(lastByTime).sort((a, b) => (a.time_value || '').localeCompare(b.time_value || '')),
+      mostDelayedTens,
+      totalAnalyzed: recentResults.length,
+      period: {
+        start: recentResults[recentResults.length - 1].date,
+        end: recentResults[0].date
+      },
+      lastUpdate: recentResults[0].created_at,
+      freqChartData,
+      comparison: {
+        current: getMetrics(last30),
+        previous: getMetrics(prev30)
+      }
+    };
+  }, [recentResults]);
+
 
   const getAnimalByTen = (ten: string) => {
     const tenInt = parseInt(ten);
