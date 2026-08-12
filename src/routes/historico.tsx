@@ -76,11 +76,9 @@ function Historico() {
             <ArrowLeft className="w-5 h-5 text-white/40 group-hover:text-yellow-500 transition-colors" />
           </Link>
           <div className="flex flex-col flex-1">
-            <div className="flex flex-col">
-              <span className="text-lg font-black tracking-tighter uppercase italic leading-none">Flex Gerenciador</span>
-              <span className="text-[9px] text-yellow-500/60 font-bold tracking-[0.2em]">HISTÓRICO RIO</span>
-            </div>
-          </Link>
+            <span className="text-lg font-black tracking-tighter uppercase italic leading-none">Flex Gerenciador</span>
+            <span className="text-[9px] text-yellow-500/60 font-bold tracking-[0.2em]">HISTÓRICO RIO</span>
+          </div>
 
           <div className="flex items-center gap-4">
             <Link to="/portal" className="text-xs font-bold text-white/40 hover:text-white transition-colors">Portal</Link>
