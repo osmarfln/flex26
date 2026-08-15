@@ -107,6 +107,13 @@ function Index() {
     queryFn: () => getTenDelayStats(),
   });
 
+  const { data: digitStats, isLoading: digitLoading } = useQuery({
+    queryKey: ["homepage-digit-stats"],
+    queryFn: () => getDigitDelayStats(),
+    staleTime: 0,
+  });
+
+
 
 
   // Cada novo resultado dispara um novo cálculo (atrasos, grupos, dezenas, repetições)
