@@ -515,9 +515,11 @@ export const getRepetitionStats = createServerFn({ method: "GET" })
 
 /**
  * LÓGICA DEZENA ESQUERDA x DEZENA DIREITA
- * A cada resultado de cada horário é feita uma nova soma:
- * separa o dígito da esquerda (dezena) e o da direita (unidade) da dezena
- * do 1º prêmio e mede há quantos concursos/dias cada dígito não aparece.
+ * DEZENA = 2 casas decimais (ex.: 25). Um número sozinho (5) é UNIDADE.
+ * O milhar do 1º prêmio é sempre normalizado com 4 casas (ex.: 0570) e
+ * dividido em duas dezenas: ESQUERDA (as 2 primeiras casas) e
+ * DIREITA (as 2 últimas casas — a dezena tradicional do jogo).
+ * O zero à esquerda NUNCA é cortado: 5 é sempre exibido como 05.
  */
 export const getDigitDelayStats = createServerFn({ method: "GET" })
   .handler(async () => {
@@ -535,15 +537,26 @@ export const getDigitDelayStats = createServerFn({ method: "GET" })
     const results = sortDrawsDesc(rawRows as any[]);
     const schedules = ["PPT", "PTM", "PT", "PTV", "PTN", "COR"];
 
+    /** milhar do 1º prêmio sempre com 4 casas (zero nunca é cortado) */
+    const milhar = (row: any): string | null => {
+      const raw = String(row?.results?.[0] ?? "").replace(/\D/g, "");
+      if (!raw) return null;
+      return raw.slice(-4).padStart(4, "0");
+    };
+    const sideDezena = (row: any, side: "left" | "right"): string | null => {
+      const m = milhar(row);
+      if (!m) return null;
+      return side === "left" ? m.slice(0, 2) : m.slice(2, 4);
+    };
+
     const build = (side: "left" | "right") => {
-      return Array.from({ length: 10 }, (_, d) => {
-        const digit = String(d);
+      return Array.from({ length: 100 }, (_, d) => {
+        const dezena = String(d).padStart(2, "0");
         let currentDelay = -1;
         let last: any = null;
         const intervals: number[] = [];
         let lastIndex = -1;
 
-        // atraso por horário (quantos concursos daquele horário sem sair)
         const scheduleDelay: Record<string, number> = {};
         const scheduleSeen: Record<string, boolean> = {};
         const scheduleCount: Record<string, number> = {};
@@ -555,12 +568,7 @@ export const getDigitDelayStats = createServerFn({ method: "GET" })
           scheduleFreq[s] = 0;
         });
 
-        const matches = (row: any) => {
-          const prize: string | undefined = row.results?.[0];
-          if (!prize || prize.length < 2) return false;
-          const ten = prize.slice(-2);
-          return (side === "left" ? ten[0] : ten[1]) === digit;
-        };
+        const matches = (row: any) => sideDezena(row, side) === dezena;
 
         results.forEach((res: any, index: number) => {
           const hit = matches(res);
@@ -581,8 +589,8 @@ export const getDigitDelayStats = createServerFn({ method: "GET" })
               date: res.date,
               time_type: res.time_type,
               time_value: res.time_value,
-              ten: res.results?.[0]?.slice(-2) ?? null,
-              prize: res.results?.[0] ?? null,
+              ten: sideDezena(res, side),
+              prize: milhar(res),
             };
           }
           if (lastIndex !== -1) intervals.push(index - lastIndex);
@@ -603,14 +611,14 @@ export const getDigitDelayStats = createServerFn({ method: "GET" })
         else if (relativeIndex > 2) classification = "Muito acima da média";
         else if (relativeIndex > 1.25) classification = "Atraso elevado";
 
-        // horário mais provável = maior atraso naquele horário
         const worstSchedule = schedules
           .map((s) => ({ schedule: s, delay: scheduleDelay[s] ?? 0, freq: scheduleFreq[s] ?? 0, total: scheduleCount[s] ?? 0 }))
           .sort((a, b) => b.delay - a.delay)[0] ?? null;
 
         return {
           side,
-          digit,
+          digit: dezena,
+          dezena,
           currentDelay,
           avgDelay: Number(avgDelay.toFixed(2)),
           medianDelay,
@@ -624,21 +632,22 @@ export const getDigitDelayStats = createServerFn({ method: "GET" })
           scheduleFreq,
           worstSchedule,
         };
-      }).sort((a, b) => b.currentDelay - a.currentDelay);
+      }).sort((a, b) => b.currentDelay - a.currentDelay || Number(a.dezena) - Number(b.dezena));
     };
 
-    // Série diária: dezenas do 1º prêmio por dia/horário (últimos 12 dias)
+    // Série diária: milhar do 1º prêmio dividido em dezena esquerda/direita
     const dayMap: Record<string, any> = {};
     results.forEach((r: any) => {
-      const ten = r.results?.[0]?.slice(-2);
-      if (!ten) return;
+      const m = milhar(r);
+      if (!m) return;
       if (!dayMap[r.date]) dayMap[r.date] = { date: r.date, draws: [] };
       dayMap[r.date].draws.push({
         time_type: r.time_type,
         time_value: r.time_value,
-        ten,
-        left: ten[0],
-        right: ten[1],
+        ten: m.slice(2, 4),
+        milhar: m,
+        left: m.slice(0, 2),
+        right: m.slice(2, 4),
       });
     });
     const daily = Object.values(dayMap)

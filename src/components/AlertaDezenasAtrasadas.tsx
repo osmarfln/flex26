@@ -29,12 +29,12 @@ function useLeaderAlerts(leftDigit?: string, rightDigit?: string) {
     }
     if (prev.left && prev.left !== leftDigit) {
       toast.warning(`Nova dezena ESQUERDA mais atrasada: ${leftDigit}`, {
-        description: `Assumiu a liderança no lugar do dígito ${prev.left}. Pode aparecer a qualquer horário.`,
+        description: `Assumiu a liderança no lugar da dezena ${prev.left}. Pode aparecer a qualquer horário.`,
       });
     }
     if (prev.right && prev.right !== rightDigit) {
       toast.warning(`Nova dezena DIREITA mais atrasada: ${rightDigit}`, {
-        description: `Assumiu a liderança no lugar do dígito ${prev.right}. Pode aparecer a qualquer horário.`,
+        description: `Assumiu a liderança no lugar da dezena ${prev.right}. Pode aparecer a qualquer horário.`,
       });
     }
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ left: leftDigit, right: rightDigit }));
@@ -58,8 +58,11 @@ export function AlertaDezenasAtrasadas({ data, loading }: { data?: DigitDelayDat
         seen.right.add(dr.right);
       }),
     );
+    // dezenas de 2 casas (00 a 99) que não apareceram no período — zero nunca cortado
     const missing = (side: SideKey) =>
-      Array.from({ length: 10 }, (_, i) => String(i)).filter((d) => !seen[side].has(d));
+      (data?.[side] ?? [])
+        .filter((s) => !seen[side].has(s.digit))
+        .map((s) => s.digit);
     return {
       days: days.length,
       start: days[days.length - 1]?.date ?? null,
@@ -91,7 +94,7 @@ export function AlertaDezenasAtrasadas({ data, loading }: { data?: DigitDelayDat
         <div className="flex-1 min-w-[200px]">
           <h3 className="text-lg font-black italic uppercase">Alerta automático de atraso</h3>
           <p className="text-xs text-white/40 font-medium">
-            Recalculado a cada resultado do dia — avisa quando muda a dezena esquerda/direita mais atrasada.
+            Dezena = 2 casas (ex.: 05, 25). Recalculado a cada resultado do dia — avisa quando muda a dezena esquerda/direita mais atrasada.
           </p>
         </div>
         <Badge variant="outline" className="text-[10px] font-bold border-white/10 bg-white/5 text-white/50">
@@ -111,7 +114,7 @@ export function AlertaDezenasAtrasadas({ data, loading }: { data?: DigitDelayDat
               <>
                 <div className="flex items-center gap-3">
                   <div
-                    className="w-14 h-14 rounded-xl flex items-center justify-center text-3xl font-black"
+                    className="w-16 h-14 rounded-xl flex items-center justify-center text-3xl font-black font-mono"
                     style={{ background: accent, color: "#0B0F19" }}
                   >
                     {stat.digit}
@@ -121,7 +124,7 @@ export function AlertaDezenasAtrasadas({ data, loading }: { data?: DigitDelayDat
                     <p>
                       Última vez:{" "}
                       {stat.last
-                        ? `${fmt(stat.last.date)} · ${stat.last.time_type} · dezena ${stat.last.ten}`
+                        ? `${fmt(stat.last.date)} · ${stat.last.time_type} · milhar ${stat.last.prize} · dezena ${stat.last.ten}`
                         : "fora da amostra"}
                     </p>
                     {stat.worstSchedule && (
@@ -135,11 +138,16 @@ export function AlertaDezenasAtrasadas({ data, loading }: { data?: DigitDelayDat
                 <div className="flex items-start gap-2 text-[11px] text-white/50">
                   <CalendarClock className="w-3.5 h-3.5 mt-0.5 shrink-0" />
                   <span>
-                    Sem aparecer na semana ({weekly.days} dias · {fmt(weekly.start)} a {fmt(weekly.end)}):{" "}
+                    Dezenas sem aparecer na semana ({weekly.days} dias · {fmt(weekly.start)} a {fmt(weekly.end)}):{" "}
                     {missing.length > 0 ? (
-                      <b className="text-red-300">{missing.join(" · ")}</b>
+                      <>
+                        <b className="text-red-300 font-mono">{missing.slice(0, 12).join(" · ")}</b>
+                        {missing.length > 12 && (
+                          <span className="text-white/35"> +{missing.length - 12} dezenas</span>
+                        )}
+                      </>
                     ) : (
-                      <b className="text-emerald-300">todos os dígitos já saíram</b>
+                      <b className="text-emerald-300">todas as dezenas já saíram</b>
                     )}
                   </span>
                 </div>
