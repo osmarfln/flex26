@@ -170,13 +170,41 @@ export function AnaliseFiltros() {
   const invalidTerm = term.trim().length > 0 && query.kind === "none";
 
   const currentRows = useMemo(
-    () => (currentQuery.data ?? []).filter((r) => matchesQuery(r, query)),
+    () =>
+      query.kind === "none"
+        ? (currentQuery.data ?? [])
+        : (currentQuery.data ?? []).filter((r) => matchPositions(r, query).length > 0),
     [currentQuery.data, query],
   );
   const previousRows = useMemo(
-    () => (previousQuery.data ?? []).filter((r) => matchesQuery(r, query)),
+    () =>
+      query.kind === "none"
+        ? (previousQuery.data ?? [])
+        : (previousQuery.data ?? []).filter((r) => matchPositions(r, query).length > 0),
     [previousQuery.data, query],
   );
+
+  /** Cada aparição do termo, com posição do prêmio (1º ao 5º). */
+  const hits = useMemo(() => {
+    const list: { row: LotteryResult; pos: number; prize: string; ten: string }[] = [];
+    currentRows.forEach((r) => {
+      const positions = query.kind === "none" ? [1] : matchPositions(r, query);
+      positions.forEach((pos) => {
+        const prize = (r.results?.[pos - 1] ?? "").replace(/\D/g, "");
+        list.push({ row: r, pos, prize, ten: prize.slice(-2).padStart(2, "0") });
+      });
+    });
+    return list;
+  }, [currentRows, query]);
+
+  const byPosition = useMemo(() => {
+    const counts = [1, 2, 3, 4, 5].map((p) => ({
+      pos: p,
+      count: hits.filter((h) => h.pos === p).length,
+    }));
+    return counts;
+  }, [hits]);
+
 
   /** Bicho relacionado ao termo e a dezena que mais saiu dentro desse bicho no período. */
   const focus = useMemo(() => {
