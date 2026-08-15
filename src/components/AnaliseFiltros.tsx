@@ -1,0 +1,346 @@
+import { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { format, subDays } from "date-fns";
+import { ArrowDown, ArrowUp, Filter, Loader2, Minus, Search, X } from "lucide-react";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+
+import { getResultsRange, type LotteryResult } from "@/lib/lottery.functions";
+import { DRAW_SCHEDULE } from "@/lib/draw-order";
+import { getAnimalByTen } from "@/lib/animals";
+
+const CHART_TOOLTIP = {
+  contentStyle: {
+    background: "#0D121F",
+    border: "1px solid rgba(255,255,255,0.1)",
+    borderRadius: 12,
+    fontSize: 12,
+  },
+  labelStyle: { color: "rgba(255,255,255,0.5)" },
+};
+
+function iso(d: Date) {
+  return format(d, "yyyy-MM-dd");
+}
+
+function matchesTerm(r: LotteryResult, term: string) {
+  if (!term) return true;
+  const t = term.trim().toLowerCase();
+  if (!t) return true;
+  const animal = (r.animal ?? "").toLowerCase();
+  const group = (r.animal_group ?? "").toLowerCase();
+  const prizes = (r.results ?? []).join(" ").toLowerCase();
+  return animal.includes(t) || group.includes(t) || prizes.includes(t) || r.time_type.toLowerCase().includes(t);
+}
+
+function summarize(rows: LotteryResult[]) {
+  const tenCounts: Record<string, number> = {};
+  const groupCounts: Record<string, number> = {};
+  rows.forEach((r) => {
+    const first = r.results?.[0];
+    if (first && first.length >= 2) {
+      const ten = first.slice(-2);
+      tenCounts[ten] = (tenCounts[ten] ?? 0) + 1;
+      const animal = getAnimalByTen(ten);
+      if (animal) groupCounts[animal.name] = (groupCounts[animal.name] ?? 0) + 1;
+    }
+  });
+  const topTen = Object.entries(tenCounts).sort((a, b) => b[1] - a[1])[0];
+  const topGroup = Object.entries(groupCounts).sort((a, b) => b[1] - a[1])[0];
+  return {
+    total: rows.length,
+    uniqueTens: Object.keys(tenCounts).length,
+    days: new Set(rows.map((r) => r.date)).size,
+    topTen: topTen ? { value: topTen[0], count: topTen[1] } : null,
+    topGroup: topGroup ? { value: topGroup[0], count: topGroup[1] } : null,
+    tenCounts,
+  };
+}
+
+function Delta({ current, previous }: { current: number; previous: number }) {
+  const diff = current - previous;
+  const Icon = diff > 0 ? ArrowUp : diff < 0 ? ArrowDown : Minus;
+  const color = diff > 0 ? "text-emerald-400" : diff < 0 ? "text-red-400" : "text-white/40";
+  return (
+    <span className={`inline-flex items-center gap-1 text-[10px] font-black ${color}`}>
+      <Icon className="h-3 w-3" />
+      {diff > 0 ? "+" : ""}
+      {diff}
+    </span>
+  );
+}
+
+/** Filtros e busca das Análises: período, horário e tipo, com comparação de períodos. */
+export function AnaliseFiltros() {
+  const today = new Date();
+  const [start, setStart] = useState(iso(subDays(today, 14)));
+  const [end, setEnd] = useState(iso(today));
+  const [times, setTimes] = useState<string[]>([]);
+  const [term, setTerm] = useState("");
+  const [compare, setCompare] = useState(true);
+
+  const fetchRange = useServerFn(getResultsRange);
+
+  const spanDays = useMemo(() => {
+    const ms = new Date(end + "T12:00:00").getTime() - new Date(start + "T12:00:00").getTime();
+    return Math.max(1, Math.round(ms / 86_400_000) + 1);
+  }, [start, end]);
+
+  const prevStart = iso(subDays(new Date(start + "T12:00:00"), spanDays));
+  const prevEnd = iso(subDays(new Date(start + "T12:00:00"), 1));
+
+  const currentQuery = useQuery({
+    queryKey: ["analise-filtro", start, end, times],
+    queryFn: () => fetchRange({ data: { start, end, timeTypes: times, limit: 2000 } }),
+    staleTime: 0,
+    gcTime: 0,
+  });
+
+  const previousQuery = useQuery({
+    queryKey: ["analise-filtro-prev", prevStart, prevEnd, times],
+    enabled: compare,
+    queryFn: () =>
+      fetchRange({ data: { start: prevStart, end: prevEnd, timeTypes: times, limit: 2000 } }),
+    staleTime: 0,
+    gcTime: 0,
+  });
+
+  const currentRows = useMemo(
+    () => (currentQuery.data ?? []).filter((r) => matchesTerm(r, term)),
+    [currentQuery.data, term],
+  );
+  const previousRows = useMemo(
+    () => (previousQuery.data ?? []).filter((r) => matchesTerm(r, term)),
+    [previousQuery.data, term],
+  );
+
+  const cur = useMemo(() => summarize(currentRows), [currentRows]);
+  const prev = useMemo(() => summarize(previousRows), [previousRows]);
+
+  const byTime = useMemo(() => {
+    const counts: Record<string, { name: string; atual: number; anterior: number }> = {};
+    DRAW_SCHEDULE.forEach((s) => {
+      counts[s.timeType] = { name: s.timeType, atual: 0, anterior: 0 };
+    });
+    currentRows.forEach((r) => {
+      const e = counts[r.time_type] ?? (counts[r.time_type] = { name: r.time_type, atual: 0, anterior: 0 });
+      e.atual += 1;
+    });
+    previousRows.forEach((r) => {
+      const e = counts[r.time_type] ?? (counts[r.time_type] = { name: r.time_type, atual: 0, anterior: 0 });
+      e.anterior += 1;
+    });
+    return Object.values(counts);
+  }, [currentRows, previousRows]);
+
+  const toggleTime = (t: string) =>
+    setTimes((old) => (old.includes(t) ? old.filter((x) => x !== t) : [...old, t]));
+
+  const loading = currentQuery.isLoading || (compare && previousQuery.isLoading);
+
+  return (
+    <section className="mb-12 rounded-3xl border border-white/10 bg-white/[0.02] p-5 md:p-7">
+      <div className="mb-5 flex items-center gap-3">
+        <div className="rounded-2xl border border-primary/20 bg-primary/10 p-2.5">
+          <Filter className="h-5 w-5 text-primary" />
+        </div>
+        <div>
+          <h2 className="text-lg font-black uppercase tracking-tight">Filtros e busca das análises</h2>
+          <p className="text-[11px] font-bold uppercase tracking-widest text-white/40">
+            Data, horário e tipo — com comparação entre períodos
+          </p>
+        </div>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-4">
+        <label className="flex flex-col gap-1.5">
+          <span className="text-[10px] font-black uppercase tracking-widest text-white/40">De</span>
+          <input
+            type="date"
+            value={start}
+            max={end}
+            onChange={(e) => setStart(e.target.value)}
+            className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm font-bold outline-none focus:border-primary/50"
+          />
+        </label>
+        <label className="flex flex-col gap-1.5">
+          <span className="text-[10px] font-black uppercase tracking-widest text-white/40">Até</span>
+          <input
+            type="date"
+            value={end}
+            min={start}
+            onChange={(e) => setEnd(e.target.value)}
+            className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm font-bold outline-none focus:border-primary/50"
+          />
+        </label>
+        <label className="flex flex-col gap-1.5 md:col-span-2">
+          <span className="text-[10px] font-black uppercase tracking-widest text-white/40">
+            Buscar por tipo, dezena, grupo ou bicho
+          </span>
+          <span className="relative">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/30" />
+            <input
+              value={term}
+              onChange={(e) => setTerm(e.target.value)}
+              placeholder="Ex.: 25, Vaca, PTN..."
+              className="w-full rounded-xl border border-white/10 bg-white/5 py-2 pl-9 pr-9 text-sm font-bold outline-none focus:border-primary/50"
+            />
+            {term && (
+              <button
+                type="button"
+                onClick={() => setTerm("")}
+                aria-label="Limpar busca"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </span>
+        </label>
+      </div>
+
+      <div className="mt-4 flex flex-wrap items-center gap-2">
+        <span className="text-[10px] font-black uppercase tracking-widest text-white/40">Horários:</span>
+        {DRAW_SCHEDULE.map((s) => {
+          const active = times.includes(s.timeType);
+          return (
+            <button
+              key={s.timeType}
+              type="button"
+              onClick={() => toggleTime(s.timeType)}
+              className={`rounded-lg border px-2.5 py-1.5 text-[10px] font-black uppercase transition-all ${
+                active
+                  ? "border-primary/50 bg-primary/15 text-primary"
+                  : "border-white/10 bg-white/5 text-white/50 hover:text-white"
+              }`}
+            >
+              {s.timeType} {s.timeValue}
+            </button>
+          );
+        })}
+        {times.length > 0 && (
+          <button
+            type="button"
+            onClick={() => setTimes([])}
+            className="text-[10px] font-black uppercase text-white/40 underline hover:text-white"
+          >
+            Todos
+          </button>
+        )}
+        <label className="ml-auto flex items-center gap-2 text-[10px] font-black uppercase text-white/50">
+          <input
+            type="checkbox"
+            checked={compare}
+            onChange={(e) => setCompare(e.target.checked)}
+            className="h-3.5 w-3.5 accent-yellow-500"
+          />
+          Comparar com período anterior
+        </label>
+      </div>
+
+      {loading ? (
+        <div className="mt-6 flex items-center gap-2 text-sm font-bold text-white/50">
+          <Loader2 className="h-4 w-4 animate-spin" /> Carregando resultados do período...
+        </div>
+      ) : (
+        <>
+          <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+              <p className="text-[10px] font-black uppercase tracking-widest text-white/40">Sorteios</p>
+              <p className="text-2xl font-black">{cur.total}</p>
+              {compare && <Delta current={cur.total} previous={prev.total} />}
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+              <p className="text-[10px] font-black uppercase tracking-widest text-white/40">Dias com dados</p>
+              <p className="text-2xl font-black">{cur.days}</p>
+              {compare && <Delta current={cur.days} previous={prev.days} />}
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+              <p className="text-[10px] font-black uppercase tracking-widest text-white/40">Dezenas distintas</p>
+              <p className="text-2xl font-black">{cur.uniqueTens}</p>
+              {compare && <Delta current={cur.uniqueTens} previous={prev.uniqueTens} />}
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+              <p className="text-[10px] font-black uppercase tracking-widest text-white/40">Destaque no 1º prêmio</p>
+              <p className="text-2xl font-black text-primary">{cur.topTen?.value ?? "—"}</p>
+              <p className="text-[11px] font-bold text-white/50">
+                {cur.topGroup ? `${cur.topGroup.value} · ${cur.topGroup.count}x` : "Sem dados"}
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-6 grid gap-6 lg:grid-cols-2">
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+              <p className="mb-3 text-[10px] font-black uppercase tracking-widest text-white/40">
+                Sorteios por horário {compare ? "(atual x anterior)" : ""}
+              </p>
+              <div className="h-56">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={byTime}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+                    <XAxis dataKey="name" tick={{ fontSize: 11, fill: "rgba(255,255,255,0.5)" }} />
+                    <YAxis tick={{ fontSize: 11, fill: "rgba(255,255,255,0.5)" }} allowDecimals={false} />
+                    <Tooltip {...CHART_TOOLTIP} />
+                    <Bar dataKey="atual" fill="#EAB308" radius={[6, 6, 0, 0]} />
+                    {compare && <Bar dataKey="anterior" fill="rgba(255,255,255,0.25)" radius={[6, 6, 0, 0]} />}
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              {compare && (
+                <p className="mt-2 text-[10px] font-bold uppercase text-white/40">
+                  Período anterior: {prevStart} → {prevEnd}
+                </p>
+              )}
+            </div>
+
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+              <p className="mb-3 text-[10px] font-black uppercase tracking-widest text-white/40">
+                Resultados filtrados ({currentRows.length})
+              </p>
+              <div className="max-h-56 overflow-auto pr-1">
+                {currentRows.length === 0 ? (
+                  <p className="py-8 text-center text-sm font-bold text-white/40">
+                    Nenhum resultado para esses filtros.
+                  </p>
+                ) : (
+                  <table className="w-full text-left text-xs">
+                    <thead className="sticky top-0 bg-[#0D121F] text-[10px] uppercase text-white/40">
+                      <tr>
+                        <th className="py-2">Data</th>
+                        <th>Horário</th>
+                        <th>1º prêmio</th>
+                        <th>Bicho</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {currentRows.slice(0, 200).map((r) => (
+                        <tr key={`${r.date}-${r.time_type}`} className="border-t border-white/5">
+                          <td className="py-1.5 font-bold">
+                            {new Date(r.date + "T12:00:00").toLocaleDateString("pt-BR")}
+                          </td>
+                          <td className="font-black text-primary">{r.time_type}</td>
+                          <td className="font-mono">{r.results?.[0] ?? "—"}</td>
+                          <td className="text-white/60">
+                            {r.animal ?? getAnimalByTen(r.results?.[0]?.slice(-2) ?? "")?.name ?? "—"}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+    </section>
+  );
+}
