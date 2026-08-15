@@ -163,7 +163,7 @@ export function PuxadasPanel({ data, loading }: { data?: PuxadasData | null; loa
                 <YAxis stroke="rgba(255,255,255,0.35)" fontSize={11} unit="%" domain={[0, 100]} />
                 <Tooltip
                   contentStyle={{ background: "#0D121F", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12 }}
-                  formatter={(v: number) => [`${v}%`, "Confirmação"]}
+                  formatter={(v) => [`${v}%`, "Confirmação"]}
                   labelFormatter={(l) => `Horário ${l}`}
                 />
                 <Bar dataKey="taxa" radius={[6, 6, 0, 0]}>
