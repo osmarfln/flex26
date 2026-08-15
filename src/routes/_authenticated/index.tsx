@@ -44,6 +44,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useLotteryRealtime } from "@/hooks/useLotteryRealtime";
+import { useUserFirstName } from "@/hooks/useUserFirstName";
+
 import { brasiliaDateISO } from "@/lib/draw-order";
 
 
@@ -69,16 +71,26 @@ export const Route = createFileRoute("/_authenticated/")({
 
 
 function getGreeting() {
-  const hour = new Date().getHours();
+  const hour = Number(
+    new Intl.DateTimeFormat("pt-BR", {
+      timeZone: "America/Sao_Paulo",
+      hour: "2-digit",
+      hour12: false,
+    }).format(new Date()),
+  );
+  if (hour < 5) return { text: "Boa madrugada", icon: Moon };
   if (hour < 12) return { text: "Bom dia", icon: Coffee };
   if (hour < 18) return { text: "Boa tarde", icon: Sun };
   return { text: "Boa noite", icon: Moon };
 }
 
+
 function Index() {
   // Estado inicial estável para evitar divergência entre servidor e navegador
   const [greeting, setGreeting] = useState<{ text: string; icon: typeof Coffee }>({ text: "Olá", icon: Sun });
   const [currentTime, setCurrentTime] = useState(new Date());
+  const firstName = useUserFirstName();
+
 
   useEffect(() => {
     setGreeting(getGreeting());
@@ -217,8 +229,13 @@ function Index() {
                 <GreetingIcon className="w-8 h-8 text-primary shadow-[0_0_15px_rgba(var(--primary),0.2)]" />
               </div>
               <div>
-                <h2 className="text-2xl font-black italic tracking-tighter uppercase leading-none">{greeting.text}!</h2>
-                <p className="text-white/40 font-bold text-xs uppercase tracking-widest mt-1">Seja bem vindo ao nosso espaço fique a vontade</p>
+                <h2 className="text-2xl font-black italic tracking-tighter uppercase leading-none">
+                  {greeting.text}{firstName ? `, ${firstName}` : ""}!
+                </h2>
+                <p className="text-white/40 font-bold text-xs uppercase tracking-widest mt-1">
+                  {firstName ? `É um prazer ter você aqui, ${firstName}. Fique à vontade.` : "Seja bem-vindo ao nosso espaço, fique à vontade."}
+                </p>
+
               </div>
             </motion.div>
 

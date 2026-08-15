@@ -3,8 +3,10 @@ import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { useUserFirstName } from "@/hooks/useUserFirstName";
 
 export function DigitalClock() {
+  const firstName = useUserFirstName();
   const [now, setNow] = useState<Date | null>(null);
 
   useEffect(() => {
@@ -50,8 +52,9 @@ export function DigitalClock() {
           </div>
           <div>
             <p className="text-[10px] uppercase tracking-[0.25em] text-primary/70 font-black">
-              Bem-vindo
+              {firstName ? `Bem-vindo, ${firstName}` : "Bem-vindo"}
             </p>
+
             <p className="text-xs text-white/40 font-bold uppercase tracking-wider">
               Painel ao vivo
             </p>
