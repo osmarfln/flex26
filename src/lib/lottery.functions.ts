@@ -537,17 +537,19 @@ export const getDigitDelayStats = createServerFn({ method: "GET" })
     const results = sortDrawsDesc(rawRows as any[]);
     const schedules = ["PPT", "PTM", "PT", "PTV", "PTN", "COR"];
 
-    /** milhar do 1º prêmio sempre com 4 casas (zero nunca é cortado) */
-    const milhar = (row: any): string | null => {
-      const raw = String(row?.results?.[0] ?? "").replace(/\D/g, "");
-      if (!raw) return null;
-      return raw.slice(-4).padStart(4, "0");
+    /** milhares do 1º ao 5º prêmio, sempre com 4 casas (zero nunca é cortado) */
+    const milhares = (row: any): string[] => {
+      const arr = Array.isArray(row?.results) ? row.results.slice(0, 5) : [];
+      return arr
+        .map((p: any) => String(p ?? "").replace(/\D/g, ""))
+        .filter((raw: string) => raw.length > 0)
+        .map((raw: string) => raw.slice(-4).padStart(4, "0"));
     };
-    const sideDezena = (row: any, side: "left" | "right"): string | null => {
-      const m = milhar(row);
-      if (!m) return null;
-      return side === "left" ? m.slice(0, 2) : m.slice(2, 4);
-    };
+    const milhar = (row: any): string | null => milhares(row)[0] ?? null;
+    const sideOf = (m: string, side: "left" | "right") => (side === "left" ? m.slice(0, 2) : m.slice(2, 4));
+    const sideDezenas = (row: any, side: "left" | "right"): string[] =>
+      milhares(row).map((m) => sideOf(m, side));
+
 
     const build = (side: "left" | "right") => {
       return Array.from({ length: 100 }, (_, d) => {
