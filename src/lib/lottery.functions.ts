@@ -188,25 +188,41 @@ export const getTenDelayStats = createServerFn({ method: "GET" })
       let currentDelay = -1;
       const intervals: number[] = [];
       let lastIndex = -1;
+      let hitInFirstPrize = false;
+      const sparklineData: number[] = [];
       
-      const freq10 = current300.slice(0, 10).filter(r => r.results?.[0]?.slice(-2) === ten).length;
-      const freq30 = current300.slice(0, 30).filter(r => r.results?.[0]?.slice(-2) === ten).length;
-      const freq50 = current300.slice(0, 50).filter(r => r.results?.[0]?.slice(-2) === ten).length;
-      const freq100 = current300.slice(0, 100).filter(r => r.results?.[0]?.slice(-2) === ten).length;
-      const freq300 = current300.filter(r => r.results?.[0]?.slice(-2) === ten).length;
+      const freq10 = current300.slice(0, 10).filter(r => r.results?.slice(0, 5).some(p => p.slice(-2) === ten)).length;
+      const freq30 = current300.slice(0, 30).filter(r => r.results?.slice(0, 5).some(p => p.slice(-2) === ten)).length;
+      const freq50 = current300.slice(0, 50).filter(r => r.results?.slice(0, 5).some(p => p.slice(-2) === ten)).length;
+      const freq100 = current300.slice(0, 100).filter(r => r.results?.slice(0, 5).some(p => p.slice(-2) === ten)).length;
+      const freq300 = current300.filter(r => r.results?.slice(0, 5).some(p => p.slice(-2) === ten)).length;
       
-      const prevFreq300 = previous300.filter(r => r.results?.[0]?.slice(-2) === ten).length;
+      const prevFreq300 = previous300.filter(r => r.results?.slice(0, 5).some(p => p.slice(-2) === ten)).length;
       const periodComparison = prevFreq300 > 0 ? ((freq300 - prevFreq300) / prevFreq300) * 100 : (freq300 > 0 ? 100 : 0);
 
       results.forEach((res, index) => {
-        const firstPrize = res.results?.[0];
-        const drawnTen = firstPrize?.slice(-2);
-        if (drawnTen === ten) {
-          if (currentDelay === -1) currentDelay = index;
+        const hit = res.results?.slice(0, 5).some(p => p?.slice(-2) === ten);
+        const firstPrizeHit = res.results?.[0]?.slice(-2) === ten;
+
+        if (hit) {
+          if (currentDelay === -1) {
+            currentDelay = index;
+            if (firstPrizeHit && index === 0) hitInFirstPrize = true;
+          }
           if (lastIndex !== -1) intervals.push(index - lastIndex);
           lastIndex = index;
         }
       });
+
+      // Simplified history for sparkline (last 30 draws)
+      let tempDelay = 0;
+      for (let j = 29; j >= 0; j--) {
+        const res = results[j];
+        const hit = res?.results?.slice(0, 5).some((p: string) => p?.slice(-2) === ten);
+        if (hit) tempDelay = 0;
+        else tempDelay++;
+        sparklineData.push(tempDelay);
+      }
 
       if (currentDelay === -1) currentDelay = 500;
       const avgDelay = intervals.length > 0 ? intervals.reduce((a, b) => a + b, 0) / intervals.length : 100;
@@ -235,7 +251,9 @@ export const getTenDelayStats = createServerFn({ method: "GET" })
         relativeIndex: Number(relativeIndex.toFixed(2)),
         freqs: { 10: freq10, 30: freq30, 50: freq50, 100: freq100, 300: freq300 },
         regularity,
-        periodComparison: Number(periodComparison.toFixed(2))
+        periodComparison: Number(periodComparison.toFixed(2)),
+        hitInFirstPrize,
+        history: sparklineData
       });
     });
 
@@ -349,20 +367,52 @@ export const getGroupDelayStats = createServerFn({ method: "GET" })
       const dezenaStats = groupDezenas.map((dz) => {
         let freq = 0;
         let delay = -1;
+        const delayHistory: number[] = [];
+        let hitInFirstPrize = false;
+
         results.forEach((res: any, index: number) => {
+          const firstPrizeHit = res.results?.[0]?.slice(-2) === dz;
           const hit = res.results?.slice(0, 5).some((prize: string) => prize?.slice(-2) === dz);
+          
           if (hit) {
             freq++;
             if (delay === -1) delay = index;
+            if (firstPrizeHit) hitInFirstPrize = true;
+          }
+          
+          // Track delay evolution (last 30 draws for sparkline)
+          if (index < 30) {
+            delayHistory.push(delay === -1 ? index + 1 : index - (results.findIndex((r, idx) => idx <= index && r.results?.slice(0, 5).some((p: string) => p?.slice(-2) === dz)) ?? index));
           }
         });
-        return { dezena: dz, freq, delay: delay === -1 ? results.length : delay };
+
+        // Simplified history for sparkline: just current delay at each point
+        const sparklineData: number[] = [];
+        let tempDelay = 0;
+        for (let j = 29; j >= 0; j--) {
+          const res = results[j];
+          const hit = res?.results?.slice(0, 5).some((p: string) => p?.slice(-2) === dz);
+          if (hit) tempDelay = 0;
+          else tempDelay++;
+          sparklineData.push(tempDelay);
+        }
+
+        return { 
+          dezena: dz, 
+          freq, 
+          delay: delay === -1 ? results.length : delay,
+          hitInFirstPrize,
+          history: sparklineData
+        };
       });
+
+      const anyDezenaInFirstPrize = dezenaStats.some(d => d.hitInFirstPrize && d.delay === 0);
 
       stats.push({
         groupId,
         animal: ANIMAL_GROUPS_DATA[groupId] ? ANIMAL_GROUPS_DATA[groupId].name : "Desconhecido",
         dezenaStats,
+        anyDezenaInFirstPrize,
 
         currentDelay,
         lastOccurrenceDate,

@@ -35,6 +35,27 @@ export const Route = createFileRoute("/_authenticated/estatisticas")({
   component: EstatisticasPage,
 });
 
+// Simple Sparkline Component for dezenas history
+const MiniSparkline = ({ data, color = "#EAB308" }: { data: number[], color?: string }) => {
+  if (!data || data.length === 0) return null;
+  const chartData = data.map((val, i) => ({ val, i }));
+  return (
+    <div className="h-6 w-full opacity-40 group-hover:opacity-100 transition-opacity">
+      <ResponsiveContainer width="100%" height="100%">
+        <AreaChart data={chartData}>
+          <Area 
+            type="monotone" 
+            dataKey="val" 
+            stroke={color} 
+            fill={`${color}10`} 
+            strokeWidth={1.5}
+            isAnimationActive={false}
+          />
+        </AreaChart>
+      </ResponsiveContainer>
+    </div>
+  );
+};
 
 function EstatisticasPage() {
   const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'palpites' | 'logica-atraso' | 'ranking-completo' | 'logica-grupos' | 'repeticoes' | 'esquerda-direita' | 'puxadas'>('quentes');
@@ -466,10 +487,19 @@ function EstatisticasPage() {
                     ) : (
                       hottestTens.slice(0, 20).map((item: any, i: number) => {
                         const animal = getAnimalByTen(item.ten);
+                        const isHitNow = item.hitInFirstPrize && item.currentDelay === 0;
                         return (
-                          <Card key={i} className="dashboard-card p-4 text-center hover:border-primary/50 transition-all bg-white/[0.03]">
-                            <span className="text-4xl font-black text-primary mb-2 block drop-shadow-[0_0_10px_rgba(var(--primary),0.3)]">{item.ten}</span>
-                            <p className="text-xs font-bold uppercase text-white/40">{item.freqs[300]} sorteios (300)</p>
+                          <Card key={i} className={`dashboard-card p-4 text-center hover:border-primary/50 transition-all bg-white/[0.03] group ${isHitNow ? 'border-red-500/50 bg-red-500/5 ring-1 ring-red-500/20' : ''}`}>
+                            {isHitNow && (
+                              <div className="absolute top-0 right-0 p-1 bg-red-500 text-white text-[6px] font-black px-1.5 uppercase z-10">1º Prêmio</div>
+                            )}
+                            <span className={`text-4xl font-black mb-2 block drop-shadow-[0_0_10px_rgba(var(--primary),0.3)] ${isHitNow ? 'text-red-500' : 'text-primary'}`}>{item.ten}</span>
+                            <div className="space-y-1">
+                              <p className="text-xs font-bold uppercase text-white/40">{item.freqs[300]} sorteios (300)</p>
+                              <div className="h-4 w-full px-2">
+                                <MiniSparkline data={item.history} color={isHitNow ? '#EF4444' : '#EAB308'} />
+                              </div>
+                            </div>
                             <div className="mt-2 flex items-center justify-center gap-2">
                               <span className="text-lg">{animal?.icon}</span>
                               <span className="text-[10px] font-black uppercase text-white/60">{animal?.name}</span>
@@ -857,7 +887,12 @@ function EstatisticasPage() {
                         }
 
                         return (
-                          <Card key={item.groupId} className="bg-[#0D121F] border-white/10 rounded-2xl p-6 hover:border-yellow-500/30 transition-all group relative overflow-hidden flex flex-col">
+                          <Card key={item.groupId} className={`bg-[#0D121F] border-white/10 rounded-2xl p-6 hover:border-yellow-500/30 transition-all group relative overflow-hidden flex flex-col ${item.anyDezenaInFirstPrize ? 'ring-2 ring-red-500 ring-offset-2 ring-offset-[#0D121F]' : ''}`}>
+                            {item.anyDezenaInFirstPrize && (
+                              <div className="absolute top-0 right-0 p-1.5 bg-red-500 text-white text-[7px] font-black px-2 uppercase z-10">
+                                1º Prêmio agora!
+                              </div>
+                            )}
                             <div className="flex items-center justify-between mb-6">
                               <div className="flex items-center gap-3">
                                 <div className="text-3xl font-black text-white group-hover:text-yellow-500 transition-colors">{animal?.icon}</div>
@@ -900,17 +935,20 @@ function EstatisticasPage() {
                             <div className="space-y-4 pt-4 border-t border-white/5 mt-auto">
                               <div>
                                 <span className="text-[7px] font-black text-white/20 uppercase tracking-widest block mb-2">
-                                  Dezenas do Grupo · Freq / Atraso
+                                  Dezenas do Grupo · Freq / Atraso / Histórico
                                 </span>
                                 <div className="grid grid-cols-4 gap-1">
                                   {(item.dezenaStats ?? []).map((d: any) => (
                                     <div
                                       key={d.dezena}
-                                      className="flex flex-col items-center rounded border border-white/5 bg-white/[0.02] py-1"
+                                      className={`flex flex-col items-center rounded border border-white/5 bg-white/[0.02] py-1 px-1 transition-all ${d.hitInFirstPrize && d.delay === 0 ? 'bg-red-500/20 border-red-500/30' : ''}`}
                                     >
-                                      <span className="text-[11px] font-black text-white">{d.dezena}</span>
+                                      <span className={`text-[11px] font-black ${d.hitInFirstPrize && d.delay === 0 ? 'text-red-500' : 'text-white'}`}>{d.dezena}</span>
                                       <span className="text-[7px] font-bold text-emerald-500">{d.freq}x</span>
-                                      <span className="text-[7px] font-bold text-white/30">atr {d.delay}</span>
+                                      <span className={`text-[7px] font-bold ${d.delay === 0 ? 'text-emerald-500' : 'text-white/30'}`}>atr {d.delay}</span>
+                                      <div className="w-full mt-1">
+                                        <MiniSparkline data={d.history} color={d.hitInFirstPrize && d.delay === 0 ? '#EF4444' : colorClass.includes('emerald') ? '#10B981' : colorClass.includes('yellow') ? '#EAB308' : '#3B82F6'} />
+                                      </div>
                                     </div>
                                   ))}
                                 </div>
