@@ -80,7 +80,7 @@ export function AlertaDezenasAtrasadas({ data, loading }: { data?: DigitDelayDat
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {blocks.map(({ side, label, icon: Icon, accent, stat, missing }) => (
+        {blocks.map(({ side, label, icon: Icon, accent, stat }) => (
           <div key={side} className="rounded-xl border border-white/10 bg-white/[0.03] p-4 space-y-3">
             <div className="flex items-center gap-2">
               <Icon className="w-4 h-4" style={{ color: accent }} />
