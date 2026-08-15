@@ -23,6 +23,7 @@ import {
   CalendarDays,
   ClipboardList,
 } from "lucide-react";
+import { BackNav } from "@/components/layout/BackNav";
 import ThemeToggle from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import {
@@ -230,6 +231,7 @@ export default function ManagementLayout({ children, currentPageName }: LayoutPr
                 </nav>
               </SheetContent>
             </Sheet>
+            <BackNav />
             <Link to="/" className="flex items-center gap-2 font-bold text-xl">
               <Sparkles className="h-6 w-6 text-primary" />
               <span>Flex Gerenciamentos</span>
