@@ -31,6 +31,16 @@ function iso(d: Date) {
   return format(d, "yyyy-MM-dd");
 }
 
+/** true quando a string é uma data ISO real (evita valores parciais dos inputs type="date"). */
+function isValidISO(s: string) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+  const d = new Date(s + "T12:00:00");
+  if (Number.isNaN(d.getTime())) return false;
+  const year = Number(s.slice(0, 4));
+  return year >= 2000 && year <= 2100;
+}
+
+
 type SearchQuery =
   | { kind: "none" }
   | { kind: "dezena" | "centena" | "milhar"; value: string; label: string }
