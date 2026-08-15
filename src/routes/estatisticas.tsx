@@ -950,7 +950,10 @@ function EstatisticasPage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
                 >
-                  <DezenasEsquerdaDireita data={digitStats as any} loading={digitLoading} />
+                  <div className="space-y-8">
+                    <AlertaDezenasAtrasadas data={digitStats as any} loading={digitLoading} />
+                    <DezenasEsquerdaDireita data={digitStats as any} loading={digitLoading} />
+                  </div>
                 </motion.div>
               )}
 
