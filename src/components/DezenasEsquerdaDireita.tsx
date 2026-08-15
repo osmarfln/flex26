@@ -5,7 +5,9 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 
 interface DigitStat {
   side: "left" | "right";
+  /** dezena com 2 casas, zero nunca cortado (ex.: 05) */
   digit: string;
+  dezena?: string;
   currentDelay: number;
   avgDelay: number;
   medianDelay: number;
@@ -26,7 +28,7 @@ export interface DigitDelayData {
   totalDraws: number;
   schedules: string[];
   period: { start: string | null; end: string | null } | null;
-  daily: { date: string; draws: { time_type: string; time_value: string | null; ten: string; left: string; right: string }[] }[];
+  daily: { date: string; draws: { time_type: string; time_value: string | null; ten: string; milhar?: string; left: string; right: string }[] }[];
 }
 
 const fmt = (iso?: string | null) => {
@@ -51,7 +53,8 @@ function SideBlock({ title, subtitle, stats, schedules, accent }: {
   schedules: string[];
   accent: string;
 }) {
-  const chartData = stats.map((s) => ({ digit: s.digit, atraso: s.currentDelay }));
+  const chartData = stats.slice(0, 12).map((s) => ({ digit: s.digit, atraso: s.currentDelay }));
+  const listed = stats.slice(0, 10);
   const top = stats[0];
 
   return (
@@ -63,7 +66,7 @@ function SideBlock({ title, subtitle, stats, schedules, accent }: {
         </div>
         {top && (
           <Badge variant="outline" className={`font-bold ${classColor(top.classification)}`}>
-            Mais atrasada: {top.digit} · {top.currentDelay} concursos
+            Dezena mais atrasada: {top.digit} · {top.currentDelay} concursos
           </Badge>
         )}
       </div>
@@ -91,11 +94,11 @@ function SideBlock({ title, subtitle, stats, schedules, accent }: {
       </Card>
 
       <div className="space-y-3">
-        {stats.map((s, i) => (
+        {listed.map((s, i) => (
           <Card key={s.digit} className="bg-[#0D121F] border-white/10 rounded-2xl p-4">
             <div className="flex items-start gap-4 flex-wrap">
               <div
-                className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl font-black shrink-0"
+                className="w-16 h-14 rounded-xl flex items-center justify-center text-2xl font-black font-mono tracking-tight shrink-0"
                 style={{ background: i === 0 ? accent : "rgba(255,255,255,0.06)", color: i === 0 ? "#0B0F19" : "#fff" }}
               >
                 {s.digit}
@@ -116,7 +119,7 @@ function SideBlock({ title, subtitle, stats, schedules, accent }: {
 
                 <div className="text-xs text-white/50 flex items-center gap-2 flex-wrap">
                   <Clock className="w-3.5 h-3.5" />
-                  Última vez: {s.last ? `${fmt(s.last.date)} · ${s.last.time_type}${s.last.time_value ? ` (${s.last.time_value})` : ""} · dezena ${s.last.ten}` : "não apareceu na amostra"}
+                  Última vez: {s.last ? `${fmt(s.last.date)} · ${s.last.time_type}${s.last.time_value ? ` (${s.last.time_value})` : ""} · milhar ${s.last.prize} · dezena ${s.last.ten}` : "não apareceu na amostra"}
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
@@ -195,7 +198,8 @@ export function DezenasEsquerdaDireita({ data, loading }: { data?: DigitDelayDat
           <div>
             <h2 className="text-2xl font-black italic uppercase">Dezena Esquerda x Direita</h2>
             <p className="text-xs text-white/40 font-medium">
-              A cada horário é feita uma nova soma sobre a dezena do 1º prêmio para achar os dígitos que ainda não saíram.
+              DEZENA = 2 casas (ex.: 25). Um número sozinho (5) é unidade. O milhar do 1º prêmio é lido com 4 casas
+              (ex.: 0570) e dividido em dezena esquerda (05) e dezena direita (70). O zero nunca é cortado.
             </p>
           </div>
         </div>
@@ -207,14 +211,14 @@ export function DezenasEsquerdaDireita({ data, loading }: { data?: DigitDelayDat
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <SideBlock
           title="Dezena Esquerda"
-          subtitle="Primeiro dígito da dezena (ex.: 7 em 73)"
+          subtitle="2 primeiras casas do milhar — ex.: 25 em 2570 · top 10 mais atrasadas"
           stats={data.left}
           schedules={data.schedules}
           accent="#EAB308"
         />
         <SideBlock
           title="Dezena Direita"
-          subtitle="Segundo dígito da dezena (ex.: 3 em 73)"
+          subtitle="2 últimas casas do milhar — ex.: 70 em 2570 · top 10 mais atrasadas"
           stats={data.right}
           schedules={data.schedules}
           accent="#38BDF8"
@@ -223,7 +227,7 @@ export function DezenasEsquerdaDireita({ data, loading }: { data?: DigitDelayDat
 
       <Card className="bg-[#0D121F] border-white/10 rounded-2xl p-5">
         <h3 className="text-sm font-black uppercase tracking-widest text-white/60 mb-4">
-          Mapa diário — dezena do 1º prêmio por horário
+          Mapa diário — milhar do 1º prêmio dividido em dezena esquerda e direita
         </h3>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -244,7 +248,7 @@ export function DezenasEsquerdaDireita({ data, loading }: { data?: DigitDelayDat
                     return (
                       <td key={h} className="py-2 px-2 text-center">
                         {d ? (
-                          <span className="inline-flex items-center gap-0.5 font-mono font-bold">
+                          <span className="inline-flex items-center gap-1 font-mono font-bold">
                             <span className="text-yellow-400">{d.left}</span>
                             <span className="text-sky-400">{d.right}</span>
                           </span>
@@ -260,8 +264,8 @@ export function DezenasEsquerdaDireita({ data, loading }: { data?: DigitDelayDat
           </table>
         </div>
         <p className="text-[10px] text-white/30 mt-3">
-          <span className="text-yellow-400 font-bold">Amarelo</span> = dígito da esquerda ·{" "}
-          <span className="text-sky-400 font-bold">Azul</span> = dígito da direita
+          <span className="text-yellow-400 font-bold">Amarelo</span> = dezena esquerda (2 casas) ·{" "}
+          <span className="text-sky-400 font-bold">Azul</span> = dezena direita (2 casas) — o zero nunca é cortado
         </p>
       </Card>
     </div>
