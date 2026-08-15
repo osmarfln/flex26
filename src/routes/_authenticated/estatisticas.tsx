@@ -878,7 +878,12 @@ function EstatisticasPage() {
                         }
 
                         return (
-                          <Card key={item.groupId} className="bg-[#0D121F] border-white/10 rounded-2xl p-6 hover:border-yellow-500/30 transition-all group relative overflow-hidden flex flex-col">
+                          <Card key={item.groupId} className={`bg-[#0D121F] border-white/10 rounded-2xl p-6 hover:border-yellow-500/30 transition-all group relative overflow-hidden flex flex-col ${item.anyDezenaInFirstPrize ? 'ring-2 ring-red-500 ring-offset-2 ring-offset-[#0D121F]' : ''}`}>
+                            {item.anyDezenaInFirstPrize && (
+                              <div className="absolute top-0 right-0 p-1.5 bg-red-500 text-white text-[7px] font-black px-2 uppercase z-10">
+                                1º Prêmio agora!
+                              </div>
+                            )}
                             <div className="flex items-center justify-between mb-6">
                               <div className="flex items-center gap-3">
                                 <div className="text-3xl font-black text-white group-hover:text-yellow-500 transition-colors">{animal?.icon}</div>
