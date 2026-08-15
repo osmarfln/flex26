@@ -243,7 +243,7 @@ function EstatisticasPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/30 overflow-x-hidden">
-      <SiteHeader subtitle="CENTRAL DE ESTATÍSTICAS" showBack />
+      <SiteHeader subtitle="CENTRAL DE ESTATÍSTICAS" />
 
       <main className="container mx-auto px-3 sm:px-4 md:px-6 py-6 md:py-12">
 

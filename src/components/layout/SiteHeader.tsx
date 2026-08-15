@@ -1,5 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Sparkles, Users, History, Activity, BarChart3, ArrowLeft } from "lucide-react";
+import { Sparkles, Users, History, Activity, BarChart3 } from "lucide-react";
+import { BackNav } from "@/components/layout/BackNav";
 
 import { UserMenu } from "@/components/layout/UserMenu";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
@@ -13,10 +14,9 @@ const navItems = [
 
 interface SiteHeaderProps {
   subtitle?: string;
-  showBack?: boolean;
 }
 
-export function SiteHeader({ subtitle = "VEM COM A GENTE", showBack = false }: SiteHeaderProps) {
+export function SiteHeader({ subtitle = "VEM COM A GENTE" }: SiteHeaderProps) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { isAdmin } = useIsAdmin();
 
@@ -26,15 +26,7 @@ export function SiteHeader({ subtitle = "VEM COM A GENTE", showBack = false }: S
       <div className="container mx-auto px-3 sm:px-4 md:px-6 py-2 md:h-20 flex flex-col md:flex-row md:items-center gap-2 md:gap-8">
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 md:flex md:items-center md:gap-3">
           <div className="flex min-w-0 items-center gap-2">
-            {showBack && (
-              <Link
-                to="/"
-                aria-label="Voltar para o início"
-                className="shrink-0 p-2 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all group"
-              >
-                <ArrowLeft className="w-4 h-4 text-white/40 group-hover:text-primary transition-colors" />
-              </Link>
-            )}
+            <BackNav />
             <Link to="/" className="flex min-w-0 flex-col group">
               <span className="flex min-w-0 items-center gap-2">
                 <Sparkles className="h-5 w-5 md:h-6 md:w-6 shrink-0 text-primary fill-primary" />
