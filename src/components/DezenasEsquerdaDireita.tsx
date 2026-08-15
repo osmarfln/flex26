@@ -15,7 +15,7 @@ interface DigitStat {
   minDelay: number;
   relativeIndex: number;
   classification: string;
-  last: { date: string; time_type: string; time_value: string | null; ten: string | null; prize: string | null } | null;
+  last: { date: string; time_type: string; time_value: string | null; ten: string | null; prize: string | null; position?: number } | null;
   freqs: Record<string, number>;
   scheduleDelay: Record<string, number>;
   scheduleFreq: Record<string, number>;
@@ -119,8 +119,9 @@ function SideBlock({ title, subtitle, stats, schedules, accent }: {
 
                 <div className="text-xs text-white/50 flex items-center gap-2 flex-wrap">
                   <Clock className="w-3.5 h-3.5" />
-                  Última vez: {s.last ? `${fmt(s.last.date)} · ${s.last.time_type}${s.last.time_value ? ` (${s.last.time_value})` : ""} · milhar ${s.last.prize} · dezena ${s.last.ten}` : "não apareceu na amostra"}
+                  Última vez: {s.last ? `${fmt(s.last.date)} · ${s.last.time_type}${s.last.time_value ? ` (${s.last.time_value})` : ""} · ${s.last.position ?? 1}º prêmio ${s.last.prize} · dezena ${s.last.ten}` : "não apareceu na amostra"}
                 </div>
+
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
                   <div className="bg-white/5 rounded-lg px-2 py-1.5">
@@ -198,9 +199,10 @@ export function DezenasEsquerdaDireita({ data, loading }: { data?: DigitDelayDat
           <div>
             <h2 className="text-2xl font-black italic uppercase">Dezena Esquerda x Direita</h2>
             <p className="text-xs text-white/40 font-medium">
-              DEZENA = 2 casas (ex.: 25). Um número sozinho (5) é unidade. O milhar do 1º prêmio é lido com 4 casas
-              (ex.: 0570) e dividido em dezena esquerda (05) e dezena direita (70). O zero nunca é cortado.
+              Monitora do 1º ao 5º prêmio. Cada prêmio é lido com 4 casas (ex.: 0570) e dividido em dezena esquerda (05)
+              e dezena direita (70). Se a dezena sair em qualquer posição, o atraso zera e ela sai da lista de atrasadas.
             </p>
+
           </div>
         </div>
         <div className="text-[10px] font-bold text-white/30 uppercase tracking-widest bg-white/5 px-4 py-2 rounded-full border border-white/10">
@@ -211,18 +213,19 @@ export function DezenasEsquerdaDireita({ data, loading }: { data?: DigitDelayDat
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <SideBlock
           title="Dezena Esquerda"
-          subtitle="2 primeiras casas do milhar — ex.: 25 em 2570 · top 10 mais atrasadas"
+          subtitle="2 primeiras casas de cada prêmio (1º ao 5º) — top 10 mais atrasadas"
           stats={data.left}
           schedules={data.schedules}
           accent="#EAB308"
         />
         <SideBlock
           title="Dezena Direita"
-          subtitle="2 últimas casas do milhar — ex.: 70 em 2570 · top 10 mais atrasadas"
+          subtitle="2 últimas casas de cada prêmio (1º ao 5º) — top 10 mais atrasadas"
           stats={data.right}
           schedules={data.schedules}
           accent="#38BDF8"
         />
+
       </div>
 
       <Card className="bg-[#0D121F] border-white/10 rounded-2xl p-5">
