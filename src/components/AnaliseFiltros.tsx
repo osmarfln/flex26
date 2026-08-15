@@ -15,7 +15,7 @@ import {
 
 import { getResultsRange, type LotteryResult } from "@/lib/lottery.functions";
 import { DRAW_SCHEDULE } from "@/lib/draw-order";
-import { getAnimalByTen } from "@/lib/animals";
+import { ANIMAL_GROUPS, ANIMAL_GROUPS_MAP, getAnimalByTen, getGroupFromTen } from "@/lib/animals";
 
 const CHART_TOOLTIP = {
   contentStyle: {
@@ -31,15 +31,57 @@ function iso(d: Date) {
   return format(d, "yyyy-MM-dd");
 }
 
-function matchesTerm(r: LotteryResult, term: string) {
-  if (!term) return true;
-  const t = term.trim().toLowerCase();
-  if (!t) return true;
-  const animal = (r.animal ?? "").toLowerCase();
-  const group = (r.animal_group ?? "").toLowerCase();
-  const prizes = (r.results ?? []).join(" ").toLowerCase();
-  return animal.includes(t) || group.includes(t) || prizes.includes(t) || r.time_type.toLowerCase().includes(t);
+type SearchQuery =
+  | { kind: "none" }
+  | { kind: "dezena" | "centena" | "milhar"; value: string; label: string }
+  | { kind: "grupo"; value: string; label: string };
+
+/** Interpreta o termo digitado: 2 dígitos = dezena, 3 = centena, 4 = milhar, texto = bicho/grupo. */
+function parseTerm(raw: string): SearchQuery {
+  const t = raw.trim().toLowerCase();
+  if (!t) return { kind: "none" };
+
+  const groupWord = /^(grupo|bicho)\s*(.+)$/.exec(t);
+  const core = groupWord ? (groupWord[2] ?? "").trim() : t;
+  const digits = core.replace(/\D/g, "");
+
+  if (digits && digits.length === core.length) {
+    if (groupWord || digits.length === 1) {
+      const n = parseInt(digits, 10);
+      if (n >= 1 && n <= 25) {
+        const id = String(n).padStart(2, "0");
+        const animal = ANIMAL_GROUPS_MAP[id];
+        return { kind: "grupo", value: id, label: `Grupo ${id} · ${animal?.name ?? ""}` };
+      }
+    }
+    if (digits.length === 2) return { kind: "dezena", value: digits, label: `Dezena ${digits}` };
+    if (digits.length === 3) return { kind: "centena", value: digits, label: `Centena ${digits}` };
+    if (digits.length >= 4) {
+      const v = digits.slice(-4);
+      return { kind: "milhar", value: v, label: `Milhar ${v}` };
+    }
+    return { kind: "none" };
+  }
+
+  const norm = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const animal = ANIMAL_GROUPS.find((a) => norm(a.name.toLowerCase()).startsWith(norm(core)));
+  if (animal) return { kind: "grupo", value: animal.id, label: `Grupo ${animal.id} · ${animal.name}` };
+
+  return { kind: "none" };
 }
+
+/** Filtra pelo 1º prêmio, sempre relacionado ao número/grupo pesquisado. */
+function matchesQuery(r: LotteryResult, q: SearchQuery) {
+  if (q.kind === "none") return true;
+  const prize = (r.results?.[0] ?? "").replace(/\D/g, "");
+  if (!prize) return false;
+  const ten = prize.slice(-2).padStart(2, "0");
+  if (q.kind === "dezena") return ten === q.value;
+  if (q.kind === "centena") return prize.slice(-3).padStart(3, "0") === q.value;
+  if (q.kind === "milhar") return prize.slice(-4).padStart(4, "0") === q.value;
+  return getGroupFromTen(ten) === q.value;
+}
+
 
 function summarize(rows: LotteryResult[]) {
   const tenCounts: Record<string, number> = {};
@@ -113,17 +155,56 @@ export function AnaliseFiltros() {
     gcTime: 0,
   });
 
+  const query = useMemo(() => parseTerm(term), [term]);
+  const invalidTerm = term.trim().length > 0 && query.kind === "none";
+
   const currentRows = useMemo(
-    () => (currentQuery.data ?? []).filter((r) => matchesTerm(r, term)),
-    [currentQuery.data, term],
+    () => (currentQuery.data ?? []).filter((r) => matchesQuery(r, query)),
+    [currentQuery.data, query],
   );
   const previousRows = useMemo(
-    () => (previousQuery.data ?? []).filter((r) => matchesTerm(r, term)),
-    [previousQuery.data, term],
+    () => (previousQuery.data ?? []).filter((r) => matchesQuery(r, query)),
+    [previousQuery.data, query],
   );
+
+  /** Bicho relacionado ao termo e a dezena que mais saiu dentro desse bicho no período. */
+  const focus = useMemo(() => {
+    if (query.kind === "none") return null;
+    const groupId =
+      query.kind === "grupo"
+        ? query.value
+        : getGroupFromTen(
+            (query.kind === "dezena" ? query.value : query.value.slice(-2)).padStart(2, "0"),
+          );
+    const animal = ANIMAL_GROUPS_MAP[groupId];
+    if (!animal) return null;
+    const rows = (currentQuery.data ?? []).filter(
+      (r) => getGroupFromTen((r.results?.[0] ?? "").slice(-2).padStart(2, "0")) === groupId,
+    );
+    const counts: Record<string, number> = {};
+    rows.forEach((r) => {
+      const ten = (r.results?.[0] ?? "").slice(-2).padStart(2, "0");
+      if (ten.length === 2) counts[ten] = (counts[ten] ?? 0) + 1;
+    });
+    const ranking = animal.dezenas.map((d) => ({ dezena: d, count: counts[d] ?? 0 }));
+    const top = [...ranking].sort((a, b) => b.count - a.count)[0];
+    const byTimeCounts: Record<string, number> = {};
+    rows.forEach((r) => {
+      byTimeCounts[r.time_type] = (byTimeCounts[r.time_type] ?? 0) + 1;
+    });
+    const topTime = Object.entries(byTimeCounts).sort((a, b) => b[1] - a[1])[0];
+    return {
+      animal,
+      total: rows.length,
+      ranking,
+      top: top && top.count > 0 ? top : null,
+      topTime: topTime ? { time: topTime[0], count: topTime[1] } : null,
+    };
+  }, [query, currentQuery.data]);
 
   const cur = useMemo(() => summarize(currentRows), [currentRows]);
   const prev = useMemo(() => summarize(previousRows), [previousRows]);
+
 
   const byTime = useMemo(() => {
     const counts: Record<string, { name: string; atual: number; anterior: number }> = {};
@@ -183,14 +264,14 @@ export function AnaliseFiltros() {
         </label>
         <label className="flex flex-col gap-1.5 md:col-span-2">
           <span className="text-[10px] font-black uppercase tracking-widest text-white/40">
-            Buscar por tipo, dezena, grupo ou bicho
+            Buscar por dezena (2), centena (3), milhar (4), grupo ou bicho
           </span>
           <span className="relative">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/30" />
             <input
               value={term}
               onChange={(e) => setTerm(e.target.value)}
-              placeholder="Ex.: 25, Vaca, PTN..."
+              placeholder="Ex.: 45, 345, 2345, Elefante, grupo 12"
               className="w-full rounded-xl border border-white/10 bg-white/5 py-2 pl-9 pr-9 text-sm font-bold outline-none focus:border-primary/50"
             />
             {term && (
@@ -204,8 +285,18 @@ export function AnaliseFiltros() {
               </button>
             )}
           </span>
+          {invalidTerm ? (
+            <span className="text-[10px] font-bold uppercase tracking-widest text-red-400">
+              Busca inválida — use 2, 3 ou 4 dígitos, nome do bicho ou "grupo 12"
+            </span>
+          ) : query.kind !== "none" ? (
+            <span className="text-[10px] font-bold uppercase tracking-widest text-primary">
+              Filtrando por {query.label} — apenas o 1º prêmio relacionado
+            </span>
+          ) : null}
         </label>
       </div>
+
 
       <div className="mt-4 flex flex-wrap items-center gap-2">
         <span className="text-[10px] font-black uppercase tracking-widest text-white/40">Horários:</span>
@@ -252,7 +343,49 @@ export function AnaliseFiltros() {
         </div>
       ) : (
         <>
+          {focus && (
+            <div className="mt-6 rounded-2xl border border-primary/25 bg-primary/[0.06] p-4">
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="text-3xl">{focus.animal.icon}</span>
+                <div>
+                  <p className="text-sm font-black uppercase tracking-tight">
+                    Grupo {focus.animal.id} · {focus.animal.name}
+                  </p>
+                  <p className="text-[11px] font-bold uppercase tracking-widest text-white/50">
+                    {focus.total} sorteios do bicho no período
+                    {focus.topTime ? ` · horário mais forte: ${focus.topTime.time} (${focus.topTime.count}x)` : ""}
+                  </p>
+                </div>
+                {focus.top && (
+                  <div className="ml-auto rounded-xl border border-primary/30 bg-primary/10 px-3 py-2 text-right">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-white/50">
+                      Dezena destaque do bicho
+                    </p>
+                    <p className="text-xl font-black text-primary">
+                      {focus.top.dezena} · {focus.top.count}x
+                    </p>
+                  </div>
+                )}
+              </div>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {focus.ranking.map((d) => (
+                  <span
+                    key={d.dezena}
+                    className={`rounded-lg border px-2.5 py-1 text-[11px] font-black ${
+                      focus.top && d.dezena === focus.top.dezena
+                        ? "border-primary/50 bg-primary/15 text-primary"
+                        : "border-white/10 bg-white/5 text-white/60"
+                    }`}
+                  >
+                    {d.dezena} · {d.count}x
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+
             <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
               <p className="text-[10px] font-black uppercase tracking-widest text-white/40">Sorteios</p>
               <p className="text-2xl font-black">{cur.total}</p>
