@@ -4,7 +4,6 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Network, AlertCircle } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell,
-  RadarChart, PolarGrid, PolarAngleAxis, Radar, PolarRadiusAxis,
 } from "recharts";
 
 interface PuxadaTarget { id: string; name: string; icon: string; count: number }
@@ -157,13 +156,21 @@ export function PuxadasPanel({ data, loading }: { data?: PuxadasData | null; loa
           <h4 className="text-xs font-black uppercase tracking-widest text-white/50 mb-4">Confirmação por horário (%)</h4>
           <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
-              <RadarChart data={scheduleChart}>
-                <PolarGrid stroke="rgba(255,255,255,0.1)" />
-                <PolarAngleAxis dataKey="name" tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 11 }} />
-                <PolarRadiusAxis tick={{ fill: "rgba(255,255,255,0.25)", fontSize: 9 }} />
-                <Tooltip contentStyle={{ background: "#0D121F", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12 }} />
-                <Radar dataKey="taxa" stroke="#38BDF8" fill="#38BDF8" fillOpacity={0.35} />
-              </RadarChart>
+              <BarChart data={scheduleChart} margin={{ top: 10, right: 10, bottom: 10, left: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+                <XAxis dataKey="name" stroke="rgba(255,255,255,0.35)" fontSize={11} interval={0} angle={-15} textAnchor="end" height={50} />
+                <YAxis stroke="rgba(255,255,255,0.35)" fontSize={11} unit="%" domain={[0, 100]} />
+                <Tooltip
+                  contentStyle={{ background: "#0D121F", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12 }}
+                  formatter={(v) => [`${v}%`, "Confirmação"]}
+                  labelFormatter={(l) => `Horário ${l}`}
+                />
+                <Bar dataKey="taxa" radius={[6, 6, 0, 0]}>
+                  {scheduleChart.map((s, i) => (
+                    <Cell key={i} fill={s.taxa >= 40 ? "#34D399" : s.taxa >= 20 ? "#FACC15" : "#38BDF8"} />
+                  ))}
+                </Bar>
+              </BarChart>
             </ResponsiveContainer>
           </div>
         </Card>
