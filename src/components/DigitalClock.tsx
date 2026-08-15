@@ -3,8 +3,10 @@ import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { useUserFirstName } from "@/hooks/useUserFirstName";
 
 export function DigitalClock() {
+  const firstName = useUserFirstName();
   const [now, setNow] = useState<Date | null>(null);
 
   useEffect(() => {
