@@ -336,7 +336,7 @@ export function AnaliseFiltros() {
             </span>
           ) : query.kind !== "none" ? (
             <span className="text-[10px] font-bold uppercase tracking-widest text-primary">
-              Filtrando por {query.label} — apenas o 1º prêmio relacionado
+              Filtrando por {query.label} — todas as posições (1º ao 5º), 1º prêmio em vermelho
             </span>
           ) : null}
         </label>
