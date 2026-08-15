@@ -570,10 +570,12 @@ export const getDigitDelayStats = createServerFn({ method: "GET" })
           scheduleFreq[s] = 0;
         });
 
-        const matches = (row: any) => sideDezena(row, side) === dezena;
+        const posOf = (row: any) => sideDezenas(row, side).indexOf(dezena);
+        const matches = (row: any) => posOf(row) >= 0;
 
         results.forEach((res: any, index: number) => {
-          const hit = matches(res);
+          const pos = posOf(res);
+          const hit = pos >= 0;
           const st = String(res.time_type || "").toUpperCase();
           if (schedules.includes(st)) {
             scheduleCount[st] = (scheduleCount[st] ?? 0) + 1;
@@ -591,10 +593,12 @@ export const getDigitDelayStats = createServerFn({ method: "GET" })
               date: res.date,
               time_type: res.time_type,
               time_value: res.time_value,
-              ten: sideDezena(res, side),
-              prize: milhar(res),
+              ten: dezena,
+              prize: milhares(res)[pos] ?? null,
+              position: pos + 1,
             };
           }
+
           if (lastIndex !== -1) intervals.push(index - lastIndex);
           lastIndex = index;
         });
