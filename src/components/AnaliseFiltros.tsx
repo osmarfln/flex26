@@ -312,7 +312,8 @@ export function AnaliseFiltros() {
           <input
             type="date"
             value={start}
-            max={end}
+            min="2000-01-01"
+            max="2100-12-31"
             onChange={(e) => setStart(e.target.value)}
             className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm font-bold outline-none focus:border-primary/50"
           />
@@ -322,11 +323,13 @@ export function AnaliseFiltros() {
           <input
             type="date"
             value={end}
-            min={start}
+            min="2000-01-01"
+            max="2100-12-31"
             onChange={(e) => setEnd(e.target.value)}
             className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm font-bold outline-none focus:border-primary/50"
           />
         </label>
+
         <label className="flex flex-col gap-1.5 md:col-span-2">
           <span className="text-[10px] font-black uppercase tracking-widest text-white/40">
             Buscar por dezena (2), centena (3), milhar (4), grupo ou bicho
