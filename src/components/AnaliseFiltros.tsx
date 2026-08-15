@@ -217,21 +217,27 @@ export function AnaliseFiltros() {
           );
     const animal = ANIMAL_GROUPS_MAP[groupId];
     if (!animal) return null;
-    const rows = (currentQuery.data ?? []).filter(
-      (r) => getGroupFromTen((r.results?.[0] ?? "").slice(-2).padStart(2, "0")) === groupId,
-    );
+    const occurrences: { time_type: string; ten: string }[] = [];
+    (currentQuery.data ?? []).forEach((r) => {
+      (r.results ?? []).slice(0, 5).forEach((raw) => {
+        const ten = (raw ?? "").replace(/\D/g, "").slice(-2).padStart(2, "0");
+        if (ten.length === 2 && getGroupFromTen(ten) === groupId) {
+          occurrences.push({ time_type: r.time_type, ten });
+        }
+      });
+    });
     const counts: Record<string, number> = {};
-    rows.forEach((r) => {
-      const ten = (r.results?.[0] ?? "").slice(-2).padStart(2, "0");
-      if (ten.length === 2) counts[ten] = (counts[ten] ?? 0) + 1;
+    occurrences.forEach((o) => {
+      counts[o.ten] = (counts[o.ten] ?? 0) + 1;
     });
     const ranking = animal.dezenas.map((d) => ({ dezena: d, count: counts[d] ?? 0 }));
     const top = [...ranking].sort((a, b) => b.count - a.count)[0];
     const byTimeCounts: Record<string, number> = {};
-    rows.forEach((r) => {
-      byTimeCounts[r.time_type] = (byTimeCounts[r.time_type] ?? 0) + 1;
+    occurrences.forEach((o) => {
+      byTimeCounts[o.time_type] = (byTimeCounts[o.time_type] ?? 0) + 1;
     });
     const topTime = Object.entries(byTimeCounts).sort((a, b) => b[1] - a[1])[0];
+
     return {
       animal,
       total: rows.length,
