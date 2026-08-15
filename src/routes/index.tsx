@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ANIMAL_GROUPS } from "@/lib/animals";
-import { getResults, getTenDelayStats, getGroupDelayStats } from "@/lib/lottery.functions";
+import { getResults, getTenDelayStats, getGroupDelayStats, getDigitDelayStats } from "@/lib/lottery.functions";
+import { AlertaDezenasAtrasadas } from "@/components/AlertaDezenasAtrasadas";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
