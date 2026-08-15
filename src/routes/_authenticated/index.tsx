@@ -89,6 +89,8 @@ function Index() {
   // Estado inicial estável para evitar divergência entre servidor e navegador
   const [greeting, setGreeting] = useState<{ text: string; icon: typeof Coffee }>({ text: "Olá", icon: Sun });
   const [currentTime, setCurrentTime] = useState(new Date());
+  const firstName = useUserFirstName();
+
 
   useEffect(() => {
     setGreeting(getGreeting());
