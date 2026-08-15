@@ -160,7 +160,7 @@ function AdminPage() {
   if (!isAdmin) {
     return (
       <div className="min-h-screen bg-background">
-        <SiteHeader subtitle="ÁREA ADMIN" showBack />
+        <SiteHeader subtitle="ÁREA ADMIN" />
         <main className="container mx-auto px-4 py-20 text-center">
           <ShieldCheck className="mx-auto mb-4 h-10 w-10 text-destructive" />
           <h1 className="text-2xl font-black uppercase">Acesso administrativo restrito</h1>
@@ -183,7 +183,7 @@ function AdminPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <SiteHeader subtitle="ÁREA ADMIN" showBack />
+      <SiteHeader subtitle="ÁREA ADMIN" />
 
       <main className="container mx-auto px-3 py-6 sm:px-4 md:px-6 md:py-10">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3">

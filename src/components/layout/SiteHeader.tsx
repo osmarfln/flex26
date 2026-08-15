@@ -14,10 +14,9 @@ const navItems = [
 
 interface SiteHeaderProps {
   subtitle?: string;
-  showBack?: boolean;
 }
 
-export function SiteHeader({ subtitle = "VEM COM A GENTE", showBack = false }: SiteHeaderProps) {
+export function SiteHeader({ subtitle = "VEM COM A GENTE" }: SiteHeaderProps) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { isAdmin } = useIsAdmin();
 

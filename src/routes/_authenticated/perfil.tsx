@@ -70,7 +70,7 @@ function PerfilPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <SiteHeader subtitle="MEU PERFIL" showBack />
+      <SiteHeader subtitle="MEU PERFIL" />
       <main className="container mx-auto max-w-2xl px-4 py-10">
         <div className="mb-6 flex items-center gap-3">
           <div className="rounded-2xl border border-primary/20 bg-primary/10 p-3">
