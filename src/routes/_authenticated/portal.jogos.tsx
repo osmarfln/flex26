@@ -11,7 +11,7 @@ import { DRAW_SCHEDULE, brasiliaDateISO } from '@/lib/draw-order';
 import { getAnimalByGroup, getAnimalByTen } from '@/lib/animals';
 import { useLotteryRealtime } from '@/hooks/useLotteryRealtime';
 
-export const Route = createFileRoute('/portal/jogos')({
+export const Route = createFileRoute("/_authenticated/portal/jogos")({
   component: JogosManagementPage,
 });
 

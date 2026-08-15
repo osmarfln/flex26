@@ -35,7 +35,7 @@ import {
   Cell,
 } from "recharts";
 
-export const Route = createFileRoute("/robot-status")({
+export const Route = createFileRoute("/_authenticated/robot-status")({
   component: RobotStatus,
   head: () => ({
     meta: [
