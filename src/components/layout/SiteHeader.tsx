@@ -1,18 +1,6 @@
-import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import {
-  Sparkles,
-  Users,
-  History,
-  Activity,
-  BarChart3,
-  ArrowLeft,
-  LogOut,
-  ShieldCheck,
-} from "lucide-react";
+import { Link, useRouterState } from "@tanstack/react-router";
+import { Sparkles, Users, History, Activity, BarChart3, ArrowLeft } from "lucide-react";
 
-import { supabase } from "@/integrations/supabase/client";
 import { UserMenu } from "@/components/layout/UserMenu";
 
 const navItems = [
@@ -29,32 +17,7 @@ interface SiteHeaderProps {
 
 export function SiteHeader({ subtitle = "VEM COM A GENTE", showBack = false }: SiteHeaderProps) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const [isAdmin, setIsAdmin] = useState(false);
 
-  useEffect(() => {
-    let active = true;
-    (async () => {
-      const { data } = await supabase.auth.getUser();
-      if (!data.user) return;
-      const { data: admin } = await supabase.rpc("has_role", {
-        _user_id: data.user.id,
-        _role: "admin",
-      });
-      if (active) setIsAdmin(Boolean(admin));
-    })();
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  async function handleSignOut() {
-    await queryClient.cancelQueries();
-    queryClient.clear();
-    await supabase.auth.signOut();
-    navigate({ to: "/auth", replace: true });
-  }
 
   return (
     <header className="border-b border-white/5 bg-background/60 backdrop-blur-2xl sticky top-0 z-50">
