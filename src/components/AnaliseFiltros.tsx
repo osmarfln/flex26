@@ -480,11 +480,27 @@ export function AnaliseFiltros() {
             </div>
 
             <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-              <p className="mb-3 text-[10px] font-black uppercase tracking-widest text-white/40">
-                Resultados filtrados ({currentRows.length})
+              <p className="mb-2 text-[10px] font-black uppercase tracking-widest text-white/40">
+                Resultados filtrados ({hits.length} {query.kind === "none" ? "sorteios" : "aparições"})
               </p>
+              {query.kind !== "none" && (
+                <div className="mb-3 flex flex-wrap gap-1.5">
+                  {byPosition.map((p) => (
+                    <span
+                      key={p.pos}
+                      className={`rounded-lg border px-2 py-1 text-[10px] font-black ${
+                        p.pos === 1
+                          ? "border-red-500/40 bg-red-500/10 text-red-400"
+                          : "border-white/10 bg-white/5 text-white/60"
+                      }`}
+                    >
+                      {p.pos}º · {p.count}x
+                    </span>
+                  ))}
+                </div>
+              )}
               <div className="max-h-56 overflow-auto pr-1">
-                {currentRows.length === 0 ? (
+                {hits.length === 0 ? (
                   <p className="py-8 text-center text-sm font-bold text-white/40">
                     Nenhum resultado para esses filtros.
                   </p>
@@ -494,28 +510,41 @@ export function AnaliseFiltros() {
                       <tr>
                         <th className="py-2">Data</th>
                         <th>Horário</th>
-                        <th>1º prêmio</th>
+                        <th>Prêmio</th>
+                        <th>Número</th>
                         <th>Bicho</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {currentRows.slice(0, 200).map((r) => (
-                        <tr key={`${r.date}-${r.time_type}`} className="border-t border-white/5">
-                          <td className="py-1.5 font-bold">
-                            {new Date(r.date + "T12:00:00").toLocaleDateString("pt-BR")}
-                          </td>
-                          <td className="font-black text-primary">{r.time_type}</td>
-                          <td className="font-mono">{r.results?.[0] ?? "—"}</td>
-                          <td className="text-white/60">
-                            {r.animal ?? getAnimalByTen(r.results?.[0]?.slice(-2) ?? "")?.name ?? "—"}
-                          </td>
-                        </tr>
-                      ))}
+                      {hits.slice(0, 300).map((h, i) => {
+                        const first = h.pos === 1;
+                        return (
+                          <tr
+                            key={`${h.row.date}-${h.row.time_type}-${h.pos}-${i}`}
+                            className={`border-t border-white/5 ${first ? "bg-red-500/[0.07]" : ""}`}
+                          >
+                            <td className="py-1.5 font-bold">
+                              {new Date(h.row.date + "T12:00:00").toLocaleDateString("pt-BR")}
+                            </td>
+                            <td className="font-black text-primary">{h.row.time_type}</td>
+                            <td className={`font-black ${first ? "text-red-400" : "text-white/50"}`}>
+                              {h.pos}º
+                            </td>
+                            <td className={`font-mono ${first ? "font-black text-red-400" : ""}`}>
+                              {h.prize || "—"}
+                            </td>
+                            <td className={first ? "font-bold text-red-400" : "text-white/60"}>
+                              {getAnimalByTen(h.ten)?.name ?? "—"}
+                            </td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 )}
               </div>
             </div>
+
           </div>
         </>
       )}
