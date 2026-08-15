@@ -35,6 +35,7 @@ function PendentePage() {
   const queryClient = useQueryClient();
   const [email, setEmail] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
+  const hydrated = useHydrated();
 
   useEffect(() => {
     let active = true;
@@ -68,6 +69,8 @@ function PendentePage() {
   }
 
   const rejected = status === "rejected";
+
+  if (!hydrated) return null;
 
   return (
     <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background px-4 py-10">
