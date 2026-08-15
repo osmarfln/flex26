@@ -3,6 +3,7 @@ import { ANIMAL_GROUPS, getAnimalByTen } from "@/lib/animals";
 import { ArrowLeft, BarChart3, Calculator, Sparkles, TrendingUp, Zap, Target, BrainCircuit, History, Flame, Clock, LayoutGrid, Hash, Users, Repeat, ArrowLeftRight, FileText, Upload, Calendar, AlertCircle, Database, CheckCircle2, XCircle, Activity, Timer, ChevronRight, Trophy, RefreshCw, Loader2, Network } from "lucide-react";
 import { CruzDoDia } from "@/components/CruzDoDia";
 import { AvisoObrigatorio } from "@/components/AvisoObrigatorio";
+import { AnaliseFiltros } from "@/components/AnaliseFiltros";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 
 import { Badge } from "@/components/ui/badge";
@@ -251,6 +252,8 @@ function EstatisticasPage() {
 
         <section className="mb-12">
           <AvisoObrigatorio />
+
+          <AnaliseFiltros />
 
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
             <div>

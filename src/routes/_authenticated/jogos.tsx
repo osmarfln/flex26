@@ -1,5 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import ManagementLayout from '@/components/layout/ManagementLayout';
+import { AcessoRestrito } from '@/components/AcessoRestrito';
+import { useIsAdmin } from '@/hooks/useIsAdmin';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useQuery } from '@tanstack/react-query';
@@ -16,6 +18,7 @@ export const Route = createFileRoute("/_authenticated/jogos")({
 });
 
 function JogosManagementPage() {
+  const { isAdmin, loading: adminLoading } = useIsAdmin();
   const { lastUpdate } = useLotteryRealtime("jogos-db-changes");
   const fetchResults = useServerFn(getResults);
   const today = brasiliaDateISO();
@@ -44,6 +47,14 @@ function JogosManagementPage() {
       group: found?.animal_group || animal?.id || '',
     };
   });
+
+  if (!adminLoading && !isAdmin) {
+    return (
+      <ManagementLayout currentPageName="Gerenciar Jogos - Rio">
+        <AcessoRestrito area="Gerenciar Jogos" />
+      </ManagementLayout>
+    );
+  }
 
   return (
     <ManagementLayout currentPageName="Gerenciar Jogos - Rio">

@@ -2,12 +2,13 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { Sparkles, Users, History, Activity, BarChart3, ArrowLeft } from "lucide-react";
 
 import { UserMenu } from "@/components/layout/UserMenu";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 
 const navItems = [
-  { to: "/", label: "Início", icon: Users },
-  { to: "/historico", label: "Histórico", icon: History },
-  { to: "/robot-status", label: "Robô", icon: Activity },
-  { to: "/estatisticas", label: "Estatísticas", icon: BarChart3 },
+  { to: "/", label: "Início", icon: Users, adminOnly: false },
+  { to: "/historico", label: "Histórico", icon: History, adminOnly: false },
+  { to: "/robot-status", label: "Robô", icon: Activity, adminOnly: true },
+  { to: "/estatisticas", label: "Estatísticas", icon: BarChart3, adminOnly: false },
 ] as const;
 
 interface SiteHeaderProps {
@@ -17,6 +18,7 @@ interface SiteHeaderProps {
 
 export function SiteHeader({ subtitle = "VEM COM A GENTE", showBack = false }: SiteHeaderProps) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { isAdmin } = useIsAdmin();
 
 
   return (
@@ -52,7 +54,7 @@ export function SiteHeader({ subtitle = "VEM COM A GENTE", showBack = false }: S
         </div>
 
         <nav className="-mx-3 flex items-center gap-3 overflow-x-auto no-scrollbar px-3 pb-1 md:mx-0 md:gap-8 md:px-0 md:pb-0">
-          {navItems.map((item) => {
+          {navItems.filter((item) => !item.adminOnly || isAdmin).map((item) => {
             const active = pathname === item.to;
             return (
               <Link
