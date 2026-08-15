@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, Calculator, Sparkles } from "lucide-react";
 import { CruzDoDia } from "@/components/CruzDoDia";
+import { UserMenu } from "@/components/layout/UserMenu";
 
 export const Route = createFileRoute("/_authenticated/cruz-do-dia")({
   head: () => ({

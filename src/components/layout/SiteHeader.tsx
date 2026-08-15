@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
+import { UserMenu } from "@/components/layout/UserMenu";
 
 const navItems = [
   { to: "/", label: "Início", icon: Users },
