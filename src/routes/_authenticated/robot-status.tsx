@@ -186,10 +186,22 @@ function RobotStatus() {
   });
   const activeHours = byHour.filter((h) => h.execucoes > 0);
 
+  if (!adminLoading && !isAdmin) {
+    return (
+      <div className="min-h-screen bg-[#0B0F19] text-white">
+        <SiteHeader subtitle="STATUS DO ROBÔ" showBack />
+        <div className="max-w-6xl mx-auto p-6 md:p-12">
+          <AcessoRestrito area="Robô" />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#0B0F19] text-white">
       <SiteHeader subtitle="STATUS DO ROBÔ" showBack />
       <div className="max-w-6xl mx-auto p-3 sm:p-4 md:p-12">
+        <RobotHealthPanel />
         <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 mb-8">
           <div className="min-w-0">
             <h1 className="text-xl sm:text-2xl md:text-3xl font-black italic tracking-tighter uppercase truncate">
