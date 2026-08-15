@@ -251,7 +251,9 @@ export const getTenDelayStats = createServerFn({ method: "GET" })
         relativeIndex: Number(relativeIndex.toFixed(2)),
         freqs: { 10: freq10, 30: freq30, 50: freq50, 100: freq100, 300: freq300 },
         regularity,
-        periodComparison: Number(periodComparison.toFixed(2))
+        periodComparison: Number(periodComparison.toFixed(2)),
+        hitInFirstPrize,
+        history: sparklineData
       });
     });
 
