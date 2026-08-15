@@ -12,7 +12,7 @@ import {
   Target
 } from 'lucide-react';
 
-export const Route = createFileRoute('/portal')({
+export const Route = createFileRoute("/_authenticated/portal")({
   component: PortalPage,
 });
 

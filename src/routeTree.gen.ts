@@ -9,50 +9,64 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as CruzDoDiaRouteImport } from './routes/cruz-do-dia'
-import { Route as EstatisticasRouteImport } from './routes/estatisticas'
-import { Route as HistoricoRouteImport } from './routes/historico'
-import { Route as PortalRouteImport } from './routes/portal'
-import { Route as RobotStatusRouteImport } from './routes/robot-status'
-import { Route as PortalJogosRouteImport } from './routes/portal.jogos'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as AuthenticatedCruzDoDiaRouteImport } from './routes/_authenticated/cruz-do-dia'
+import { Route as AuthenticatedEstatisticasRouteImport } from './routes/_authenticated/estatisticas'
+import { Route as AuthenticatedHistoricoRouteImport } from './routes/_authenticated/historico'
+import { Route as AuthenticatedPortalRouteImport } from './routes/_authenticated/portal'
+import { Route as AuthenticatedRobotStatusRouteImport } from './routes/_authenticated/robot-status'
+import { Route as AuthenticatedPortalJogosRouteImport } from './routes/_authenticated/portal.jogos'
 import { Route as ApiPublicSyncResultsRouteImport } from './routes/api/public/sync-results'
 
-const IndexRoute = IndexRouteImport.update({
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const CruzDoDiaRoute = CruzDoDiaRouteImport.update({
+const AuthenticatedCruzDoDiaRoute = AuthenticatedCruzDoDiaRouteImport.update({
   id: '/cruz-do-dia',
   path: '/cruz-do-dia',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const EstatisticasRoute = EstatisticasRouteImport.update({
-  id: '/estatisticas',
-  path: '/estatisticas',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HistoricoRoute = HistoricoRouteImport.update({
+const AuthenticatedEstatisticasRoute =
+  AuthenticatedEstatisticasRouteImport.update({
+    id: '/estatisticas',
+    path: '/estatisticas',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedHistoricoRoute = AuthenticatedHistoricoRouteImport.update({
   id: '/historico',
   path: '/historico',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const PortalRoute = PortalRouteImport.update({
+const AuthenticatedPortalRoute = AuthenticatedPortalRouteImport.update({
   id: '/portal',
   path: '/portal',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const RobotStatusRoute = RobotStatusRouteImport.update({
-  id: '/robot-status',
-  path: '/robot-status',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PortalJogosRoute = PortalJogosRouteImport.update({
-  id: '/jogos',
-  path: '/jogos',
-  getParentRoute: () => PortalRoute,
-} as any)
+const AuthenticatedRobotStatusRoute =
+  AuthenticatedRobotStatusRouteImport.update({
+    id: '/robot-status',
+    path: '/robot-status',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedPortalJogosRoute =
+  AuthenticatedPortalJogosRouteImport.update({
+    id: '/jogos',
+    path: '/jogos',
+    getParentRoute: () => AuthenticatedPortalRoute,
+  } as any)
 const ApiPublicSyncResultsRoute = ApiPublicSyncResultsRouteImport.update({
   id: '/api/public/sync-results',
   path: '/api/public/sync-results',
@@ -60,40 +74,45 @@ const ApiPublicSyncResultsRoute = ApiPublicSyncResultsRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/cruz-do-dia': typeof CruzDoDiaRoute
-  '/estatisticas': typeof EstatisticasRoute
-  '/historico': typeof HistoricoRoute
-  '/portal': typeof PortalRouteWithChildren
-  '/robot-status': typeof RobotStatusRoute
-  '/portal/jogos': typeof PortalJogosRoute
+  '/': typeof AuthenticatedIndexRoute
+  '/auth': typeof AuthRoute
+  '/cruz-do-dia': typeof AuthenticatedCruzDoDiaRoute
+  '/estatisticas': typeof AuthenticatedEstatisticasRoute
+  '/historico': typeof AuthenticatedHistoricoRoute
+  '/portal': typeof AuthenticatedPortalRouteWithChildren
+  '/robot-status': typeof AuthenticatedRobotStatusRoute
+  '/portal/jogos': typeof AuthenticatedPortalJogosRoute
   '/api/public/sync-results': typeof ApiPublicSyncResultsRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/cruz-do-dia': typeof CruzDoDiaRoute
-  '/estatisticas': typeof EstatisticasRoute
-  '/historico': typeof HistoricoRoute
-  '/portal': typeof PortalRouteWithChildren
-  '/robot-status': typeof RobotStatusRoute
-  '/portal/jogos': typeof PortalJogosRoute
+  '/auth': typeof AuthRoute
+  '/cruz-do-dia': typeof AuthenticatedCruzDoDiaRoute
+  '/estatisticas': typeof AuthenticatedEstatisticasRoute
+  '/historico': typeof AuthenticatedHistoricoRoute
+  '/portal': typeof AuthenticatedPortalRouteWithChildren
+  '/robot-status': typeof AuthenticatedRobotStatusRoute
+  '/': typeof AuthenticatedIndexRoute
+  '/portal/jogos': typeof AuthenticatedPortalJogosRoute
   '/api/public/sync-results': typeof ApiPublicSyncResultsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/cruz-do-dia': typeof CruzDoDiaRoute
-  '/estatisticas': typeof EstatisticasRoute
-  '/historico': typeof HistoricoRoute
-  '/portal': typeof PortalRouteWithChildren
-  '/robot-status': typeof RobotStatusRoute
-  '/portal/jogos': typeof PortalJogosRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/_authenticated/cruz-do-dia': typeof AuthenticatedCruzDoDiaRoute
+  '/_authenticated/estatisticas': typeof AuthenticatedEstatisticasRoute
+  '/_authenticated/historico': typeof AuthenticatedHistoricoRoute
+  '/_authenticated/portal': typeof AuthenticatedPortalRouteWithChildren
+  '/_authenticated/robot-status': typeof AuthenticatedRobotStatusRoute
+  '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/portal/jogos': typeof AuthenticatedPortalJogosRoute
   '/api/public/sync-results': typeof ApiPublicSyncResultsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
     | '/cruz-do-dia'
     | '/estatisticas'
     | '/historico'
@@ -103,86 +122,99 @@ export interface FileRouteTypes {
     | '/api/public/sync-results'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
+    | '/auth'
     | '/cruz-do-dia'
     | '/estatisticas'
     | '/historico'
     | '/portal'
     | '/robot-status'
+    | '/'
     | '/portal/jogos'
     | '/api/public/sync-results'
   id:
     | '__root__'
-    | '/'
-    | '/cruz-do-dia'
-    | '/estatisticas'
-    | '/historico'
-    | '/portal'
-    | '/robot-status'
-    | '/portal/jogos'
+    | '/_authenticated'
+    | '/auth'
+    | '/_authenticated/cruz-do-dia'
+    | '/_authenticated/estatisticas'
+    | '/_authenticated/historico'
+    | '/_authenticated/portal'
+    | '/_authenticated/robot-status'
+    | '/_authenticated/'
+    | '/_authenticated/portal/jogos'
     | '/api/public/sync-results'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  CruzDoDiaRoute: typeof CruzDoDiaRoute
-  EstatisticasRoute: typeof EstatisticasRoute
-  HistoricoRoute: typeof HistoricoRoute
-  PortalRoute: typeof PortalRouteWithChildren
-  RobotStatusRoute: typeof RobotStatusRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
   ApiPublicSyncResultsRoute: typeof ApiPublicSyncResultsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/': {
+      id: '/_authenticated/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/cruz-do-dia': {
-      id: '/cruz-do-dia'
+    '/_authenticated/cruz-do-dia': {
+      id: '/_authenticated/cruz-do-dia'
       path: '/cruz-do-dia'
       fullPath: '/cruz-do-dia'
-      preLoaderRoute: typeof CruzDoDiaRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedCruzDoDiaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/estatisticas': {
-      id: '/estatisticas'
+    '/_authenticated/estatisticas': {
+      id: '/_authenticated/estatisticas'
       path: '/estatisticas'
       fullPath: '/estatisticas'
-      preLoaderRoute: typeof EstatisticasRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedEstatisticasRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/historico': {
-      id: '/historico'
+    '/_authenticated/historico': {
+      id: '/_authenticated/historico'
       path: '/historico'
       fullPath: '/historico'
-      preLoaderRoute: typeof HistoricoRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedHistoricoRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/portal': {
-      id: '/portal'
+    '/_authenticated/portal': {
+      id: '/_authenticated/portal'
       path: '/portal'
       fullPath: '/portal'
-      preLoaderRoute: typeof PortalRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedPortalRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/robot-status': {
-      id: '/robot-status'
+    '/_authenticated/robot-status': {
+      id: '/_authenticated/robot-status'
       path: '/robot-status'
       fullPath: '/robot-status'
-      preLoaderRoute: typeof RobotStatusRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedRobotStatusRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/portal/jogos': {
-      id: '/portal/jogos'
+    '/_authenticated/portal/jogos': {
+      id: '/_authenticated/portal/jogos'
       path: '/jogos'
       fullPath: '/portal/jogos'
-      preLoaderRoute: typeof PortalJogosRouteImport
-      parentRoute: typeof PortalRoute
+      preLoaderRoute: typeof AuthenticatedPortalJogosRouteImport
+      parentRoute: typeof AuthenticatedPortalRoute
     }
     '/api/public/sync-results': {
       id: '/api/public/sync-results'
@@ -194,24 +226,41 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface PortalRouteChildren {
-  PortalJogosRoute: typeof PortalJogosRoute
+interface AuthenticatedPortalRouteChildren {
+  AuthenticatedPortalJogosRoute: typeof AuthenticatedPortalJogosRoute
 }
 
-const PortalRouteChildren: PortalRouteChildren = {
-  PortalJogosRoute: PortalJogosRoute,
+const AuthenticatedPortalRouteChildren: AuthenticatedPortalRouteChildren = {
+  AuthenticatedPortalJogosRoute: AuthenticatedPortalJogosRoute,
 }
 
-const PortalRouteWithChildren =
-  PortalRoute._addFileChildren(PortalRouteChildren)
+const AuthenticatedPortalRouteWithChildren =
+  AuthenticatedPortalRoute._addFileChildren(AuthenticatedPortalRouteChildren)
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedCruzDoDiaRoute: typeof AuthenticatedCruzDoDiaRoute
+  AuthenticatedEstatisticasRoute: typeof AuthenticatedEstatisticasRoute
+  AuthenticatedHistoricoRoute: typeof AuthenticatedHistoricoRoute
+  AuthenticatedPortalRoute: typeof AuthenticatedPortalRouteWithChildren
+  AuthenticatedRobotStatusRoute: typeof AuthenticatedRobotStatusRoute
+  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedCruzDoDiaRoute: AuthenticatedCruzDoDiaRoute,
+  AuthenticatedEstatisticasRoute: AuthenticatedEstatisticasRoute,
+  AuthenticatedHistoricoRoute: AuthenticatedHistoricoRoute,
+  AuthenticatedPortalRoute: AuthenticatedPortalRouteWithChildren,
+  AuthenticatedRobotStatusRoute: AuthenticatedRobotStatusRoute,
+  AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  CruzDoDiaRoute: CruzDoDiaRoute,
-  EstatisticasRoute: EstatisticasRoute,
-  HistoricoRoute: HistoricoRoute,
-  PortalRoute: PortalRouteWithChildren,
-  RobotStatusRoute: RobotStatusRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
   ApiPublicSyncResultsRoute: ApiPublicSyncResultsRoute,
 }
 export const routeTree = rootRouteImport

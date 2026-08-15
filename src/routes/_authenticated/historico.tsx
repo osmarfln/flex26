@@ -26,7 +26,7 @@ import { AvisoObrigatorio } from "@/components/AvisoObrigatorio";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 
 
-export const Route = createFileRoute("/historico")({
+export const Route = createFileRoute("/_authenticated/historico")({
   head: () => ({
     title: "Histórico de Resultados — Flex Gerenciador",
     meta: [

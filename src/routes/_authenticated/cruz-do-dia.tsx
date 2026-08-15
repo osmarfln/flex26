@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, Calculator, Sparkles } from "lucide-react";
 import { CruzDoDia } from "@/components/CruzDoDia";
 
-export const Route = createFileRoute("/cruz-do-dia")({
+export const Route = createFileRoute("/_authenticated/cruz-do-dia")({
   head: () => ({
     title: "Cruz do Dia — Técnica Tradicional",
     meta: [

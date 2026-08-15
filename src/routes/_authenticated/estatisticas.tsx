@@ -24,7 +24,7 @@ import { ptBR } from "date-fns/locale";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell, PieChart, Pie } from "recharts";
 
 
-export const Route = createFileRoute("/estatisticas")({
+export const Route = createFileRoute("/_authenticated/estatisticas")({
   head: () => ({
     title: "Estatísticas Premium — Flex Gerenciador",
     meta: [

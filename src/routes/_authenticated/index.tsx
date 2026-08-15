@@ -47,7 +47,7 @@ import { useLotteryRealtime } from "@/hooks/useLotteryRealtime";
 import { brasiliaDateISO } from "@/lib/draw-order";
 
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_authenticated/")({
   head: () => ({
     meta: [
       { title: "Flex Gerenciador — Resultados Jogo do Bicho Rio" },
