@@ -344,9 +344,26 @@ export const getGroupDelayStats = createServerFn({ method: "GET" })
       if (regularityScore < 0.5) regularity = "Alta";
       else if (regularityScore > 1.2) regularity = "Baixa";
 
+      // Detalhe por dezena do grupo (frequência total e atraso atual, 1º ao 5º prêmio)
+      const groupDezenas: string[] = ANIMAL_GROUPS_DATA[groupId]?.dezenas ?? [];
+      const dezenaStats = groupDezenas.map((dz) => {
+        let freq = 0;
+        let delay = -1;
+        results.forEach((res: any, index: number) => {
+          const hit = res.results?.slice(0, 5).some((prize: string) => prize?.slice(-2) === dz);
+          if (hit) {
+            freq++;
+            if (delay === -1) delay = index;
+          }
+        });
+        return { dezena: dz, freq, delay: delay === -1 ? results.length : delay };
+      });
+
       stats.push({
         groupId,
         animal: ANIMAL_GROUPS_DATA[groupId] ? ANIMAL_GROUPS_DATA[groupId].name : "Desconhecido",
+        dezenaStats,
+
         currentDelay,
         lastOccurrenceDate,
         avgDelay: Number(avgDelay.toFixed(2)),
