@@ -11,17 +11,17 @@ import { DRAW_SCHEDULE, brasiliaDateISO } from '@/lib/draw-order';
 import { getAnimalByGroup, getAnimalByTen } from '@/lib/animals';
 import { useLotteryRealtime } from '@/hooks/useLotteryRealtime';
 
-export const Route = createFileRoute("/_authenticated/portal/jogos")({
+export const Route = createFileRoute("/_authenticated/jogos")({
   component: JogosManagementPage,
 });
 
 function JogosManagementPage() {
-  const { lastUpdate } = useLotteryRealtime("portal-jogos-db-changes");
+  const { lastUpdate } = useLotteryRealtime("jogos-db-changes");
   const fetchResults = useServerFn(getResults);
   const today = brasiliaDateISO();
 
   const { data: results, isLoading } = useQuery({
-    queryKey: ['portal-jogos', today, lastUpdate],
+    queryKey: ['jogos', today, lastUpdate],
     queryFn: () => fetchResults({ data: { date: today, limit: 50, offset: 0 } }),
     staleTime: 0,
     gcTime: 0,

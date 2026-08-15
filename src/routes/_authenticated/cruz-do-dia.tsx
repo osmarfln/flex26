@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, Calculator, Sparkles } from "lucide-react";
 import { CruzDoDia } from "@/components/CruzDoDia";
+import { UserMenu } from "@/components/layout/UserMenu";
 
 export const Route = createFileRoute("/_authenticated/cruz-do-dia")({
   head: () => ({
@@ -27,7 +28,7 @@ function CruzDoDiaPage() {
           </div>
 
           <div className="flex items-center gap-4">
-            <Link to="/portal" className="text-xs font-bold text-white/40 hover:text-white transition-colors">Portal</Link>
+            <UserMenu />
           </div>
         </div>
       </header>

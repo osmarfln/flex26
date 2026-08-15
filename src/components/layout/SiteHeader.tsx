@@ -1,18 +1,7 @@
-import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import {
-  Sparkles,
-  Users,
-  History,
-  Activity,
-  BarChart3,
-  ArrowLeft,
-  LogOut,
-  ShieldCheck,
-} from "lucide-react";
+import { Link, useRouterState } from "@tanstack/react-router";
+import { Sparkles, Users, History, Activity, BarChart3, ArrowLeft } from "lucide-react";
 
-import { supabase } from "@/integrations/supabase/client";
+import { UserMenu } from "@/components/layout/UserMenu";
 
 const navItems = [
   { to: "/", label: "Início", icon: Users },
@@ -28,32 +17,7 @@ interface SiteHeaderProps {
 
 export function SiteHeader({ subtitle = "VEM COM A GENTE", showBack = false }: SiteHeaderProps) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const [isAdmin, setIsAdmin] = useState(false);
 
-  useEffect(() => {
-    let active = true;
-    (async () => {
-      const { data } = await supabase.auth.getUser();
-      if (!data.user) return;
-      const { data: admin } = await supabase.rpc("has_role", {
-        _user_id: data.user.id,
-        _role: "admin",
-      });
-      if (active) setIsAdmin(Boolean(admin));
-    })();
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  async function handleSignOut() {
-    await queryClient.cancelQueries();
-    queryClient.clear();
-    await supabase.auth.signOut();
-    navigate({ to: "/auth", replace: true });
-  }
 
   return (
     <header className="border-b border-white/5 bg-background/60 backdrop-blur-2xl sticky top-0 z-50">
@@ -83,28 +47,7 @@ export function SiteHeader({ subtitle = "VEM COM A GENTE", showBack = false }: S
           </div>
 
           <div className="flex shrink-0 items-center gap-3 md:hidden">
-            {isAdmin && (
-              <Link
-                to="/admin"
-                className="flex items-center gap-1 text-[10px] font-bold text-primary hover:text-primary/80 transition-colors"
-              >
-                <ShieldCheck className="h-3.5 w-3.5" /> Admin
-              </Link>
-            )}
-            <Link
-              to="/portal"
-              className="text-[10px] font-bold text-white/40 hover:text-white transition-colors"
-            >
-              Portal
-            </Link>
-            <button
-              type="button"
-              onClick={handleSignOut}
-              aria-label="Sair"
-              className="rounded-lg border border-white/10 bg-white/5 p-1.5 text-white/50 transition-colors hover:text-white"
-            >
-              <LogOut className="h-3.5 w-3.5" />
-            </button>
+            <UserMenu />
           </div>
         </div>
 
@@ -128,27 +71,7 @@ export function SiteHeader({ subtitle = "VEM COM A GENTE", showBack = false }: S
         </nav>
 
         <div className="hidden md:flex ml-auto items-center gap-4">
-          {isAdmin && (
-            <Link
-              to="/admin"
-              className="flex items-center gap-1.5 text-xs font-bold text-primary hover:text-primary/80 transition-colors"
-            >
-              <ShieldCheck className="h-3.5 w-3.5" /> Admin
-            </Link>
-          )}
-          <Link
-            to="/portal"
-            className="text-xs font-bold text-white/40 hover:text-white transition-colors"
-          >
-            Portal
-          </Link>
-          <button
-            type="button"
-            onClick={handleSignOut}
-            className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-bold text-white/50 transition-colors hover:bg-white/10 hover:text-white"
-          >
-            <LogOut className="h-3.5 w-3.5" /> Sair
-          </button>
+          <UserMenu />
         </div>
       </div>
     </header>

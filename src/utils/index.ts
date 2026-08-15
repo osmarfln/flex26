@@ -1,6 +1,5 @@
 export const createPageUrl = (pageName: string) => {
   const mapping: Record<string, string> = {
-    Portal: "/portal",
     AnalisesIA: "/analises",
     PalpiteDoDia: "/palpite",
     ArquivoResultados: "/arquivo",

@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { UserMenu } from "@/components/layout/UserMenu";
 import { ANIMAL_GROUPS } from "@/lib/animals";
 import { getResults, getTenDelayStats, getGroupDelayStats, getDigitDelayStats } from "@/lib/lottery.functions";
 import { AlertaDezenasAtrasadas } from "@/components/AlertaDezenasAtrasadas";
@@ -166,7 +167,7 @@ function Index() {
                 <RefreshCw className="w-3 h-3" />
                 <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               </Button>
-              <Link to="/portal" className="text-[10px] font-bold text-white/40 hover:text-white transition-colors">Portal</Link>
+              <UserMenu />
             </div>
           </div>
 
@@ -202,7 +203,7 @@ function Index() {
               <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             </Button>
 
-            <Link to="/portal" className="text-xs font-bold text-white/40 hover:text-white transition-colors">Portal</Link>
+            <UserMenu />
           </div>
         </div>
       </header>

@@ -19,13 +19,14 @@ import { Route as AuthenticatedAnalisesRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedArquivoRouteImport } from './routes/_authenticated/arquivo'
 import { Route as AuthenticatedCadastrarRouteImport } from './routes/_authenticated/cadastrar'
 import { Route as AuthenticatedCalendarioRouteImport } from './routes/_authenticated/calendario'
+import { Route as AuthenticatedConfiguracoesRouteImport } from './routes/_authenticated/configuracoes'
 import { Route as AuthenticatedCruzDoDiaRouteImport } from './routes/_authenticated/cruz-do-dia'
 import { Route as AuthenticatedEstatisticasRouteImport } from './routes/_authenticated/estatisticas'
 import { Route as AuthenticatedHistoricoRouteImport } from './routes/_authenticated/historico'
+import { Route as AuthenticatedJogosRouteImport } from './routes/_authenticated/jogos'
 import { Route as AuthenticatedPalpiteRouteImport } from './routes/_authenticated/palpite'
-import { Route as AuthenticatedPortalRouteImport } from './routes/_authenticated/portal'
+import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated/perfil'
 import { Route as AuthenticatedRobotStatusRouteImport } from './routes/_authenticated/robot-status'
-import { Route as AuthenticatedPortalJogosRouteImport } from './routes/_authenticated/portal.jogos'
 import { Route as ApiPublicSyncResultsRouteImport } from './routes/api/public/sync-results'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -77,6 +78,12 @@ const AuthenticatedCalendarioRoute = AuthenticatedCalendarioRouteImport.update({
   path: '/calendario',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedConfiguracoesRoute =
+  AuthenticatedConfiguracoesRouteImport.update({
+    id: '/configuracoes',
+    path: '/configuracoes',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedCruzDoDiaRoute = AuthenticatedCruzDoDiaRouteImport.update({
   id: '/cruz-do-dia',
   path: '/cruz-do-dia',
@@ -93,14 +100,19 @@ const AuthenticatedHistoricoRoute = AuthenticatedHistoricoRouteImport.update({
   path: '/historico',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedJogosRoute = AuthenticatedJogosRouteImport.update({
+  id: '/jogos',
+  path: '/jogos',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedPalpiteRoute = AuthenticatedPalpiteRouteImport.update({
   id: '/palpite',
   path: '/palpite',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedPortalRoute = AuthenticatedPortalRouteImport.update({
-  id: '/portal',
-  path: '/portal',
+const AuthenticatedPerfilRoute = AuthenticatedPerfilRouteImport.update({
+  id: '/perfil',
+  path: '/perfil',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedRobotStatusRoute =
@@ -108,12 +120,6 @@ const AuthenticatedRobotStatusRoute =
     id: '/robot-status',
     path: '/robot-status',
     getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedPortalJogosRoute =
-  AuthenticatedPortalJogosRouteImport.update({
-    id: '/jogos',
-    path: '/jogos',
-    getParentRoute: () => AuthenticatedPortalRoute,
   } as any)
 const ApiPublicSyncResultsRoute = ApiPublicSyncResultsRouteImport.update({
   id: '/api/public/sync-results',
@@ -131,13 +137,14 @@ export interface FileRoutesByFullPath {
   '/arquivo': typeof AuthenticatedArquivoRoute
   '/cadastrar': typeof AuthenticatedCadastrarRoute
   '/calendario': typeof AuthenticatedCalendarioRoute
+  '/configuracoes': typeof AuthenticatedConfiguracoesRoute
   '/cruz-do-dia': typeof AuthenticatedCruzDoDiaRoute
   '/estatisticas': typeof AuthenticatedEstatisticasRoute
   '/historico': typeof AuthenticatedHistoricoRoute
+  '/jogos': typeof AuthenticatedJogosRoute
   '/palpite': typeof AuthenticatedPalpiteRoute
-  '/portal': typeof AuthenticatedPortalRouteWithChildren
+  '/perfil': typeof AuthenticatedPerfilRoute
   '/robot-status': typeof AuthenticatedRobotStatusRoute
-  '/portal/jogos': typeof AuthenticatedPortalJogosRoute
   '/api/public/sync-results': typeof ApiPublicSyncResultsRoute
 }
 export interface FileRoutesByTo {
@@ -149,14 +156,15 @@ export interface FileRoutesByTo {
   '/arquivo': typeof AuthenticatedArquivoRoute
   '/cadastrar': typeof AuthenticatedCadastrarRoute
   '/calendario': typeof AuthenticatedCalendarioRoute
+  '/configuracoes': typeof AuthenticatedConfiguracoesRoute
   '/cruz-do-dia': typeof AuthenticatedCruzDoDiaRoute
   '/estatisticas': typeof AuthenticatedEstatisticasRoute
   '/historico': typeof AuthenticatedHistoricoRoute
+  '/jogos': typeof AuthenticatedJogosRoute
   '/palpite': typeof AuthenticatedPalpiteRoute
-  '/portal': typeof AuthenticatedPortalRouteWithChildren
+  '/perfil': typeof AuthenticatedPerfilRoute
   '/robot-status': typeof AuthenticatedRobotStatusRoute
   '/': typeof AuthenticatedIndexRoute
-  '/portal/jogos': typeof AuthenticatedPortalJogosRoute
   '/api/public/sync-results': typeof ApiPublicSyncResultsRoute
 }
 export interface FileRoutesById {
@@ -170,14 +178,15 @@ export interface FileRoutesById {
   '/_authenticated/arquivo': typeof AuthenticatedArquivoRoute
   '/_authenticated/cadastrar': typeof AuthenticatedCadastrarRoute
   '/_authenticated/calendario': typeof AuthenticatedCalendarioRoute
+  '/_authenticated/configuracoes': typeof AuthenticatedConfiguracoesRoute
   '/_authenticated/cruz-do-dia': typeof AuthenticatedCruzDoDiaRoute
   '/_authenticated/estatisticas': typeof AuthenticatedEstatisticasRoute
   '/_authenticated/historico': typeof AuthenticatedHistoricoRoute
+  '/_authenticated/jogos': typeof AuthenticatedJogosRoute
   '/_authenticated/palpite': typeof AuthenticatedPalpiteRoute
-  '/_authenticated/portal': typeof AuthenticatedPortalRouteWithChildren
+  '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
   '/_authenticated/robot-status': typeof AuthenticatedRobotStatusRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
-  '/_authenticated/portal/jogos': typeof AuthenticatedPortalJogosRoute
   '/api/public/sync-results': typeof ApiPublicSyncResultsRoute
 }
 export interface FileRouteTypes {
@@ -192,13 +201,14 @@ export interface FileRouteTypes {
     | '/arquivo'
     | '/cadastrar'
     | '/calendario'
+    | '/configuracoes'
     | '/cruz-do-dia'
     | '/estatisticas'
     | '/historico'
+    | '/jogos'
     | '/palpite'
-    | '/portal'
+    | '/perfil'
     | '/robot-status'
-    | '/portal/jogos'
     | '/api/public/sync-results'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -210,14 +220,15 @@ export interface FileRouteTypes {
     | '/arquivo'
     | '/cadastrar'
     | '/calendario'
+    | '/configuracoes'
     | '/cruz-do-dia'
     | '/estatisticas'
     | '/historico'
+    | '/jogos'
     | '/palpite'
-    | '/portal'
+    | '/perfil'
     | '/robot-status'
     | '/'
-    | '/portal/jogos'
     | '/api/public/sync-results'
   id:
     | '__root__'
@@ -230,14 +241,15 @@ export interface FileRouteTypes {
     | '/_authenticated/arquivo'
     | '/_authenticated/cadastrar'
     | '/_authenticated/calendario'
+    | '/_authenticated/configuracoes'
     | '/_authenticated/cruz-do-dia'
     | '/_authenticated/estatisticas'
     | '/_authenticated/historico'
+    | '/_authenticated/jogos'
     | '/_authenticated/palpite'
-    | '/_authenticated/portal'
+    | '/_authenticated/perfil'
     | '/_authenticated/robot-status'
     | '/_authenticated/'
-    | '/_authenticated/portal/jogos'
     | '/api/public/sync-results'
   fileRoutesById: FileRoutesById
 }
@@ -321,6 +333,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCalendarioRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/configuracoes': {
+      id: '/_authenticated/configuracoes'
+      path: '/configuracoes'
+      fullPath: '/configuracoes'
+      preLoaderRoute: typeof AuthenticatedConfiguracoesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/cruz-do-dia': {
       id: '/_authenticated/cruz-do-dia'
       path: '/cruz-do-dia'
@@ -342,6 +361,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedHistoricoRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/jogos': {
+      id: '/_authenticated/jogos'
+      path: '/jogos'
+      fullPath: '/jogos'
+      preLoaderRoute: typeof AuthenticatedJogosRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/palpite': {
       id: '/_authenticated/palpite'
       path: '/palpite'
@@ -349,11 +375,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPalpiteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/portal': {
-      id: '/_authenticated/portal'
-      path: '/portal'
-      fullPath: '/portal'
-      preLoaderRoute: typeof AuthenticatedPortalRouteImport
+    '/_authenticated/perfil': {
+      id: '/_authenticated/perfil'
+      path: '/perfil'
+      fullPath: '/perfil'
+      preLoaderRoute: typeof AuthenticatedPerfilRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/robot-status': {
@@ -362,13 +388,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/robot-status'
       preLoaderRoute: typeof AuthenticatedRobotStatusRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/portal/jogos': {
-      id: '/_authenticated/portal/jogos'
-      path: '/jogos'
-      fullPath: '/portal/jogos'
-      preLoaderRoute: typeof AuthenticatedPortalJogosRouteImport
-      parentRoute: typeof AuthenticatedPortalRoute
     }
     '/api/public/sync-results': {
       id: '/api/public/sync-results'
@@ -380,28 +399,19 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface AuthenticatedPortalRouteChildren {
-  AuthenticatedPortalJogosRoute: typeof AuthenticatedPortalJogosRoute
-}
-
-const AuthenticatedPortalRouteChildren: AuthenticatedPortalRouteChildren = {
-  AuthenticatedPortalJogosRoute: AuthenticatedPortalJogosRoute,
-}
-
-const AuthenticatedPortalRouteWithChildren =
-  AuthenticatedPortalRoute._addFileChildren(AuthenticatedPortalRouteChildren)
-
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedAnalisesRoute: typeof AuthenticatedAnalisesRoute
   AuthenticatedArquivoRoute: typeof AuthenticatedArquivoRoute
   AuthenticatedCadastrarRoute: typeof AuthenticatedCadastrarRoute
   AuthenticatedCalendarioRoute: typeof AuthenticatedCalendarioRoute
+  AuthenticatedConfiguracoesRoute: typeof AuthenticatedConfiguracoesRoute
   AuthenticatedCruzDoDiaRoute: typeof AuthenticatedCruzDoDiaRoute
   AuthenticatedEstatisticasRoute: typeof AuthenticatedEstatisticasRoute
   AuthenticatedHistoricoRoute: typeof AuthenticatedHistoricoRoute
+  AuthenticatedJogosRoute: typeof AuthenticatedJogosRoute
   AuthenticatedPalpiteRoute: typeof AuthenticatedPalpiteRoute
-  AuthenticatedPortalRoute: typeof AuthenticatedPortalRouteWithChildren
+  AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRoute
   AuthenticatedRobotStatusRoute: typeof AuthenticatedRobotStatusRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
 }
@@ -412,11 +422,13 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedArquivoRoute: AuthenticatedArquivoRoute,
   AuthenticatedCadastrarRoute: AuthenticatedCadastrarRoute,
   AuthenticatedCalendarioRoute: AuthenticatedCalendarioRoute,
+  AuthenticatedConfiguracoesRoute: AuthenticatedConfiguracoesRoute,
   AuthenticatedCruzDoDiaRoute: AuthenticatedCruzDoDiaRoute,
   AuthenticatedEstatisticasRoute: AuthenticatedEstatisticasRoute,
   AuthenticatedHistoricoRoute: AuthenticatedHistoricoRoute,
+  AuthenticatedJogosRoute: AuthenticatedJogosRoute,
   AuthenticatedPalpiteRoute: AuthenticatedPalpiteRoute,
-  AuthenticatedPortalRoute: AuthenticatedPortalRouteWithChildren,
+  AuthenticatedPerfilRoute: AuthenticatedPerfilRoute,
   AuthenticatedRobotStatusRoute: AuthenticatedRobotStatusRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
 }
