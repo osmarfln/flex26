@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ANIMAL_GROUPS, getAnimalByTen } from "@/lib/animals";
-import { ArrowLeft, BarChart3, Calculator, Sparkles, TrendingUp, Zap, Target, BrainCircuit, History, Flame, Clock, LayoutGrid, Hash, Users, Repeat, ArrowLeftRight, FileText, Upload, Calendar, AlertCircle, Database, CheckCircle2, XCircle, Activity, Timer, ChevronRight, Trophy, RefreshCw, Loader2 } from "lucide-react";
+import { ArrowLeft, BarChart3, Calculator, Sparkles, TrendingUp, Zap, Target, BrainCircuit, History, Flame, Clock, LayoutGrid, Hash, Users, Repeat, ArrowLeftRight, FileText, Upload, Calendar, AlertCircle, Database, CheckCircle2, XCircle, Activity, Timer, ChevronRight, Trophy, RefreshCw, Loader2, Network } from "lucide-react";
 import { CruzDoDia } from "@/components/CruzDoDia";
 import { AvisoObrigatorio } from "@/components/AvisoObrigatorio";
 import { SiteHeader } from "@/components/layout/SiteHeader";
@@ -9,8 +9,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
-import { getStats, getResults, getTenDelayStats, getGroupDelayStats, getRepetitionStats, getDigitDelayStats } from "@/lib/lottery.functions";
+import { getStats, getResults, getTenDelayStats, getGroupDelayStats, getRepetitionStats, getDigitDelayStats, getPuxadasStats } from "@/lib/lottery.functions";
 import { DezenasEsquerdaDireita } from "@/components/DezenasEsquerdaDireita";
+import { PuxadasPanel } from "@/components/PuxadasPanel";
 import { runSyncNow } from "@/lib/robot.functions";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -34,7 +35,7 @@ export const Route = createFileRoute("/estatisticas")({
 
 
 function EstatisticasPage() {
-  const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'palpites' | 'logica-atraso' | 'ranking-completo' | 'logica-grupos' | 'repeticoes' | 'esquerda-direita'>('quentes');
+  const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'palpites' | 'logica-atraso' | 'ranking-completo' | 'logica-grupos' | 'repeticoes' | 'esquerda-direita' | 'puxadas'>('quentes');
 
   const [cruzData, setCruzData] = useState<string[]>([]);
   
@@ -72,6 +73,12 @@ function EstatisticasPage() {
     ...live,
   });
 
+  const { data: puxadasStats, isLoading: puxadasLoading } = useQuery({
+    queryKey: ["puxadas-stats"],
+    queryFn: () => getPuxadasStats(),
+    ...live,
+  });
+
   const { data: repetitionStats, isLoading: repetitionLoading } = useQuery({
     queryKey: ["repetition-stats"],
     queryFn: () => getRepetitionStats(),
@@ -86,8 +93,11 @@ function EstatisticasPage() {
   const triggerSync = useServerFn(runSyncNow);
   const [syncMessage, setSyncMessage] = useState<string | null>(null);
   const [syncStep, setSyncStep] = useState<string | null>(null);
+  const [lastSync, setLastSync] = useState<{ at: Date; ms: number } | null>(null);
+  const [partialStep, setPartialStep] = useState<string | null>(null);
   const syncMutation = useMutation({
     mutationFn: async () => {
+      (window as any).__syncStart = performance.now();
       setSyncStep("Buscando novos resultados na origem...");
       const res: any = await triggerSync();
       setSyncStep("Recalculando dezenas atrasadas, grupos e bicho em alta...");
@@ -97,6 +107,8 @@ function EstatisticasPage() {
     },
     onSuccess: (res: any) => {
       setSyncStep(null);
+      const start = (window as any).__syncStart as number | undefined;
+      setLastSync({ at: new Date(), ms: start ? performance.now() - start : 0 });
       setSyncMessage(
         res?.ok
           ? `Dados validados e recalculados (${res.synced ?? 0} registros verificados).`
@@ -112,9 +124,21 @@ function EstatisticasPage() {
     setSyncMessage(null);
     syncMutation.mutate();
   };
+
+  // Recálculos parciais (validação rápida)
+  const recalcPart = async (label: string, keys: string[]) => {
+    setSyncMessage(null);
+    setPartialStep(`Recalculando ${label}...`);
+    const start = performance.now();
+    await Promise.all(keys.map((k) => queryClient.refetchQueries({ queryKey: [k] })));
+    const ms = performance.now() - start;
+    setLastSync({ at: new Date(), ms });
+    setPartialStep(null);
+    setSyncMessage(`${label} recalculado em ${(ms / 1000).toFixed(1)}s.`);
+  };
   const recalculating =
-    syncMutation.isPending ||
-    statsLoading || resultsLoading || delayStatsLoading || groupDelayStatsLoading || repetitionLoading || digitLoading;
+    syncMutation.isPending || !!partialStep ||
+    statsLoading || resultsLoading || delayStatsLoading || groupDelayStatsLoading || repetitionLoading || digitLoading || puxadasLoading;
 
 
 
@@ -268,10 +292,46 @@ function EstatisticasPage() {
                     <RefreshCw className={`w-4 h-4 ${syncMutation.isPending ? "animate-spin" : ""}`} />
                     Sincronizar agora
                   </button>
+                  <div className="flex flex-wrap gap-1.5">
+                    <button
+                      onClick={() => recalcPart("Dezenas atrasadas", ["ten-delay-stats", "digit-delay-stats"])}
+                      disabled={recalculating}
+                      className="px-2.5 py-1.5 rounded-lg bg-white/5 border border-white/10 text-[10px] font-black uppercase text-white/60 hover:border-primary/40 hover:text-primary transition-all disabled:opacity-50"
+                    >
+                      Dezenas
+                    </button>
+                    <button
+                      onClick={() => recalcPart("Grupos", ["group-delay-stats", "puxadas-stats"])}
+                      disabled={recalculating}
+                      className="px-2.5 py-1.5 rounded-lg bg-white/5 border border-white/10 text-[10px] font-black uppercase text-white/60 hover:border-emerald-400/40 hover:text-emerald-400 transition-all disabled:opacity-50"
+                    >
+                      Grupos
+                    </button>
+                    <button
+                      onClick={() => recalcPart("Bicho em alta", ["stats-page", "recent-results-stats"])}
+                      disabled={recalculating}
+                      className="px-2.5 py-1.5 rounded-lg bg-white/5 border border-white/10 text-[10px] font-black uppercase text-white/60 hover:border-blue-400/40 hover:text-blue-400 transition-all disabled:opacity-50"
+                    >
+                      Bicho em alta
+                    </button>
+                  </div>
+
+                  <div className="text-[10px] font-bold text-white/40 leading-snug max-w-[220px]">
+                    Última sincronização:{" "}
+                    <span className="text-white/70">
+                      {lastSync
+                        ? lastSync.at.toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo", hourCycle: "h23" })
+                        : "—"}
+                    </span>
+                    <br />
+                    Duração do recálculo:{" "}
+                    <span className="text-white/70">{lastSync ? `${(lastSync.ms / 1000).toFixed(1)}s` : "—"}</span>
+                  </div>
+
                   {recalculating ? (
                     <div className="flex items-center gap-2 text-[10px] font-bold text-blue-400">
                       <Loader2 className="w-3 h-3 animate-spin" />
-                      <span>{syncStep ?? "Recalculando análises..."}</span>
+                      <span>{syncStep ?? partialStep ?? "Recalculando análises..."}</span>
                     </div>
                   ) : syncMessage ? (
                     <p className="text-[10px] font-bold text-emerald-400 max-w-[220px] leading-snug">{syncMessage}</p>
@@ -354,6 +414,17 @@ function EstatisticasPage() {
                 </div>
                 <h3 className="text-xl font-black italic uppercase">Esquerda x Direita</h3>
                 <p className="text-sm text-white/40 font-medium leading-snug">Dígitos da dezena mais atrasados que ainda não saíram, por dia e horário.</p>
+             </Card>
+
+             <Card 
+               onClick={() => setActiveTab('puxadas')}
+               className={`bg-[#0D121F] border-white/10 rounded-2xl p-6 transition-all cursor-pointer group ${activeTab === 'puxadas' ? 'border-emerald-400/50 ring-1 ring-emerald-400/20' : 'hover:border-emerald-400/30'}`}
+             >
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'puxadas' ? 'bg-emerald-500 text-white' : 'bg-emerald-500/10 text-emerald-400'}`}>
+                   <Network className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-black italic uppercase">Puxadas</h3>
+                <p className="text-sm text-white/40 font-medium leading-snug">Tabela 01 a 25 do que cada bicho puxa, horário por horário, com gráficos.</p>
              </Card>
 
              <Card 
@@ -879,6 +950,17 @@ function EstatisticasPage() {
                   exit={{ opacity: 0, y: -20 }}
                 >
                   <DezenasEsquerdaDireita data={digitStats as any} loading={digitLoading} />
+                </motion.div>
+              )}
+
+              {activeTab === 'puxadas' && (
+                <motion.div
+                  key="puxadas"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                >
+                  <PuxadasPanel data={puxadasStats as any} loading={puxadasLoading} />
                 </motion.div>
               )}
 
