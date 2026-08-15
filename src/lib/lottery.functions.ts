@@ -394,6 +394,7 @@ export const getGroupDelayStats = createServerFn({ method: "GET" })
         groupId,
         animal: ANIMAL_GROUPS_DATA[groupId] ? ANIMAL_GROUPS_DATA[groupId].name : "Desconhecido",
         dezenaStats,
+        anyDezenaInFirstPrize,
 
         currentDelay,
         lastOccurrenceDate,
