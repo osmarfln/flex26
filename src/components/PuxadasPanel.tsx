@@ -4,7 +4,6 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Network, AlertCircle } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell,
-  RadarChart, PolarGrid, PolarAngleAxis, Radar, PolarRadiusAxis,
 } from "recharts";
 
 interface PuxadaTarget { id: string; name: string; icon: string; count: number }
