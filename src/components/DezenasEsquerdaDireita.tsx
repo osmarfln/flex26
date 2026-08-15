@@ -119,8 +119,9 @@ function SideBlock({ title, subtitle, stats, schedules, accent }: {
 
                 <div className="text-xs text-white/50 flex items-center gap-2 flex-wrap">
                   <Clock className="w-3.5 h-3.5" />
-                  Última vez: {s.last ? `${fmt(s.last.date)} · ${s.last.time_type}${s.last.time_value ? ` (${s.last.time_value})` : ""} · milhar ${s.last.prize} · dezena ${s.last.ten}` : "não apareceu na amostra"}
+                  Última vez: {s.last ? `${fmt(s.last.date)} · ${s.last.time_type}${s.last.time_value ? ` (${s.last.time_value})` : ""} · ${s.last.position ?? 1}º prêmio ${s.last.prize} · dezena ${s.last.ten}` : "não apareceu na amostra"}
                 </div>
+
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
                   <div className="bg-white/5 rounded-lg px-2 py-1.5">
