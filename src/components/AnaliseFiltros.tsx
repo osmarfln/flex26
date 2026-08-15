@@ -240,7 +240,7 @@ export function AnaliseFiltros() {
 
     return {
       animal,
-      total: rows.length,
+      total: occurrences.length,
       ranking,
       top: top && top.count > 0 ? top : null,
       topTime: topTime ? { time: topTime[0], count: topTime[1] } : null,
