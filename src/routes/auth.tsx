@@ -78,10 +78,12 @@ function AuthPage() {
         });
         if (error) throw error;
         if (data.session) {
-          toast.success("Conta criada com sucesso");
-          navigate({ to: "/", replace: true });
+          toast.success("Conta criada. Aguardando aprovação do administrador.");
+          navigate({ to: "/pendente", replace: true });
         } else {
-          toast.success("Confira seu email para confirmar o cadastro");
+          toast.success(
+            "Cadastro enviado. Após confirmar o email, o acesso precisa ser aprovado pelo administrador.",
+          );
           setMode("login");
         }
       }
@@ -117,7 +119,8 @@ function AuthPage() {
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground">Flex Gerenciador</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Área restrita. Acesse com seu login e senha.
+            Área restrita. Acesse com seu login e senha. Novos cadastros só entram após
+            aprovação do administrador.
           </p>
         </div>
 

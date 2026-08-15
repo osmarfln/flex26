@@ -1,6 +1,16 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { Sparkles, Users, History, Activity, BarChart3, ArrowLeft, LogOut } from "lucide-react";
+import { useEffect, useState } from "react";
+import {
+  Sparkles,
+  Users,
+  History,
+  Activity,
+  BarChart3,
+  ArrowLeft,
+  LogOut,
+  ShieldCheck,
+} from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 
@@ -20,6 +30,23 @@ export function SiteHeader({ subtitle = "VEM COM A GENTE", showBack = false }: S
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      const { data } = await supabase.auth.getUser();
+      if (!data.user) return;
+      const { data: admin } = await supabase.rpc("has_role", {
+        _user_id: data.user.id,
+        _role: "admin",
+      });
+      if (active) setIsAdmin(Boolean(admin));
+    })();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   async function handleSignOut() {
     await queryClient.cancelQueries();
@@ -56,6 +83,14 @@ export function SiteHeader({ subtitle = "VEM COM A GENTE", showBack = false }: S
           </div>
 
           <div className="flex shrink-0 items-center gap-3 md:hidden">
+            {isAdmin && (
+              <Link
+                to="/admin"
+                className="flex items-center gap-1 text-[10px] font-bold text-primary hover:text-primary/80 transition-colors"
+              >
+                <ShieldCheck className="h-3.5 w-3.5" /> Admin
+              </Link>
+            )}
             <Link
               to="/portal"
               className="text-[10px] font-bold text-white/40 hover:text-white transition-colors"
@@ -93,6 +128,14 @@ export function SiteHeader({ subtitle = "VEM COM A GENTE", showBack = false }: S
         </nav>
 
         <div className="hidden md:flex ml-auto items-center gap-4">
+          {isAdmin && (
+            <Link
+              to="/admin"
+              className="flex items-center gap-1.5 text-xs font-bold text-primary hover:text-primary/80 transition-colors"
+            >
+              <ShieldCheck className="h-3.5 w-3.5" /> Admin
+            </Link>
+          )}
           <Link
             to="/portal"
             className="text-xs font-bold text-white/40 hover:text-white transition-colors"
