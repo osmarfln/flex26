@@ -31,6 +31,16 @@ function iso(d: Date) {
   return format(d, "yyyy-MM-dd");
 }
 
+/** true quando a string é uma data ISO real (evita valores parciais dos inputs type="date"). */
+function isValidISO(s: string) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+  const d = new Date(s + "T12:00:00");
+  if (Number.isNaN(d.getTime())) return false;
+  const year = Number(s.slice(0, 4));
+  return year >= 2000 && year <= 2100;
+}
+
+
 type SearchQuery =
   | { kind: "none" }
   | { kind: "dezena" | "centena" | "milhar"; value: string; label: string }
@@ -133,26 +143,35 @@ function Delta({ current, previous }: { current: number; previous: number }) {
 
 /** Filtros e busca das Análises: período, horário e tipo, com comparação de períodos. */
 export function AnaliseFiltros() {
-  const today = new Date();
-  const [start, setStart] = useState(iso(today));
-  const [end, setEnd] = useState(iso(today));
+  const todayISO = iso(new Date());
+  const [start, setStart] = useState(todayISO);
+  const [end, setEnd] = useState(todayISO);
   const [times, setTimes] = useState<string[]>([]);
   const [term, setTerm] = useState("");
   const [compare, setCompare] = useState(false);
 
   const fetchRange = useServerFn(getResultsRange);
 
-  const spanDays = useMemo(() => {
-    const ms = new Date(end + "T12:00:00").getTime() - new Date(start + "T12:00:00").getTime();
-    return Math.max(1, Math.round(ms / 86_400_000) + 1);
-  }, [start, end]);
+  // Enquanto o usuário digita, o input pode devolver datas parciais/inválidas.
+  // Só usamos datas válidas nos cálculos e nas consultas.
+  const datesValid = isValidISO(start) && isValidISO(end);
+  const safeStart = datesValid ? (start <= end ? start : end) : todayISO;
+  const safeEnd = datesValid ? (start <= end ? end : start) : todayISO;
 
-  const prevStart = iso(subDays(new Date(start + "T12:00:00"), spanDays));
-  const prevEnd = iso(subDays(new Date(start + "T12:00:00"), 1));
+  const spanDays = useMemo(() => {
+    const ms =
+      new Date(safeEnd + "T12:00:00").getTime() - new Date(safeStart + "T12:00:00").getTime();
+    const days = Math.round(ms / 86_400_000) + 1;
+    return Number.isFinite(days) ? Math.max(1, days) : 1;
+  }, [safeStart, safeEnd]);
+
+  const prevStart = iso(subDays(new Date(safeStart + "T12:00:00"), spanDays));
+  const prevEnd = iso(subDays(new Date(safeStart + "T12:00:00"), 1));
 
   const currentQuery = useQuery({
-    queryKey: ["analise-filtro", start, end, times],
-    queryFn: () => fetchRange({ data: { start, end, timeTypes: times, limit: 2000 } }),
+    queryKey: ["analise-filtro", safeStart, safeEnd, times],
+    queryFn: () =>
+      fetchRange({ data: { start: safeStart, end: safeEnd, timeTypes: times, limit: 2000 } }),
     staleTime: 0,
     gcTime: 0,
   });
@@ -165,6 +184,7 @@ export function AnaliseFiltros() {
     staleTime: 0,
     gcTime: 0,
   });
+
 
   const query = useMemo(() => parseTerm(term), [term]);
   const invalidTerm = term.trim().length > 0 && query.kind === "none";
@@ -292,7 +312,8 @@ export function AnaliseFiltros() {
           <input
             type="date"
             value={start}
-            max={end}
+            min="2000-01-01"
+            max="2100-12-31"
             onChange={(e) => setStart(e.target.value)}
             className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm font-bold outline-none focus:border-primary/50"
           />
@@ -302,11 +323,13 @@ export function AnaliseFiltros() {
           <input
             type="date"
             value={end}
-            min={start}
+            min="2000-01-01"
+            max="2100-12-31"
             onChange={(e) => setEnd(e.target.value)}
             className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm font-bold outline-none focus:border-primary/50"
           />
         </label>
+
         <label className="flex flex-col gap-1.5 md:col-span-2">
           <span className="text-[10px] font-black uppercase tracking-widest text-white/40">
             Buscar por dezena (2), centena (3), milhar (4), grupo ou bicho
@@ -345,6 +368,14 @@ export function AnaliseFiltros() {
           )}
         </label>
       </div>
+
+      {!datesValid && (
+        <p className="mt-3 text-[10px] font-bold uppercase tracking-widest text-amber-400">
+          Data incompleta — completando com hoje ({todayISO.split("-").reverse().join("/")}) até você
+          terminar de digitar
+        </p>
+      )}
+
 
 
       <div className="mt-4 flex flex-wrap items-center gap-2">
