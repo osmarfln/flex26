@@ -155,17 +155,56 @@ export function AnaliseFiltros() {
     gcTime: 0,
   });
 
+  const query = useMemo(() => parseTerm(term), [term]);
+  const invalidTerm = term.trim().length > 0 && query.kind === "none";
+
   const currentRows = useMemo(
-    () => (currentQuery.data ?? []).filter((r) => matchesTerm(r, term)),
-    [currentQuery.data, term],
+    () => (currentQuery.data ?? []).filter((r) => matchesQuery(r, query)),
+    [currentQuery.data, query],
   );
   const previousRows = useMemo(
-    () => (previousQuery.data ?? []).filter((r) => matchesTerm(r, term)),
-    [previousQuery.data, term],
+    () => (previousQuery.data ?? []).filter((r) => matchesQuery(r, query)),
+    [previousQuery.data, query],
   );
+
+  /** Bicho relacionado ao termo e a dezena que mais saiu dentro desse bicho no período. */
+  const focus = useMemo(() => {
+    if (query.kind === "none") return null;
+    const groupId =
+      query.kind === "grupo"
+        ? query.value
+        : getGroupFromTen(
+            (query.kind === "dezena" ? query.value : query.value.slice(-2)).padStart(2, "0"),
+          );
+    const animal = ANIMAL_GROUPS_MAP[groupId];
+    if (!animal) return null;
+    const rows = (currentQuery.data ?? []).filter(
+      (r) => getGroupFromTen((r.results?.[0] ?? "").slice(-2).padStart(2, "0")) === groupId,
+    );
+    const counts: Record<string, number> = {};
+    rows.forEach((r) => {
+      const ten = (r.results?.[0] ?? "").slice(-2).padStart(2, "0");
+      if (ten.length === 2) counts[ten] = (counts[ten] ?? 0) + 1;
+    });
+    const ranking = animal.dezenas.map((d) => ({ dezena: d, count: counts[d] ?? 0 }));
+    const top = [...ranking].sort((a, b) => b.count - a.count)[0];
+    const byTimeCounts: Record<string, number> = {};
+    rows.forEach((r) => {
+      byTimeCounts[r.time_type] = (byTimeCounts[r.time_type] ?? 0) + 1;
+    });
+    const topTime = Object.entries(byTimeCounts).sort((a, b) => b[1] - a[1])[0];
+    return {
+      animal,
+      total: rows.length,
+      ranking,
+      top: top && top.count > 0 ? top : null,
+      topTime: topTime ? { time: topTime[0], count: topTime[1] } : null,
+    };
+  }, [query, currentQuery.data]);
 
   const cur = useMemo(() => summarize(currentRows), [currentRows]);
   const prev = useMemo(() => summarize(previousRows), [previousRows]);
+
 
   const byTime = useMemo(() => {
     const counts: Record<string, { name: string; atual: number; anterior: number }> = {};
