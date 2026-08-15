@@ -382,6 +382,12 @@ function Index() {
 
           </div>
 
+          <div className="mb-12">
+            <AlertaDezenasAtrasadas data={digitStats as any} loading={digitLoading} />
+          </div>
+
+
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             <Card className="bg-[#0D121F] border-white/10 rounded-2xl overflow-hidden group hover:border-yellow-500/30 transition-all">
               <CardHeader className="bg-yellow-500/5 p-4 border-b border-white/5 flex flex-row items-center justify-between">
