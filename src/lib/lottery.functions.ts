@@ -478,3 +478,149 @@ export const getRepetitionStats = createServerFn({ method: "GET" })
 
     return repetitionStats;
   });
+
+
+/**
+ * LÓGICA DEZENA ESQUERDA x DEZENA DIREITA
+ * A cada resultado de cada horário é feita uma nova soma:
+ * separa o dígito da esquerda (dezena) e o da direita (unidade) da dezena
+ * do 1º prêmio e mede há quantos concursos/dias cada dígito não aparece.
+ */
+export const getDigitDelayStats = createServerFn({ method: "GET" })
+  .handler(async () => {
+    const { data: rawRows, error } = await supabase
+      .from("lottery_results")
+      .select("results, date, time_type, time_value")
+      .order("date", { ascending: false })
+      .limit(600);
+
+    if (error) throw error;
+    if (!rawRows || rawRows.length === 0) {
+      return { left: [], right: [], totalDraws: 0, period: null, schedules: [] as string[], daily: [] as any[] };
+    }
+
+    const results = sortDrawsDesc(rawRows as any[]);
+    const schedules = ["PPT", "PTM", "PT", "PTV", "PTN", "COR"];
+
+    const build = (side: "left" | "right") => {
+      return Array.from({ length: 10 }, (_, d) => {
+        const digit = String(d);
+        let currentDelay = -1;
+        let last: any = null;
+        const intervals: number[] = [];
+        let lastIndex = -1;
+
+        // atraso por horário (quantos concursos daquele horário sem sair)
+        const scheduleDelay: Record<string, number> = {};
+        const scheduleSeen: Record<string, boolean> = {};
+        const scheduleCount: Record<string, number> = {};
+        const scheduleFreq: Record<string, number> = {};
+        schedules.forEach((s) => {
+          scheduleDelay[s] = 0;
+          scheduleSeen[s] = false;
+          scheduleCount[s] = 0;
+          scheduleFreq[s] = 0;
+        });
+
+        const matches = (row: any) => {
+          const prize: string | undefined = row.results?.[0];
+          if (!prize || prize.length < 2) return false;
+          const ten = prize.slice(-2);
+          return (side === "left" ? ten[0] : ten[1]) === digit;
+        };
+
+        results.forEach((res: any, index: number) => {
+          const hit = matches(res);
+          const st = String(res.time_type || "").toUpperCase();
+          if (schedules.includes(st)) {
+            scheduleCount[st] = (scheduleCount[st] ?? 0) + 1;
+            if (hit) {
+              scheduleFreq[st] = (scheduleFreq[st] ?? 0) + 1;
+              scheduleSeen[st] = true;
+            } else if (!scheduleSeen[st]) {
+              scheduleDelay[st] = (scheduleDelay[st] ?? 0) + 1;
+            }
+          }
+          if (!hit) return;
+          if (currentDelay === -1) {
+            currentDelay = index;
+            last = {
+              date: res.date,
+              time_type: res.time_type,
+              time_value: res.time_value,
+              ten: res.results?.[0]?.slice(-2) ?? null,
+              prize: res.results?.[0] ?? null,
+            };
+          }
+          if (lastIndex !== -1) intervals.push(index - lastIndex);
+          lastIndex = index;
+        });
+
+        if (currentDelay === -1) currentDelay = results.length;
+        const freqIn = (n: number) => results.slice(0, n).filter(matches).length;
+        const avgDelay = intervals.length > 0 ? intervals.reduce((a, b) => a + b, 0) / intervals.length : results.length;
+        const sorted = [...intervals].sort((a, b) => a - b);
+        const medianDelay = sorted.length > 0 ? sorted[Math.floor(sorted.length / 2)]! : 0;
+        const maxDelay = intervals.length > 0 ? Math.max(...intervals) : currentDelay;
+        const minDelay = intervals.length > 0 ? Math.min(...intervals) : 0;
+        const relativeIndex = avgDelay > 0 ? currentDelay / avgDelay : 0;
+
+        let classification = "Dentro da média";
+        if (relativeIndex < 0.75) classification = "Atraso baixo";
+        else if (relativeIndex > 2) classification = "Muito acima da média";
+        else if (relativeIndex > 1.25) classification = "Atraso elevado";
+
+        // horário mais provável = maior atraso naquele horário
+        const worstSchedule = schedules
+          .map((s) => ({ schedule: s, delay: scheduleDelay[s] ?? 0, freq: scheduleFreq[s] ?? 0, total: scheduleCount[s] ?? 0 }))
+          .sort((a, b) => b.delay - a.delay)[0] ?? null;
+
+        return {
+          side,
+          digit,
+          currentDelay,
+          avgDelay: Number(avgDelay.toFixed(2)),
+          medianDelay,
+          maxDelay,
+          minDelay,
+          relativeIndex: Number(relativeIndex.toFixed(2)),
+          classification,
+          last,
+          freqs: { 10: freqIn(10), 30: freqIn(30), 50: freqIn(50), 100: freqIn(100), 300: freqIn(300) },
+          scheduleDelay,
+          scheduleFreq,
+          worstSchedule,
+        };
+      }).sort((a, b) => b.currentDelay - a.currentDelay);
+    };
+
+    // Série diária: dezenas do 1º prêmio por dia/horário (últimos 12 dias)
+    const dayMap: Record<string, any> = {};
+    results.forEach((r: any) => {
+      const ten = r.results?.[0]?.slice(-2);
+      if (!ten) return;
+      if (!dayMap[r.date]) dayMap[r.date] = { date: r.date, draws: [] };
+      dayMap[r.date].draws.push({
+        time_type: r.time_type,
+        time_value: r.time_value,
+        ten,
+        left: ten[0],
+        right: ten[1],
+      });
+    });
+    const daily = Object.values(dayMap)
+      .sort((a: any, b: any) => (a.date < b.date ? 1 : -1))
+      .slice(0, 12);
+
+    const oldest = results[results.length - 1] as any;
+    const newest = results[0] as any;
+
+    return {
+      left: build("left"),
+      right: build("right"),
+      totalDraws: results.length,
+      schedules,
+      period: { start: oldest?.date ?? null, end: newest?.date ?? null },
+      daily,
+    };
+  });
