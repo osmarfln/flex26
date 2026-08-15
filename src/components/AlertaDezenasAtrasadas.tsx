@@ -48,30 +48,6 @@ export function AlertaDezenasAtrasadas({ data, loading }: { data?: DigitDelayDat
     return { left, right };
   }, [data]);
 
-  // Dígitos que não apareceram nos últimos 7 dias com sorteio
-  const weekly = useMemo(() => {
-    const days = (data?.daily ?? []).slice(0, 7);
-    const seen: Record<SideKey, Set<string>> = { left: new Set(), right: new Set() };
-    days.forEach((d) =>
-      d.draws.forEach((dr) => {
-        seen.left.add(dr.left);
-        seen.right.add(dr.right);
-      }),
-    );
-    // dezenas de 2 casas (00 a 99) que não apareceram no período — zero nunca cortado
-    const missing = (side: SideKey) =>
-      (data?.[side] ?? [])
-        .filter((s) => !seen[side].has(s.digit))
-        .map((s) => s.digit);
-    return {
-      days: days.length,
-      start: days[days.length - 1]?.date ?? null,
-      end: days[0]?.date ?? null,
-      left: missing("left"),
-      right: missing("right"),
-    };
-  }, [data]);
-
   useLeaderAlerts(leaders.left?.digit, leaders.right?.digit);
 
   if (loading) {
@@ -80,10 +56,11 @@ export function AlertaDezenasAtrasadas({ data, loading }: { data?: DigitDelayDat
 
   if (!data || data.totalDraws === 0) return null;
 
-  const blocks: { side: SideKey; label: string; icon: typeof ArrowLeft; accent: string; stat: any; missing: string[] }[] = [
-    { side: "left", label: "Dezena Esquerda", icon: ArrowLeft, accent: "#EAB308", stat: leaders.left, missing: weekly.left },
-    { side: "right", label: "Dezena Direita", icon: ArrowRight, accent: "#38BDF8", stat: leaders.right, missing: weekly.right },
+  const blocks: { side: SideKey; label: string; icon: typeof ArrowLeft; accent: string; stat: any }[] = [
+    { side: "left", label: "Dezena Esquerda", icon: ArrowLeft, accent: "#EAB308", stat: leaders.left },
+    { side: "right", label: "Dezena Direita", icon: ArrowRight, accent: "#38BDF8", stat: leaders.right },
   ];
+
 
   return (
     <Card className="bg-gradient-to-br from-[#141A28] to-[#0D121F] border-yellow-400/25 rounded-2xl p-5 space-y-5">
