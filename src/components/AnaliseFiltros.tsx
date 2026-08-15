@@ -369,6 +369,14 @@ export function AnaliseFiltros() {
         </label>
       </div>
 
+      {!datesValid && (
+        <p className="mt-3 text-[10px] font-bold uppercase tracking-widest text-amber-400">
+          Data incompleta — completando com hoje ({todayISO.split("-").reverse().join("/")}) até você
+          terminar de digitar
+        </p>
+      )}
+
+
 
       <div className="mt-4 flex flex-wrap items-center gap-2">
         <span className="text-[10px] font-black uppercase tracking-widest text-white/40">Horários:</span>
