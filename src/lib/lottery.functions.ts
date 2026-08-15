@@ -44,6 +44,38 @@ export const getResults = createServerFn({ method: "GET" })
     return results as LotteryResult[];
   });
 
+/** Busca resultados por intervalo de datas e horários (filtros das Análises). */
+export const getResultsRange = createServerFn({ method: "GET" })
+  .validator((data: unknown) =>
+    z
+      .object({
+        start: z.string(),
+        end: z.string(),
+        timeTypes: z.array(z.string()).optional(),
+        limit: z.number().optional().default(2000),
+      })
+      .parse(data),
+  )
+  .handler(async ({ data }) => {
+    let query = supabase
+      .from("lottery_results")
+      .select("*")
+      .gte("date", data.start)
+      .lte("date", data.end)
+      .order("date", { ascending: false })
+      .limit(data.limit);
+
+    if (data.timeTypes && data.timeTypes.length > 0) {
+      query = query.in("time_type", data.timeTypes);
+    }
+
+    const { data: results, error } = await query;
+    if (error) throw error;
+    return sortDrawsDesc((results ?? []) as any[]) as LotteryResult[];
+  });
+
+
+
 export const getStats = createServerFn({ method: "GET" })
   .handler(async () => {
     const { data: rawResults, error } = await supabase
