@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "@tanstack/react-router";
 import { createPageUrl } from "@/utils";
 import {
-  LayoutDashboard,
   BrainCircuit,
   Menu,
   LogOut,
@@ -45,14 +44,6 @@ import { motion } from "framer-motion";
 
 const navigationItems = [
   {
-    title: "Portal",
-    url: createPageUrl("Portal"),
-    icon: LayoutDashboard,
-    color: "from-teal-500 to-cyan-500",
-    bgColor: "bg-gradient-to-r from-teal-500/10 to-cyan-500/10",
-    textColor: "text-teal-600"
-  },
-  {
     title: "Análises",
     url: createPageUrl("AnalisesIA"),
     icon: BrainCircuit,
@@ -86,7 +77,7 @@ const navigationItems = [
   },
   {
     title: "Gerenciar Jogos",
-    url: "/portal/jogos",
+    url: "/jogos",
     icon: Star,
     color: "from-purple-500 to-indigo-600",
     bgColor: "bg-gradient-to-r from-purple-500/10 to-indigo-600/10",
@@ -269,10 +260,19 @@ export default function ManagementLayout({ children, currentPageName }: LayoutPr
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
+                <DropdownMenuLabel>{user?.nome ?? "Minha Conta"}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Perfil</DropdownMenuItem>
-                <DropdownMenuItem>Configurações</DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/perfil">Perfil</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/configuracoes">Configuração</Link>
+                </DropdownMenuItem>
+                {user?.isAdmin && (
+                  <DropdownMenuItem asChild>
+                    <Link to="/admin">Área Admin</Link>
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="text-destructive" onClick={handleSignOut}>
                   <LogOut className="mr-2 h-4 w-4" />
