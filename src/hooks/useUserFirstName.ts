@@ -21,8 +21,9 @@ export function useUserFirstName() {
       if (!user || !active) return;
 
       const metaName =
-        firstNameFrom(user.user_metadata?.display_name as string | undefined) ??
-        firstNameFrom(user.user_metadata?.full_name as string | undefined) ??
+        firstNameFrom(user.user_metadata?.['display_name'] as string | undefined) ??
+        firstNameFrom(user.user_metadata?.['full_name'] as string | undefined) ??
+
         firstNameFrom(user.email?.split("@")[0]);
 
       if (active) setFirstName(metaName);
