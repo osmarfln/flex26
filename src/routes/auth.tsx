@@ -40,6 +40,7 @@ function AuthPage() {
   const [displayName, setDisplayName] = useState("");
   const [loading, setLoading] = useState(false);
   const [checking, setChecking] = useState(true);
+  const hydrated = useHydrated();
 
   useEffect(() => {
     let active = true;
@@ -108,6 +109,8 @@ function AuthPage() {
       setLoading(false);
     }
   }
+
+  if (!hydrated) return null;
 
   if (checking) {
     return (
