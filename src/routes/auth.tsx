@@ -4,6 +4,7 @@ import { KeyRound, Loader2, Lock, Mail, User } from "lucide-react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
+import { useHydrated } from "@/hooks/useHydrated";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -39,6 +40,7 @@ function AuthPage() {
   const [displayName, setDisplayName] = useState("");
   const [loading, setLoading] = useState(false);
   const [checking, setChecking] = useState(true);
+  const hydrated = useHydrated();
 
   useEffect(() => {
     let active = true;
@@ -107,6 +109,8 @@ function AuthPage() {
       setLoading(false);
     }
   }
+
+  if (!hydrated) return null;
 
   if (checking) {
     return (
