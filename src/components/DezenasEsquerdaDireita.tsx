@@ -15,7 +15,7 @@ interface DigitStat {
   minDelay: number;
   relativeIndex: number;
   classification: string;
-  last: { date: string; time_type: string; time_value: string | null; ten: string | null; prize: string | null } | null;
+  last: { date: string; time_type: string; time_value: string | null; ten: string | null; prize: string | null; position?: number } | null;
   freqs: Record<string, number>;
   scheduleDelay: Record<string, number>;
   scheduleFreq: Record<string, number>;
