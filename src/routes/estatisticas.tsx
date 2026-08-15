@@ -9,7 +9,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
-import { getStats, getResults, getTenDelayStats, getGroupDelayStats, getRepetitionStats } from "@/lib/lottery.functions";
+import { getStats, getResults, getTenDelayStats, getGroupDelayStats, getRepetitionStats, getDigitDelayStats } from "@/lib/lottery.functions";
+import { DezenasEsquerdaDireita } from "@/components/DezenasEsquerdaDireita";
 import { runSyncNow } from "@/lib/robot.functions";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -33,7 +34,7 @@ export const Route = createFileRoute("/estatisticas")({
 
 
 function EstatisticasPage() {
-  const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'palpites' | 'logica-atraso' | 'ranking-completo' | 'logica-grupos' | 'repeticoes'>('quentes');
+  const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'palpites' | 'logica-atraso' | 'ranking-completo' | 'logica-grupos' | 'repeticoes' | 'esquerda-direita'>('quentes');
 
   const [cruzData, setCruzData] = useState<string[]>([]);
   
@@ -64,6 +65,12 @@ function EstatisticasPage() {
     ...live,
   });
 
+
+  const { data: digitStats, isLoading: digitLoading } = useQuery({
+    queryKey: ["digit-delay-stats"],
+    queryFn: () => getDigitDelayStats(),
+    ...live,
+  });
 
   const { data: repetitionStats, isLoading: repetitionLoading } = useQuery({
     queryKey: ["repetition-stats"],
@@ -107,7 +114,7 @@ function EstatisticasPage() {
   };
   const recalculating =
     syncMutation.isPending ||
-    statsLoading || resultsLoading || delayStatsLoading || groupDelayStatsLoading || repetitionLoading;
+    statsLoading || resultsLoading || delayStatsLoading || groupDelayStatsLoading || repetitionLoading || digitLoading;
 
 
 
@@ -336,6 +343,17 @@ function EstatisticasPage() {
                 </div>
                 <h3 className="text-xl font-black italic uppercase mb-2">Repetições</h3>
                 <p className="text-sm text-white/40 font-medium leading-snug">Análise de tendências repetitivas entre concursos e horários.</p>
+             </Card>
+
+             <Card 
+               onClick={() => setActiveTab('esquerda-direita')}
+               className={`bg-[#0D121F] border-white/10 rounded-2xl p-6 transition-all cursor-pointer group ${activeTab === 'esquerda-direita' ? 'border-sky-400/50 ring-1 ring-sky-400/20' : 'hover:border-sky-400/30'}`}
+             >
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'esquerda-direita' ? 'bg-sky-500 text-white' : 'bg-sky-500/10 text-sky-400'}`}>
+                   <ArrowLeftRight className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-black italic uppercase">Esquerda x Direita</h3>
+                <p className="text-sm text-white/40 font-medium leading-snug">Dígitos da dezena mais atrasados que ainda não saíram, por dia e horário.</p>
              </Card>
 
              <Card 
@@ -850,6 +868,17 @@ function EstatisticasPage() {
                       })
                     )}
                   </div>
+                </motion.div>
+              )}
+
+              {activeTab === 'esquerda-direita' && (
+                <motion.div
+                  key="esquerda-direita"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                >
+                  <DezenasEsquerdaDireita data={digitStats as any} loading={digitLoading} />
                 </motion.div>
               )}
 
