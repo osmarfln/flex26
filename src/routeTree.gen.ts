@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as PendenteRouteImport } from './routes/pendente'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedCruzDoDiaRouteImport } from './routes/_authenticated/cruz-do-dia'
@@ -34,6 +35,11 @@ const AuthRoute = AuthRouteImport.update({
 const PendenteRoute = PendenteRouteImport.update({
   id: '/pendente',
   path: '/pendente',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
@@ -89,6 +95,7 @@ export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/auth': typeof AuthRoute
   '/pendente': typeof PendenteRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/cruz-do-dia': typeof AuthenticatedCruzDoDiaRoute
   '/estatisticas': typeof AuthenticatedEstatisticasRoute
@@ -101,6 +108,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/pendente': typeof PendenteRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/cruz-do-dia': typeof AuthenticatedCruzDoDiaRoute
   '/estatisticas': typeof AuthenticatedEstatisticasRoute
@@ -116,6 +124,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/pendente': typeof PendenteRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/cruz-do-dia': typeof AuthenticatedCruzDoDiaRoute
   '/_authenticated/estatisticas': typeof AuthenticatedEstatisticasRoute
@@ -132,6 +141,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/pendente'
+    | '/reset-password'
     | '/admin'
     | '/cruz-do-dia'
     | '/estatisticas'
@@ -144,6 +154,7 @@ export interface FileRouteTypes {
   to:
     | '/auth'
     | '/pendente'
+    | '/reset-password'
     | '/admin'
     | '/cruz-do-dia'
     | '/estatisticas'
@@ -158,6 +169,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/pendente'
+    | '/reset-password'
     | '/_authenticated/admin'
     | '/_authenticated/cruz-do-dia'
     | '/_authenticated/estatisticas'
@@ -173,6 +185,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   PendenteRoute: typeof PendenteRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   ApiPublicSyncResultsRoute: typeof ApiPublicSyncResultsRoute
 }
 
@@ -197,6 +210,13 @@ declare module '@tanstack/react-router' {
       path: '/pendente'
       fullPath: '/pendente'
       preLoaderRoute: typeof PendenteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/': {
@@ -303,6 +323,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   PendenteRoute: PendenteRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   ApiPublicSyncResultsRoute: ApiPublicSyncResultsRoute,
 }
 export const routeTree = rootRouteImport

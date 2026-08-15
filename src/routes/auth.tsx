@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Loader2, Lock, Mail, User } from "lucide-react";
+import { KeyRound, Loader2, Lock, Mail, User } from "lucide-react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -33,7 +33,7 @@ export const Route = createFileRoute("/auth")({
 
 function AuthPage() {
   const navigate = useNavigate();
-  const [mode, setMode] = useState<"login" | "signup">("login");
+  const [mode, setMode] = useState<"login" | "signup" | "forgot">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
@@ -62,7 +62,14 @@ function AuthPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      if (mode === "login") {
+      if (mode === "forgot") {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: `${window.location.origin}/reset-password`,
+        });
+        if (error) throw error;
+        toast.success("Enviamos um link de redefinição para o seu email.");
+        setMode("login");
+      } else if (mode === "login") {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast.success("Acesso liberado");
@@ -119,8 +126,9 @@ function AuthPage() {
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground">Flex Gerenciador</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Área restrita. Acesse com seu login e senha. Novos cadastros só entram após
-            aprovação do administrador.
+            {mode === "forgot"
+              ? "Informe seu email cadastrado e enviaremos um link para criar uma nova senha."
+              : "Área restrita. Acesse com seu login e senha. Novos cadastros só entram após aprovação do administrador."}
           </p>
         </div>
 
@@ -159,6 +167,7 @@ function AuthPage() {
             </div>
           </div>
 
+          {mode !== "forgot" && (
           <div className="space-y-2">
             <Label htmlFor="password">Senha</Label>
             <div className="relative">
@@ -166,7 +175,7 @@ function AuthPage() {
               <Input
                 id="password"
                 type="password"
-                required
+                required={mode !== "forgot"}
                 minLength={6}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -176,10 +185,23 @@ function AuthPage() {
               />
             </div>
           </div>
+          )}
+
+          {mode === "login" && (
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={() => setMode("forgot")}
+                className="flex items-center gap-1.5 text-xs font-medium text-primary underline-offset-4 hover:underline"
+              >
+                <KeyRound className="h-3.5 w-3.5" /> Esqueci minha senha
+              </button>
+            </div>
+          )}
 
           <Button type="submit" className="w-full" disabled={loading}>
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {mode === "login" ? "Entrar" : "Criar conta"}
+            {mode === "login" ? "Entrar" : mode === "signup" ? "Criar conta" : "Enviar link de redefinição"}
           </Button>
         </form>
 
