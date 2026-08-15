@@ -143,26 +143,35 @@ function Delta({ current, previous }: { current: number; previous: number }) {
 
 /** Filtros e busca das Análises: período, horário e tipo, com comparação de períodos. */
 export function AnaliseFiltros() {
-  const today = new Date();
-  const [start, setStart] = useState(iso(today));
-  const [end, setEnd] = useState(iso(today));
+  const todayISO = iso(new Date());
+  const [start, setStart] = useState(todayISO);
+  const [end, setEnd] = useState(todayISO);
   const [times, setTimes] = useState<string[]>([]);
   const [term, setTerm] = useState("");
   const [compare, setCompare] = useState(false);
 
   const fetchRange = useServerFn(getResultsRange);
 
-  const spanDays = useMemo(() => {
-    const ms = new Date(end + "T12:00:00").getTime() - new Date(start + "T12:00:00").getTime();
-    return Math.max(1, Math.round(ms / 86_400_000) + 1);
-  }, [start, end]);
+  // Enquanto o usuário digita, o input pode devolver datas parciais/inválidas.
+  // Só usamos datas válidas nos cálculos e nas consultas.
+  const datesValid = isValidISO(start) && isValidISO(end);
+  const safeStart = datesValid ? (start <= end ? start : end) : todayISO;
+  const safeEnd = datesValid ? (start <= end ? end : start) : todayISO;
 
-  const prevStart = iso(subDays(new Date(start + "T12:00:00"), spanDays));
-  const prevEnd = iso(subDays(new Date(start + "T12:00:00"), 1));
+  const spanDays = useMemo(() => {
+    const ms =
+      new Date(safeEnd + "T12:00:00").getTime() - new Date(safeStart + "T12:00:00").getTime();
+    const days = Math.round(ms / 86_400_000) + 1;
+    return Number.isFinite(days) ? Math.max(1, days) : 1;
+  }, [safeStart, safeEnd]);
+
+  const prevStart = iso(subDays(new Date(safeStart + "T12:00:00"), spanDays));
+  const prevEnd = iso(subDays(new Date(safeStart + "T12:00:00"), 1));
 
   const currentQuery = useQuery({
-    queryKey: ["analise-filtro", start, end, times],
-    queryFn: () => fetchRange({ data: { start, end, timeTypes: times, limit: 2000 } }),
+    queryKey: ["analise-filtro", safeStart, safeEnd, times],
+    queryFn: () =>
+      fetchRange({ data: { start: safeStart, end: safeEnd, timeTypes: times, limit: 2000 } }),
     staleTime: 0,
     gcTime: 0,
   });
@@ -175,6 +184,7 @@ export function AnaliseFiltros() {
     staleTime: 0,
     gcTime: 0,
   });
+
 
   const query = useMemo(() => parseTerm(term), [term]);
   const invalidTerm = term.trim().length > 0 && query.kind === "none";
