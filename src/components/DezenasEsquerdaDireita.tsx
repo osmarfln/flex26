@@ -213,18 +213,19 @@ export function DezenasEsquerdaDireita({ data, loading }: { data?: DigitDelayDat
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <SideBlock
           title="Dezena Esquerda"
-          subtitle="2 primeiras casas do milhar — ex.: 25 em 2570 · top 10 mais atrasadas"
+          subtitle="2 primeiras casas de cada prêmio (1º ao 5º) — top 10 mais atrasadas"
           stats={data.left}
           schedules={data.schedules}
           accent="#EAB308"
         />
         <SideBlock
           title="Dezena Direita"
-          subtitle="2 últimas casas do milhar — ex.: 70 em 2570 · top 10 mais atrasadas"
+          subtitle="2 últimas casas de cada prêmio (1º ao 5º) — top 10 mais atrasadas"
           stats={data.right}
           schedules={data.schedules}
           accent="#38BDF8"
         />
+
       </div>
 
       <Card className="bg-[#0D121F] border-white/10 rounded-2xl p-5">
