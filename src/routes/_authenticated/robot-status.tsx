@@ -3,6 +3,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
+import { RobotHealthPanel } from "@/components/RobotHealthPanel";
+import { AcessoRestrito } from "@/components/AcessoRestrito";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { getSyncStatus } from "@/lib/realtime.functions";
 import { getScheduleSyncMatrix, runSyncNow } from "@/lib/robot.functions";
 import { useLotteryRealtime } from "@/hooks/useLotteryRealtime";
@@ -95,6 +98,7 @@ const CHART_TOOLTIP = {
 };
 
 function RobotStatus() {
+  const { isAdmin, loading: adminLoading } = useIsAdmin();
   useLotteryRealtime("robot-status-db-changes");
   const { data: logs, isLoading, refetch, isError } = useQuery({
     queryKey: ["sync-logs"],
