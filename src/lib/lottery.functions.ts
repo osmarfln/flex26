@@ -3,6 +3,7 @@ import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { ANIMAL_GROUPS_MAP, getGroupFromTen as tenToGroup } from "@/lib/animals";
 import { sortDrawsDesc } from "@/lib/draw-order";
+import { PUXADAS as PUXADAS_TABLE } from "@/lib/puxadas";
 
 
 // Tipos para os resultados
@@ -622,5 +623,116 @@ export const getDigitDelayStats = createServerFn({ method: "GET" })
       schedules,
       period: { start: oldest?.date ?? null, end: newest?.date ?? null },
       daily,
+    };
+  });
+
+
+/**
+ * TABELA DE PUXADAS — mede, a cada horário, quantas vezes o grupo que saiu
+ * no 1º prêmio "puxou" um dos seus grupos associados no sorteio seguinte.
+ */
+export const getPuxadasStats = createServerFn({ method: "GET" })
+  .handler(async () => {
+    const { data: rawRows, error } = await supabase
+      .from("lottery_results")
+      .select("results, date, time_type, time_value")
+      .order("date", { ascending: false })
+      .limit(600);
+
+    if (error) throw error;
+
+    const schedules = ["PPT", "PTM", "PT", "PTV", "PTN", "COR"];
+    const empty = {
+      totalDraws: 0,
+      period: null as { start: string | null; end: string | null } | null,
+      schedules,
+      table: PUXADAS_TABLE.map((p) => ({
+        ...p,
+        occurrences: 0,
+        hits: 0,
+        hitRate: 0,
+        byTarget: [] as any[],
+        bySchedule: [] as any[],
+        lastOccurrence: null as any,
+      })),
+    };
+
+    if (!rawRows || rawRows.length < 2) return empty;
+
+    const desc = sortDrawsDesc(rawRows as any[]);
+    const asc = [...desc].reverse();
+
+    const groupOf = (row: any): string | null => {
+      const prize: string | undefined = row?.results?.[0];
+      if (!prize || prize.length < 2) return null;
+      return tenToGroup(prize.slice(-2)) || null;
+    };
+
+    const table = PUXADAS_TABLE.map((p) => {
+      const targets = p.puxa.map((t) => t.id).filter(Boolean);
+      let occurrences = 0;
+      let hits = 0;
+      const targetCount: Record<string, number> = {};
+      const schedStats: Record<string, { occurrences: number; hits: number }> = {};
+      schedules.forEach((s) => (schedStats[s] = { occurrences: 0, hits: 0 }));
+      let lastOccurrence: any = null;
+
+      for (let i = 0; i < asc.length - 1; i++) {
+        const cur = asc[i];
+        const next = asc[i + 1];
+        if (groupOf(cur) !== p.groupId) continue;
+        occurrences++;
+        const st = String(cur.time_type || "").toUpperCase();
+        if (schedStats[st]) schedStats[st].occurrences++;
+        const nextGroup = groupOf(next);
+        const hit = !!nextGroup && targets.includes(nextGroup);
+        if (hit) {
+          hits++;
+          if (schedStats[st]) schedStats[st].hits++;
+          if (nextGroup) targetCount[nextGroup] = (targetCount[nextGroup] ?? 0) + 1;
+        }
+        lastOccurrence = {
+          date: cur.date,
+          time_type: cur.time_type,
+          time_value: cur.time_value,
+          ten: cur.results?.[0]?.slice(-2) ?? null,
+          nextGroup,
+          nextDate: next.date,
+          nextTime: next.time_type,
+          hit,
+        };
+      }
+
+      return {
+        ...p,
+        occurrences,
+        hits,
+        hitRate: occurrences > 0 ? Number(((hits / occurrences) * 100).toFixed(1)) : 0,
+        byTarget: p.puxa.map((t) => ({
+          id: t.id,
+          name: t.name,
+          icon: t.icon,
+          count: targetCount[t.id] ?? 0,
+        })),
+        bySchedule: schedules.map((s) => ({
+          schedule: s,
+          occurrences: schedStats[s]!.occurrences,
+          hits: schedStats[s]!.hits,
+          rate: schedStats[s]!.occurrences > 0
+            ? Number(((schedStats[s]!.hits / schedStats[s]!.occurrences) * 100).toFixed(1))
+            : 0,
+        })),
+        lastOccurrence,
+      };
+    });
+
+    const oldest = asc[0] as any;
+    const newest = desc[0] as any;
+
+    return {
+      totalDraws: desc.length,
+      period: { start: oldest?.date ?? null, end: newest?.date ?? null },
+      schedules,
+      table,
     };
   });
