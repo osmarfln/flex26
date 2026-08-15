@@ -44,6 +44,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useLotteryRealtime } from "@/hooks/useLotteryRealtime";
+import { useUserFirstName } from "@/hooks/useUserFirstName";
+
 import { brasiliaDateISO } from "@/lib/draw-order";
 
 
