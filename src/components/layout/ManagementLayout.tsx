@@ -165,28 +165,33 @@ export default function ManagementLayout({ children, currentPageName }: LayoutPr
   useEffect(() => {
     const loadUser = async () => {
       try {
-        const userData = await base44.auth.me();
-        
-        if (userData && userData.email === 'flixautomacaosc@gmail.com') {
-          if (userData.nivel !== 'diamante' || userData.status !== 'aprovado') {
-            await base44.auth.updateMe({
-              nivel: 'diamante',
-              status: 'aprovado'
-            });
-            const updatedUser = await base44.auth.me();
-            setUser(updatedUser);
-          } else {
-            setUser(userData);
-          }
-        } else {
-          setUser(userData);
-        }
+        const { data } = await supabase.auth.getUser();
+        const authUser = data.user;
+        if (!authUser) return;
+
+        const [{ data: profile }, { data: adminFlag }] = await Promise.all([
+          supabase.from("profiles").select("display_name, email, status").eq("id", authUser.id).maybeSingle(),
+          supabase.rpc("has_role", { _user_id: authUser.id, _role: "admin" }),
+        ]);
+
+        setUser({
+          email: profile?.email ?? authUser.email,
+          nome: profile?.display_name ?? authUser.email,
+          status: profile?.status ?? "pending",
+          nivel: adminFlag ? "diamante" : "prata",
+          isAdmin: Boolean(adminFlag),
+        });
       } catch (err) {
         console.error(err);
       }
     };
     loadUser();
   }, []);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    window.location.href = "/auth";
+  };
 
   const handleFullscreenToggle = () => {
     if (!document.fullscreenElement) {
