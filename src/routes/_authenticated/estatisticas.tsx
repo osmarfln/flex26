@@ -926,17 +926,20 @@ function EstatisticasPage() {
                             <div className="space-y-4 pt-4 border-t border-white/5 mt-auto">
                               <div>
                                 <span className="text-[7px] font-black text-white/20 uppercase tracking-widest block mb-2">
-                                  Dezenas do Grupo · Freq / Atraso
+                                  Dezenas do Grupo · Freq / Atraso / Histórico
                                 </span>
                                 <div className="grid grid-cols-4 gap-1">
                                   {(item.dezenaStats ?? []).map((d: any) => (
                                     <div
                                       key={d.dezena}
-                                      className="flex flex-col items-center rounded border border-white/5 bg-white/[0.02] py-1"
+                                      className={`flex flex-col items-center rounded border border-white/5 bg-white/[0.02] py-1 px-1 transition-all ${d.hitInFirstPrize && d.delay === 0 ? 'bg-red-500/20 border-red-500/30' : ''}`}
                                     >
-                                      <span className="text-[11px] font-black text-white">{d.dezena}</span>
+                                      <span className={`text-[11px] font-black ${d.hitInFirstPrize && d.delay === 0 ? 'text-red-500' : 'text-white'}`}>{d.dezena}</span>
                                       <span className="text-[7px] font-bold text-emerald-500">{d.freq}x</span>
-                                      <span className="text-[7px] font-bold text-white/30">atr {d.delay}</span>
+                                      <span className={`text-[7px] font-bold ${d.delay === 0 ? 'text-emerald-500' : 'text-white/30'}`}>atr {d.delay}</span>
+                                      <div className="w-full mt-1">
+                                        <MiniSparkline data={d.history} color={d.hitInFirstPrize && d.delay === 0 ? '#EF4444' : colorClass.includes('emerald') ? '#10B981' : colorClass.includes('yellow') ? '#EAB308' : '#3B82F6'} />
+                                      </div>
                                     </div>
                                   ))}
                                 </div>
