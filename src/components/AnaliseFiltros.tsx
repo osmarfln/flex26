@@ -134,11 +134,11 @@ function Delta({ current, previous }: { current: number; previous: number }) {
 /** Filtros e busca das Análises: período, horário e tipo, com comparação de períodos. */
 export function AnaliseFiltros() {
   const today = new Date();
-  const [start, setStart] = useState(iso(subDays(today, 14)));
+  const [start, setStart] = useState(iso(today));
   const [end, setEnd] = useState(iso(today));
   const [times, setTimes] = useState<string[]>([]);
   const [term, setTerm] = useState("");
-  const [compare, setCompare] = useState(true);
+  const [compare, setCompare] = useState(false);
 
   const fetchRange = useServerFn(getResultsRange);
 
@@ -336,9 +336,13 @@ export function AnaliseFiltros() {
             </span>
           ) : query.kind !== "none" ? (
             <span className="text-[10px] font-bold uppercase tracking-widest text-primary">
-              Filtrando por {query.label} — todas as posições (1º ao 5º), 1º prêmio em vermelho
+              Filtrando por {query.label} — todas as posições (1º ao 5º)
             </span>
-          ) : null}
+          ) : (
+            <span className="text-[10px] font-bold uppercase tracking-widest text-white/20">
+              Dados zerados — ative a busca para processar os resultados
+            </span>
+          )}
         </label>
       </div>
 
@@ -385,6 +389,16 @@ export function AnaliseFiltros() {
       {loading ? (
         <div className="mt-6 flex items-center gap-2 text-sm font-bold text-white/50">
           <Loader2 className="h-4 w-4 animate-spin" /> Carregando resultados do período...
+        </div>
+      ) : query.kind === "none" && times.length === 0 ? (
+        <div className="mt-12 flex flex-col items-center justify-center rounded-3xl border border-dashed border-white/10 py-20 text-center">
+          <div className="mb-4 rounded-full bg-white/5 p-4">
+            <Search className="h-8 w-8 text-white/20" />
+          </div>
+          <h3 className="text-lg font-black uppercase italic text-white/60">Análise aguardando</h3>
+          <p className="max-w-xs text-xs font-medium text-white/30">
+            Digite uma dezena, centena, milhar ou bicho na busca acima para visualizar as estatísticas e resultados.
+          </p>
         </div>
       ) : (
         <>
