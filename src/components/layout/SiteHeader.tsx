@@ -1,5 +1,8 @@
-import { Link, useRouterState } from "@tanstack/react-router";
-import { Sparkles, Users, History, Activity, BarChart3, ArrowLeft } from "lucide-react";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
+import { Sparkles, Users, History, Activity, BarChart3, ArrowLeft, LogOut } from "lucide-react";
+
+import { supabase } from "@/integrations/supabase/client";
 
 const navItems = [
   { to: "/", label: "Início", icon: Users },
@@ -15,6 +18,15 @@ interface SiteHeaderProps {
 
 export function SiteHeader({ subtitle = "VEM COM A GENTE", showBack = false }: SiteHeaderProps) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  async function handleSignOut() {
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    await supabase.auth.signOut();
+    navigate({ to: "/auth", replace: true });
+  }
 
   return (
     <header className="border-b border-white/5 bg-background/60 backdrop-blur-2xl sticky top-0 z-50">
@@ -43,12 +55,22 @@ export function SiteHeader({ subtitle = "VEM COM A GENTE", showBack = false }: S
             </Link>
           </div>
 
-          <Link
-            to="/portal"
-            className="shrink-0 text-[10px] md:hidden font-bold text-white/40 hover:text-white transition-colors"
-          >
-            Portal
-          </Link>
+          <div className="flex shrink-0 items-center gap-3 md:hidden">
+            <Link
+              to="/portal"
+              className="text-[10px] font-bold text-white/40 hover:text-white transition-colors"
+            >
+              Portal
+            </Link>
+            <button
+              type="button"
+              onClick={handleSignOut}
+              aria-label="Sair"
+              className="rounded-lg border border-white/10 bg-white/5 p-1.5 text-white/50 transition-colors hover:text-white"
+            >
+              <LogOut className="h-3.5 w-3.5" />
+            </button>
+          </div>
         </div>
 
         <nav className="-mx-3 flex items-center gap-3 overflow-x-auto no-scrollbar px-3 pb-1 md:mx-0 md:gap-8 md:px-0 md:pb-0">
@@ -70,12 +92,21 @@ export function SiteHeader({ subtitle = "VEM COM A GENTE", showBack = false }: S
           })}
         </nav>
 
-        <Link
-          to="/portal"
-          className="hidden md:block ml-auto text-xs font-bold text-white/40 hover:text-white transition-colors"
-        >
-          Portal
-        </Link>
+        <div className="hidden md:flex ml-auto items-center gap-4">
+          <Link
+            to="/portal"
+            className="text-xs font-bold text-white/40 hover:text-white transition-colors"
+          >
+            Portal
+          </Link>
+          <button
+            type="button"
+            onClick={handleSignOut}
+            className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-bold text-white/50 transition-colors hover:bg-white/10 hover:text-white"
+          >
+            <LogOut className="h-3.5 w-3.5" /> Sair
+          </button>
+        </div>
       </div>
     </header>
   );
