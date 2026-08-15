@@ -40,7 +40,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 
 const navigationItems = [
@@ -165,28 +165,33 @@ export default function ManagementLayout({ children, currentPageName }: LayoutPr
   useEffect(() => {
     const loadUser = async () => {
       try {
-        const userData = await base44.auth.me();
-        
-        if (userData && userData.email === 'flixautomacaosc@gmail.com') {
-          if (userData.nivel !== 'diamante' || userData.status !== 'aprovado') {
-            await base44.auth.updateMe({
-              nivel: 'diamante',
-              status: 'aprovado'
-            });
-            const updatedUser = await base44.auth.me();
-            setUser(updatedUser);
-          } else {
-            setUser(userData);
-          }
-        } else {
-          setUser(userData);
-        }
+        const { data } = await supabase.auth.getUser();
+        const authUser = data.user;
+        if (!authUser) return;
+
+        const [{ data: profile }, { data: adminFlag }] = await Promise.all([
+          supabase.from("profiles").select("display_name, email, status").eq("id", authUser.id).maybeSingle(),
+          supabase.rpc("has_role", { _user_id: authUser.id, _role: "admin" }),
+        ]);
+
+        setUser({
+          email: profile?.email ?? authUser.email,
+          nome: profile?.display_name ?? authUser.email,
+          status: profile?.status ?? "pending",
+          nivel: adminFlag ? "diamante" : "prata",
+          isAdmin: Boolean(adminFlag),
+        });
       } catch (err) {
         console.error(err);
       }
     };
     loadUser();
   }, []);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    window.location.href = "/auth";
+  };
 
   const handleFullscreenToggle = () => {
     if (!document.fullscreenElement) {
@@ -221,7 +226,7 @@ export default function ManagementLayout({ children, currentPageName }: LayoutPr
               </SheetTrigger>
               <SheetContent side="left" className="w-72">
                 <nav className="flex flex-col gap-4 mt-8">
-                  {navigationItems.map((item) => (
+                  {navigationItems.filter(i => !i.diamanteOnly || user?.isAdmin).map((item) => (
                     <Link
                       key={item.url}
                       to={item.url as any}
@@ -241,7 +246,7 @@ export default function ManagementLayout({ children, currentPageName }: LayoutPr
           </div>
 
           <div className="hidden md:flex items-center gap-6">
-            {navigationItems.filter(i => !i.diamanteOnly || user?.nivel === 'diamante').map((item) => (
+            {navigationItems.filter(i => !i.diamanteOnly || user?.isAdmin).map((item) => (
               <Link
                 key={item.url}
                 to={item.url as any}
@@ -269,7 +274,7 @@ export default function ManagementLayout({ children, currentPageName }: LayoutPr
                 <DropdownMenuItem>Perfil</DropdownMenuItem>
                 <DropdownMenuItem>Configurações</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-destructive">
+                <DropdownMenuItem className="text-destructive" onClick={handleSignOut}>
                   <LogOut className="mr-2 h-4 w-4" />
                   Sair
                 </DropdownMenuItem>
