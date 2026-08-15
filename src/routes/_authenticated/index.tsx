@@ -229,8 +229,13 @@ function Index() {
                 <GreetingIcon className="w-8 h-8 text-primary shadow-[0_0_15px_rgba(var(--primary),0.2)]" />
               </div>
               <div>
-                <h2 className="text-2xl font-black italic tracking-tighter uppercase leading-none">{greeting.text}!</h2>
-                <p className="text-white/40 font-bold text-xs uppercase tracking-widest mt-1">Seja bem vindo ao nosso espaço fique a vontade</p>
+                <h2 className="text-2xl font-black italic tracking-tighter uppercase leading-none">
+                  {greeting.text}{firstName ? `, ${firstName}` : ""}!
+                </h2>
+                <p className="text-white/40 font-bold text-xs uppercase tracking-widest mt-1">
+                  {firstName ? `É um prazer ter você aqui, ${firstName}. Fique à vontade.` : "Seja bem-vindo ao nosso espaço, fique à vontade."}
+                </p>
+
               </div>
             </motion.div>
 
