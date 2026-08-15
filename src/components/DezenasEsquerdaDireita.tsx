@@ -199,9 +199,10 @@ export function DezenasEsquerdaDireita({ data, loading }: { data?: DigitDelayDat
           <div>
             <h2 className="text-2xl font-black italic uppercase">Dezena Esquerda x Direita</h2>
             <p className="text-xs text-white/40 font-medium">
-              DEZENA = 2 casas (ex.: 25). Um número sozinho (5) é unidade. O milhar do 1º prêmio é lido com 4 casas
-              (ex.: 0570) e dividido em dezena esquerda (05) e dezena direita (70). O zero nunca é cortado.
+              Monitora do 1º ao 5º prêmio. Cada prêmio é lido com 4 casas (ex.: 0570) e dividido em dezena esquerda (05)
+              e dezena direita (70). Se a dezena sair em qualquer posição, o atraso zera e ela sai da lista de atrasadas.
             </p>
+
           </div>
         </div>
         <div className="text-[10px] font-bold text-white/30 uppercase tracking-widest bg-white/5 px-4 py-2 rounded-full border border-white/10">
