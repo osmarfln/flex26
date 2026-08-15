@@ -899,6 +899,25 @@ function EstatisticasPage() {
 
                             <div className="space-y-4 pt-4 border-t border-white/5 mt-auto">
                               <div>
+                                <span className="text-[7px] font-black text-white/20 uppercase tracking-widest block mb-2">
+                                  Dezenas do Grupo · Freq / Atraso
+                                </span>
+                                <div className="grid grid-cols-4 gap-1">
+                                  {(item.dezenaStats ?? []).map((d: any) => (
+                                    <div
+                                      key={d.dezena}
+                                      className="flex flex-col items-center rounded border border-white/5 bg-white/[0.02] py-1"
+                                    >
+                                      <span className="text-[11px] font-black text-white">{d.dezena}</span>
+                                      <span className="text-[7px] font-bold text-emerald-500">{d.freq}x</span>
+                                      <span className="text-[7px] font-bold text-white/30">atr {d.delay}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+
+                              <div>
+
                                 <span className="text-[7px] font-black text-white/20 uppercase tracking-widest block mb-2">Frequência Multi-Período</span>
                                 <div className="flex justify-between gap-1">
                                   {[10, 30, 50, 100, 300].map(n => (
