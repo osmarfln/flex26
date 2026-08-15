@@ -487,10 +487,19 @@ function EstatisticasPage() {
                     ) : (
                       hottestTens.slice(0, 20).map((item: any, i: number) => {
                         const animal = getAnimalByTen(item.ten);
+                        const isHitNow = item.hitInFirstPrize && item.currentDelay === 0;
                         return (
-                          <Card key={i} className="dashboard-card p-4 text-center hover:border-primary/50 transition-all bg-white/[0.03]">
-                            <span className="text-4xl font-black text-primary mb-2 block drop-shadow-[0_0_10px_rgba(var(--primary),0.3)]">{item.ten}</span>
-                            <p className="text-xs font-bold uppercase text-white/40">{item.freqs[300]} sorteios (300)</p>
+                          <Card key={i} className={`dashboard-card p-4 text-center hover:border-primary/50 transition-all bg-white/[0.03] group ${isHitNow ? 'border-red-500/50 bg-red-500/5 ring-1 ring-red-500/20' : ''}`}>
+                            {isHitNow && (
+                              <div className="absolute top-0 right-0 p-1 bg-red-500 text-white text-[6px] font-black px-1.5 uppercase z-10">1º Prêmio</div>
+                            )}
+                            <span className={`text-4xl font-black mb-2 block drop-shadow-[0_0_10px_rgba(var(--primary),0.3)] ${isHitNow ? 'text-red-500' : 'text-primary'}`}>{item.ten}</span>
+                            <div className="space-y-1">
+                              <p className="text-xs font-bold uppercase text-white/40">{item.freqs[300]} sorteios (300)</p>
+                              <div className="h-4 w-full px-2">
+                                <MiniSparkline data={item.history} color={isHitNow ? '#EF4444' : '#EAB308'} />
+                              </div>
+                            </div>
                             <div className="mt-2 flex items-center justify-center gap-2">
                               <span className="text-lg">{animal?.icon}</span>
                               <span className="text-[10px] font-black uppercase text-white/60">{animal?.name}</span>
