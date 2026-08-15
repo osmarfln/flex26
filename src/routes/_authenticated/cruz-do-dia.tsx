@@ -27,7 +27,7 @@ function CruzDoDiaPage() {
           </div>
 
           <div className="flex items-center gap-4">
-            <Link to="/portal" className="text-xs font-bold text-white/40 hover:text-white transition-colors">Portal</Link>
+            <UserMenu />
           </div>
         </div>
       </header>

@@ -83,28 +83,7 @@ export function SiteHeader({ subtitle = "VEM COM A GENTE", showBack = false }: S
           </div>
 
           <div className="flex shrink-0 items-center gap-3 md:hidden">
-            {isAdmin && (
-              <Link
-                to="/admin"
-                className="flex items-center gap-1 text-[10px] font-bold text-primary hover:text-primary/80 transition-colors"
-              >
-                <ShieldCheck className="h-3.5 w-3.5" /> Admin
-              </Link>
-            )}
-            <Link
-              to="/portal"
-              className="text-[10px] font-bold text-white/40 hover:text-white transition-colors"
-            >
-              Portal
-            </Link>
-            <button
-              type="button"
-              onClick={handleSignOut}
-              aria-label="Sair"
-              className="rounded-lg border border-white/10 bg-white/5 p-1.5 text-white/50 transition-colors hover:text-white"
-            >
-              <LogOut className="h-3.5 w-3.5" />
-            </button>
+            <UserMenu />
           </div>
         </div>
 
@@ -128,27 +107,7 @@ export function SiteHeader({ subtitle = "VEM COM A GENTE", showBack = false }: S
         </nav>
 
         <div className="hidden md:flex ml-auto items-center gap-4">
-          {isAdmin && (
-            <Link
-              to="/admin"
-              className="flex items-center gap-1.5 text-xs font-bold text-primary hover:text-primary/80 transition-colors"
-            >
-              <ShieldCheck className="h-3.5 w-3.5" /> Admin
-            </Link>
-          )}
-          <Link
-            to="/portal"
-            className="text-xs font-bold text-white/40 hover:text-white transition-colors"
-          >
-            Portal
-          </Link>
-          <button
-            type="button"
-            onClick={handleSignOut}
-            className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-bold text-white/50 transition-colors hover:bg-white/10 hover:text-white"
-          >
-            <LogOut className="h-3.5 w-3.5" /> Sair
-          </button>
+          <UserMenu />
         </div>
       </div>
     </header>
