@@ -343,7 +343,49 @@ export function AnaliseFiltros() {
         </div>
       ) : (
         <>
+          {focus && (
+            <div className="mt-6 rounded-2xl border border-primary/25 bg-primary/[0.06] p-4">
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="text-3xl">{focus.animal.icon}</span>
+                <div>
+                  <p className="text-sm font-black uppercase tracking-tight">
+                    Grupo {focus.animal.id} · {focus.animal.name}
+                  </p>
+                  <p className="text-[11px] font-bold uppercase tracking-widest text-white/50">
+                    {focus.total} sorteios do bicho no período
+                    {focus.topTime ? ` · horário mais forte: ${focus.topTime.time} (${focus.topTime.count}x)` : ""}
+                  </p>
+                </div>
+                {focus.top && (
+                  <div className="ml-auto rounded-xl border border-primary/30 bg-primary/10 px-3 py-2 text-right">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-white/50">
+                      Dezena destaque do bicho
+                    </p>
+                    <p className="text-xl font-black text-primary">
+                      {focus.top.dezena} · {focus.top.count}x
+                    </p>
+                  </div>
+                )}
+              </div>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {focus.ranking.map((d) => (
+                  <span
+                    key={d.dezena}
+                    className={`rounded-lg border px-2.5 py-1 text-[11px] font-black ${
+                      focus.top && d.dezena === focus.top.dezena
+                        ? "border-primary/50 bg-primary/15 text-primary"
+                        : "border-white/10 bg-white/5 text-white/60"
+                    }`}
+                  >
+                    {d.dezena} · {d.count}x
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+
             <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
               <p className="text-[10px] font-black uppercase tracking-widest text-white/40">Sorteios</p>
               <p className="text-2xl font-black">{cur.total}</p>
