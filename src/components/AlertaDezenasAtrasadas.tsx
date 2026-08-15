@@ -135,22 +135,29 @@ export function AlertaDezenasAtrasadas({ data, loading }: { data?: DigitDelayDat
                   </div>
                 </div>
 
-                <div className="flex items-start gap-2 text-[11px] text-white/50">
-                  <CalendarClock className="w-3.5 h-3.5 mt-0.5 shrink-0" />
-                  <span>
-                    Dezenas sem aparecer na semana ({weekly.days} dias · {fmt(weekly.start)} a {fmt(weekly.end)}):{" "}
-                    {missing.length > 0 ? (
-                      <>
-                        <b className="text-red-300 font-mono">{missing.slice(0, 12).join(" · ")}</b>
-                        {missing.length > 12 && (
-                          <span className="text-white/35"> +{missing.length - 12} dezenas</span>
-                        )}
-                      </>
-                    ) : (
-                      <b className="text-emerald-300">todas as dezenas já saíram</b>
-                    )}
-                  </span>
+                <div className="space-y-1.5">
+                  <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest font-bold text-white/40">
+                    <CalendarClock className="w-3.5 h-3.5" />
+                    Top 5 dezenas mais atrasadas
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {(data[side] ?? []).slice(0, 5).map((s, i) => (
+                      <span
+                        key={s.digit}
+                        className="inline-flex items-center gap-1 rounded-lg border px-2 py-1 font-mono text-[11px] font-bold"
+                        style={{
+                          borderColor: i === 0 ? accent : "rgba(255,255,255,0.12)",
+                          color: i === 0 ? accent : "rgba(255,255,255,0.7)",
+                          background: i === 0 ? `${accent}1A` : "rgba(255,255,255,0.03)",
+                        }}
+                      >
+                        {s.digit}
+                        <span className="text-white/40 font-medium">{s.currentDelay}x</span>
+                      </span>
+                    ))}
+                  </div>
                 </div>
+
 
                 {stat.relativeIndex >= 1.25 && (
                   <div className="flex items-center gap-2 rounded-lg border border-red-400/30 bg-red-500/10 px-3 py-2 text-[11px] font-bold text-red-300">
