@@ -134,11 +134,11 @@ function Delta({ current, previous }: { current: number; previous: number }) {
 /** Filtros e busca das Análises: período, horário e tipo, com comparação de períodos. */
 export function AnaliseFiltros() {
   const today = new Date();
-  const [start, setStart] = useState(iso(subDays(today, 14)));
+  const [start, setStart] = useState(iso(today));
   const [end, setEnd] = useState(iso(today));
   const [times, setTimes] = useState<string[]>([]);
   const [term, setTerm] = useState("");
-  const [compare, setCompare] = useState(true);
+  const [compare, setCompare] = useState(false);
 
   const fetchRange = useServerFn(getResultsRange);
 
