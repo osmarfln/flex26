@@ -71,11 +71,19 @@ export const Route = createFileRoute("/_authenticated/")({
 
 
 function getGreeting() {
-  const hour = new Date().getHours();
+  const hour = Number(
+    new Intl.DateTimeFormat("pt-BR", {
+      timeZone: "America/Sao_Paulo",
+      hour: "2-digit",
+      hour12: false,
+    }).format(new Date()),
+  );
+  if (hour < 5) return { text: "Boa madrugada", icon: Moon };
   if (hour < 12) return { text: "Bom dia", icon: Coffee };
   if (hour < 18) return { text: "Boa tarde", icon: Sun };
   return { text: "Boa noite", icon: Moon };
 }
+
 
 function Index() {
   // Estado inicial estável para evitar divergência entre servidor e navegador
