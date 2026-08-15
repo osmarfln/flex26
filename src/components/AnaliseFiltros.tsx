@@ -386,6 +386,16 @@ export function AnaliseFiltros() {
         <div className="mt-6 flex items-center gap-2 text-sm font-bold text-white/50">
           <Loader2 className="h-4 w-4 animate-spin" /> Carregando resultados do período...
         </div>
+      ) : query.kind === "none" && times.length === 0 ? (
+        <div className="mt-12 flex flex-col items-center justify-center rounded-3xl border border-dashed border-white/10 py-20 text-center">
+          <div className="mb-4 rounded-full bg-white/5 p-4">
+            <Search className="h-8 w-8 text-white/20" />
+          </div>
+          <h3 className="text-lg font-black uppercase italic text-white/60">Análise aguardando</h3>
+          <p className="max-w-xs text-xs font-medium text-white/30">
+            Digite uma dezena, centena, milhar ou bicho na busca acima para visualizar as estatísticas e resultados.
+          </p>
+        </div>
       ) : (
         <>
           {focus && (
