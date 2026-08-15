@@ -188,25 +188,41 @@ export const getTenDelayStats = createServerFn({ method: "GET" })
       let currentDelay = -1;
       const intervals: number[] = [];
       let lastIndex = -1;
+      let hitInFirstPrize = false;
+      const sparklineData: number[] = [];
       
-      const freq10 = current300.slice(0, 10).filter(r => r.results?.[0]?.slice(-2) === ten).length;
-      const freq30 = current300.slice(0, 30).filter(r => r.results?.[0]?.slice(-2) === ten).length;
-      const freq50 = current300.slice(0, 50).filter(r => r.results?.[0]?.slice(-2) === ten).length;
-      const freq100 = current300.slice(0, 100).filter(r => r.results?.[0]?.slice(-2) === ten).length;
-      const freq300 = current300.filter(r => r.results?.[0]?.slice(-2) === ten).length;
+      const freq10 = current300.slice(0, 10).filter(r => r.results?.slice(0, 5).some(p => p.slice(-2) === ten)).length;
+      const freq30 = current300.slice(0, 30).filter(r => r.results?.slice(0, 5).some(p => p.slice(-2) === ten)).length;
+      const freq50 = current300.slice(0, 50).filter(r => r.results?.slice(0, 5).some(p => p.slice(-2) === ten)).length;
+      const freq100 = current300.slice(0, 100).filter(r => r.results?.slice(0, 5).some(p => p.slice(-2) === ten)).length;
+      const freq300 = current300.filter(r => r.results?.slice(0, 5).some(p => p.slice(-2) === ten)).length;
       
-      const prevFreq300 = previous300.filter(r => r.results?.[0]?.slice(-2) === ten).length;
+      const prevFreq300 = previous300.filter(r => r.results?.slice(0, 5).some(p => p.slice(-2) === ten)).length;
       const periodComparison = prevFreq300 > 0 ? ((freq300 - prevFreq300) / prevFreq300) * 100 : (freq300 > 0 ? 100 : 0);
 
       results.forEach((res, index) => {
-        const firstPrize = res.results?.[0];
-        const drawnTen = firstPrize?.slice(-2);
-        if (drawnTen === ten) {
-          if (currentDelay === -1) currentDelay = index;
+        const hit = res.results?.slice(0, 5).some(p => p?.slice(-2) === ten);
+        const firstPrizeHit = res.results?.[0]?.slice(-2) === ten;
+
+        if (hit) {
+          if (currentDelay === -1) {
+            currentDelay = index;
+            if (firstPrizeHit && index === 0) hitInFirstPrize = true;
+          }
           if (lastIndex !== -1) intervals.push(index - lastIndex);
           lastIndex = index;
         }
       });
+
+      // Simplified history for sparkline (last 30 draws)
+      let tempDelay = 0;
+      for (let j = 29; j >= 0; j--) {
+        const res = results[j];
+        const hit = res?.results?.slice(0, 5).some((p: string) => p?.slice(-2) === ten);
+        if (hit) tempDelay = 0;
+        else tempDelay++;
+        sparklineData.push(tempDelay);
+      }
 
       if (currentDelay === -1) currentDelay = 500;
       const avgDelay = intervals.length > 0 ? intervals.reduce((a, b) => a + b, 0) / intervals.length : 100;
