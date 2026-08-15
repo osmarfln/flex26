@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as PendenteRouteImport } from './routes/pendente'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedCruzDoDiaRouteImport } from './routes/_authenticated/cruz-do-dia'
 import { Route as AuthenticatedEstatisticasRouteImport } from './routes/_authenticated/estatisticas'
@@ -27,6 +28,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PendenteRoute = PendenteRouteImport.update({
+  id: '/pendente',
+  path: '/pendente',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
@@ -76,6 +82,7 @@ const ApiPublicSyncResultsRoute = ApiPublicSyncResultsRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/auth': typeof AuthRoute
+  '/pendente': typeof PendenteRoute
   '/cruz-do-dia': typeof AuthenticatedCruzDoDiaRoute
   '/estatisticas': typeof AuthenticatedEstatisticasRoute
   '/historico': typeof AuthenticatedHistoricoRoute
@@ -86,6 +93,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
+  '/pendente': typeof PendenteRoute
   '/cruz-do-dia': typeof AuthenticatedCruzDoDiaRoute
   '/estatisticas': typeof AuthenticatedEstatisticasRoute
   '/historico': typeof AuthenticatedHistoricoRoute
@@ -99,6 +107,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/pendente': typeof PendenteRoute
   '/_authenticated/cruz-do-dia': typeof AuthenticatedCruzDoDiaRoute
   '/_authenticated/estatisticas': typeof AuthenticatedEstatisticasRoute
   '/_authenticated/historico': typeof AuthenticatedHistoricoRoute
@@ -113,6 +122,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/pendente'
     | '/cruz-do-dia'
     | '/estatisticas'
     | '/historico'
@@ -123,6 +133,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/auth'
+    | '/pendente'
     | '/cruz-do-dia'
     | '/estatisticas'
     | '/historico'
@@ -135,6 +146,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_authenticated'
     | '/auth'
+    | '/pendente'
     | '/_authenticated/cruz-do-dia'
     | '/_authenticated/estatisticas'
     | '/_authenticated/historico'
@@ -148,6 +160,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  PendenteRoute: typeof PendenteRoute
   ApiPublicSyncResultsRoute: typeof ApiPublicSyncResultsRoute
 }
 
@@ -165,6 +178,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pendente': {
+      id: '/pendente'
+      path: '/pendente'
+      fullPath: '/pendente'
+      preLoaderRoute: typeof PendenteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/': {
@@ -261,6 +281,7 @@ const AuthenticatedRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  PendenteRoute: PendenteRoute,
   ApiPublicSyncResultsRoute: ApiPublicSyncResultsRoute,
 }
 export const routeTree = rootRouteImport
