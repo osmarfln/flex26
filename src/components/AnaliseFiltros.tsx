@@ -15,7 +15,7 @@ import {
 
 import { getResultsRange, type LotteryResult } from "@/lib/lottery.functions";
 import { DRAW_SCHEDULE } from "@/lib/draw-order";
-import { getAnimalByTen } from "@/lib/animals";
+import { ANIMAL_GROUPS, ANIMAL_GROUPS_MAP, getAnimalByTen, getGroupFromTen } from "@/lib/animals";
 
 const CHART_TOOLTIP = {
   contentStyle: {
@@ -31,15 +31,57 @@ function iso(d: Date) {
   return format(d, "yyyy-MM-dd");
 }
 
-function matchesTerm(r: LotteryResult, term: string) {
-  if (!term) return true;
-  const t = term.trim().toLowerCase();
-  if (!t) return true;
-  const animal = (r.animal ?? "").toLowerCase();
-  const group = (r.animal_group ?? "").toLowerCase();
-  const prizes = (r.results ?? []).join(" ").toLowerCase();
-  return animal.includes(t) || group.includes(t) || prizes.includes(t) || r.time_type.toLowerCase().includes(t);
+type SearchQuery =
+  | { kind: "none" }
+  | { kind: "dezena" | "centena" | "milhar"; value: string; label: string }
+  | { kind: "grupo"; value: string; label: string };
+
+/** Interpreta o termo digitado: 2 dígitos = dezena, 3 = centena, 4 = milhar, texto = bicho/grupo. */
+function parseTerm(raw: string): SearchQuery {
+  const t = raw.trim().toLowerCase();
+  if (!t) return { kind: "none" };
+
+  const groupWord = /^(grupo|bicho)\s*(.+)$/.exec(t);
+  const core = groupWord ? (groupWord[2] ?? "").trim() : t;
+  const digits = core.replace(/\D/g, "");
+
+  if (digits && digits.length === core.length) {
+    if (groupWord || digits.length === 1) {
+      const n = parseInt(digits, 10);
+      if (n >= 1 && n <= 25) {
+        const id = String(n).padStart(2, "0");
+        const animal = ANIMAL_GROUPS_MAP[id];
+        return { kind: "grupo", value: id, label: `Grupo ${id} · ${animal?.name ?? ""}` };
+      }
+    }
+    if (digits.length === 2) return { kind: "dezena", value: digits, label: `Dezena ${digits}` };
+    if (digits.length === 3) return { kind: "centena", value: digits, label: `Centena ${digits}` };
+    if (digits.length >= 4) {
+      const v = digits.slice(-4);
+      return { kind: "milhar", value: v, label: `Milhar ${v}` };
+    }
+    return { kind: "none" };
+  }
+
+  const norm = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const animal = ANIMAL_GROUPS.find((a) => norm(a.name.toLowerCase()).startsWith(norm(core)));
+  if (animal) return { kind: "grupo", value: animal.id, label: `Grupo ${animal.id} · ${animal.name}` };
+
+  return { kind: "none" };
 }
+
+/** Filtra pelo 1º prêmio, sempre relacionado ao número/grupo pesquisado. */
+function matchesQuery(r: LotteryResult, q: SearchQuery) {
+  if (q.kind === "none") return true;
+  const prize = (r.results?.[0] ?? "").replace(/\D/g, "");
+  if (!prize) return false;
+  const ten = prize.slice(-2).padStart(2, "0");
+  if (q.kind === "dezena") return ten === q.value;
+  if (q.kind === "centena") return prize.slice(-3).padStart(3, "0") === q.value;
+  if (q.kind === "milhar") return prize.slice(-4).padStart(4, "0") === q.value;
+  return getGroupFromTen(ten) === q.value;
+}
+
 
 function summarize(rows: LotteryResult[]) {
   const tenCounts: Record<string, number> = {};
