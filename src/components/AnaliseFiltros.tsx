@@ -70,17 +70,28 @@ function parseTerm(raw: string): SearchQuery {
   return { kind: "none" };
 }
 
-/** Filtra pelo 1º prêmio, sempre relacionado ao número/grupo pesquisado. */
-function matchesQuery(r: LotteryResult, q: SearchQuery) {
-  if (q.kind === "none") return true;
-  const prize = (r.results?.[0] ?? "").replace(/\D/g, "");
-  if (!prize) return false;
-  const ten = prize.slice(-2).padStart(2, "0");
-  if (q.kind === "dezena") return ten === q.value;
-  if (q.kind === "centena") return prize.slice(-3).padStart(3, "0") === q.value;
-  if (q.kind === "milhar") return prize.slice(-4).padStart(4, "0") === q.value;
-  return getGroupFromTen(ten) === q.value;
+/** Retorna as posições (1º ao 5º) em que o termo pesquisado apareceu. */
+function matchPositions(r: LotteryResult, q: SearchQuery): number[] {
+  const prizes = (r.results ?? []).slice(0, 5);
+  if (q.kind === "none") return [];
+  const hits: number[] = [];
+  prizes.forEach((raw, i) => {
+    const prize = (raw ?? "").replace(/\D/g, "");
+    if (!prize) return;
+    const ten = prize.slice(-2).padStart(2, "0");
+    const ok =
+      q.kind === "dezena"
+        ? ten === q.value
+        : q.kind === "centena"
+          ? prize.slice(-3).padStart(3, "0") === q.value
+          : q.kind === "milhar"
+            ? prize.slice(-4).padStart(4, "0") === q.value
+            : getGroupFromTen(ten) === q.value;
+    if (ok) hits.push(i + 1);
+  });
+  return hits;
 }
+
 
 
 function summarize(rows: LotteryResult[]) {
