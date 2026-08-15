@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
 import { getStats, getResults, getTenDelayStats, getGroupDelayStats, getRepetitionStats, getDigitDelayStats, getPuxadasStats } from "@/lib/lottery.functions";
 import { DezenasEsquerdaDireita } from "@/components/DezenasEsquerdaDireita";
+import { AlertaDezenasAtrasadas } from "@/components/AlertaDezenasAtrasadas";
 import { PuxadasPanel } from "@/components/PuxadasPanel";
 import { runSyncNow } from "@/lib/robot.functions";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -949,7 +950,10 @@ function EstatisticasPage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
                 >
-                  <DezenasEsquerdaDireita data={digitStats as any} loading={digitLoading} />
+                  <div className="space-y-8">
+                    <AlertaDezenasAtrasadas data={digitStats as any} loading={digitLoading} />
+                    <DezenasEsquerdaDireita data={digitStats as any} loading={digitLoading} />
+                  </div>
                 </motion.div>
               )}
 

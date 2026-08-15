@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ANIMAL_GROUPS } from "@/lib/animals";
-import { getResults, getTenDelayStats, getGroupDelayStats } from "@/lib/lottery.functions";
+import { getResults, getTenDelayStats, getGroupDelayStats, getDigitDelayStats } from "@/lib/lottery.functions";
+import { AlertaDezenasAtrasadas } from "@/components/AlertaDezenasAtrasadas";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -105,6 +106,13 @@ function Index() {
     queryKey: ["homepage-ten-stats"],
     queryFn: () => getTenDelayStats(),
   });
+
+  const { data: digitStats, isLoading: digitLoading } = useQuery({
+    queryKey: ["homepage-digit-stats"],
+    queryFn: () => getDigitDelayStats(),
+    staleTime: 0,
+  });
+
 
 
 
@@ -373,6 +381,12 @@ function Index() {
             </div>
 
           </div>
+
+          <div className="mb-12">
+            <AlertaDezenasAtrasadas data={digitStats as any} loading={digitLoading} />
+          </div>
+
+
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             <Card className="bg-[#0D121F] border-white/10 rounded-2xl overflow-hidden group hover:border-yellow-500/30 transition-all">
