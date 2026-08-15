@@ -35,6 +35,27 @@ export const Route = createFileRoute("/_authenticated/estatisticas")({
   component: EstatisticasPage,
 });
 
+// Simple Sparkline Component for dezenas history
+const MiniSparkline = ({ data, color = "#EAB308" }: { data: number[], color?: string }) => {
+  if (!data || data.length === 0) return null;
+  const chartData = data.map((val, i) => ({ val, i }));
+  return (
+    <div className="h-6 w-full opacity-40 group-hover:opacity-100 transition-opacity">
+      <ResponsiveContainer width="100%" height="100%">
+        <AreaChart data={chartData}>
+          <Area 
+            type="monotone" 
+            dataKey="val" 
+            stroke={color} 
+            fill={`${color}10`} 
+            strokeWidth={1.5}
+            isAnimationActive={false}
+          />
+        </AreaChart>
+      </ResponsiveContainer>
+    </div>
+  );
+};
 
 function EstatisticasPage() {
   const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'palpites' | 'logica-atraso' | 'ranking-completo' | 'logica-grupos' | 'repeticoes' | 'esquerda-direita' | 'puxadas'>('quentes');
