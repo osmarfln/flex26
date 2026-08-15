@@ -264,14 +264,14 @@ export function AnaliseFiltros() {
         </label>
         <label className="flex flex-col gap-1.5 md:col-span-2">
           <span className="text-[10px] font-black uppercase tracking-widest text-white/40">
-            Buscar por tipo, dezena, grupo ou bicho
+            Buscar por dezena (2), centena (3), milhar (4), grupo ou bicho
           </span>
           <span className="relative">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/30" />
             <input
               value={term}
               onChange={(e) => setTerm(e.target.value)}
-              placeholder="Ex.: 25, Vaca, PTN..."
+              placeholder="Ex.: 45, 345, 2345, Elefante, grupo 12"
               className="w-full rounded-xl border border-white/10 bg-white/5 py-2 pl-9 pr-9 text-sm font-bold outline-none focus:border-primary/50"
             />
             {term && (
@@ -285,8 +285,18 @@ export function AnaliseFiltros() {
               </button>
             )}
           </span>
+          {invalidTerm ? (
+            <span className="text-[10px] font-bold uppercase tracking-widest text-red-400">
+              Busca inválida — use 2, 3 ou 4 dígitos, nome do bicho ou "grupo 12"
+            </span>
+          ) : query.kind !== "none" ? (
+            <span className="text-[10px] font-bold uppercase tracking-widest text-primary">
+              Filtrando por {query.label} — apenas o 1º prêmio relacionado
+            </span>
+          ) : null}
         </label>
       </div>
+
 
       <div className="mt-4 flex flex-wrap items-center gap-2">
         <span className="text-[10px] font-black uppercase tracking-widest text-white/40">Horários:</span>
