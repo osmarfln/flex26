@@ -138,7 +138,6 @@ function CalendarioPage() {
                   <Link
                     key={iso}
                     to="/historico"
-                    search={{ date: iso } as never}
                     className={`min-h-[74px] rounded-lg border p-1.5 text-left transition-colors hover:border-primary/60 ${
                       isToday ? "border-primary" : ""
                     } ${times.length ? "bg-card" : "bg-muted/30"}`}
