@@ -19,10 +19,12 @@ import { Route as AuthenticatedAnalisesRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedArquivoRouteImport } from './routes/_authenticated/arquivo'
 import { Route as AuthenticatedCadastrarRouteImport } from './routes/_authenticated/cadastrar'
 import { Route as AuthenticatedCalendarioRouteImport } from './routes/_authenticated/calendario'
+import { Route as AuthenticatedConfiguracoesRouteImport } from './routes/_authenticated/configuracoes'
 import { Route as AuthenticatedCruzDoDiaRouteImport } from './routes/_authenticated/cruz-do-dia'
 import { Route as AuthenticatedEstatisticasRouteImport } from './routes/_authenticated/estatisticas'
 import { Route as AuthenticatedHistoricoRouteImport } from './routes/_authenticated/historico'
 import { Route as AuthenticatedPalpiteRouteImport } from './routes/_authenticated/palpite'
+import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated/perfil'
 import { Route as AuthenticatedPortalRouteImport } from './routes/_authenticated/portal'
 import { Route as AuthenticatedRobotStatusRouteImport } from './routes/_authenticated/robot-status'
 import { Route as AuthenticatedPortalJogosRouteImport } from './routes/_authenticated/portal.jogos'
@@ -77,6 +79,12 @@ const AuthenticatedCalendarioRoute = AuthenticatedCalendarioRouteImport.update({
   path: '/calendario',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedConfiguracoesRoute =
+  AuthenticatedConfiguracoesRouteImport.update({
+    id: '/configuracoes',
+    path: '/configuracoes',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedCruzDoDiaRoute = AuthenticatedCruzDoDiaRouteImport.update({
   id: '/cruz-do-dia',
   path: '/cruz-do-dia',
@@ -96,6 +104,11 @@ const AuthenticatedHistoricoRoute = AuthenticatedHistoricoRouteImport.update({
 const AuthenticatedPalpiteRoute = AuthenticatedPalpiteRouteImport.update({
   id: '/palpite',
   path: '/palpite',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedPerfilRoute = AuthenticatedPerfilRouteImport.update({
+  id: '/perfil',
+  path: '/perfil',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedPortalRoute = AuthenticatedPortalRouteImport.update({
@@ -131,10 +144,12 @@ export interface FileRoutesByFullPath {
   '/arquivo': typeof AuthenticatedArquivoRoute
   '/cadastrar': typeof AuthenticatedCadastrarRoute
   '/calendario': typeof AuthenticatedCalendarioRoute
+  '/configuracoes': typeof AuthenticatedConfiguracoesRoute
   '/cruz-do-dia': typeof AuthenticatedCruzDoDiaRoute
   '/estatisticas': typeof AuthenticatedEstatisticasRoute
   '/historico': typeof AuthenticatedHistoricoRoute
   '/palpite': typeof AuthenticatedPalpiteRoute
+  '/perfil': typeof AuthenticatedPerfilRoute
   '/portal': typeof AuthenticatedPortalRouteWithChildren
   '/robot-status': typeof AuthenticatedRobotStatusRoute
   '/portal/jogos': typeof AuthenticatedPortalJogosRoute
@@ -149,10 +164,12 @@ export interface FileRoutesByTo {
   '/arquivo': typeof AuthenticatedArquivoRoute
   '/cadastrar': typeof AuthenticatedCadastrarRoute
   '/calendario': typeof AuthenticatedCalendarioRoute
+  '/configuracoes': typeof AuthenticatedConfiguracoesRoute
   '/cruz-do-dia': typeof AuthenticatedCruzDoDiaRoute
   '/estatisticas': typeof AuthenticatedEstatisticasRoute
   '/historico': typeof AuthenticatedHistoricoRoute
   '/palpite': typeof AuthenticatedPalpiteRoute
+  '/perfil': typeof AuthenticatedPerfilRoute
   '/portal': typeof AuthenticatedPortalRouteWithChildren
   '/robot-status': typeof AuthenticatedRobotStatusRoute
   '/': typeof AuthenticatedIndexRoute
@@ -170,10 +187,12 @@ export interface FileRoutesById {
   '/_authenticated/arquivo': typeof AuthenticatedArquivoRoute
   '/_authenticated/cadastrar': typeof AuthenticatedCadastrarRoute
   '/_authenticated/calendario': typeof AuthenticatedCalendarioRoute
+  '/_authenticated/configuracoes': typeof AuthenticatedConfiguracoesRoute
   '/_authenticated/cruz-do-dia': typeof AuthenticatedCruzDoDiaRoute
   '/_authenticated/estatisticas': typeof AuthenticatedEstatisticasRoute
   '/_authenticated/historico': typeof AuthenticatedHistoricoRoute
   '/_authenticated/palpite': typeof AuthenticatedPalpiteRoute
+  '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
   '/_authenticated/portal': typeof AuthenticatedPortalRouteWithChildren
   '/_authenticated/robot-status': typeof AuthenticatedRobotStatusRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
@@ -192,10 +211,12 @@ export interface FileRouteTypes {
     | '/arquivo'
     | '/cadastrar'
     | '/calendario'
+    | '/configuracoes'
     | '/cruz-do-dia'
     | '/estatisticas'
     | '/historico'
     | '/palpite'
+    | '/perfil'
     | '/portal'
     | '/robot-status'
     | '/portal/jogos'
@@ -210,10 +231,12 @@ export interface FileRouteTypes {
     | '/arquivo'
     | '/cadastrar'
     | '/calendario'
+    | '/configuracoes'
     | '/cruz-do-dia'
     | '/estatisticas'
     | '/historico'
     | '/palpite'
+    | '/perfil'
     | '/portal'
     | '/robot-status'
     | '/'
@@ -230,10 +253,12 @@ export interface FileRouteTypes {
     | '/_authenticated/arquivo'
     | '/_authenticated/cadastrar'
     | '/_authenticated/calendario'
+    | '/_authenticated/configuracoes'
     | '/_authenticated/cruz-do-dia'
     | '/_authenticated/estatisticas'
     | '/_authenticated/historico'
     | '/_authenticated/palpite'
+    | '/_authenticated/perfil'
     | '/_authenticated/portal'
     | '/_authenticated/robot-status'
     | '/_authenticated/'
@@ -321,6 +346,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCalendarioRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/configuracoes': {
+      id: '/_authenticated/configuracoes'
+      path: '/configuracoes'
+      fullPath: '/configuracoes'
+      preLoaderRoute: typeof AuthenticatedConfiguracoesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/cruz-do-dia': {
       id: '/_authenticated/cruz-do-dia'
       path: '/cruz-do-dia'
@@ -347,6 +379,13 @@ declare module '@tanstack/react-router' {
       path: '/palpite'
       fullPath: '/palpite'
       preLoaderRoute: typeof AuthenticatedPalpiteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/perfil': {
+      id: '/_authenticated/perfil'
+      path: '/perfil'
+      fullPath: '/perfil'
+      preLoaderRoute: typeof AuthenticatedPerfilRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/portal': {
@@ -397,10 +436,12 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedArquivoRoute: typeof AuthenticatedArquivoRoute
   AuthenticatedCadastrarRoute: typeof AuthenticatedCadastrarRoute
   AuthenticatedCalendarioRoute: typeof AuthenticatedCalendarioRoute
+  AuthenticatedConfiguracoesRoute: typeof AuthenticatedConfiguracoesRoute
   AuthenticatedCruzDoDiaRoute: typeof AuthenticatedCruzDoDiaRoute
   AuthenticatedEstatisticasRoute: typeof AuthenticatedEstatisticasRoute
   AuthenticatedHistoricoRoute: typeof AuthenticatedHistoricoRoute
   AuthenticatedPalpiteRoute: typeof AuthenticatedPalpiteRoute
+  AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRoute
   AuthenticatedPortalRoute: typeof AuthenticatedPortalRouteWithChildren
   AuthenticatedRobotStatusRoute: typeof AuthenticatedRobotStatusRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
@@ -412,10 +453,12 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedArquivoRoute: AuthenticatedArquivoRoute,
   AuthenticatedCadastrarRoute: AuthenticatedCadastrarRoute,
   AuthenticatedCalendarioRoute: AuthenticatedCalendarioRoute,
+  AuthenticatedConfiguracoesRoute: AuthenticatedConfiguracoesRoute,
   AuthenticatedCruzDoDiaRoute: AuthenticatedCruzDoDiaRoute,
   AuthenticatedEstatisticasRoute: AuthenticatedEstatisticasRoute,
   AuthenticatedHistoricoRoute: AuthenticatedHistoricoRoute,
   AuthenticatedPalpiteRoute: AuthenticatedPalpiteRoute,
+  AuthenticatedPerfilRoute: AuthenticatedPerfilRoute,
   AuthenticatedPortalRoute: AuthenticatedPortalRouteWithChildren,
   AuthenticatedRobotStatusRoute: AuthenticatedRobotStatusRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,

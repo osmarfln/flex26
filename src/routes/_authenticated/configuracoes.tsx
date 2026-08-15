@@ -31,8 +31,14 @@ function ConfiguracoesPage() {
   const [saving, setSaving] = useState(false);
 
   async function changePassword() {
-    if (password.length < 6) return toast.error("A senha deve ter ao menos 6 caracteres");
-    if (password !== confirm) return toast.error("As senhas não conferem");
+    if (password.length < 6) {
+      toast.error("A senha deve ter ao menos 6 caracteres");
+      return;
+    }
+    if (password !== confirm) {
+      toast.error("As senhas não conferem");
+      return;
+    }
     setSaving(true);
     const { error } = await supabase.auth.updateUser({ password });
     setSaving(false);
