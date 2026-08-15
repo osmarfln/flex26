@@ -40,7 +40,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 
 const navigationItems = [
@@ -226,7 +226,7 @@ export default function ManagementLayout({ children, currentPageName }: LayoutPr
               </SheetTrigger>
               <SheetContent side="left" className="w-72">
                 <nav className="flex flex-col gap-4 mt-8">
-                  {navigationItems.map((item) => (
+                  {navigationItems.filter(i => !i.diamanteOnly || user?.isAdmin).map((item) => (
                     <Link
                       key={item.url}
                       to={item.url as any}
@@ -246,7 +246,7 @@ export default function ManagementLayout({ children, currentPageName }: LayoutPr
           </div>
 
           <div className="hidden md:flex items-center gap-6">
-            {navigationItems.filter(i => !i.diamanteOnly || user?.nivel === 'diamante').map((item) => (
+            {navigationItems.filter(i => !i.diamanteOnly || user?.isAdmin).map((item) => (
               <Link
                 key={item.url}
                 to={item.url as any}
@@ -274,7 +274,7 @@ export default function ManagementLayout({ children, currentPageName }: LayoutPr
                 <DropdownMenuItem>Perfil</DropdownMenuItem>
                 <DropdownMenuItem>Configurações</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-destructive">
+                <DropdownMenuItem className="text-destructive" onClick={handleSignOut}>
                   <LogOut className="mr-2 h-4 w-4" />
                   Sair
                 </DropdownMenuItem>
