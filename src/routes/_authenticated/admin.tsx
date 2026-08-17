@@ -79,6 +79,7 @@ function AdminPage() {
   const queryClient = useQueryClient();
   const { lastUpdate } = useLotteryRealtime("admin-panel");
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<{ id: string; name: string } | null>(null);
 
   const fetchMatrix = useServerFn(getScheduleSyncMatrix);
   const syncNow = useServerFn(runSyncNow);
