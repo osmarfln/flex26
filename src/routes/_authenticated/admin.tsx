@@ -360,26 +360,35 @@ function AdminPage() {
                           </td>
                           <td className="py-3 text-xs text-white/40">{fmtDateTime(u.created_at)}</td>
                           <td className="py-3">
-                            <div className="flex justify-end gap-2">
-                              {u.status !== "approved" && (
-                                <Button
-                                  size="sm"
-                                  onClick={() => setStatus(u.id, "approved")}
-                                  disabled={busyId === u.id}
-                                >
-                                  Aprovar
-                                </Button>
-                              )}
-                              {u.status !== "rejected" && !u.roles.includes("admin") && (
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={() => setStatus(u.id, "rejected")}
-                                  disabled={busyId === u.id}
-                                >
-                                  Recusar
-                                </Button>
-                              )}
+                            <div className="flex justify-end gap-1.5">
+                              <IconAction
+                                label="Permitir acesso"
+                                onClick={() => setStatus(u.id, "approved")}
+                                disabled={busyId === u.id || u.status === "approved"}
+                                className="text-emerald-400 hover:bg-emerald-500/15"
+                              >
+                                <UserCheck className="h-4 w-4" />
+                              </IconAction>
+                              <IconAction
+                                label="Bloquear acesso"
+                                onClick={() => setStatus(u.id, "blocked")}
+                                disabled={
+                                  busyId === u.id || u.status === "blocked" || u.roles.includes("admin")
+                                }
+                                className="text-yellow-400 hover:bg-yellow-500/15"
+                              >
+                                <Ban className="h-4 w-4" />
+                              </IconAction>
+                              <IconAction
+                                label="Excluir usuário"
+                                onClick={() =>
+                                  setConfirmDelete({ id: u.id, name: u.display_name ?? u.email ?? "usuário" })
+                                }
+                                disabled={busyId === u.id || u.roles.includes("admin")}
+                                className="text-destructive hover:bg-destructive/15"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </IconAction>
                             </div>
                           </td>
                         </tr>
