@@ -246,29 +246,41 @@ function AdminPage() {
         </div>
 
         <Tabs value={tab} onValueChange={setTab} className="w-full">
-          <TabsList className="mb-6 flex w-full flex-wrap justify-start gap-1">
-            <TabsTrigger value="geral" className="gap-1.5">
-              <LayoutDashboard className="h-4 w-4" /> Painel geral
+          <TabsList className="mb-6 flex w-full flex-wrap justify-start gap-1.5 h-auto p-1.5">
+            <TabsTrigger value="geral" className="gap-1.5 px-2.5 py-1.5">
+              <LayoutDashboard className="h-4 w-4 shrink-0" />
+              <span className="hidden sm:inline">Painel geral</span>
+              <span className="sm:hidden">Geral</span>
             </TabsTrigger>
-            <TabsTrigger value="usuarios" className="gap-1.5">
-              <Users className="h-4 w-4" /> Usuários
+            <TabsTrigger value="usuarios" className="gap-1.5 px-2.5 py-1.5">
+              <Users className="h-4 w-4 shrink-0" />
+              <span className="hidden sm:inline">Usuários</span>
+              <span className="sm:hidden">Usuários</span>
               {pending.length > 0 && (
-                <span className="ml-1 rounded-full bg-yellow-400/20 px-1.5 text-[10px] font-bold text-yellow-400">
+                <span className="ml-0.5 rounded-full bg-yellow-400/20 px-1.5 text-[10px] font-bold text-yellow-400">
                   {pending.length}
                 </span>
               )}
             </TabsTrigger>
-            <TabsTrigger value="redes" className="gap-1.5">
-              <Network className="h-4 w-4" /> Redes
+            <TabsTrigger value="redes" className="gap-1.5 px-2.5 py-1.5">
+              <Network className="h-4 w-4 shrink-0" />
+              <span className="hidden sm:inline">Redes</span>
+              <span className="sm:hidden">Redes</span>
             </TabsTrigger>
-            <TabsTrigger value="status" className="gap-1.5">
-              <UserCog className="h-4 w-4" /> Status do usuário
+            <TabsTrigger value="status" className="gap-1.5 px-2.5 py-1.5">
+              <UserCog className="h-4 w-4 shrink-0" />
+              <span className="hidden sm:inline">Status do usuário</span>
+              <span className="sm:hidden">Status</span>
             </TabsTrigger>
-            <TabsTrigger value="ia" className="gap-1.5">
-              <BrainCircuit className="h-4 w-4" /> Análise inteligente
+            <TabsTrigger value="ia" className="gap-1.5 px-2.5 py-1.5">
+              <BrainCircuit className="h-4 w-4 shrink-0" />
+              <span className="hidden sm:inline">Análise inteligente</span>
+              <span className="sm:hidden">Análise</span>
             </TabsTrigger>
-            <TabsTrigger value="robo" className="gap-1.5">
-              <Activity className="h-4 w-4" /> Robô
+            <TabsTrigger value="robo" className="gap-1.5 px-2.5 py-1.5">
+              <Activity className="h-4 w-4 shrink-0" />
+              <span className="hidden sm:inline">Robô</span>
+              <span className="sm:hidden">Robô</span>
             </TabsTrigger>
           </TabsList>
 
