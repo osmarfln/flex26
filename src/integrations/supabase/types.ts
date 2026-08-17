@@ -116,6 +116,39 @@ export type Database = {
         }
         Relationships: []
       }
+      user_activity: {
+        Row: {
+          created_at: string
+          detail: Json | null
+          event_type: string
+          id: string
+          label: string | null
+          latency_ms: number | null
+          path: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          detail?: Json | null
+          event_type?: string
+          id?: string
+          label?: string | null
+          latency_ms?: number | null
+          path?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          detail?: Json | null
+          event_type?: string
+          id?: string
+          label?: string | null
+          latency_ms?: number | null
+          path?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
