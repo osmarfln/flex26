@@ -1,7 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { Eye, MousePointerClick, UserCircle2 } from "lucide-react";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { Eraser, Eye, Loader2, MousePointerClick, Trash2, UserCircle2 } from "lucide-react";
+import { toast } from "sonner";
 
+import { Button } from "@/components/ui/button";
+import { clearUserActivity } from "@/lib/admin.functions";
 import { supabase } from "@/integrations/supabase/client";
 
 type Activity = {
@@ -102,6 +106,28 @@ export function StatusUsuariosPanel({ enabled }: { enabled: boolean }) {
   const detail = selected ? acts.filter((a) => a.user_id === selected).slice(0, 40) : [];
   const selectedUser = users.find((u) => u.id === selected);
 
+  const clearFn = useServerFn(clearUserActivity);
+  const clearMutation = useMutation({
+    mutationFn: (userId?: string | null) => clearFn({ data: { userId: userId ?? null } }),
+    onSuccess: (_res, userId) => {
+      toast.success(
+        userId ? "Trilha de navegação do usuário limpa." : "Histórico de trilhas limpo por completo.",
+      );
+      void activityQuery.refetch();
+    },
+    onError: (err: Error) => toast.error(err.message || "Falha ao limpar o histórico."),
+  });
+
+  const clearing = clearMutation.isPending;
+
+  function confirmClear(userId?: string | null) {
+    const label = userId ? "deste usuário" : "de TODOS os usuários";
+    if (!window.confirm(`Limpar o histórico de trilhas de navegação ${label}? Esta ação não pode ser desfeita.`))
+      return;
+    clearMutation.mutate(userId ?? null);
+  }
+
+
   return (
     <div className="space-y-5">
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
@@ -187,10 +213,34 @@ export function StatusUsuariosPanel({ enabled }: { enabled: boolean }) {
       </section>
 
       <section className="rounded-2xl border border-white/10 bg-card/60 p-4 backdrop-blur md:p-6">
-        <h2 className="mb-3 flex items-center gap-2 text-sm font-black uppercase tracking-wider text-white/70">
-          <UserCircle2 className="h-4 w-4" />
-          Trilha de navegação {selectedUser ? `— ${selectedUser.display_name ?? selectedUser.email}` : ""}
-        </h2>
+        <div className="mb-3 flex flex-wrap items-center gap-2">
+          <h2 className="flex items-center gap-2 text-sm font-black uppercase tracking-wider text-white/70">
+            <UserCircle2 className="h-4 w-4" />
+            Trilha de navegação {selectedUser ? `— ${selectedUser.display_name ?? selectedUser.email}` : ""}
+          </h2>
+          <div className="ml-auto flex items-center gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={!selected || clearing}
+              onClick={() => confirmClear(selected)}
+              title="Limpar trilha deste usuário"
+            >
+              {clearing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Eraser className="h-3.5 w-3.5" />}
+              <span className="ml-1.5 text-xs">Limpar deste usuário</span>
+            </Button>
+            <Button
+              size="sm"
+              variant="destructive"
+              disabled={clearing || acts.length === 0}
+              onClick={() => confirmClear(null)}
+              title="Limpar todo o histórico de trilhas"
+            >
+              {clearing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
+              <span className="ml-1.5 text-xs">Limpar tudo</span>
+            </Button>
+          </div>
+        </div>
         {!selected ? (
           <p className="py-6 text-center text-sm text-white/40">
             Selecione um usuário na tabela para ver onde ele acessou e onde clicou.
