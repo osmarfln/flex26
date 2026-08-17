@@ -80,6 +80,7 @@ function AdminPage() {
   const { lastUpdate } = useLotteryRealtime("admin-panel");
   const [busyId, setBusyId] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<{ id: string; name: string } | null>(null);
+  const [tab, setTab] = useState("geral");
 
   const fetchMatrix = useServerFn(getScheduleSyncMatrix);
   const syncNow = useServerFn(runSyncNow);
