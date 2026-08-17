@@ -6,13 +6,18 @@ import { toast } from "sonner";
 import {
   Activity,
   AlertTriangle,
+  BrainCircuit,
+  Ban,
   CheckCircle2,
   Clock,
   LayoutDashboard,
   Loader2,
+  Network,
   RefreshCw,
   ShieldCheck,
+  Trash2,
   UserCheck,
+  UserCog,
   Users,
   XCircle,
 } from "lucide-react";
