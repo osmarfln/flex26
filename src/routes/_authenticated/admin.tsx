@@ -244,7 +244,7 @@ function AdminPage() {
           </Button>
         </div>
 
-        <Tabs defaultValue="geral" className="w-full">
+        <Tabs value={tab} onValueChange={setTab} className="w-full">
           <TabsList className="mb-6 flex w-full flex-wrap justify-start gap-1">
             <TabsTrigger value="geral" className="gap-1.5">
               <LayoutDashboard className="h-4 w-4" /> Painel geral
@@ -257,10 +257,31 @@ function AdminPage() {
                 </span>
               )}
             </TabsTrigger>
+            <TabsTrigger value="redes" className="gap-1.5">
+              <Network className="h-4 w-4" /> Redes
+            </TabsTrigger>
+            <TabsTrigger value="status" className="gap-1.5">
+              <UserCog className="h-4 w-4" /> Status do usuário
+            </TabsTrigger>
+            <TabsTrigger value="ia" className="gap-1.5">
+              <BrainCircuit className="h-4 w-4" /> Análise inteligente
+            </TabsTrigger>
             <TabsTrigger value="robo" className="gap-1.5">
               <Activity className="h-4 w-4" /> Robô
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="redes">
+            {tab === "redes" && <RedesPanel />}
+          </TabsContent>
+
+          <TabsContent value="status">
+            <StatusUsuariosPanel enabled={tab === "status"} />
+          </TabsContent>
+
+          <TabsContent value="ia">
+            <AnaliseInteligentePanel enabled={tab === "ia"} />
+          </TabsContent>
 
           {/* PAINEL GERAL */}
           <TabsContent value="geral" className="space-y-5">
