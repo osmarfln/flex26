@@ -106,6 +106,28 @@ export function StatusUsuariosPanel({ enabled }: { enabled: boolean }) {
   const detail = selected ? acts.filter((a) => a.user_id === selected).slice(0, 40) : [];
   const selectedUser = users.find((u) => u.id === selected);
 
+  const clearFn = useServerFn(clearUserActivity);
+  const clearMutation = useMutation({
+    mutationFn: (userId?: string | null) => clearFn({ data: { userId: userId ?? null } }),
+    onSuccess: (_res, userId) => {
+      toast.success(
+        userId ? "Trilha de navegação do usuário limpa." : "Histórico de trilhas limpo por completo.",
+      );
+      void activityQuery.refetch();
+    },
+    onError: (err: Error) => toast.error(err.message || "Falha ao limpar o histórico."),
+  });
+
+  const clearing = clearMutation.isPending;
+
+  function confirmClear(userId?: string | null) {
+    const label = userId ? "deste usuário" : "de TODOS os usuários";
+    if (!window.confirm(`Limpar o histórico de trilhas de navegação ${label}? Esta ação não pode ser desfeita.`))
+      return;
+    clearMutation.mutate(userId ?? null);
+  }
+
+
   return (
     <div className="space-y-5">
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
