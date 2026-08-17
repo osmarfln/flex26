@@ -213,10 +213,34 @@ export function StatusUsuariosPanel({ enabled }: { enabled: boolean }) {
       </section>
 
       <section className="rounded-2xl border border-white/10 bg-card/60 p-4 backdrop-blur md:p-6">
-        <h2 className="mb-3 flex items-center gap-2 text-sm font-black uppercase tracking-wider text-white/70">
-          <UserCircle2 className="h-4 w-4" />
-          Trilha de navegação {selectedUser ? `— ${selectedUser.display_name ?? selectedUser.email}` : ""}
-        </h2>
+        <div className="mb-3 flex flex-wrap items-center gap-2">
+          <h2 className="flex items-center gap-2 text-sm font-black uppercase tracking-wider text-white/70">
+            <UserCircle2 className="h-4 w-4" />
+            Trilha de navegação {selectedUser ? `— ${selectedUser.display_name ?? selectedUser.email}` : ""}
+          </h2>
+          <div className="ml-auto flex items-center gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={!selected || clearing}
+              onClick={() => confirmClear(selected)}
+              title="Limpar trilha deste usuário"
+            >
+              {clearing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Eraser className="h-3.5 w-3.5" />}
+              <span className="ml-1.5 text-xs">Limpar deste usuário</span>
+            </Button>
+            <Button
+              size="sm"
+              variant="destructive"
+              disabled={clearing || acts.length === 0}
+              onClick={() => confirmClear(null)}
+              title="Limpar todo o histórico de trilhas"
+            >
+              {clearing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
+              <span className="ml-1.5 text-xs">Limpar tudo</span>
+            </Button>
+          </div>
+        </div>
         {!selected ? (
           <p className="py-6 text-center text-sm text-white/40">
             Selecione um usuário na tabela para ver onde ele acessou e onde clicou.
