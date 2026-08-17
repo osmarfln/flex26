@@ -29,6 +29,21 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLotteryRealtime } from "@/hooks/useLotteryRealtime";
 import { getScheduleSyncMatrix, runSyncNow } from "@/lib/robot.functions";
+import { deleteUserAccount } from "@/lib/admin.functions";
+import { RedesPanel } from "@/components/admin/RedesPanel";
+import { StatusUsuariosPanel } from "@/components/admin/StatusUsuariosPanel";
+import { AnaliseInteligentePanel } from "@/components/admin/AnaliseInteligentePanel";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
