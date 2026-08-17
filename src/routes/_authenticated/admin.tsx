@@ -6,13 +6,18 @@ import { toast } from "sonner";
 import {
   Activity,
   AlertTriangle,
+  BrainCircuit,
+  Ban,
   CheckCircle2,
   Clock,
   LayoutDashboard,
   Loader2,
+  Network,
   RefreshCw,
   ShieldCheck,
+  Trash2,
   UserCheck,
+  UserCog,
   Users,
   XCircle,
 } from "lucide-react";
@@ -24,6 +29,21 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLotteryRealtime } from "@/hooks/useLotteryRealtime";
 import { getScheduleSyncMatrix, runSyncNow } from "@/lib/robot.functions";
+import { deleteUserAccount } from "@/lib/admin.functions";
+import { RedesPanel } from "@/components/admin/RedesPanel";
+import { StatusUsuariosPanel } from "@/components/admin/StatusUsuariosPanel";
+import { AnaliseInteligentePanel } from "@/components/admin/AnaliseInteligentePanel";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
@@ -59,6 +79,8 @@ function AdminPage() {
   const queryClient = useQueryClient();
   const { lastUpdate } = useLotteryRealtime("admin-panel");
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<{ id: string; name: string } | null>(null);
+  const [tab, setTab] = useState("geral");
 
   const fetchMatrix = useServerFn(getScheduleSyncMatrix);
   const syncNow = useServerFn(runSyncNow);
@@ -132,7 +154,10 @@ function AdminPage() {
     onError: (e: unknown) => toast.error(e instanceof Error ? e.message : "Falha na sincronização"),
   });
 
-  async function setStatus(id: string, status: "approved" | "rejected" | "pending") {
+  async function setStatus(
+    id: string,
+    status: "approved" | "rejected" | "pending" | "blocked",
+  ) {
     setBusyId(id);
     const { data: me } = await supabase.auth.getUser();
     const { error } = await supabase
@@ -148,14 +173,29 @@ function AdminPage() {
     else {
       toast.success(
         status === "approved"
-          ? "Usuário aprovado"
+          ? "Usuário liberado"
           : status === "rejected"
             ? "Usuário recusado"
-            : "Usuário voltou para pendente",
+            : status === "blocked"
+              ? "Usuário bloqueado"
+              : "Usuário voltou para pendente",
       );
       usersQuery.refetch();
     }
   }
+
+  const removeUser = useServerFn(deleteUserAccount);
+  const deleteMutation = useMutation({
+    mutationFn: (userId: string) => removeUser({ data: { userId } }),
+    onSuccess: () => {
+      toast.success("Usuário excluído definitivamente");
+      setConfirmDelete(null);
+      usersQuery.refetch();
+    },
+    onError: (e: unknown) =>
+      toast.error(e instanceof Error ? e.message : "Não foi possível excluir o usuário"),
+  });
+
 
   if (!isAdmin) {
     return (
@@ -205,7 +245,7 @@ function AdminPage() {
           </Button>
         </div>
 
-        <Tabs defaultValue="geral" className="w-full">
+        <Tabs value={tab} onValueChange={setTab} className="w-full">
           <TabsList className="mb-6 flex w-full flex-wrap justify-start gap-1">
             <TabsTrigger value="geral" className="gap-1.5">
               <LayoutDashboard className="h-4 w-4" /> Painel geral
@@ -218,10 +258,31 @@ function AdminPage() {
                 </span>
               )}
             </TabsTrigger>
+            <TabsTrigger value="redes" className="gap-1.5">
+              <Network className="h-4 w-4" /> Redes
+            </TabsTrigger>
+            <TabsTrigger value="status" className="gap-1.5">
+              <UserCog className="h-4 w-4" /> Status do usuário
+            </TabsTrigger>
+            <TabsTrigger value="ia" className="gap-1.5">
+              <BrainCircuit className="h-4 w-4" /> Análise inteligente
+            </TabsTrigger>
             <TabsTrigger value="robo" className="gap-1.5">
               <Activity className="h-4 w-4" /> Robô
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="redes">
+            {tab === "redes" && <RedesPanel />}
+          </TabsContent>
+
+          <TabsContent value="status">
+            <StatusUsuariosPanel enabled={tab === "status"} />
+          </TabsContent>
+
+          <TabsContent value="ia">
+            <AnaliseInteligentePanel enabled={tab === "ia"} />
+          </TabsContent>
 
           {/* PAINEL GERAL */}
           <TabsContent value="geral" className="space-y-5">
@@ -299,26 +360,35 @@ function AdminPage() {
                           </td>
                           <td className="py-3 text-xs text-white/40">{fmtDateTime(u.created_at)}</td>
                           <td className="py-3">
-                            <div className="flex justify-end gap-2">
-                              {u.status !== "approved" && (
-                                <Button
-                                  size="sm"
-                                  onClick={() => setStatus(u.id, "approved")}
-                                  disabled={busyId === u.id}
-                                >
-                                  Aprovar
-                                </Button>
-                              )}
-                              {u.status !== "rejected" && !u.roles.includes("admin") && (
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={() => setStatus(u.id, "rejected")}
-                                  disabled={busyId === u.id}
-                                >
-                                  Recusar
-                                </Button>
-                              )}
+                            <div className="flex justify-end gap-1.5">
+                              <IconAction
+                                label="Permitir acesso"
+                                onClick={() => setStatus(u.id, "approved")}
+                                disabled={busyId === u.id || u.status === "approved"}
+                                className="text-emerald-400 hover:bg-emerald-500/15"
+                              >
+                                <UserCheck className="h-4 w-4" />
+                              </IconAction>
+                              <IconAction
+                                label="Bloquear acesso"
+                                onClick={() => setStatus(u.id, "blocked")}
+                                disabled={
+                                  busyId === u.id || u.status === "blocked" || u.roles.includes("admin")
+                                }
+                                className="text-yellow-400 hover:bg-yellow-500/15"
+                              >
+                                <Ban className="h-4 w-4" />
+                              </IconAction>
+                              <IconAction
+                                label="Excluir usuário"
+                                onClick={() =>
+                                  setConfirmDelete({ id: u.id, name: u.display_name ?? u.email ?? "usuário" })
+                                }
+                                disabled={busyId === u.id || u.roles.includes("admin")}
+                                className="text-destructive hover:bg-destructive/15"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </IconAction>
                             </div>
                           </td>
                         </tr>
@@ -438,7 +508,64 @@ function AdminPage() {
           <AvisoObrigatorio />
         </div>
       </main>
+
+      <AlertDialog open={!!confirmDelete} onOpenChange={(o) => !o && setConfirmDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir {confirmDelete?.name}?</AlertDialogTitle>
+            <AlertDialogDescription>
+              A conta e o perfil serão removidos definitivamente. Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault();
+                if (confirmDelete) deleteMutation.mutate(confirmDelete.id);
+              }}
+              disabled={deleteMutation.isPending}
+            >
+              {deleteMutation.isPending ? "Excluindo..." : "Excluir"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
+  );
+}
+
+function IconAction({
+  label,
+  onClick,
+  disabled,
+  className,
+  children,
+}: {
+  label: string;
+  onClick: () => void;
+  disabled?: boolean;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <TooltipProvider delayDuration={200}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            size="icon"
+            variant="ghost"
+            aria-label={label}
+            onClick={onClick}
+            disabled={disabled}
+            className={`h-8 w-8 rounded-lg border border-white/10 ${className ?? ""}`}
+          >
+            {children}
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>{label}</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }
 
@@ -485,6 +612,12 @@ function StatusBadge({ status }: { status: string }) {
     return (
       <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-400">
         <CheckCircle2 className="h-3.5 w-3.5" /> Aprovado
+      </span>
+    );
+  if (status === "blocked")
+    return (
+      <span className="inline-flex items-center gap-1 text-xs font-bold text-yellow-400">
+        <Ban className="h-3.5 w-3.5" /> Bloqueado
       </span>
     );
   if (status === "rejected")
