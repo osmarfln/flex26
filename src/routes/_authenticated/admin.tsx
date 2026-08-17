@@ -171,14 +171,29 @@ function AdminPage() {
     else {
       toast.success(
         status === "approved"
-          ? "Usuário aprovado"
+          ? "Usuário liberado"
           : status === "rejected"
             ? "Usuário recusado"
-            : "Usuário voltou para pendente",
+            : status === "blocked"
+              ? "Usuário bloqueado"
+              : "Usuário voltou para pendente",
       );
       usersQuery.refetch();
     }
   }
+
+  const removeUser = useServerFn(deleteUserAccount);
+  const deleteMutation = useMutation({
+    mutationFn: (userId: string) => removeUser({ data: { userId } }),
+    onSuccess: () => {
+      toast.success("Usuário excluído definitivamente");
+      setConfirmDelete(null);
+      usersQuery.refetch();
+    },
+    onError: (e: unknown) =>
+      toast.error(e instanceof Error ? e.message : "Não foi possível excluir o usuário"),
+  });
+
 
   if (!isAdmin) {
     return (
