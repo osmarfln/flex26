@@ -614,6 +614,12 @@ function StatusBadge({ status }: { status: string }) {
         <CheckCircle2 className="h-3.5 w-3.5" /> Aprovado
       </span>
     );
+  if (status === "blocked")
+    return (
+      <span className="inline-flex items-center gap-1 text-xs font-bold text-yellow-400">
+        <Ban className="h-3.5 w-3.5" /> Bloqueado
+      </span>
+    );
   if (status === "rejected")
     return (
       <span className="inline-flex items-center gap-1 text-xs font-bold text-destructive">
