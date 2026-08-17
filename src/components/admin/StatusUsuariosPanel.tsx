@@ -1,7 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { Eye, MousePointerClick, UserCircle2 } from "lucide-react";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { Eraser, Eye, Loader2, MousePointerClick, Trash2, UserCircle2 } from "lucide-react";
+import { toast } from "sonner";
 
+import { Button } from "@/components/ui/button";
+import { clearUserActivity } from "@/lib/admin.functions";
 import { supabase } from "@/integrations/supabase/client";
 
 type Activity = {
