@@ -152,7 +152,10 @@ function AdminPage() {
     onError: (e: unknown) => toast.error(e instanceof Error ? e.message : "Falha na sincronização"),
   });
 
-  async function setStatus(id: string, status: "approved" | "rejected" | "pending") {
+  async function setStatus(
+    id: string,
+    status: "approved" | "rejected" | "pending" | "blocked",
+  ) {
     setBusyId(id);
     const { data: me } = await supabase.auth.getUser();
     const { error } = await supabase
