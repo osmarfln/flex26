@@ -545,6 +545,17 @@ function EstatisticasPage() {
                 <h3 className="text-xl font-black italic uppercase mb-2">Palpites IA</h3>
                 <p className="text-sm text-white/40 font-medium leading-snug">Cruzamento inteligente: Dados históricos + Cruz do Dia para palpites fortes.</p>
              </Card>
+
+             <Card 
+               onClick={() => setActiveTab('analise-premium')}
+               className={`bg-[#0D121F] border-yellow-500/20 rounded-2xl p-6 transition-all cursor-pointer group ${activeTab === 'analise-premium' ? 'border-yellow-500/50 ring-1 ring-yellow-500/20 shadow-lg shadow-yellow-500/5' : 'hover:border-yellow-500/30'}`}
+             >
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'analise-premium' ? 'bg-yellow-500 text-black' : 'bg-yellow-500/10 text-yellow-500'}`}>
+                   <Sparkles className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-black italic uppercase mb-2">Análise Premium</h3>
+                <p className="text-sm text-white/40 font-medium leading-snug">Inteligência aplicada aos resultados históricos: Capital e Rio.</p>
+             </Card>
           </div>
 
           {/* Dynamic Content Based on Tabs */}
