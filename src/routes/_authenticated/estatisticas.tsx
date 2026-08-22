@@ -175,7 +175,7 @@ function EstatisticasPage() {
     setSyncMessage(`${label} recalculado em ${(ms / 1000).toFixed(1)}s.`);
   };
   const recalculating =
-    syncMutation.isPending || !!partialStep ||
+    isSyncing || !!partialStep ||
     statsLoading || resultsLoading || delayStatsLoading || groupDelayStatsLoading || repetitionLoading || digitLoading || puxadasLoading || scheduleDelayLoading;
 
 
