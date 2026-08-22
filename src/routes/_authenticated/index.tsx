@@ -727,7 +727,7 @@ function Index() {
            <div className="flex items-center gap-6">
               <span className="text-[8px] text-white/5 font-black uppercase tracking-widest">Plataforma Independente</span>
                <div className="h-4 w-px bg-white/5" />
-               <span className="text-[8px] text-white/5 font-black uppercase tracking-widest">Resultados diários automatizados via robô ai automatizado sem interveção humana</span>
+               <span className="text-[8px] text-white/5 font-black uppercase tracking-widest">Resultados diários automatizados via robô ai automatizado sem intervenção humana</span>
             </div>
 
         </div>
