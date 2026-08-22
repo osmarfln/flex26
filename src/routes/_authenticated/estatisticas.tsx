@@ -610,8 +610,8 @@ function EstatisticasPage() {
                           <BarChart3 className="w-4 h-4 text-primary" />
                           Top 10 Dezenas (Frequência)
                         </h3>
-                        <div className="h-[300px] w-full">
-                          <ResponsiveContainer width="100%" height="100%">
+                        <div className="h-[300px] w-full min-h-[300px]">
+                          <ResponsiveContainer width="100%" height="100%" minHeight={300}>
                             <BarChart data={hottestTens.slice(0, 10).map(t => ({ name: t.ten, freq: t.freqs[300] }))}>
                               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
                               <XAxis 
