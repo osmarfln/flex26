@@ -264,7 +264,7 @@ function Index() {
             </motion.div>
 
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-4 italic">Resultados {location === 'rio' ? 'Rio' : 'Capital'}</h1>
-            <p className="text-white/40 text-lg mb-8 font-medium italic">Resultados diários automatizados Rio e Capital via robô ai sem intervenção humana</p>
+            <p className="text-white/40 text-lg mb-8 font-medium italic">Resultados diários automatizados Rio e Capital via robô ai automatizado sem intervenção humana</p>
             
             <Card className="dashboard-card p-6 mb-8 border-primary/20 bg-primary/5">
               <div className="flex flex-wrap items-center justify-between gap-6">
