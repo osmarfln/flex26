@@ -27,11 +27,6 @@ export const Route = createFileRoute('/api/public/sync-results')({
           
           console.log(`[SYNC] Request received. Date: ${dateParam}, Days: ${daysToSync}, Location: ${location}, Auto: ${auto}`);
           
-          // Se auto=true e location=rio, vamos garantir que Capital também seja atualizada em sequência se for uma chamada via cron
-          // A lógica abaixo já itera sobre locationsToSync no handler de else.
-
-
-
           // Fecha execuções travadas (sem finished_at) de tentativas anteriores
           await supabase
             .from('sync_logs')
@@ -62,11 +57,12 @@ export const Route = createFileRoute('/api/public/sync-results')({
             let offset = 0;
             const batchSize = 1000;
             let hasMore = true;
+            
+            // Define a tabela correta na origem baseada na localização solicitada
+            const externalTable = location === 'capital' ? 'capital_results' : 'draw_results';
 
             while (hasMore) {
-              // Filtra a origem pela localização solicitada se a origem suportar
-              const apiUrl = `${EXTERNAL_REST_URL}/draw_results?select=*&location=eq.${location}&order=draw_date.desc,draw_time.asc&limit=${batchSize}&offset=${offset}`;
-
+              const apiUrl = `${EXTERNAL_REST_URL}/${externalTable}?select=*&order=draw_date.desc&limit=${batchSize}&offset=${offset}`;
               
               const response = await fetch(apiUrl, {
                 headers: {
@@ -75,7 +71,10 @@ export const Route = createFileRoute('/api/public/sync-results')({
                 }
               });
 
-              if (!response.ok) break;
+              if (!response.ok) {
+                console.error(`[SYNC] API error: ${response.status}`);
+                break;
+              }
 
               const externalResults = await response.json();
               if (!Array.isArray(externalResults) || externalResults.length === 0) {
@@ -84,10 +83,6 @@ export const Route = createFileRoute('/api/public/sync-results')({
               }
 
               for (const res of externalResults) {
-                // If the external source has location info, we should respect it
-                // If not, we use the requested location
-                const recordLocation = res.location || location;
-
                 const results = [
                   res.prize_1_milhar,
                   res.prize_2_milhar,
@@ -100,35 +95,63 @@ export const Route = createFileRoute('/api/public/sync-results')({
                   ? String(res.prize_1_group).padStart(2, '0') 
                   : null;
 
-                const drawTimeValue = res.draw_time_value || (
-                  res.draw_time === 'PPT' ? '09:20' :
-                  res.draw_time === 'PTM' ? '11:20' :
-                  res.draw_time === 'PT' ? '14:20' :
-                  res.draw_time === 'PTV' ? '16:20' :
-                  res.draw_time === 'PTN' ? '18:20' :
-                  res.draw_time === 'COR' ? '21:20' : 
-                  // Fallback para horários da Capital se o time_value estiver ausente
-                  res.draw_time.startsWith('L-') ? res.draw_time.replace('L-', '') + ':00' : null
-                );
+                let drawTime = res.draw_time;
+                let drawTimeValue = res.draw_time_value;
 
+                if (location === 'capital') {
+                  const capMap: Record<string, { type: string, value: string }> = {
+                    'LCAP_09': { type: 'L-09', value: '09:00' },
+                    'LCAP_10': { type: 'L-10', value: '10:00' },
+                    'LCAP_11': { type: 'L-11', value: '11:00' },
+                    'PTSP_13': { type: 'L-13', value: '13:00' },
+                    'LCAP_13': { type: 'L-13', value: '13:00' },
+                    'CAP_14': { type: 'L-14', value: '14:00' },
+                    'BAND_15': { type: 'L-15', value: '15:00' },
+                    'LCAP_16': { type: 'L-16', value: '16:00' },
+                    'CAP_18': { type: 'L-18', value: '18:00' },
+                    'LCAP_19': { type: 'L-19', value: '19:00' },
+                    'LCAP_20': { type: 'L-20', value: '20:30' },
+                    'PTNSP_20': { type: 'L-20', value: '20:30' },
+                    'LCAP_2230': { type: 'L-22', value: '22:30' }
+                  };
+                  
+                  if (capMap[drawTime]) {
+                    const mapped = capMap[drawTime]!;
+                    drawTime = mapped.type;
+                    drawTimeValue = mapped.value;
+                  } else if (drawTime.startsWith('L-')) {
+                     drawTimeValue = drawTime.replace('L-', '') + ':00';
+                  }
+                } else {
+                  drawTimeValue = drawTimeValue || (
+                    drawTime === 'PPT' ? '09:20' :
+                    drawTime === 'PTM' ? '11:20' :
+                    drawTime === 'PT' ? '14:20' :
+                    drawTime === 'PTV' ? '16:20' :
+                    drawTime === 'PTN' ? '18:20' :
+                    drawTime === 'COR' ? '21:20' : null
+                  );
+                }
+
+                if (!drawTimeValue) continue;
 
                 await supabase
                   .from('lottery_results')
                   .upsert({
                     date: res.draw_date,
-                    time_type: res.draw_time,
+                    time_type: drawTime,
                     time_value: drawTimeValue,
                     results: results,
                     animal: res.prize_1_bicho,
                     animal_group: groupStr,
-                    location: recordLocation,
+                    location: location,
                     created_at: new Date().toISOString()
                   }, { onConflict: 'date,time_type,location' });
 
                 totalSynced++;
               }
               offset += batchSize;
-              if (offset > 10000) break; 
+              if (offset > 5000) break; 
             }
           } else {
             const locationsToSync = auto ? ['rio', 'capital'] : [location];
@@ -138,8 +161,8 @@ export const Route = createFileRoute('/api/public/sync-results')({
                 currentSyncDate.setDate(currentSyncDate.getDate() - i);
                 const dateStr = currentSyncDate.toISOString().split('T')[0]!;
                 
-                // Busca resultados da data específica e localização
-                const apiUrl = `${EXTERNAL_REST_URL}/draw_results?draw_date=eq.${dateStr}&location=eq.${loc}&select=*`;
+                const externalTable = loc === 'capital' ? 'capital_results' : 'draw_results';
+                const apiUrl = `${EXTERNAL_REST_URL}/${externalTable}?draw_date=eq.${dateStr}&select=*`;
                 
                 const response = await fetch(apiUrl, {
                   headers: {
@@ -152,7 +175,6 @@ export const Route = createFileRoute('/api/public/sync-results')({
                   const externalResults = await response.json();
                   if (Array.isArray(externalResults) && externalResults.length > 0) {
                     for (const res of externalResults) {
-                      const recordLocation = res.location || loc;
                       const results = [
                         res.prize_1_milhar,
                         res.prize_2_milhar,
@@ -165,26 +187,56 @@ export const Route = createFileRoute('/api/public/sync-results')({
                         ? String(res.prize_1_group).padStart(2, '0') 
                         : null;
 
-                      const drawTimeValue = res.draw_time_value || (
-                        res.draw_time === 'PPT' ? '09:20' :
-                        res.draw_time === 'PTM' ? '11:20' :
-                        res.draw_time === 'PT' ? '14:20' :
-                        res.draw_time === 'PTV' ? '16:20' :
-                        res.draw_time === 'PTN' ? '18:20' :
-                        res.draw_time === 'COR' ? '21:20' : 
-                        res.draw_time.startsWith('L-') ? res.draw_time.replace('L-', '') + ':00' : null
-                      );
+                      let drawTime = res.draw_time;
+                      let drawTimeValue = res.draw_time_value;
+
+                      if (loc === 'capital') {
+                        const capMap: Record<string, { type: string, value: string }> = {
+                          'LCAP_09': { type: 'L-09', value: '09:00' },
+                          'LCAP_10': { type: 'L-10', value: '10:00' },
+                          'LCAP_11': { type: 'L-11', value: '11:00' },
+                          'PTSP_13': { type: 'L-13', value: '13:00' },
+                          'LCAP_13': { type: 'L-13', value: '13:00' },
+                          'CAP_14': { type: 'L-14', value: '14:00' },
+                          'BAND_15': { type: 'L-15', value: '15:00' },
+                          'LCAP_16': { type: 'L-16', value: '16:00' },
+                          'CAP_18': { type: 'L-18', value: '18:00' },
+                          'LCAP_19': { type: 'L-19', value: '19:00' },
+                          'LCAP_20': { type: 'L-20', value: '20:30' },
+                          'PTNSP_20': { type: 'L-20', value: '20:30' },
+                          'LCAP_2230': { type: 'L-22', value: '22:30' }
+                        };
+                        
+                        if (capMap[drawTime]) {
+                          const mapped = capMap[drawTime]!;
+                          drawTime = mapped.type;
+                          drawTimeValue = mapped.value;
+                        } else if (drawTime.startsWith('L-')) {
+                          drawTimeValue = drawTime.replace('L-', '') + ':00';
+                        }
+                      } else {
+                        drawTimeValue = drawTimeValue || (
+                          drawTime === 'PPT' ? '09:20' :
+                          drawTime === 'PTM' ? '11:20' :
+                          drawTime === 'PT' ? '14:20' :
+                          drawTime === 'PTV' ? '16:20' :
+                          drawTime === 'PTN' ? '18:20' :
+                          drawTime === 'COR' ? '21:20' : null
+                        );
+                      }
+
+                      if (!drawTimeValue) continue;
 
                       await supabase
                         .from('lottery_results')
                         .upsert({
                           date: res.draw_date,
-                          time_type: res.draw_time,
+                          time_type: drawTime,
                           time_value: drawTimeValue,
                           results: results,
                           animal: res.prize_1_bicho,
                           animal_group: groupStr,
-                          location: recordLocation
+                          location: loc
                         }, { onConflict: 'date,time_type,location' });
                       
                       totalSynced++;
@@ -194,7 +246,6 @@ export const Route = createFileRoute('/api/public/sync-results')({
               }
             }
           }
-
 
           if (logEntry) {
             await supabase

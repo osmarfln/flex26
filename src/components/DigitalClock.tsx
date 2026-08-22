@@ -63,20 +63,19 @@ export function DigitalClock() {
 
         {/* Time */}
         <div className="relative flex flex-col items-center justify-center flex-1 py-4">
-          <div className="flex items-center justify-center font-mono tabular-nums text-5xl md:text-4xl xl:text-5xl font-black tracking-tight text-foreground">
+          <div className="flex items-center justify-center font-mono tabular-nums text-4xl md:text-3xl xl:text-4xl font-black tracking-tight text-foreground">
             <span>{hh}</span>
-            <span className="text-primary mx-1 animate-pulse">:</span>
+            <span className="text-primary mx-1">:</span>
             <span>{mm}</span>
-            <span className="text-primary mx-1 animate-pulse">:</span>
+            <span className="text-primary mx-1">:</span>
             <span className="text-primary/80">{ss}</span>
           </div>
           <div className="mt-4 flex items-center gap-2">
             <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
             </span>
             <span className="text-[10px] uppercase tracking-[0.2em] text-emerald-400/80 font-bold">
-              Tempo real
+              Horário Oficial
             </span>
           </div>
         </div>
