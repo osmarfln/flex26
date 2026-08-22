@@ -308,7 +308,7 @@ function AdminPage() {
             </TabsTrigger>
             <TabsTrigger value="ia" className="gap-1.5 px-2.5 py-1.5">
               <BrainCircuit className="h-4 w-4 shrink-0" />
-              <span className="hidden sm:inline">Análise inteligente</span>
+              <span className="hidden sm:inline">Análise da plataforma</span>
               <span className="sm:hidden">Análise</span>
             </TabsTrigger>
             <TabsTrigger value="auditoria" className="gap-1.5 px-2.5 py-1.5">

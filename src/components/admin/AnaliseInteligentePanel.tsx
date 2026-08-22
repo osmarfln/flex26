@@ -56,7 +56,7 @@ function brasiliaNow() {
   };
 }
 
-/** Análise inteligente: analytics da plataforma, atrasos e falhas internas em tempo real. */
+/** Análise da plataforma: analytics da plataforma, atrasos e falhas internas em tempo real. */
 export function AnaliseInteligentePanel({ enabled }: { enabled: boolean }) {
   const [location, setLocation] = useState<'rio' | 'capital'>('rio');
 
