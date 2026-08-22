@@ -260,6 +260,18 @@ export const Route = createFileRoute('/api/public/sync-results')({
                           animal_group: groupStr,
                           location: loc === 'capital' || loc === 'rio' ? loc : 'rio'
                         }, { onConflict: 'date,time_type,location' });
+
+                      // Correção manual solicitada para LCAP 15:00 (7977) - Loop de dias
+                      if (loc === 'capital' && res.draw_date === '2026-08-22' && drawTime === 'L-15') {
+                        await supabase
+                          .from('lottery_results')
+                          .update({ 
+                            results: ['7977', '4166', '0339', '0722', '9190'],
+                            animal: 'Peru',
+                            animal_group: '20'
+                          })
+                          .match({ date: '2026-08-22', time_type: 'L-15', location: 'capital' });
+                      }
                       
                       totalSynced++;
                     }
