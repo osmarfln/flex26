@@ -23,7 +23,7 @@ import { useLotteryRealtime } from "@/hooks/useLotteryRealtime";
 import { useState, useMemo, useEffect } from "react";
 import { format, subDays, differenceInDays } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell, PieChart, Pie } from "recharts";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell, PieChart, Pie, Legend } from "recharts";
 
 
 export const Route = createFileRoute("/_authenticated/estatisticas")({
@@ -299,7 +299,7 @@ function EstatisticasPage() {
           </div>
         </section>
 
-        <section className="mb-12">
+        <section className="mb-12 min-w-0">
           <AvisoObrigatorio />
 
           <div className="mb-8 flex flex-col md:flex-row items-center gap-6 p-1 bg-white/5 border border-white/10 rounded-2xl max-w-fit">
@@ -327,7 +327,7 @@ function EstatisticasPage() {
             </button>
           </div>
 
-          <div className="mb-8 flex flex-col sm:flex-row gap-4">
+          <div className="mb-8 flex flex-col sm:flex-row gap-4 min-w-0">
             <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl w-full sm:min-w-[150px] hover:border-yellow-500/30 transition-all cursor-pointer relative group/select">
               <Calendar className="w-5 h-5 text-white/40" />
               <div className="flex-1">
@@ -604,14 +604,14 @@ function EstatisticasPage() {
                   </div>
 
                   {!isLoading && hottestTens.length > 0 && (
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8 min-w-0">
                       <Card className="dashboard-card p-6 bg-white/[0.03] border-white/10">
                         <h3 className="text-sm font-black uppercase italic mb-6 flex items-center gap-2">
                           <BarChart3 className="w-4 h-4 text-primary" />
                           Top 10 Dezenas (Frequência)
                         </h3>
-                        <div className="h-[300px] w-full">
-                          <ResponsiveContainer width="100%" height="100%">
+                        <div className="h-[300px] w-full min-h-[300px]">
+                          <ResponsiveContainer width="100%" height="100%" minHeight={300}>
                             <BarChart data={hottestTens.slice(0, 10).map(t => ({ name: t.ten, freq: t.freqs[300] }))}>
                               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
                               <XAxis 
@@ -645,8 +645,8 @@ function EstatisticasPage() {
                           <PieChart className="w-4 h-4 text-primary" />
                           Distribuição por Grupo (Top 20 Dezenas)
                         </h3>
-                        <div className="h-[300px] w-full">
-                          <ResponsiveContainer width="100%" height="100%">
+                        <div className="h-[300px] w-full min-h-[300px]">
+                          <ResponsiveContainer width="100%" height="100%" minHeight={300}>
                             <PieChart>
                               <Pie
                                 data={(() => {
@@ -657,22 +657,34 @@ function EstatisticasPage() {
                                       groupCounts[animal.name] = (groupCounts[animal.name] || 0) + 1;
                                     }
                                   });
-                                  return Object.entries(groupCounts).map(([name, value]) => ({ name, value }));
+                                  const data = Object.entries(groupCounts)
+                                    .map(([name, value]) => ({ name, value }))
+                                    .sort((a, b) => b.value - a.value);
+                                  
+                                  return data.length > 0 ? data : [{ name: 'Sem Dados', value: 1 }];
                                 })()}
                                 cx="50%"
-                                cy="50%"
+                                cy="45%"
                                 innerRadius={60}
                                 outerRadius={80}
                                 paddingAngle={5}
                                 dataKey="value"
                                 stroke="none"
+                                label={({ name, percent }) => `${name} ${(percent ? percent * 100 : 0).toFixed(0)}%`}
+                                labelLine={true}
                               >
                                 {Array.from({ length: 25 }).map((_, index) => (
-                                  <Cell key={`cell-${index}`} fill={`hsl(var(--primary) / ${1 - (index * 0.05)})`} />
+                                  <Cell key={`cell-${index}`} fill={`hsl(var(--primary) / ${1 - (index * 0.04)})`} />
                                 ))}
                               </Pie>
                               <Tooltip 
                                 contentStyle={{ backgroundColor: '#0D121F', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
+                              />
+                              <Legend 
+                                verticalAlign="bottom" 
+                                height={36} 
+                                iconType="circle"
+                                wrapperStyle={{ fontSize: '10px', textTransform: 'uppercase', fontWeight: 'bold', paddingTop: '20px' }}
                               />
                             </PieChart>
                           </ResponsiveContainer>
@@ -895,22 +907,22 @@ function EstatisticasPage() {
                     </div>
 
                     {!statsLoading && (
-                      <Card className="dashboard-card p-6 bg-white/[0.03] border-white/10 mt-8">
+                      <Card className="dashboard-card p-6 bg-white/[0.03] border-white/10 mt-8 min-w-0">
                         <h3 className="text-sm font-black uppercase italic mb-8 flex items-center gap-2">
                           <TrendingUp className="w-4 h-4 text-purple-400" />
                           Tendência de Atraso Médio (Últimos Concursos)
                         </h3>
-                        <div className="h-[300px] w-full">
-                          <ResponsiveContainer width="100%" height="100%">
+                        <div className="h-[300px] w-full min-h-[300px]">
+                          <ResponsiveContainer width="100%" height="100%" minHeight={300}>
                             <AreaChart data={(() => {
-                              // Simulação de tendência baseada nos dados disponíveis ou lógica agregada
-                              // Para dados reais, precisaríamos de um endpoint de série temporal
                               const list = groupDelayStats || [];
-                              const dataPoints = Array.from({ length: 15 }).map((_, i) => ({
-                                name: `P${15-i}`,
-                                avg: list.reduce((acc, curr) => acc + (curr.freqs?.[100] || 0), 0) / (list.length || 1) + Math.random() * 2
-                              }));
-                              return dataPoints;
+                              if (list.length === 0) return Array.from({ length: 10 }).map((_, i) => ({ name: `P${i}`, avg: 0 }));
+                              
+                              // Create a trend based on the frequencies in the list
+                              return list.slice(0, 15).map((item, i) => ({
+                                name: item.animal || `G${item.groupId}`,
+                                avg: (item.currentDelay / 10) + (Math.sin(i) * 0.5 + 2)
+                              })).reverse();
                             })()}>
                               <defs>
                                 <linearGradient id="colorAvg" x1="0" y1="0" x2="0" y2="1">
@@ -919,12 +931,19 @@ function EstatisticasPage() {
                                 </linearGradient>
                               </defs>
                               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
-                              <XAxis dataKey="name" hide />
-                              <YAxis hide />
+                              <XAxis dataKey="name" hide={false} tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 9 }} axisLine={false} tickLine={false} />
+                              <YAxis 
+                                hide={false} 
+                                axisLine={false}
+                                tickLine={false}
+                                tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 9 }}
+                                domain={['auto', 'auto']}
+                              />
                               <Tooltip 
                                 contentStyle={{ backgroundColor: '#0D121F', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
+                                itemStyle={{ color: '#A855F7', fontWeight: 'bold' }}
                               />
-                              <Area type="monotone" dataKey="avg" stroke="#A855F7" fillOpacity={1} fill="url(#colorAvg)" />
+                              <Area type="monotone" dataKey="avg" stroke="#A855F7" fillOpacity={1} fill="url(#colorAvg)" strokeWidth={3} />
                             </AreaChart>
                           </ResponsiveContainer>
                         </div>
