@@ -667,10 +667,15 @@ function Index() {
                           <td className="p-4 text-center font-mono text-xs text-white/40">
                             {item.relativeIndex?.toFixed(2)}
                           </td>
+                          <td className="p-4 text-center">
+                            <span className={`text-[10px] font-black uppercase ${item.dailyDelay > 2 ? 'text-red-400' : 'text-white/40'}`}>
+                              {item.dailyDelay}h
+                            </span>
+                          </td>
                           <td className="p-4">
                             <span className={`text-[10px] font-black uppercase px-2 py-1 rounded ${
-                              item.classification === 'Crítico' ? 'bg-orange-500/10 text-orange-500' : 
-                              item.classification === 'Elevado' ? 'bg-primary/10 text-primary' : 
+                              item.classification === 'Muito acima da média' ? 'bg-red-500/10 text-red-500' : 
+                              item.classification === 'Atraso elevado' ? 'bg-primary/10 text-primary' : 
                               'bg-emerald-500/10 text-emerald-500'
                             }`}>
                               {item.classification}
