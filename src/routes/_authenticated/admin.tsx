@@ -178,6 +178,14 @@ function AdminPage() {
     setBusyId(null);
     if (error) toast.error(error.message);
     else {
+      // Auditoria
+      await supabase.from("admin_audit").insert({
+        admin_id: (me.user?.id as any),
+        action: status === "approved" ? "permitir" : status === "blocked" ? "bloquear" : "atualizar_status",
+        target_user_id: id,
+        details: { status_anterior: users.find(u => u.id === id)?.status, novo_status: status }
+      });
+
       toast.success(
         status === "approved"
           ? "Usuário liberado"
