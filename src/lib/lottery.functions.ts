@@ -1030,3 +1030,83 @@ export const getPuxadasStats = createServerFn({ method: "GET" })
       table,
     };
   });
+
+
+/**
+ * LOGÍSTICA DE DEZENAS POR HORÁRIO
+ * Analisa as dezenas mais atrasadas em horários específicos,
+ * cruzando a frequência histórica daquele horário com o atraso atual.
+ */
+export const getTenDelayByScheduleStats = createServerFn({ method: "GET" })
+  .validator((data: unknown) => z.object({
+    location: z.enum(['rio', 'capital']).optional().default('rio')
+  }).parse(data))
+  .handler(async ({ data }) => {
+    const { data: rawRows, error } = await supabase
+      .from("lottery_results")
+      .select("results, date, time_type, time_value, location")
+      .eq("location" as any, data.location)
+      .order("date", { ascending: false })
+      .limit(800);
+
+    if (error) throw error;
+    if (!rawRows || rawRows.length === 0) return [];
+
+    const results = sortDrawsDesc(rawRows as any[]);
+    const schedules = data.location === 'capital' 
+      ? ["L-09", "L-10", "L-11", "L-13", "L-14", "L-15", "L-16", "L-18", "L-19", "L-20", "L-22"]
+      : ["PPT", "PTM", "PT", "PTV", "PTN", "COR"];
+
+    const scheduleResults: Record<string, any[]> = {};
+    schedules.forEach(s => scheduleResults[s] = results.filter(r => r.time_type === s));
+
+    const stats = schedules.map(schedule => {
+      const scheduleDraws = scheduleResults[schedule] || [];
+      const allTens = Array.from({ length: 100 }, (_, i) => String(i).padStart(2, '0'));
+      
+      const tenStats = allTens.map(ten => {
+        let currentDelay = -1;
+        let hits = 0;
+        const intervals: number[] = [];
+        let lastIndex = -1;
+
+        scheduleDraws.forEach((res, index) => {
+          const hit = res.results?.slice(0, 5).some((p: string) => p.slice(-2) === ten);
+          if (hit) {
+            hits++;
+            if (currentDelay === -1) currentDelay = index;
+            if (lastIndex !== -1) intervals.push(index - lastIndex);
+            lastIndex = index;
+          }
+        });
+
+        const avgDelay = intervals.length > 0 ? intervals.reduce((a, b) => a + b, 0) / intervals.length : scheduleDraws.length;
+        const probability = avgDelay > 0 ? Math.min((currentDelay / (avgDelay * 2)) * 100, 100) : 0;
+        const animal = getAnimalByTen(ten);
+
+        return {
+          ten,
+          animal: animal?.name || "Desconhecido",
+          icon: animal?.icon || "",
+          currentDelay: currentDelay === -1 ? scheduleDraws.length : currentDelay,
+          hits,
+          avgDelay: Number(avgDelay.toFixed(2)),
+          probability: Number(probability.toFixed(1))
+        };
+      });
+
+      // Ordena pelas mais prováveis (maior atraso relativo ao seu próprio histórico naquele horário)
+      const sorted = tenStats.sort((a, b) => b.probability - a.probability);
+
+      return {
+        schedule,
+        label: schedule,
+        totalAnalyzed: scheduleDraws.length,
+        mostDelayed: sorted.slice(0, 5),
+        topProbability: sorted[0]
+      };
+    });
+
+    return stats;
+  });
+
