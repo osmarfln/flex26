@@ -323,7 +323,7 @@ function Index() {
                 <div className="flex-1">
                   <p className="text-[10px] text-white/40 font-bold uppercase tracking-wider">Localidade</p>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-bold">{location === 'rio' ? 'Rio de Janeiro' : 'Capital (Floripa)'}</span>
+                    <span className="text-sm font-bold">{location === 'rio' ? 'Rio de Janeiro' : 'Capital (Florianópolis)'}</span>
                     <ChevronDown className="w-4 h-4 text-white/40" />
                   </div>
                 </div>
