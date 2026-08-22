@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ANIMAL_GROUPS, getAnimalByTen } from "@/lib/animals";
-import { ArrowLeft, BarChart3, Calculator, Sparkles, TrendingUp, Zap, Target, BrainCircuit, History, Flame, Clock, LayoutGrid, Hash, Users, Repeat, ArrowLeftRight, FileText, Upload, Calendar, AlertCircle, Database, CheckCircle2, XCircle, Activity, Timer, ChevronRight, Trophy, RefreshCw, Loader2, Network } from "lucide-react";
+import { ArrowLeft, BarChart3, Calculator, Sparkles, TrendingUp, Zap, Target, BrainCircuit, History, Flame, Clock, LayoutGrid, Hash, Users, Repeat, ArrowLeftRight, FileText, Upload, Calendar, AlertCircle, Database, CheckCircle2, XCircle, Activity, Timer, ChevronRight, Trophy, RefreshCw, Loader2, Network, Info } from "lucide-react";
 import { CruzDoDia } from "@/components/CruzDoDia";
 import { AvisoObrigatorio } from "@/components/AvisoObrigatorio";
 import { AnaliseFiltros } from "@/components/AnaliseFiltros";
@@ -58,7 +58,7 @@ const MiniSparkline = ({ data, color = "#EAB308" }: { data: number[], color?: st
 };
 
 function EstatisticasPage() {
-  const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'palpites' | 'logica-atraso' | 'ranking-completo' | 'logica-grupos' | 'repeticoes' | 'esquerda-direita' | 'puxadas'>('quentes');
+  const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'palpites' | 'logica-atraso' | 'ranking-completo' | 'logica-grupos' | 'repeticoes' | 'esquerda-direita' | 'puxadas' | 'analise-premium'>('quentes');
   const [location, setLocation] = useState<'rio' | 'capital'>('rio');
   const [date, setDate] = useState("");
   const [dateEnd, setDateEnd] = useState("");
@@ -264,6 +264,29 @@ function EstatisticasPage() {
         animal: getAnimalByTen(item.ten)
       }));
   }, [tenStats]);
+
+  const premiumStats = useMemo(() => {
+    if (!groupDelayStats || !tenStats || !digitStats) return null;
+
+    // Lógica para Capital Florida / Rio
+    const listGroups = [...groupDelayStats].sort((a, b) => b.days - a.days);
+    const mostDelayedGroup = listGroups[0];
+    
+    // Dezenas do grupo mais atrasado
+    const groupDezenas = mostDelayedGroup?.dezenaStats || [];
+    const mostDelayedTenOfGroup = [...groupDezenas].sort((a, b) => b.delay - a.delay)[0];
+
+    // Bicho em Alta (Maior frequência recente no 1º prêmio)
+    const bichoEmAlta = [...groupDelayStats].sort((a, b) => (b.freqs?.[30] || 0) - (a.freqs?.[30] || 0))[0];
+
+    return {
+      mostDelayedGroup,
+      mostDelayedTenOfGroup,
+      bichoEmAlta,
+      leftTop: digitStats.left[0],
+      rightTop: digitStats.right[0]
+    };
+  }, [groupDelayStats, tenStats, digitStats]);
 
 
   return (
@@ -521,6 +544,17 @@ function EstatisticasPage() {
                 </div>
                 <h3 className="text-xl font-black italic uppercase mb-2">Palpites IA</h3>
                 <p className="text-sm text-white/40 font-medium leading-snug">Cruzamento inteligente: Dados históricos + Cruz do Dia para palpites fortes.</p>
+             </Card>
+
+             <Card 
+               onClick={() => setActiveTab('analise-premium')}
+               className={`bg-[#0D121F] border-yellow-500/20 rounded-2xl p-6 transition-all cursor-pointer group ${activeTab === 'analise-premium' ? 'border-yellow-500/50 ring-1 ring-yellow-500/20 shadow-lg shadow-yellow-500/5' : 'hover:border-yellow-500/30'}`}
+             >
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'analise-premium' ? 'bg-yellow-500 text-black' : 'bg-yellow-500/10 text-yellow-500'}`}>
+                   <Sparkles className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-black italic uppercase mb-2">Análise Premium</h3>
+                <p className="text-sm text-white/40 font-medium leading-snug">Inteligência aplicada aos resultados históricos: Capital e Rio.</p>
              </Card>
           </div>
 
@@ -1286,6 +1320,154 @@ function EstatisticasPage() {
 
                     </>
                   ) : null}
+                </motion.div>
+              )}
+
+              {activeTab === 'analise-premium' && (
+                <motion.div
+                  key="analise-premium"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="space-y-8"
+                >
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <Sparkles className="w-6 h-6 text-yellow-500" />
+                      <h2 className="text-2xl font-black italic uppercase">Análise Premium de Atrasos</h2>
+                    </div>
+                    <Badge variant="outline" className="border-yellow-500/20 text-yellow-500 bg-yellow-500/5 px-4 py-2 font-black uppercase text-[10px] tracking-widest">
+                      Inteligência aplicada aos resultados históricos
+                    </Badge>
+                  </div>
+
+                  {!premiumStats ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                      {Array.from({ length: 4 }).map((_, i) => (
+                        <div key={i} className="h-40 bg-white/5 animate-pulse rounded-2xl border border-white/10" />
+                      ))}
+                    </div>
+                  ) : (
+                    <>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                         <Card className="dashboard-card p-6 border-primary/20 bg-primary/5">
+                            <div className="flex items-center gap-3 mb-6">
+                               <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
+                                  <Trophy className="w-5 h-5 text-primary" />
+                               </div>
+                               <div>
+                                  <h4 className="text-xs font-black uppercase tracking-widest text-white/40">Bicho em Alta</h4>
+                                  <p className="text-lg font-black italic text-primary uppercase">{premiumStats.bichoEmAlta?.animal}</p>
+                               </div>
+                            </div>
+                            <div className="flex items-center justify-between">
+                               <span className="text-5xl">{premiumStats.bichoEmAlta?.animalInfo?.icon || ANIMAL_GROUPS.find(a => a.name === premiumStats.bichoEmAlta?.animal)?.icon}</span>
+                               <div className="text-right">
+                                  <p className="text-2xl font-black text-white">{premiumStats.bichoEmAlta?.freqs?.[30] || 0}x</p>
+                                  <p className="text-[10px] font-bold text-white/20 uppercase">Frequência (30 dias)</p>
+                               </div>
+                            </div>
+                         </Card>
+
+                         <Card className="dashboard-card p-6 border-blue-500/20 bg-blue-500/5">
+                            <div className="flex items-center gap-3 mb-6">
+                               <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center">
+                                  <Timer className="w-5 h-5 text-blue-400" />
+                               </div>
+                               <div>
+                                  <h4 className="text-xs font-black uppercase tracking-widest text-white/40">Grupo Atrasado</h4>
+                                  <p className="text-lg font-black italic text-blue-400 uppercase">{premiumStats.mostDelayedGroup?.animal}</p>
+                               </div>
+                            </div>
+                            <div className="flex items-center justify-between">
+                               <span className="text-5xl">{ANIMAL_GROUPS.find(a => a.id === premiumStats.mostDelayedGroup?.groupId)?.icon}</span>
+                               <div className="text-right">
+                                  <p className="text-2xl font-black text-white">{premiumStats.mostDelayedGroup?.currentDelay}x</p>
+                                  <p className="text-[10px] font-bold text-white/20 uppercase">Sorteios em atraso</p>
+                               </div>
+                            </div>
+                         </Card>
+
+                         <Card className="dashboard-card p-6 border-emerald-500/20 bg-emerald-500/5">
+                            <div className="flex items-center gap-3 mb-6">
+                               <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center">
+                                  <Flame className="w-5 h-5 text-emerald-400" />
+                               </div>
+                               <div>
+                                  <h4 className="text-xs font-black uppercase tracking-widest text-white/40">Dezena do Grupo</h4>
+                                  <p className="text-lg font-black italic text-emerald-400 uppercase">Mais Atrasada</p>
+                               </div>
+                            </div>
+                            <div className="flex items-center justify-between">
+                               <span className="text-5xl font-black text-white font-mono">{premiumStats.mostDelayedTenOfGroup?.ten || '--'}</span>
+                               <div className="text-right">
+                                  <p className="text-2xl font-black text-white">{premiumStats.mostDelayedTenOfGroup?.delay || 0}x</p>
+                                  <p className="text-[10px] font-bold text-white/20 uppercase">Atraso na posição</p>
+                               </div>
+                            </div>
+                         </Card>
+                      </div>
+
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                         <div className="space-y-6">
+                            <div className="flex items-center gap-2 mb-2">
+                               <div className="w-1.5 h-6 bg-yellow-500 rounded-full" />
+                               <h3 className="text-xl font-black italic uppercase">Alertas Estratégicos</h3>
+                            </div>
+                            
+                            <AlertaDezenasAtrasadas data={digitStats as any} loading={digitLoading} />
+
+                            <Card className="dashboard-card p-6 bg-white/[0.03]">
+                               <div className="flex items-center gap-3 mb-6">
+                                  <Activity className="w-5 h-5 text-primary" />
+                                  <h4 className="text-sm font-black uppercase tracking-widest">Resumo Logístico de Atraso</h4>
+                               </div>
+                               <div className="space-y-4">
+                                  <div className="flex justify-between items-center py-2 border-b border-white/5">
+                                     <span className="text-xs text-white/40 font-bold uppercase">Dezena Esquerda (Líder)</span>
+                                     <span className="font-black text-yellow-400">{premiumStats.leftTop?.digit} ({premiumStats.leftTop?.currentDelay}x)</span>
+                                  </div>
+                                  <div className="flex justify-between items-center py-2 border-b border-white/5">
+                                     <span className="text-xs text-white/40 font-bold uppercase">Dezena Direita (Líder)</span>
+                                     <span className="font-black text-sky-400">{premiumStats.rightTop?.digit} ({premiumStats.rightTop?.currentDelay}x)</span>
+                                  </div>
+                                  <div className="flex justify-between items-center py-2">
+                                     <span className="text-xs text-white/40 font-bold uppercase">Ciclo de Atraso Médio</span>
+                                     <span className="font-black text-white">{(premiumStats.leftTop?.avgDelay || 0).toFixed(1)} sorteios</span>
+                                  </div>
+                               </div>
+                            </Card>
+                         </div>
+
+                         <div className="space-y-6">
+                            <div className="flex items-center gap-2 mb-2">
+                               <div className="w-1.5 h-6 bg-blue-500 rounded-full" />
+                               <h3 className="text-xl font-black italic uppercase">Milhar Destaque</h3>
+                            </div>
+                            <Card className="dashboard-card p-8 bg-gradient-to-br from-primary/10 to-transparent border-primary/20 flex flex-col items-center justify-center text-center">
+                               <Sparkles className="w-12 h-12 text-primary mb-6 animate-pulse" />
+                               <h4 className="text-xs font-black uppercase tracking-[0.2em] text-white/40 mb-4">Combinação Sugerida (IA)</h4>
+                               <div className="text-7xl font-black text-white font-mono tracking-tighter mb-4">
+                                  {premiumStats.leftTop?.digit}{premiumStats.rightTop?.digit}
+                               </div>
+                               <p className="text-xs text-white/30 font-medium max-w-[280px]">
+                                  Milhar formada pelo cruzamento das dezenas esquerda e direita mais atrasadas da amostra.
+                                </p>
+                            </Card>
+                            
+                            <div className="bg-yellow-500/5 border border-yellow-500/10 rounded-2xl p-6 flex gap-4">
+                               <Info className="w-6 h-6 text-yellow-500 shrink-0" />
+                               <div className="space-y-1">
+                                 <p className="text-xs font-bold text-yellow-500 uppercase tracking-wider">Metodologia Premium</p>
+                                 <p className="text-xs text-white/40 leading-relaxed">
+                                   O sistema analisa a milhar em blocos de 2 dígitos. O "Índice de Atraso Crítico" é atingido quando uma dezena ultrapassa 2.5x o seu atraso médio histórico.
+                                 </p>
+                               </div>
+                            </div>
+                         </div>
+                      </div>
+                    </>
+                  )}
                 </motion.div>
               )}
 
