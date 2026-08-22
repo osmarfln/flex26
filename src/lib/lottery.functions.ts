@@ -221,7 +221,7 @@ export const getTenDelayStats = createServerFn({ method: "GET" })
       const periodComparison = prevFreq300 > 0 ? ((freq300 - prevFreq300) / prevFreq300) * 100 : (freq300 > 0 ? 100 : 0);
 
       // Cálculo do atraso diário (horários do dia atual sem sair)
-      if (results.length > 0) {
+      if (results.length > 0 && results[0]) {
         const lastDate = results[0].date;
         let dDelay = 0;
         for (const res of results) {
