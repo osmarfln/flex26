@@ -380,7 +380,7 @@ function EstatisticasPage() {
                 </div>
                 <div>
                   <h1 className="text-4xl font-black italic tracking-tighter uppercase">Inteligência {location === 'rio' ? 'Rio' : 'Capital'}</h1>
-                  <p className="text-white/40 font-bold text-xs uppercase tracking-widest mt-1">Estatísticas sincronizadas e auditadas letra por letra via robo ai</p>
+                  <p className="text-white/40 font-bold text-xs uppercase tracking-widest mt-1">Estatísticas sincronizadas e auditadas letra por letra via robô automatizado</p>
                 </div>
               </div>
               <p className="max-w-2xl text-white/60 text-lg leading-relaxed">
