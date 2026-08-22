@@ -200,8 +200,8 @@ export function DezenasEsquerdaDireita({ data, loading }: { data?: DigitDelayDat
           <div>
             <h2 className="text-2xl font-black italic uppercase">Dezena Esquerda x Direita</h2>
             <p className="text-xs text-white/40 font-medium">
-              Monitora do 1º ao 5º prêmio. Cada prêmio é lido com 4 casas (ex.: 0570) e dividido em dezena esquerda (05)
-              e dezena direita (70). Se a dezena sair em qualquer posição, o atraso zera. Monitoramento Rio e Capital com base em atrasos diários (de um horário para outro) e arquivos históricos.
+              Inteligência aplicada: monitora do 1º ao 5º prêmio. Cada prêmio é dividido em dezenas esquerda (05) e direita (70). 
+              A análise cruza o atraso diário Rio/Capital com correlações históricas reais.
             </p>
 
           </div>
