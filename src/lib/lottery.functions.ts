@@ -54,7 +54,7 @@ export const getResults = createServerFn({ method: "GET" })
 
 /** Busca resultados por intervalo de datas e horários (filtros das Análises). */
 export const getResultsRange = createServerFn({ method: "GET" })
-  .validator((data: unknown) =>
+  .inputValidator((data: unknown) =>
     z
       .object({
         start: z.string(),
