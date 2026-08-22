@@ -1022,18 +1022,24 @@ export const getPuxadasStats = createServerFn({ method: "GET" })
         };
       }
 
-      // Constrói a lista final de alvos, priorizando os que realmente saem (stats)
+      // Constrói a lista final de alvos
       const finalPuxa = allTargets.map(id => {
         const animal = ANIMAL_GROUPS_MAP[id];
         const stats = (statisticalPuxadas[p.groupId] || []).find((t: any) => t.id === id);
+        const isTraditional = traditionalTargets.includes(id);
         return {
           id,
           name: animal?.name || '?',
           icon: animal?.icon || '',
           probability: stats?.probability || 0,
-          isTraditional: traditionalTargets.includes(id)
+          isTraditional
         };
-      }).sort((a, b) => b.probability - a.probability);
+      }).sort((a, b) => {
+        // Prioriza tradicionais, depois por probabilidade
+        if (a.isTraditional && !b.isTraditional) return -1;
+        if (!a.isTraditional && b.isTraditional) return 1;
+        return b.probability - a.probability;
+      });
 
       return {
         ...p,

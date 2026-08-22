@@ -56,7 +56,6 @@ export const PUXADAS: PuxadaEntry[] = ANIMAL_GROUPS.map((a) => ({
   name: a.name,
   icon: a.icon,
   puxa: (RAW[a.id] ?? []).map((n) => {
-    // Normalização completa para bater com os nomes em ANIMAL_GROUPS e RAW
     const cleanName = n.toLowerCase()
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
