@@ -68,7 +68,7 @@ export const getScheduleSyncMatrix = createServerFn({ method: "GET" })
       sourceError = e?.message ?? "Falha ao consultar a base de origem";
     }
 
-    const rows: ScheduleRow[] = DRAW_SCHEDULE.map((s) => {
+    const rows: ScheduleRow[] = (location === 'rio' ? DRAW_SCHEDULE_RIO : DRAW_SCHEDULE_CAPITAL).map((s: any) => {
       const mine = (ours ?? []).find((r) => r.time_type === s.timeType);
       const src = source.find((r) => r.draw_time === s.timeType);
       const [hh, mm] = s.timeValue.split(":").map(Number);
