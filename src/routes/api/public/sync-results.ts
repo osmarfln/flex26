@@ -27,11 +27,6 @@ export const Route = createFileRoute('/api/public/sync-results')({
           
           console.log(`[SYNC] Request received. Date: ${dateParam}, Days: ${daysToSync}, Location: ${location}, Auto: ${auto}`);
           
-          // Se auto=true e location=rio, vamos garantir que Capital também seja atualizada em sequência se for uma chamada via cron
-          // A lógica abaixo já itera sobre locationsToSync no handler de else.
-
-
-
           // Fecha execuções travadas (sem finished_at) de tentativas anteriores
           await supabase
             .from('sync_logs')
@@ -67,7 +62,6 @@ export const Route = createFileRoute('/api/public/sync-results')({
             const externalTable = location === 'capital' ? 'capital_results' : 'draw_results';
 
             while (hasMore) {
-              // A tabela draw_results não tem coluna location, capital_results também não precisa filtrar
               const apiUrl = `${EXTERNAL_REST_URL}/${externalTable}?select=*&order=draw_date.desc&limit=${batchSize}&offset=${offset}`;
               
               const response = await fetch(apiUrl, {
@@ -101,17 +95,15 @@ export const Route = createFileRoute('/api/public/sync-results')({
                   ? String(res.prize_1_group).padStart(2, '0') 
                   : null;
 
-                // Mapeamento de horários para Capital e Rio
                 let drawTime = res.draw_time;
                 let drawTimeValue = res.draw_time_value;
 
                 if (location === 'capital') {
-                  // Mapear horários da Capital da tabela capital_results
                   const capMap: Record<string, { type: string, value: string }> = {
                     'LCAP_09': { type: 'L-09', value: '09:00' },
                     'LCAP_10': { type: 'L-10', value: '10:00' },
                     'LCAP_11': { type: 'L-11', value: '11:00' },
-                    'PTSP_13': { type: 'L-13', value: '13:00' }, // PTSP as L-13
+                    'PTSP_13': { type: 'L-13', value: '13:00' },
                     'LCAP_13': { type: 'L-13', value: '13:00' },
                     'CAP_14': { type: 'L-14', value: '14:00' },
                     'BAND_15': { type: 'L-15', value: '15:00' },
@@ -128,11 +120,9 @@ export const Route = createFileRoute('/api/public/sync-results')({
                     drawTime = mapped.type;
                     drawTimeValue = mapped.value;
                   } else if (drawTime.startsWith('L-')) {
-                     // Caso já esteja no formato L-XX
                      drawTimeValue = drawTime.replace('L-', '') + ':00';
                   }
                 } else {
-                  // Mapeamento Rio
                   drawTimeValue = drawTimeValue || (
                     drawTime === 'PPT' ? '09:20' :
                     drawTime === 'PTM' ? '11:20' :
@@ -161,23 +151,8 @@ export const Route = createFileRoute('/api/public/sync-results')({
                 totalSynced++;
               }
               offset += batchSize;
-              // Permitir sincronização de todo o 2026 (aprox 365 dias * 11 horários = ~4000 registros)
-              // Se o ambiente estiver lento, podemos reduzir o limite para 5000
               if (offset > 5000) break; 
             }
-
-            if (logEntry) {
-              await supabase
-                .from('sync_logs')
-                .update({ status: 'success', finished_at: new Date().toISOString(), records_synced: totalSynced })
-                .eq('id', logEntry.id);
-            }
-
-            return new Response(JSON.stringify({ success: true, synced: totalSynced }), { 
-              headers: { 'Content-Type': 'application/json' } 
-            });
-          }
-
           } else {
             const locationsToSync = auto ? ['rio', 'capital'] : [location];
             for (const loc of locationsToSync) {
@@ -186,7 +161,6 @@ export const Route = createFileRoute('/api/public/sync-results')({
                 currentSyncDate.setDate(currentSyncDate.getDate() - i);
                 const dateStr = currentSyncDate.toISOString().split('T')[0]!;
                 
-                // Busca resultados da data específica e localização
                 const externalTable = loc === 'capital' ? 'capital_results' : 'draw_results';
                 const apiUrl = `${EXTERNAL_REST_URL}/${externalTable}?draw_date=eq.${dateStr}&select=*`;
                 
@@ -213,7 +187,6 @@ export const Route = createFileRoute('/api/public/sync-results')({
                         ? String(res.prize_1_group).padStart(2, '0') 
                         : null;
 
-                      // Mapeamento de horários (mesma lógica do syncAll)
                       let drawTime = res.draw_time;
                       let drawTimeValue = res.draw_time_value;
 
@@ -273,7 +246,6 @@ export const Route = createFileRoute('/api/public/sync-results')({
               }
             }
           }
-
 
           if (logEntry) {
             await supabase
