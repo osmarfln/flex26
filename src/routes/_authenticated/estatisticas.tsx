@@ -602,6 +602,84 @@ function EstatisticasPage() {
 
                     )}
                   </div>
+
+                  {!isLoading && hottestTens.length > 0 && (
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
+                      <Card className="dashboard-card p-6 bg-white/[0.03] border-white/10">
+                        <h3 className="text-sm font-black uppercase italic mb-6 flex items-center gap-2">
+                          <BarChart3 className="w-4 h-4 text-primary" />
+                          Top 10 Dezenas (Frequência)
+                        </h3>
+                        <div className="h-[300px] w-full">
+                          <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={hottestTens.slice(0, 10).map(t => ({ name: t.ten, freq: t.freqs[300] }))}>
+                              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                              <XAxis 
+                                dataKey="name" 
+                                axisLine={false} 
+                                tickLine={false} 
+                                tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 12, fontWeight: 'bold' }} 
+                              />
+                              <YAxis 
+                                axisLine={false} 
+                                tickLine={false} 
+                                tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 10 }} 
+                              />
+                              <Tooltip 
+                                cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                                contentStyle={{ backgroundColor: '#0D121F', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
+                                itemStyle={{ color: '#EAB308', fontWeight: 'bold' }}
+                              />
+                              <Bar dataKey="freq" radius={[4, 4, 0, 0]}>
+                                {hottestTens.slice(0, 10).map((entry, index) => (
+                                  <Cell key={`cell-${index}`} fill={index === 0 ? '#EAB308' : '#EAB30880'} />
+                                ))}
+                              </Bar>
+                            </BarChart>
+                          </ResponsiveContainer>
+                        </div>
+                      </Card>
+
+                      <Card className="dashboard-card p-6 bg-white/[0.03] border-white/10">
+                        <h3 className="text-sm font-black uppercase italic mb-6 flex items-center gap-2">
+                          <PieChart className="w-4 h-4 text-primary" />
+                          Distribuição por Grupo (Top 20 Dezenas)
+                        </h3>
+                        <div className="h-[300px] w-full">
+                          <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                              <Pie
+                                data={(() => {
+                                  const groupCounts: Record<string, number> = {};
+                                  hottestTens.slice(0, 20).forEach(t => {
+                                    const animal = getAnimalByTen(t.ten);
+                                    if (animal) {
+                                      groupCounts[animal.name] = (groupCounts[animal.name] || 0) + 1;
+                                    }
+                                  });
+                                  return Object.entries(groupCounts).map(([name, value]) => ({ name, value }));
+                                })()}
+                                cx="50%"
+                                cy="50%"
+                                innerRadius={60}
+                                outerRadius={80}
+                                paddingAngle={5}
+                                dataKey="value"
+                                stroke="none"
+                              >
+                                {Array.from({ length: 25 }).map((_, index) => (
+                                  <Cell key={`cell-${index}`} fill={`hsl(var(--primary) / ${1 - (index * 0.05)})`} />
+                                ))}
+                              </Pie>
+                              <Tooltip 
+                                contentStyle={{ backgroundColor: '#0D121F', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
+                              />
+                            </PieChart>
+                          </ResponsiveContainer>
+                        </div>
+                      </Card>
+                    </div>
+                  )}
                 </motion.div>
               )}
 
