@@ -112,6 +112,7 @@ export const Route = createFileRoute('/api/public/sync-results')({
                     'CAP_14':  { type: 'L-14', value: '14:00' },
                     'LCAP_15': { type: 'L-15', value: '15:00' },
                     'BAND_15': { type: 'L-15', value: '15:00' },
+                    'PTSP_15': { type: 'L-15', value: '15:00' }, // Added PTSP_15
                     'LCAP_16': { type: 'L-16', value: '16:00' },
                     'LCAP_18': { type: 'L-18', value: '18:00' },
                     'CAP_18':  { type: 'L-18', value: '18:00' },
@@ -209,6 +210,7 @@ export const Route = createFileRoute('/api/public/sync-results')({
                           'CAP_14':  { type: 'L-14', value: '14:00' },
                           'LCAP_15': { type: 'L-15', value: '15:00' },
                           'BAND_15': { type: 'L-15', value: '15:00' },
+                          'PTSP_15': { type: 'L-15', value: '15:00' }, // Added PTSP_15
                           'LCAP_16': { type: 'L-16', value: '16:00' },
                           'LCAP_18': { type: 'L-18', value: '18:00' },
                           'CAP_18':  { type: 'L-18', value: '18:00' },
