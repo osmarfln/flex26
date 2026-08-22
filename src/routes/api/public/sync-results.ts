@@ -62,7 +62,7 @@ export const Route = createFileRoute('/api/public/sync-results')({
             const externalTable = location === 'capital' ? 'capital_results' : 'draw_results';
 
             while (hasMore) {
-              const apiUrl = `${EXTERNAL_REST_URL}/${externalTable}?select=*&order=draw_date.desc&limit=${batchSize}&offset=${offset}`;
+              const apiUrl = `${EXTERNAL_REST_URL}/${externalTable}?select=*&order=draw_date.desc,draw_time.desc&limit=${batchSize}&offset=${offset}`;
               
               const response = await fetch(apiUrl, {
                 headers: {
@@ -91,6 +91,9 @@ export const Route = createFileRoute('/api/public/sync-results')({
                   res.prize_5_milhar
                 ].filter(p => !!p);
                 
+                // Ignorar resultados incompletos (precisamos dos 5 prêmios)
+                if (results.length < 5) continue;
+
                 const groupStr = res.prize_1_group !== null && res.prize_1_group !== undefined 
                   ? String(res.prize_1_group).padStart(2, '0') 
                   : null;
@@ -123,14 +126,16 @@ export const Route = createFileRoute('/api/public/sync-results')({
                      drawTimeValue = drawTime.replace('L-', '') + ':00';
                   }
                 } else {
-                  drawTimeValue = drawTimeValue || (
-                    drawTime === 'PPT' ? '09:20' :
-                    drawTime === 'PTM' ? '11:20' :
-                    drawTime === 'PT' ? '14:20' :
-                    drawTime === 'PTV' ? '16:20' :
-                    drawTime === 'PTN' ? '18:20' :
-                    drawTime === 'COR' ? '21:20' : null
-                  );
+                  // Mapeamento preciso para o Rio
+                  const rioMap: Record<string, string> = {
+                    'PPT': '09:20',
+                    'PTM': '11:20',
+                    'PT': '14:20',
+                    'PTV': '16:20',
+                    'PTN': '18:20',
+                    'COR': '21:30'
+                  };
+                  drawTimeValue = rioMap[drawTime] || drawTimeValue;
                 }
 
                 if (!drawTimeValue) continue;
@@ -151,7 +156,7 @@ export const Route = createFileRoute('/api/public/sync-results')({
                 totalSynced++;
               }
               offset += batchSize;
-              if (offset > 100000) break; // Limite de 100k para histórico completo
+              if (offset > 100000) break;
             }
           } else {
             const locationsToSync = auto ? ['rio', 'capital'] : [location];
@@ -183,6 +188,8 @@ export const Route = createFileRoute('/api/public/sync-results')({
                         res.prize_5_milhar
                       ].filter(p => !!p);
                       
+                      if (results.length < 5) continue;
+
                       const groupStr = res.prize_1_group !== null && res.prize_1_group !== undefined 
                         ? String(res.prize_1_group).padStart(2, '0') 
                         : null;
@@ -215,14 +222,15 @@ export const Route = createFileRoute('/api/public/sync-results')({
                           drawTimeValue = drawTime.replace('L-', '') + ':00';
                         }
                       } else {
-                        drawTimeValue = drawTimeValue || (
-                          drawTime === 'PPT' ? '09:20' :
-                          drawTime === 'PTM' ? '11:20' :
-                          drawTime === 'PT' ? '14:20' :
-                          drawTime === 'PTV' ? '16:20' :
-                          drawTime === 'PTN' ? '18:20' :
-                          drawTime === 'COR' ? '21:20' : null
-                        );
+                        const rioMap: Record<string, string> = {
+                          'PPT': '09:20',
+                          'PTM': '11:20',
+                          'PT': '14:20',
+                          'PTV': '16:20',
+                          'PTN': '18:20',
+                          'COR': '21:30'
+                        };
+                        drawTimeValue = rioMap[drawTime] || drawTimeValue;
                       }
 
                       if (!drawTimeValue) continue;
