@@ -946,28 +946,26 @@ export const getPuxadasStats = createServerFn({ method: "GET" })
     if (!rawRows || rawRows.length === 0) return { table: [], totalDraws: 0, period: null, schedules: [] };
 
     const results = sortDrawsDesc(rawRows as any[]);
-    const statisticalPuxadas = calculateStatisticalPuxadas(results);
-
-
     const schedules = data.location === 'capital' 
       ? ["L-09", "L-10", "L-11", "L-13", "L-14", "L-15", "L-16", "L-18", "L-19", "L-20", "L-22"]
       : ["PPT", "PTM", "PT", "PTV", "PTN", "COR"];
-    const empty = {
-      totalDraws: 0,
-      period: null as { start: string | null; end: string | null } | null,
-      schedules,
-      table: PUXADAS_TABLE.map((p) => ({
-        ...p,
-        occurrences: 0,
-        hits: 0,
-        hitRate: 0,
-        byTarget: [] as any[],
-        bySchedule: [] as any[],
-        lastOccurrence: null as any,
-      })),
-    };
 
-    if (!rawRows || rawRows.length < 2) return empty;
+    if (rawRows.length < 2) {
+      return {
+        totalDraws: rawRows.length,
+        period: null,
+        schedules,
+        table: PUXADAS_TABLE.map(p => ({
+          ...p,
+          occurrences: 0,
+          hits: 0,
+          hitRate: 0,
+          byTarget: p.puxa.map(t => ({ ...t, count: 0, probability: 0, isTraditional: true })),
+          bySchedule: schedules.map(s => ({ schedule: s, occurrences: 0, hits: 0, rate: 0 })),
+          lastOccurrence: null
+        }))
+      };
+    }
 
     const desc = sortDrawsDesc(rawRows as any[]);
     const asc = [...desc].reverse();
@@ -979,13 +977,7 @@ export const getPuxadasStats = createServerFn({ method: "GET" })
     };
 
     const table = PUXADAS_TABLE.map((p) => {
-      // Combina a puxada tradicional com a estatística calculada
       const traditionalTargets = p.puxa.map((t) => t.id).filter(Boolean);
-      const statsTargets = (statisticalPuxadas[p.groupId] || []).map((t: any) => t.id);
-      
-      // União de alvos (alvos únicos)
-      const allTargets = Array.from(new Set([...traditionalTargets, ...statsTargets]));
-      
       let occurrences = 0;
       let hits = 0;
       const targetCount: Record<string, number> = {};
@@ -1002,14 +994,15 @@ export const getPuxadasStats = createServerFn({ method: "GET" })
         if (schedStats[st]) schedStats[st].occurrences++;
         const nextGroup = groupOf(next);
         
-        // Uma puxada é considerada "hit" se o próximo grupo está na lista combinada (tradicional + estatística)
-        const hit = !!nextGroup && allTargets.includes(nextGroup);
+        // Puxada TRADICIONAL apenas
+        const hit = !!nextGroup && traditionalTargets.includes(nextGroup);
         
         if (hit) {
           hits++;
           if (schedStats[st]) schedStats[st].hits++;
           if (nextGroup) targetCount[nextGroup] = (targetCount[nextGroup] ?? 0) + 1;
         }
+        
         lastOccurrence = {
           date: cur.date,
           time_type: cur.time_type,
@@ -1022,39 +1015,22 @@ export const getPuxadasStats = createServerFn({ method: "GET" })
         };
       }
 
-      // Constrói a lista final de alvos
-      const finalPuxa = allTargets.map(id => {
-        const animal = ANIMAL_GROUPS_MAP[id];
-        const stats = (statisticalPuxadas[p.groupId] || []).find((t: any) => t.id === id);
-        const isTraditional = traditionalTargets.includes(id);
-        return {
-          id,
-          name: animal?.name || '?',
-          icon: animal?.icon || '',
-          probability: stats?.probability || 0,
-          isTraditional
-        };
-      }).sort((a, b) => {
-        // Prioriza tradicionais, depois por probabilidade
-        if (a.isTraditional && !b.isTraditional) return -1;
-        if (!a.isTraditional && b.isTraditional) return 1;
-        return b.probability - a.probability;
-      });
+      const byTarget = p.puxa.map((t) => ({
+        id: t.id,
+        name: t.name,
+        icon: t.icon,
+        count: targetCount[t.id] ?? 0,
+        probability: occurrences > 0 ? Number((( (targetCount[t.id] ?? 0) / occurrences) * 100).toFixed(1)) : 0,
+        isTraditional: true
+      })).sort((a, b) => b.count - a.count);
 
       return {
         ...p,
-        puxa: finalPuxa,
+        puxa: p.puxa,
         occurrences,
         hits,
         hitRate: occurrences > 0 ? Number(((hits / occurrences) * 100).toFixed(1)) : 0,
-        byTarget: finalPuxa.map((t) => ({
-          id: t.id,
-          name: t.name,
-          icon: t.icon,
-          count: targetCount[t.id] ?? 0,
-          probability: t.probability,
-          isTraditional: t.isTraditional
-        })),
+        byTarget,
         bySchedule: schedules.map((s) => ({
           schedule: s,
           occurrences: schedStats[s]!.occurrences,
@@ -1067,14 +1043,12 @@ export const getPuxadasStats = createServerFn({ method: "GET" })
       };
     });
 
-
     const oldestPuxada = asc[0] as any;
     const newestPuxada = desc[0] as any;
 
     return {
       totalDraws: desc.length,
       period: { start: oldestPuxada?.date ?? null, end: newestPuxada?.date ?? null },
-
       schedules,
       table,
     };

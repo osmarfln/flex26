@@ -24,7 +24,7 @@ const RAW: Record<string, string[]> = {
   "05": ["Galo", "Gato", "Camelo", "Macaco", "Porco", "Pavão"],
   "06": ["Carneiro", "Macaco", "Elefante", "Touro", "Tigre", "Urso"],
   "07": ["Cabra", "Coelho", "Vaca"],
-  "08": ["Cachorro", "Elefante", "Urso"],
+  "08": ["Camelo", "Coelho", "Cachorro"],
   "09": ["Jacaré", "Porco", "Burro", "Gato"],
   "10": ["Carneiro", "Águia", "Burro"],
   "11": ["Burro", "Cabra", "Touro"],
