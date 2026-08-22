@@ -179,7 +179,7 @@ function AdminPage() {
     if (error) toast.error(error.message);
     else {
       // Auditoria
-      await supabase.from("admin_audit").insert({
+      await supabase.from("admin_audit" as any).insert({
         admin_id: (me.user?.id as any),
         action: status === "approved" ? "permitir" : status === "blocked" ? "bloquear" : "atualizar_status",
         target_user_id: id,
