@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { UserMenu } from "@/components/layout/UserMenu";
 import { ANIMAL_GROUPS } from "@/lib/animals";
-import { getResults, getTenDelayStats, getGroupDelayStats, getDigitDelayStats } from "@/lib/lottery.functions";
+import { getResults, getTenDelayStats, getGroupDelayStats, getDigitDelayStats, getStats } from "@/lib/lottery.functions";
 import { DRAW_SCHEDULE_RIO, DRAW_SCHEDULE_CAPITAL } from "@/lib/draw-order";
 
 import { AlertaDezenasAtrasadas } from "@/components/AlertaDezenasAtrasadas";
@@ -133,6 +133,11 @@ function Index() {
   const { data: tenStats } = useQuery({
     queryKey: ["homepage-ten-stats", location],
     queryFn: () => getTenDelayStats({ data: { location } }),
+  });
+
+  const { data: globalStats } = useQuery({
+    queryKey: ["homepage-global-stats", location],
+    queryFn: () => getStats({ data: { location } }),
   });
 
   const { data: digitStats, isLoading: digitLoading } = useQuery({
