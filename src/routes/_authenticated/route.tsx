@@ -1,5 +1,7 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
+import { useDrawNotifications } from "@/hooks/useDrawNotifications";
+import { useState, useEffect } from "react";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
