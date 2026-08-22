@@ -29,13 +29,13 @@ export function timePriority(timeType?: string | null, location: 'rio' | 'capita
  * Ordena os concursos do mais recente para o mais antigo:
  * primeiro por data, depois pelo horário oficial do dia.
  */
-export function sortDrawsDesc<T extends { date: string; time_type?: string | null; location?: string | null }>(
+export function sortDrawsDesc<T extends { date: string; time_type?: string | null; location?: any }>(
   rows: T[],
 ): T[] {
   return [...rows].sort((a, b) => {
     if (a.date !== b.date) return a.date < b.date ? 1 : -1;
-    const locA = (a.location as any) || 'rio';
-    const locB = (b.location as any) || 'rio';
+    const locA = a.location || 'rio';
+    const locB = b.location || 'rio';
     return timePriority(b.time_type, locB) - timePriority(a.time_type, locA);
   });
 }
@@ -72,5 +72,3 @@ export const DRAW_SCHEDULE_CAPITAL: { timeType: string; timeValue: string; label
 export function brasiliaDateISO(d: Date = new Date()): string {
   return new Date(d.getTime() - 3 * 60 * 60 * 1000).toISOString().split("T")[0]!;
 }
-
-
