@@ -261,7 +261,7 @@ function Index() {
                 <p className="text-white/40 font-bold text-xs uppercase tracking-widest mt-1">
                   {firstName ? `É um prazer ter você aqui, ${firstName}. Fique à vontade.` : "Seja bem-vindo ao nosso espaço, fique à vontade."}
                 </p>
-                <p className="text-[10px] text-primary/40 font-black uppercase tracking-[0.3em] mt-2 border-t border-white/5 pt-2">Resultados diários automatizados via robô ai automatizado sem intervenção humana</p>
+                <p className="text-[10px] text-primary/40 font-black uppercase tracking-[0.3em] mt-2 border-t border-white/5 pt-2">Resultados diários automatizados via robô automatizado sem intervenção humana</p>
 
 
 
