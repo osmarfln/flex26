@@ -130,7 +130,7 @@ export const runSyncNow = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => z.object({
     location: z.enum(['rio', 'capital']).optional().default('rio'),
     daysToSync: z.number().optional().default(2)
-  }).parse(data))
+  }).optional().default({}).parse(data ?? {}))
   .handler(async ({ data: { location, daysToSync } }) => {
 
   const origin = new URL(getRequest().url).origin;
