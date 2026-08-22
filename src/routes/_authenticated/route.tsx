@@ -1,5 +1,7 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
+import { useDrawNotifications } from "@/hooks/useDrawNotifications";
+import { useState, useEffect } from "react";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
@@ -24,5 +26,33 @@ export const Route = createFileRoute("/_authenticated")({
 
     return { user: data.user, isAdmin: Boolean(isAdmin) };
   },
-  component: () => <Outlet />,
+  component: AuthenticatedLayout,
 });
+
+function AuthenticatedLayout() {
+  const [location, setLocation] = useState<'rio' | 'capital'>(() => {
+    if (typeof window !== 'undefined') {
+      return (localStorage.getItem('preferred-location') as 'rio' | 'capital') || 'rio';
+    }
+    return 'rio';
+  });
+
+  // Escuta mudanças no localStorage para atualizar a localidade da notificação
+  useEffect(() => {
+    const handleStorage = () => {
+      const stored = localStorage.getItem('preferred-location') as 'rio' | 'capital';
+      if (stored && stored !== location) setLocation(stored);
+    };
+    window.addEventListener('storage', handleStorage);
+    // Polling local para mudanças na mesma aba
+    const interval = setInterval(handleStorage, 2000);
+    return () => {
+      window.removeEventListener('storage', handleStorage);
+      clearInterval(interval);
+    };
+  }, [location]);
+
+  useDrawNotifications(location);
+
+  return <Outlet />;
+}
