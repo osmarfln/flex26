@@ -800,6 +800,73 @@ function EstatisticasPage() {
                         }
 
                         return (
+                          <motion.div
+                            key={item.ten}
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: i * 0.02 }}
+                          >
+                            <Card className={`group relative overflow-hidden bg-white/5 ${borderColorClass} border hover:bg-white/[0.08] transition-all p-4 rounded-2xl`}>
+                              <div className="flex justify-between items-start mb-3">
+                                <div>
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <span className="text-2xl font-black italic tracking-tighter">{item.ten}</span>
+                                    {item.hitInFirstPrize && item.currentDelay === 0 && (
+                                      <Badge className="bg-emerald-500 text-[8px] h-4">1º Prêmio agora!</Badge>
+                                    )}
+                                  </div>
+                                  <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest">
+                                    {animal?.icon} {animal?.name}
+                                  </p>
+                                </div>
+                                <div className={`px-2 py-1 rounded-md text-[9px] font-black uppercase ${bgColorClass} ${colorClass}`}>
+                                  x{item.relativeIndex}
+                                </div>
+                              </div>
+
+                              <div className="grid grid-cols-2 gap-4 mb-4">
+                                <div>
+                                  <p className="text-[9px] text-white/20 font-bold uppercase mb-1">Atraso Atual</p>
+                                  <p className="text-sm font-black text-white">{item.currentDelay} <span className="text-[8px] text-white/30">conc.</span></p>
+                                </div>
+                                <div>
+                                  <p className="text-[9px] text-white/20 font-bold uppercase mb-1">Atraso Diário</p>
+                                  <p className={`text-sm font-black ${item.dailyDelay > 2 ? 'text-red-400' : 'text-white/60'}`}>
+                                    {item.dailyDelay} <span className="text-[8px] text-white/30">horár.</span>
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div className="space-y-2">
+                                <div className="flex justify-between items-center text-[9px]">
+                                  <span className="text-white/30 uppercase font-bold">Probabilidade Atraso</span>
+                                  <span className={`font-black ${colorClass}`}>{item.percentile}%</span>
+                                </div>
+                                <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                                  <div 
+                                    className={`h-full ${bgColorClass.replace('/10', '')}`} 
+                                    style={{ width: `${item.percentile}%` }} 
+                                  />
+                                </div>
+                              </div>
+
+                              <div className="mt-4 pt-4 border-t border-white/5">
+                                <MiniSparkline data={item.history} color={item.relativeIndex > 1.25 ? "#EAB308" : "#3B82F6"} />
+                              </div>
+
+                              {item.dailyDelay >= 3 && item.relativeIndex > 1.5 && (
+                                <div className="absolute top-0 left-0 w-full h-full pointer-events-none border-2 border-red-500/20 animate-pulse rounded-2xl" />
+                              )}
+                            </Card>
+                          </motion.div>
+                        );
+                      })
+                    )}
+                  </div>
+                </motion.div>
+              )}
+
+                        return (
                           <Card key={i} className={`bg-[#0D121F] border-white/10 p-5 hover:border-white/20 transition-all group relative overflow-hidden flex flex-col`}>
                             <div className={`absolute top-0 right-0 w-1 h-full ${colorClass.replace('text-', 'bg-')}`} />
                             
