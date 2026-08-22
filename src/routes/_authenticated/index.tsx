@@ -365,7 +365,7 @@ function Index() {
                   const isLatest = game && sortedGames[0]?.id === game.id;
                   
                   return (
-                    <Card key={schedule.timeType} className={`dashboard-card rounded-3xl overflow-hidden group hover:border-primary/40 transition-all duration-500 relative ${!game ? 'opacity-70 bg-white/[0.02]' : 'bg-card'}`}>
+                    <Card key={schedule.timeType} className={`dashboard-card rounded-3xl overflow-hidden group hover:border-primary/40 transition-all duration-500 relative min-h-[300px] ${!game ? 'opacity-70 bg-white/[0.02]' : 'bg-card'}`}>
                       {isLatest && (
                         <div className="absolute inset-0 border-2 border-primary/20 rounded-3xl pointer-events-none z-10" />
                       )}
