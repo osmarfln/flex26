@@ -640,8 +640,8 @@ function EstatisticasPage() {
                         </div>
                       </Card>
 
-                      <Card className="dashboard-card p-6 bg-white/[0.03] border-white/10">
-                        <h3 className="text-sm font-black uppercase italic mb-6 flex items-center gap-2">
+                      <Card className="dashboard-card p-6 bg-white border-white/10 shadow-xl">
+                        <h3 className="text-sm font-black uppercase italic mb-6 flex items-center gap-2 text-slate-900">
                           <PieChart className="w-4 h-4 text-primary" />
                           Distribuição por Grupo (Top 20 Dezenas)
                         </h3>
@@ -669,22 +669,31 @@ function EstatisticasPage() {
                                 outerRadius={80}
                                 paddingAngle={5}
                                 dataKey="value"
-                                stroke="none"
+                                stroke="#fff"
+                                strokeWidth={2}
                                 label={({ name, percent }) => `${name} ${(percent ? percent * 100 : 0).toFixed(0)}%`}
-                                labelLine={true}
+                                labelLine={{ stroke: '#64748b', strokeWidth: 1 }}
                               >
-                                {Array.from({ length: 25 }).map((_, index) => (
-                                  <Cell key={`cell-${index}`} fill={`hsl(var(--primary) / ${1 - (index * 0.04)})`} />
-                                ))}
+                                {(() => {
+                                  const colors = [
+                                    '#ef4444', '#f97316', '#f59e0b', '#eab308', '#84cc16', 
+                                    '#22c55e', '#10b981', '#06b6d4', '#0ea5e9', '#3b82f6', 
+                                    '#6366f1', '#8b5cf6', '#a855f7', '#d946ef', '#ec4899', 
+                                    '#f43f5e', '#64748b', '#71717a', '#737373', '#78716c'
+                                  ];
+                                  return Array.from({ length: 25 }).map((_, index) => (
+                                    <Cell key={`cell-${index}`} fill={colors[index % colors.length] as string} />
+                                  ));
+                                })()}
                               </Pie>
                               <Tooltip 
-                                contentStyle={{ backgroundColor: '#0D121F', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
+                                contentStyle={{ backgroundColor: '#fff', border: '1px solid #e2e8f0', borderRadius: '12px', color: '#0f172a' }}
                               />
                               <Legend 
                                 verticalAlign="bottom" 
                                 height={36} 
                                 iconType="circle"
-                                wrapperStyle={{ fontSize: '10px', textTransform: 'uppercase', fontWeight: 'bold', paddingTop: '20px' }}
+                                wrapperStyle={{ fontSize: '9px', textTransform: 'uppercase', fontWeight: 'bold', paddingTop: '20px', color: '#0f172a' }}
                               />
                             </PieChart>
                           </ResponsiveContainer>
