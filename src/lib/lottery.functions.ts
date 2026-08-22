@@ -25,6 +25,7 @@ const ANIMAL_GROUPS_DATA = ANIMAL_GROUPS_MAP;
 export const getResults = createServerFn({ method: "GET" })
   .validator((data: unknown) => z.object({
     date: z.string().optional(),
+    dateEnd: z.string().optional(),
     location: z.enum(['rio', 'capital']).optional().default('rio'),
     limit: z.number().optional().default(20),
     offset: z.number().optional().default(0)
@@ -39,7 +40,9 @@ export const getResults = createServerFn({ method: "GET" })
       .order("time_type", { ascending: true });
 
 
-    if (data.date) {
+    if (data.date && data.dateEnd) {
+      query = query.gte("date", data.date).lte("date", data.dateEnd);
+    } else if (data.date) {
       query = query.eq("date", data.date);
     }
 
