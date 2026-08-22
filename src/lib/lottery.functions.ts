@@ -156,7 +156,7 @@ export const getStats = createServerFn({ method: "GET" })
           let dDelay = 0;
           for (const res of results) {
             if (!res || res.date !== lastDate) break;
-            const hit = res.results?.slice(0, 5).some(p => tenToGroup(p.slice(-2)) === group);
+            const hit = res.results?.slice(0, 5).some((p: string) => tenToGroup(p.slice(-2)) === group);
             if (hit) break;
             dDelay++;
           }
