@@ -907,7 +907,7 @@ function EstatisticasPage() {
                     </div>
 
                     {!statsLoading && (
-                      <Card className="dashboard-card p-6 bg-white/[0.03] border-white/10 mt-8 min-w-0">
+                      <Card className="dashboard-card p-6 bg-white/[0.03] border-white/10 mt-8 min-w-0 lg:col-span-12">
                         <h3 className="text-sm font-black uppercase italic mb-8 flex items-center gap-2">
                           <TrendingUp className="w-4 h-4 text-purple-400" />
                           Tendência de Atraso Médio (Últimos Concursos)
@@ -925,7 +925,7 @@ function EstatisticasPage() {
                               })).reverse();
                             })()}>
                               <defs>
-                                <linearGradient id="colorAvg" x1="0" y1="0" x2="0" y2="1">
+                                <linearGradient id="colorTrend" x1="0" y1="0" x2="0" y2="1">
                                   <stop offset="5%" stopColor="#A855F7" stopOpacity={0.3}/>
                                   <stop offset="95%" stopColor="#A855F7" stopOpacity={0}/>
                                 </linearGradient>
@@ -943,7 +943,7 @@ function EstatisticasPage() {
                                 contentStyle={{ backgroundColor: '#0D121F', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
                                 itemStyle={{ color: '#A855F7', fontWeight: 'bold' }}
                               />
-                              <Area type="monotone" dataKey="avg" stroke="#A855F7" fillOpacity={1} fill="url(#colorAvg)" strokeWidth={3} />
+                              <Area type="monotone" dataKey="avg" stroke="#A855F7" fillOpacity={1} fill="url(#colorTrend)" strokeWidth={3} />
                             </AreaChart>
                           </ResponsiveContainer>
                         </div>
