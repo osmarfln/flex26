@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
-import { DRAW_SCHEDULE, brasiliaDateISO } from "@/lib/draw-order";
+import { DRAW_SCHEDULE_RIO, DRAW_SCHEDULE_CAPITAL, brasiliaDateISO } from "@/lib/draw-order";
 import { getAnimalByTen } from "@/lib/animals";
 import { useLotteryRealtime } from "@/hooks/useLotteryRealtime";
 
@@ -42,20 +42,26 @@ function CadastrarPage() {
   const queryClient = useQueryClient();
   const { lastUpdate } = useLotteryRealtime("cadastrar-db-changes");
 
+  const [location, setLocation] = useState<'rio' | 'capital'>('rio');
   const [date, setDate] = useState(brasiliaDateISO());
-  const [timeType, setTimeType] = useState(DRAW_SCHEDULE[0]!.timeType);
-  const [timeValue, setTimeValue] = useState(DRAW_SCHEDULE[0]!.timeValue);
+  
+  const schedules = location === 'rio' ? DRAW_SCHEDULE_RIO : DRAW_SCHEDULE_CAPITAL;
+  const [timeType, setTimeType] = useState(schedules[0]!.timeType);
+  const [timeValue, setTimeValue] = useState(schedules[0]!.timeValue);
   const [prizes, setPrizes] = useState<string[]>(["", "", "", "", ""]);
   const [saving, setSaving] = useState(false);
 
+
   const recentQuery = useQuery({
-    queryKey: ["cadastrar", "recent", lastUpdate?.toISOString()],
+    queryKey: ["cadastrar", "recent", lastUpdate?.toISOString(), location],
     enabled: isAdmin,
     staleTime: 0,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("lottery_results")
-        .select("id, date, time_type, time_value, results, animal")
+        .select("id, date, time_type, time_value, results, animal, location")
+        .eq("location", location)
+
         .order("date", { ascending: false })
         .order("time_value", { ascending: false })
         .limit(12);
@@ -96,6 +102,8 @@ function CadastrarPage() {
     const animal = getAnimalByTen(firstTen);
     const { error } = await supabase.from("lottery_results").insert({
       date,
+      location,
+
       time_type: timeType,
       time_value: timeValue,
       results: filled,
@@ -107,7 +115,7 @@ function CadastrarPage() {
       toast.error(error.message);
       return;
     }
-    toast.success(`Resultado ${timeType} de ${date} cadastrado.`);
+    toast.success(`Resultado ${timeType} (${location === 'rio' ? 'Rio' : 'Capital'}) de ${date} cadastrado.`);
     setPrizes(["", "", "", "", ""]);
     queryClient.invalidateQueries();
     recentQuery.refetch();
@@ -137,7 +145,26 @@ function CadastrarPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid gap-3 sm:grid-cols-3">
+            <div className="grid gap-3 sm:grid-cols-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="local">Local</Label>
+                <select
+                  id="local"
+                  className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                  value={location}
+                  onChange={(e) => {
+                    const newLoc = e.target.value as 'rio' | 'capital';
+                    const newSchedules = newLoc === 'rio' ? DRAW_SCHEDULE_RIO : DRAW_SCHEDULE_CAPITAL;
+                    setLocation(newLoc);
+                    setTimeType(newSchedules[0]!.timeType);
+                    setTimeValue(newSchedules[0]!.timeValue);
+                  }}
+                >
+                  <option value="rio">Rio de Janeiro</option>
+                  <option value="capital">Capital (Floripa)</option>
+                </select>
+              </div>
+
               <div className="space-y-1.5">
                 <Label htmlFor="data">Data</Label>
                 <Input id="data" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
@@ -149,12 +176,12 @@ function CadastrarPage() {
                   className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
                   value={timeType}
                   onChange={(e) => {
-                    const slot = DRAW_SCHEDULE.find((s) => s.timeType === e.target.value);
+                    const slot = (location === 'rio' ? DRAW_SCHEDULE_RIO : DRAW_SCHEDULE_CAPITAL).find((s) => s.timeType === e.target.value);
                     setTimeType(e.target.value);
                     if (slot) setTimeValue(slot.timeValue);
                   }}
                 >
-                  {DRAW_SCHEDULE.map((s) => (
+                  {(location === 'rio' ? DRAW_SCHEDULE_RIO : DRAW_SCHEDULE_CAPITAL).map((s) => (
                     <option key={s.timeType} value={s.timeType}>
                       {s.label} — {s.timeValue}
                     </option>
