@@ -297,7 +297,7 @@ function EstatisticasPage() {
             </div>
           </div>
 
-          <AnaliseFiltros />
+          <AnaliseFiltros initialLocation={location} />
 
 
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
