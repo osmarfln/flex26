@@ -2,8 +2,9 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { ANIMAL_GROUPS_MAP, getGroupFromTen as tenToGroup, getAnimalByTen } from "@/lib/animals";
-import { sortDrawsDesc } from "@/lib/draw-order";
+import { sortDrawsDesc, timePriority } from "@/lib/draw-order";
 import { PUXADAS as PUXADAS_TABLE } from "@/lib/puxadas";
+import { calculateStatisticalPuxadas } from "./puxadas.server";
 
 
 // Tipos para os resultados
