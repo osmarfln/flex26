@@ -23,14 +23,13 @@ export interface LotteryResult {
 const ANIMAL_GROUPS_DATA = ANIMAL_GROUPS_MAP;
 
 export const getResults = createServerFn({ method: "GET" })
-  .validator((data: unknown) => z.object({
+  .inputValidator((data: unknown) => z.object({
     date: z.string().optional(),
     dateEnd: z.string().optional(),
     location: z.enum(['rio', 'capital']).optional().default('rio'),
     limit: z.number().optional().default(20),
     offset: z.number().optional().default(0)
   }).parse(data))
-
   .handler(async ({ data }) => {
     let query = supabase
       .from("lottery_results")
