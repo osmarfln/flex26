@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ANIMAL_GROUPS, getAnimalByTen } from "@/lib/animals";
-import { ArrowLeft, BarChart3, Calculator, Sparkles, TrendingUp, Zap, Target, BrainCircuit, History, Flame, Clock, LayoutGrid, Hash, Users, Repeat, ArrowLeftRight, FileText, Upload, Calendar, AlertCircle, Database, CheckCircle2, XCircle, Activity, Timer, ChevronRight, Trophy, RefreshCw, Loader2, Network, Info } from "lucide-react";
+import { ArrowLeft, BarChart3, Calculator, Sparkles, TrendingUp, Zap, Target, BrainCircuit, History, Flame, Clock, LayoutGrid, Hash, Users, Repeat, ArrowLeftRight, FileText, Upload, Calendar, AlertCircle, Database, CheckCircle2, XCircle, Activity, Timer, ChevronRight, Trophy, RefreshCw, Loader2, Network, Info, MapPin } from "lucide-react";
 import { CruzDoDia } from "@/components/CruzDoDia";
 import { AvisoObrigatorio } from "@/components/AvisoObrigatorio";
 import { AnaliseFiltros } from "@/components/AnaliseFiltros";
@@ -300,7 +300,7 @@ function EstatisticasPage() {
         <section className="mb-12 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           <div className="lg:col-span-8">
             <h1 className="text-4xl md:text-5xl lg:text-7xl font-black italic tracking-tighter uppercase mb-4">
-              Análise Rio e Capital
+              Monitoramento {location === 'rio' ? 'Rio' : 'Capital'}
             </h1>
             <p className="text-white/40 text-lg mb-8 font-medium">Dezena em atraso Rio e Capital baseada em resultados diários e históricos</p>
           </div>
@@ -309,7 +309,32 @@ function EstatisticasPage() {
         <section className="mb-12">
           <AvisoObrigatorio />
 
-          <div className="mb-8 flex flex-wrap justify-end gap-4">
+          <div className="mb-8 flex flex-col md:flex-row items-center gap-6 p-1 bg-white/5 border border-white/10 rounded-2xl max-w-fit">
+            <button
+              onClick={() => setLocation('rio')}
+              className={`px-8 py-3 rounded-xl text-sm font-black uppercase tracking-wider transition-all flex items-center gap-2 ${
+                location === 'rio' 
+                  ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20 scale-105' 
+                  : 'text-white/40 hover:text-white/70'
+              }`}
+            >
+              <Trophy className={`w-4 h-4 ${location === 'rio' ? 'animate-pulse' : ''}`} />
+              Análise Rio
+            </button>
+            <button
+              onClick={() => setLocation('capital')}
+              className={`px-8 py-3 rounded-xl text-sm font-black uppercase tracking-wider transition-all flex items-center gap-2 ${
+                location === 'capital' 
+                  ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20 scale-105' 
+                  : 'text-white/40 hover:text-white/70'
+              }`}
+            >
+              <MapPin className={`w-4 h-4 ${location === 'capital' ? 'animate-pulse' : ''}`} />
+              Análise Capital
+            </button>
+          </div>
+
+          <div className="mb-8 flex flex-wrap gap-4">
             <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl min-w-[150px] hover:border-yellow-500/30 transition-all cursor-pointer relative group/select">
               <Calendar className="w-5 h-5 text-white/40" />
               <div className="flex-1">
@@ -334,25 +359,6 @@ function EstatisticasPage() {
                   className="bg-transparent border-none outline-none text-sm font-bold w-full text-white color-scheme-dark"
                 />
               </div>
-            </div>
-
-            <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl min-w-[200px] hover:border-yellow-500/30 transition-all cursor-pointer relative group/select">
-              <Network className="w-5 h-5 text-white/40" />
-              <div className="flex-1">
-                <p className="text-[10px] text-white/40 font-bold uppercase tracking-wider">Localidade</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-bold">{location === 'rio' ? 'Rio de Janeiro' : 'Capital (Floripa)'}</span>
-                  <ChevronRight className="w-4 h-4 text-white/40" />
-                </div>
-              </div>
-              <select 
-                className="absolute inset-0 opacity-0 cursor-pointer"
-                value={location}
-                onChange={(e) => setLocation(e.target.value as any)}
-              >
-                <option value="rio">Rio de Janeiro</option>
-                <option value="capital">Capital (Florianópolis)</option>
-              </select>
             </div>
           </div>
 
