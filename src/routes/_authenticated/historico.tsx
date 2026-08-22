@@ -43,6 +43,7 @@ function Historico() {
   const [dateEnd, setDateEnd] = useState("");
   const [location, setLocation] = useState<'rio' | 'capital'>('rio');
   const [offset, setOffset] = useState(0);
+  const [isSyncing, setIsSyncing] = useState(false);
 
   const limit = 20;
 
