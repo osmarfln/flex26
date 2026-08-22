@@ -143,6 +143,7 @@ function EstatisticasPage() {
     },
     onSuccess: (res: any) => {
       setSyncStep(null);
+      setIsSyncing(false);
       const start = (window as any).__syncStart as number | undefined;
       setLastSync({ at: new Date(), ms: start ? performance.now() - start : 0 });
       setSyncMessage(
