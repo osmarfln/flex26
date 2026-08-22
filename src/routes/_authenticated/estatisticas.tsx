@@ -126,6 +126,7 @@ function EstatisticasPage() {
   const queryClient = useQueryClient();
   const triggerSync = useServerFn(runSyncNow);
   const [syncMessage, setSyncMessage] = useState<string | null>(null);
+  const [isSyncing, setIsSyncing] = useState(false);
   const [syncStep, setSyncStep] = useState<string | null>(null);
   const [lastSync, setLastSync] = useState<{ at: Date; ms: number } | null>(null);
   const [partialStep, setPartialStep] = useState<string | null>(null);
