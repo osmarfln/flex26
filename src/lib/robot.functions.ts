@@ -41,7 +41,7 @@ async function fetchSource(date: string, location: string = 'rio') {
  * na base de origem — prova de que o robô está capturando corretamente.
  */
 export const getScheduleSyncMatrix = createServerFn({ method: "GET" })
-  .validator((data: unknown) => z.object({
+  .inputValidator((data: unknown) => z.object({
     location: z.enum(['rio', 'capital']).optional().default('rio')
   }).parse(data))
   .handler(async ({ data: { location } }) => {
@@ -127,7 +127,7 @@ export const getScheduleSyncMatrix = createServerFn({ method: "GET" })
 
 /** Dispara uma sincronização imediata do robô. */
 export const runSyncNow = createServerFn({ method: "POST" })
-  .validator((data: unknown) => z.object({
+  .inputValidator((data: unknown) => z.object({
     location: z.enum(['rio', 'capital']).optional().default('rio'),
     daysToSync: z.number().optional().default(2)
   }).parse(data))

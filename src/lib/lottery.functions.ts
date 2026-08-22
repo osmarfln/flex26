@@ -23,14 +23,13 @@ export interface LotteryResult {
 const ANIMAL_GROUPS_DATA = ANIMAL_GROUPS_MAP;
 
 export const getResults = createServerFn({ method: "GET" })
-  .validator((data: unknown) => z.object({
+  .inputValidator((data: unknown) => z.object({
     date: z.string().optional(),
     dateEnd: z.string().optional(),
     location: z.enum(['rio', 'capital']).optional().default('rio'),
     limit: z.number().optional().default(20),
     offset: z.number().optional().default(0)
   }).parse(data))
-
   .handler(async ({ data }) => {
     let query = supabase
       .from("lottery_results")
@@ -55,7 +54,7 @@ export const getResults = createServerFn({ method: "GET" })
 
 /** Busca resultados por intervalo de datas e horários (filtros das Análises). */
 export const getResultsRange = createServerFn({ method: "GET" })
-  .validator((data: unknown) =>
+  .inputValidator((data: unknown) =>
     z
       .object({
         start: z.string(),
@@ -90,7 +89,7 @@ export const getResultsRange = createServerFn({ method: "GET" })
 
 
 export const getStats = createServerFn({ method: "GET" })
-  .validator((data: unknown) => z.object({
+  .inputValidator((data: unknown) => z.object({
     location: z.enum(['rio', 'capital']).optional().default('rio'),
     date: z.string().optional(),
     dateEnd: z.string().optional()
@@ -207,7 +206,7 @@ export const getStats = createServerFn({ method: "GET" })
 
 
 export const getTenDelayStats = createServerFn({ method: "GET" })
-  .validator((data: unknown) => z.object({
+  .inputValidator((data: unknown) => z.object({
     location: z.enum(['rio', 'capital']).optional().default('rio')
   }).parse(data))
   .handler(async ({ data }) => {
@@ -335,7 +334,7 @@ export const getTenDelayStats = createServerFn({ method: "GET" })
 
 
 export const getGroupDelayStats = createServerFn({ method: "GET" })
-  .validator((data: unknown) => z.object({
+  .inputValidator((data: unknown) => z.object({
     location: z.enum(['rio', 'capital']).optional().default('rio'),
     date: z.string().optional(),
     dateEnd: z.string().optional()
@@ -558,7 +557,7 @@ export const getGroupDelayStats = createServerFn({ method: "GET" })
 
 
 export const getRepetitionStats = createServerFn({ method: "GET" })
-  .validator((data: unknown) => z.object({
+  .inputValidator((data: unknown) => z.object({
     location: z.enum(['rio', 'capital']).optional().default('rio'),
     date: z.string().optional(),
     dateEnd: z.string().optional()
@@ -715,7 +714,7 @@ export const getRepetitionStats = createServerFn({ method: "GET" })
  * O zero à esquerda NUNCA é cortado: 5 é sempre exibido como 05.
  */
 export const getDigitDelayStats = createServerFn({ method: "GET" })
-  .validator((data: unknown) => z.object({
+  .inputValidator((data: unknown) => z.object({
     location: z.enum(['rio', 'capital']).optional().default('rio'),
     date: z.string().optional(),
     dateEnd: z.string().optional()
@@ -909,7 +908,7 @@ export const getDigitDelayStats = createServerFn({ method: "GET" })
  * no 1º prêmio "puxou" um dos seus grupos associados no sorteio seguinte.
  */
 export const getPuxadasStats = createServerFn({ method: "GET" })
-  .validator((data: unknown) => z.object({
+  .inputValidator((data: unknown) => z.object({
     location: z.enum(['rio', 'capital']).optional().default('rio'),
     date: z.string().optional(),
     dateEnd: z.string().optional()
@@ -1038,7 +1037,7 @@ export const getPuxadasStats = createServerFn({ method: "GET" })
  * cruzando a frequência histórica daquele horário com o atraso atual.
  */
 export const getTenDelayByScheduleStats = createServerFn({ method: "GET" })
-  .validator((data: unknown) => z.object({
+  .inputValidator((data: unknown) => z.object({
     location: z.enum(['rio', 'capital']).optional().default('rio')
   }).parse(data))
   .handler(async ({ data }) => {
