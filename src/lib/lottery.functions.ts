@@ -490,10 +490,25 @@ export const getGroupDelayStats = createServerFn({ method: "GET" })
           sparklineData.push(tempDelay);
         }
 
+        // Daily delay per dezena (Capital/Rio)
+        let dzDailyDelay = 0;
+        if (results.length > 0 && results[0]) {
+          const lastDate = results[0].date;
+          let dDelay = 0;
+          for (const res of results) {
+            if (!res || res.date !== lastDate) break;
+            const hit = res.results?.slice(0, 5).some((p: string) => p?.slice(-2) === dz);
+            if (hit) break;
+            dDelay++;
+          }
+          dzDailyDelay = dDelay;
+        }
+
         return { 
           dezena: dz, 
           freq, 
           delay: delay === -1 ? results.length : delay,
+          dailyDelay: dzDailyDelay,
           hitInFirstPrize,
           history: sparklineData
         };
@@ -504,10 +519,12 @@ export const getGroupDelayStats = createServerFn({ method: "GET" })
       stats.push({
         groupId,
         animal: ANIMAL_GROUPS_DATA[groupId] ? ANIMAL_GROUPS_DATA[groupId].name : "Desconhecido",
+        icon: ANIMAL_GROUPS_DATA[groupId] ? ANIMAL_GROUPS_DATA[groupId].icon : "",
         dezenaStats,
         anyDezenaInFirstPrize,
 
         currentDelay,
+        dailyDelay,
         lastOccurrenceDate,
         avgDelay: Number(avgDelay.toFixed(2)),
         medianDelay,
