@@ -259,12 +259,18 @@ function Index() {
                 <p className="text-white/40 font-bold text-xs uppercase tracking-widest mt-1">
                   {firstName ? `É um prazer ter você aqui, ${firstName}. Fique à vontade.` : "Seja bem-vindo ao nosso espaço, fique à vontade."}
                 </p>
+                <p className="text-[10px] text-primary/40 font-black uppercase tracking-[0.3em] mt-2 border-t border-white/5 pt-2">Resultados diários automatizados via robô ai automatizado sem intervenção humana</p>
+
+
+
 
               </div>
             </motion.div>
 
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-4 italic">Resultados {location === 'rio' ? 'Rio' : 'Capital'}</h1>
-            <p className="text-white/40 text-lg mb-8 font-medium italic">Resultados diários automatizados Rio e Capital via robô ai sem intervenção humana</p>
+            <p className="text-white/40 text-lg mb-8 font-medium italic">Resultados diários automatizados Rio e Capital via robô ai automatizado sem intervenção humana</p>
+
+
             
             <Card className="dashboard-card p-6 mb-8 border-primary/20 bg-primary/5">
               <div className="flex flex-wrap items-center justify-between gap-6">
@@ -363,7 +369,7 @@ function Index() {
                   const isLatest = game && sortedGames[0]?.id === game.id;
                   
                   return (
-                    <Card key={schedule.timeType} className={`dashboard-card rounded-3xl overflow-hidden group hover:border-primary/40 transition-all duration-500 relative ${!game ? 'opacity-70 bg-white/[0.02]' : 'bg-card'}`}>
+                    <Card key={schedule.timeType} className={`dashboard-card rounded-3xl overflow-hidden group hover:border-primary/40 transition-all duration-500 relative min-h-[300px] ${!game ? 'opacity-70 bg-white/[0.02]' : 'bg-card'}`}>
                       {isLatest && (
                         <div className="absolute inset-0 border-2 border-primary/20 rounded-3xl pointer-events-none z-10" />
                       )}
@@ -394,8 +400,9 @@ function Index() {
                               [1, 2, 3, 4, 5].map((idx) => (
                                 <div key={idx} className="flex gap-4 text-sm font-bold items-baseline">
                                   <span className="text-white/20 w-4">{idx}º</span>
-                                  <span className="font-mono tracking-widest text-lg text-red-500 italic">Aguardando... <span className="animate-pulse">...</span></span>
+                                  <span className="font-mono tracking-widest text-lg text-red-500/80 italic text-[11px] whitespace-nowrap">Aguardando... <span className="animate-pulse">...</span></span>
                                 </div>
+
                               ))
                             )}
                           </div>
@@ -486,22 +493,30 @@ function Index() {
 
             <Card className="bg-[#0D121F] border-white/10 rounded-2xl overflow-hidden group hover:border-yellow-500/30 transition-all">
               <CardHeader className="bg-yellow-500/5 p-4 border-b border-white/5 flex flex-row items-center justify-between">
-                <CardTitle className="text-xs font-black uppercase tracking-widest">Grupos Atrasados</CardTitle>
+                <CardTitle className="text-xs font-black uppercase tracking-widest">Dezena do Grupo Mais Atrasada</CardTitle>
                 <Clock className="w-4 h-4 text-yellow-500" />
+
               </CardHeader>
               <CardContent className="p-6 space-y-4">
-                {groupStats?.slice(0, 3).map((item: any) => (
-                  <div key={item.groupId} className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5">
-                    <div className="flex items-center gap-3">
-                      <span className="text-2xl">{ANIMAL_GROUPS.find(a => a.id === item.groupId)?.icon}</span>
-                      <span className="text-sm font-black uppercase italic">{item.animal}</span>
+                {groupStats?.slice(0, 3).map((item: any) => {
+                  const mostDelayedDz = (item.dezenaStats ?? []).sort((a: any, b: any) => b.delay - a.delay)[0];
+                  return (
+                    <div key={item.groupId} className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5">
+                      <div className="flex items-center gap-3">
+                        <span className="text-2xl">{ANIMAL_GROUPS.find(a => a.id === item.groupId)?.icon}</span>
+                        <div className="flex flex-col">
+                          <span className="text-sm font-black uppercase italic">{item.animal}</span>
+                          <span className="text-[8px] font-bold text-white/30 uppercase">Mais Atrasada: <span className="text-yellow-500">{mostDelayedDz?.dezena || '--'}</span></span>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-lg font-black text-yellow-500 block leading-none">{item.currentDelay}d</span>
+                        <span className="text-[9px] font-bold text-red-500/80 uppercase">{item.dailyDelay} horários</span>
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <span className="text-lg font-black text-yellow-500 block leading-none">{item.currentDelay}d</span>
-                      <span className="text-[9px] font-bold text-red-500/80 uppercase">{item.dailyDelay} horários</span>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
+
               </CardContent>
             </Card>
 
