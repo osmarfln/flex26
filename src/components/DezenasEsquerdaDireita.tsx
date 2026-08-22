@@ -9,6 +9,7 @@ interface DigitStat {
   digit: string;
   dezena?: string;
   currentDelay: number;
+  dailyDelay: number;
   avgDelay: number;
   medianDelay: number;
   maxDelay: number;
@@ -107,7 +108,7 @@ function SideBlock({ title, subtitle, stats, schedules, accent }: {
               <div className="flex-1 min-w-[220px] space-y-2">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="text-sm font-bold">
-                    {s.currentDelay} concursos sem sair
+                    {s.currentDelay} concursos · <span className={s.dailyDelay > 2 ? 'text-red-500' : 'text-white/40'}>{s.dailyDelay}h hoje</span>
                   </span>
                   <Badge variant="outline" className={`text-[10px] font-bold ${classColor(s.classification)}`}>
                     {s.classification}

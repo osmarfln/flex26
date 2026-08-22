@@ -60,6 +60,8 @@ const MiniSparkline = ({ data, color = "#EAB308" }: { data: number[], color?: st
 function EstatisticasPage() {
   const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'palpites' | 'logica-atraso' | 'ranking-completo' | 'logica-grupos' | 'repeticoes' | 'esquerda-direita' | 'puxadas'>('quentes');
   const [location, setLocation] = useState<'rio' | 'capital'>('rio');
+  const [date, setDate] = useState("");
+  const [dateEnd, setDateEnd] = useState("");
   const [cruzData, setCruzData] = useState<string[]>([]);
 
   
@@ -67,8 +69,8 @@ function EstatisticasPage() {
   const live = { staleTime: 0, gcTime: 0, refetchOnWindowFocus: true, refetchOnMount: true } as const;
 
   const { data: stats, isLoading: statsLoading } = useQuery({
-    queryKey: ["stats-page", location],
-    queryFn: () => getStats({ data: { location } }),
+    queryKey: ["stats-page", location, date, dateEnd],
+    queryFn: () => getStats({ data: { location, date, dateEnd } }),
     ...live,
   });
 
@@ -79,33 +81,33 @@ function EstatisticasPage() {
   });
 
   const { data: delayStats, isLoading: delayStatsLoading } = useQuery({
-    queryKey: ["ten-delay-stats", location],
-    queryFn: () => getTenDelayStats({ data: { location } }),
+    queryKey: ["ten-delay-stats", location, date, dateEnd],
+    queryFn: () => getTenDelayStats({ data: { location, date, dateEnd } }),
     ...live,
   });
 
   const { data: groupDelayStats, isLoading: groupDelayStatsLoading } = useQuery({
-    queryKey: ["group-delay-stats", location],
-    queryFn: () => getGroupDelayStats({ data: { location } }),
+    queryKey: ["group-delay-stats", location, date, dateEnd],
+    queryFn: () => getGroupDelayStats({ data: { location, date, dateEnd } }),
     ...live,
   });
 
 
   const { data: digitStats, isLoading: digitLoading } = useQuery({
-    queryKey: ["digit-delay-stats", location],
-    queryFn: () => getDigitDelayStats({ data: { location } }),
+    queryKey: ["digit-delay-stats", location, date, dateEnd],
+    queryFn: () => getDigitDelayStats({ data: { location, date, dateEnd } }),
     ...live,
   });
 
   const { data: puxadasStats, isLoading: puxadasLoading } = useQuery({
-    queryKey: ["puxadas-stats", location],
-    queryFn: () => getPuxadasStats({ data: { location } }),
+    queryKey: ["puxadas-stats", location, date, dateEnd],
+    queryFn: () => getPuxadasStats({ data: { location, date, dateEnd } }),
     ...live,
   });
 
   const { data: repetitionStats, isLoading: repetitionLoading } = useQuery({
-    queryKey: ["repetition-stats", location],
-    queryFn: () => getRepetitionStats({ data: { location } }),
+    queryKey: ["repetition-stats", location, date, dateEnd],
+    queryFn: () => getRepetitionStats({ data: { location, date, dateEnd } }),
     ...live,
   });
 
@@ -276,7 +278,33 @@ function EstatisticasPage() {
         <section className="mb-12">
           <AvisoObrigatorio />
 
-          <div className="mb-8 flex justify-end">
+          <div className="mb-8 flex flex-wrap justify-end gap-4">
+            <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl min-w-[150px] hover:border-yellow-500/30 transition-all cursor-pointer relative group/select">
+              <Calendar className="w-5 h-5 text-white/40" />
+              <div className="flex-1">
+                <p className="text-[10px] text-white/40 font-bold uppercase tracking-wider">Início</p>
+                <input 
+                  type="date" 
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  className="bg-transparent border-none outline-none text-sm font-bold w-full text-white color-scheme-dark"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl min-w-[150px] hover:border-yellow-500/30 transition-all cursor-pointer relative group/select">
+              <Calendar className="w-5 h-5 text-white/40" />
+              <div className="flex-1">
+                <p className="text-[10px] text-white/40 font-bold uppercase tracking-wider">Fim</p>
+                <input 
+                  type="date" 
+                  value={dateEnd}
+                  onChange={(e) => setDateEnd(e.target.value)}
+                  className="bg-transparent border-none outline-none text-sm font-bold w-full text-white color-scheme-dark"
+                />
+              </div>
+            </div>
+
             <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl min-w-[200px] hover:border-yellow-500/30 transition-all cursor-pointer relative group/select">
               <Network className="w-5 h-5 text-white/40" />
               <div className="flex-1">
@@ -624,6 +652,7 @@ function EstatisticasPage() {
                             <tr className="border-b border-white/5 bg-white/[0.02]">
                               <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40">Pos</th>
                               <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40">Bicho</th>
+                              <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40 text-center">Atraso Diário</th>
                               <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40">Última</th>
                               <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40 text-center">Atraso</th>
                               <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40 text-center">Índice</th>
@@ -650,6 +679,11 @@ function EstatisticasPage() {
                                           <span className="text-sm font-black uppercase italic text-white/80">{group.animal}</span>
                                           <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest">Grupo {group.group}</span>
                                         </div>
+                                      </div>
+                                    </td>
+                                    <td className="p-4 text-center">
+                                      <div className={`text-[10px] font-black px-2 py-1 rounded-lg border ${group.dailyDelay > 2 ? 'bg-red-500/10 text-red-500 border-red-500/20 animate-pulse' : 'bg-white/5 text-white/40 border-white/10'}`}>
+                                        {group.dailyDelay} horários
                                       </div>
                                     </td>
                                     <td className="p-4 text-[10px] font-bold text-white/40">{group.lastSeen}</td>
@@ -800,68 +834,66 @@ function EstatisticasPage() {
                         }
 
                         return (
-                          <Card key={i} className={`bg-[#0D121F] border-white/10 p-5 hover:border-white/20 transition-all group relative overflow-hidden flex flex-col`}>
-                            <div className={`absolute top-0 right-0 w-1 h-full ${colorClass.replace('text-', 'bg-')}`} />
-                            
-                            <div className="flex justify-between items-start mb-4">
-                              <div className="flex items-center gap-3">
-                                <div className="text-3xl font-black text-white group-hover:text-yellow-500 transition-colors">{item.ten}</div>
-                                <div className="flex flex-col">
-                                  <span className="text-[10px] font-black uppercase text-white/60">{animal?.name}</span>
-                                  <span className="text-[8px] font-bold text-white/20 uppercase tracking-widest">{animal?.icon} GRUPO {animal?.id}</span>
+                          <motion.div
+                            key={item.ten}
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: i * 0.02 }}
+                          >
+                            <Card className={`group relative overflow-hidden bg-white/5 ${borderColorClass} border hover:bg-white/[0.08] transition-all p-4 rounded-2xl`}>
+                              <div className="flex justify-between items-start mb-3">
+                                <div>
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <span className="text-2xl font-black italic tracking-tighter">{item.ten}</span>
+                                    {item.hitInFirstPrize && item.currentDelay === 0 && (
+                                      <Badge className="bg-emerald-500 text-[8px] h-4">1º Prêmio agora!</Badge>
+                                    )}
+                                  </div>
+                                  <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest">
+                                    {animal?.icon} {animal?.name}
+                                  </p>
+                                </div>
+                                <div className={`px-2 py-1 rounded-md text-[9px] font-black uppercase ${bgColorClass} ${colorClass}`}>
+                                  x{item.relativeIndex}
                                 </div>
                               </div>
-                              <div className="flex flex-col items-end gap-1">
-                                <div className={`px-2 py-1 rounded text-[8px] font-black uppercase ${bgColorClass} ${colorClass} ${borderColorClass} border`}>
-                                  {item.classification}
-                                </div>
-                                <span className="text-[7px] font-black text-white/20 uppercase tracking-tighter">Percentil: {item.percentile}%</span>
-                              </div>
-                            </div>
 
-                            <div className="grid grid-cols-2 gap-y-3 gap-x-4 mb-4">
-                              <div className="flex flex-col">
-                                <span className="text-[8px] font-bold text-white/20 uppercase">Atraso Atual</span>
-                                <span className="text-sm font-black text-white">{item.currentDelay}</span>
-                              </div>
-                              <div className="flex flex-col">
-                                <span className="text-[8px] font-bold text-white/20 uppercase">Índice Atraso</span>
-                                <span className={`text-sm font-black ${colorClass}`}>{item.relativeIndex}</span>
-                              </div>
-                              <div className="flex flex-col">
-                                <span className="text-[8px] font-bold text-white/20 uppercase">Regularidade</span>
-                                <span className={`text-[10px] font-black uppercase ${item.regularity === 'Alta' ? 'text-emerald-500' : item.regularity === 'Baixa' ? 'text-red-500' : 'text-blue-500'}`}>
-                                  {item.regularity}
-                                </span>
-                              </div>
-                              <div className="flex flex-col">
-                                <span className="text-[8px] font-bold text-white/20 uppercase">Comparação</span>
-                                <span className={`text-[10px] font-black ${item.periodComparison > 0 ? 'text-emerald-500' : 'text-red-500'}`}>
-                                  {item.periodComparison > 0 ? '+' : ''}{item.periodComparison}%
-                                </span>
-                              </div>
-                            </div>
-
-                            <div className="mt-auto pt-4 border-t border-white/5 space-y-3">
-                              <div>
-                                <span className="text-[7px] font-black text-white/20 uppercase tracking-widest block mb-2">Frequência por Amostra</span>
-                                <div className="flex justify-between gap-1">
-                                  {[10, 30, 50, 100, 300].map(n => (
-                                    <div key={n} className="flex-1 flex flex-col items-center bg-white/[0.02] rounded py-1 border border-white/5">
-                                      <span className="text-[8px] font-black text-white/80">{item.freqs[n]}</span>
-                                      <span className="text-[6px] font-bold text-white/20 uppercase">{n}</span>
-                                    </div>
-                                  ))}
+                              <div className="grid grid-cols-2 gap-4 mb-4">
+                                <div>
+                                  <p className="text-[9px] text-white/20 font-bold uppercase mb-1">Atraso Atual</p>
+                                  <p className="text-sm font-black text-white">{item.currentDelay} <span className="text-[8px] text-white/30">conc.</span></p>
+                                </div>
+                                <div>
+                                  <p className="text-[9px] text-white/20 font-bold uppercase mb-1">Atraso Diário</p>
+                                  <p className={`text-sm font-black ${item.dailyDelay > 2 ? 'text-red-400' : 'text-white/60'}`}>
+                                    {item.dailyDelay} <span className="text-[8px] text-white/30">horár.</span>
+                                  </p>
                                 </div>
                               </div>
-                              <div className="flex justify-between items-end text-[7px] font-bold text-white/20 uppercase">
-                                <span>Média: {item.avgDelay}</span>
-                                <span>Máx: {item.maxDelay}</span>
+
+                              <div className="space-y-2">
+                                <div className="flex justify-between items-center text-[9px]">
+                                  <span className="text-white/30 uppercase font-bold">Probabilidade Atraso</span>
+                                  <span className={`font-black ${colorClass}`}>{item.percentile}%</span>
+                                </div>
+                                <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                                  <div 
+                                    className={`h-full ${bgColorClass.replace('/10', '')}`} 
+                                    style={{ width: `${item.percentile}%` }} 
+                                  />
+                                </div>
                               </div>
-                            </div>
-                          </Card>
+
+                              <div className="mt-4 pt-4 border-t border-white/5">
+                                <MiniSparkline data={item.history} color={item.relativeIndex > 1.25 ? "#EAB308" : "#3B82F6"} />
+                              </div>
+
+                              {item.dailyDelay >= 3 && item.relativeIndex > 1.5 && (
+                                <div className="absolute top-0 left-0 w-full h-full pointer-events-none border-2 border-red-500/20 animate-pulse rounded-2xl" />
+                              )}
+                            </Card>
+                          </motion.div>
                         );
-
                       })
                     )}
                   </div>

@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { UserMenu } from "@/components/layout/UserMenu";
 import { ANIMAL_GROUPS } from "@/lib/animals";
-import { getResults, getTenDelayStats, getGroupDelayStats, getDigitDelayStats } from "@/lib/lottery.functions";
+import { getResults, getTenDelayStats, getGroupDelayStats, getDigitDelayStats, getStats } from "@/lib/lottery.functions";
 import { DRAW_SCHEDULE_RIO, DRAW_SCHEDULE_CAPITAL } from "@/lib/draw-order";
 
 import { AlertaDezenasAtrasadas } from "@/components/AlertaDezenasAtrasadas";
@@ -133,6 +133,11 @@ function Index() {
   const { data: tenStats } = useQuery({
     queryKey: ["homepage-ten-stats", location],
     queryFn: () => getTenDelayStats({ data: { location } }),
+  });
+
+  const { data: globalStats } = useQuery({
+    queryKey: ["homepage-global-stats", location],
+    queryFn: () => getStats({ data: { location } }),
   });
 
   const { data: digitStats, isLoading: digitLoading } = useQuery({
@@ -443,7 +448,7 @@ function Index() {
                       <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center font-mono text-2xl font-black text-white group-hover/item:border-yellow-500/50 group-hover/item:text-yellow-500 transition-all relative">
                         {item.ten}
                       </div>
-                      <span className="text-[10px] font-black text-white/30 uppercase">{item.currentDelay}d</span>
+                      <span className="text-[10px] font-black text-white/30 uppercase">{item.currentDelay}d / {item.dailyDelay}h</span>
                     </div>
                   ))}
                 </div>
@@ -462,7 +467,10 @@ function Index() {
                       <span className="text-2xl">{ANIMAL_GROUPS.find(a => a.id === item.groupId)?.icon}</span>
                       <span className="text-sm font-black uppercase italic">{item.animal}</span>
                     </div>
-                    <span className="text-lg font-black text-yellow-500">{item.currentDelay}d</span>
+                    <div className="text-right">
+                      <span className="text-lg font-black text-yellow-500 block leading-none">{item.currentDelay}d</span>
+                      <span className="text-[9px] font-bold text-red-500/80 uppercase">{item.dailyDelay} horários</span>
+                    </div>
                   </div>
                 ))}
               </CardContent>

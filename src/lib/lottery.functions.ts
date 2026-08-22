@@ -25,6 +25,7 @@ const ANIMAL_GROUPS_DATA = ANIMAL_GROUPS_MAP;
 export const getResults = createServerFn({ method: "GET" })
   .validator((data: unknown) => z.object({
     date: z.string().optional(),
+    dateEnd: z.string().optional(),
     location: z.enum(['rio', 'capital']).optional().default('rio'),
     limit: z.number().optional().default(20),
     offset: z.number().optional().default(0)
@@ -39,7 +40,9 @@ export const getResults = createServerFn({ method: "GET" })
       .order("time_type", { ascending: true });
 
 
-    if (data.date) {
+    if (data.date && data.dateEnd) {
+      query = query.gte("date", data.date).lte("date", data.dateEnd);
+    } else if (data.date) {
       query = query.eq("date", data.date);
     }
 
@@ -88,7 +91,9 @@ export const getResultsRange = createServerFn({ method: "GET" })
 
 export const getStats = createServerFn({ method: "GET" })
   .validator((data: unknown) => z.object({
-    location: z.enum(['rio', 'capital']).optional().default('rio')
+    location: z.enum(['rio', 'capital']).optional().default('rio'),
+    date: z.string().optional(),
+    dateEnd: z.string().optional()
   }).parse(data))
   .handler(async ({ data }) => {
     const { data: rawResults, error } = await supabase
@@ -148,10 +153,26 @@ export const getStats = createServerFn({ method: "GET" })
         const idx = lastIndexByGroup[group];
         const days = idx === undefined ? results.length : idx;
         const animalInfo = ANIMAL_GROUPS_DATA[group];
+        
+        // Atraso diário para grupos
+        let dailyDelay = 0;
+        if (results.length > 0 && results[0]) {
+          const lastDate = results[0].date;
+          let dDelay = 0;
+          for (const res of results) {
+            if (!res || res.date !== lastDate) break;
+            const hit = res.results?.slice(0, 5).some((p: string) => tenToGroup(p.slice(-2)) === group);
+            if (hit) break;
+            dDelay++;
+          }
+          dailyDelay = dDelay;
+        }
+
         return {
           group,
           animal: animalInfo ? animalInfo.name : "Desconhecido",
           days,
+          dailyDelay,
           lastSeen: formatDate(lastDateByGroup[group])
         };
       })
@@ -193,12 +214,9 @@ export const getTenDelayStats = createServerFn({ method: "GET" })
       .order("date", { ascending: false })
       .limit(600);
 
-
-
     if (error) throw error;
     if (!rawRows) return [];
     const results = sortDrawsDesc(rawRows);
-
 
     const stats: any[] = [];
     const allTens = Array.from({ length: 100 }, (_, i) => String(i).padStart(2, '0'));
@@ -208,6 +226,7 @@ export const getTenDelayStats = createServerFn({ method: "GET" })
 
     allTens.forEach(ten => {
       let currentDelay = -1;
+      let dailyDelay = 0; // Atraso em horários do mesmo dia
       const intervals: number[] = [];
       let lastIndex = -1;
       let hitInFirstPrize = false;
@@ -221,6 +240,19 @@ export const getTenDelayStats = createServerFn({ method: "GET" })
       
       const prevFreq300 = previous300.filter(r => r.results?.slice(0, 5).some(p => p.slice(-2) === ten)).length;
       const periodComparison = prevFreq300 > 0 ? ((freq300 - prevFreq300) / prevFreq300) * 100 : (freq300 > 0 ? 100 : 0);
+
+      // Cálculo do atraso diário (horários do dia atual sem sair)
+      if (results.length > 0 && results[0]) {
+        const lastDate = results[0].date;
+        let dDelay = 0;
+        for (const res of results) {
+          if (!res || res.date !== lastDate) break;
+          const hit = res.results?.slice(0, 5).some(p => p?.slice(-2) === ten);
+          if (hit) break;
+          dDelay++;
+        }
+        dailyDelay = dDelay;
+      }
 
       results.forEach((res, index) => {
         const hit = res.results?.slice(0, 5).some(p => p?.slice(-2) === ten);
@@ -254,7 +286,7 @@ export const getTenDelayStats = createServerFn({ method: "GET" })
       const minDelay = intervals.length > 0 ? Math.min(...intervals) : currentDelay;
       const relativeIndex = currentDelay / avgDelay;
 
-      // Regularidade (Coeficiente de Variação Inverso do Atraso)
+      // Regularidade
       const variance = intervals.length > 1 ? intervals.reduce((acc, val) => acc + Math.pow(val - avgDelay, 2), 0) / (intervals.length - 1) : 0;
       const stdDev = Math.sqrt(variance);
       const regularityScore = avgDelay > 0 ? stdDev / avgDelay : 1;
@@ -266,6 +298,7 @@ export const getTenDelayStats = createServerFn({ method: "GET" })
       stats.push({
         ten,
         currentDelay,
+        dailyDelay,
         avgDelay: Number(avgDelay.toFixed(2)),
         medianDelay,
         maxDelay,
@@ -299,13 +332,23 @@ export const getTenDelayStats = createServerFn({ method: "GET" })
 
 export const getGroupDelayStats = createServerFn({ method: "GET" })
   .validator((data: unknown) => z.object({
-    location: z.enum(['rio', 'capital']).optional().default('rio')
+    location: z.enum(['rio', 'capital']).optional().default('rio'),
+    date: z.string().optional(),
+    dateEnd: z.string().optional()
   }).parse(data))
   .handler(async ({ data }) => {
-    const { data: rawRows, error } = await supabase
+    let query = supabase
       .from("lottery_results")
       .select("results, date, time_type, animal_group, location")
-      .eq("location" as any, data.location)
+      .eq("location" as any, data.location);
+
+    if (data.date && data.dateEnd) {
+      query = query.gte("date", data.date).lte("date", data.dateEnd);
+    } else if (data.date) {
+      query = query.eq("date", data.date);
+    }
+
+    const { data: rawRows, error } = await query
       .order("date", { ascending: false })
       .limit(600);
 
@@ -477,13 +520,23 @@ export const getGroupDelayStats = createServerFn({ method: "GET" })
 
 export const getRepetitionStats = createServerFn({ method: "GET" })
   .validator((data: unknown) => z.object({
-    location: z.enum(['rio', 'capital']).optional().default('rio')
+    location: z.enum(['rio', 'capital']).optional().default('rio'),
+    date: z.string().optional(),
+    dateEnd: z.string().optional()
   }).parse(data))
   .handler(async ({ data }) => {
-    const { data: rawRows, error } = await supabase
+    let query = supabase
       .from("lottery_results")
       .select("results, date, time_type, animal_group, location")
-      .eq("location" as any, data.location)
+      .eq("location" as any, data.location);
+
+    if (data.date && data.dateEnd) {
+      query = query.gte("date", data.date).lte("date", data.dateEnd);
+    } else if (data.date) {
+      query = query.eq("date", data.date);
+    }
+
+    const { data: rawRows, error } = await query
       .order("date", { ascending: false })
       .limit(300);
 
@@ -624,13 +677,23 @@ export const getRepetitionStats = createServerFn({ method: "GET" })
  */
 export const getDigitDelayStats = createServerFn({ method: "GET" })
   .validator((data: unknown) => z.object({
-    location: z.enum(['rio', 'capital']).optional().default('rio')
+    location: z.enum(['rio', 'capital']).optional().default('rio'),
+    date: z.string().optional(),
+    dateEnd: z.string().optional()
   }).parse(data))
   .handler(async ({ data }) => {
-    const { data: rawRows, error } = await supabase
+    let query = supabase
       .from("lottery_results")
       .select("results, date, time_type, time_value, location")
-      .eq("location" as any, data.location)
+      .eq("location" as any, data.location);
+
+    if (data.date && data.dateEnd) {
+      query = query.gte("date", data.date).lte("date", data.dateEnd);
+    } else if (data.date) {
+      query = query.eq("date", data.date);
+    }
+
+    const { data: rawRows, error } = await query
       .order("date", { ascending: false })
       .limit(600);
 
@@ -662,6 +725,7 @@ export const getDigitDelayStats = createServerFn({ method: "GET" })
       return Array.from({ length: 100 }, (_, d) => {
         const dezena = String(d).padStart(2, "0");
         let currentDelay = -1;
+        let dailyDelay = 0;
         let last: any = null;
         const intervals: number[] = [];
         let lastIndex = -1;
@@ -710,6 +774,19 @@ export const getDigitDelayStats = createServerFn({ method: "GET" })
           lastIndex = index;
         });
 
+        // Cálculo do atraso diário para dezenas esquerda/direita
+        if (results.length > 0 && results[0]) {
+          const lastDate = results[0].date;
+          let dDelay = 0;
+          for (const res of results) {
+            if (!res || res.date !== lastDate) break;
+            const hit = sideDezenas(res, side).indexOf(dezena) >= 0;
+            if (hit) break;
+            dDelay++;
+          }
+          dailyDelay = dDelay;
+        }
+
         if (currentDelay === -1) currentDelay = results.length;
         const freqIn = (n: number) => results.slice(0, n).filter(matches).length;
         const avgDelay = intervals.length > 0 ? intervals.reduce((a, b) => a + b, 0) / intervals.length : results.length;
@@ -731,9 +808,10 @@ export const getDigitDelayStats = createServerFn({ method: "GET" })
         return {
           side,
           digit: dezena,
-          dezena,
-          currentDelay,
-          avgDelay: Number(avgDelay.toFixed(2)),
+           dezena,
+           currentDelay,
+           dailyDelay,
+           avgDelay: Number(avgDelay.toFixed(2)),
           medianDelay,
           maxDelay,
           minDelay,
@@ -787,13 +865,23 @@ export const getDigitDelayStats = createServerFn({ method: "GET" })
  */
 export const getPuxadasStats = createServerFn({ method: "GET" })
   .validator((data: unknown) => z.object({
-    location: z.enum(['rio', 'capital']).optional().default('rio')
+    location: z.enum(['rio', 'capital']).optional().default('rio'),
+    date: z.string().optional(),
+    dateEnd: z.string().optional()
   }).parse(data))
   .handler(async ({ data }) => {
-    const { data: rawRows, error } = await supabase
+    let query = supabase
       .from("lottery_results")
       .select("results, date, time_type, time_value, location")
-      .eq("location" as any, data.location)
+      .eq("location" as any, data.location);
+
+    if (data.date && data.dateEnd) {
+      query = query.gte("date", data.date).lte("date", data.dateEnd);
+    } else if (data.date) {
+      query = query.eq("date", data.date);
+    }
+
+    const { data: rawRows, error } = await query
       .order("date", { ascending: false })
       .limit(600);
 
