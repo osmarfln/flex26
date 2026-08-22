@@ -131,13 +131,17 @@ export const getStats = createServerFn({ method: "GET" })
 
       const firstPrize = prizes[0];
       if (firstPrize && firstPrize.length >= 2) {
-        const ten = firstPrize.slice(-2);
+      const ten = firstPrize.slice(-2);
         tenCounts[ten] = (tenCounts[ten] || 0) + 1;
       }
 
       const key = res.time_type;
+      const schedules = data.location === 'capital' 
+        ? ["L-09", "L-10", "L-11", "L-13", "L-14", "L-15", "L-16", "L-18", "L-19", "L-20", "L-22"]
+        : ["PPT", "PTM", "PT", "PTV", "PTN", "COR"];
+      
       const firstGroup = firstPrize && firstPrize.length >= 2 ? tenToGroup(firstPrize.slice(-2)) : null;
-      if (key && firstGroup && !scheduleDelay[key]) {
+      if (key && firstGroup && schedules.includes(key) && !scheduleDelay[key]) {
         scheduleDelay[key] = { group: firstGroup, date: res.date, index };
       }
     });
@@ -705,7 +709,9 @@ export const getDigitDelayStats = createServerFn({ method: "GET" })
     }
 
     const results = sortDrawsDesc(rawRows as any[]);
-    const schedules = ["PPT", "PTM", "PT", "PTV", "PTN", "COR"];
+    const schedules = data.location === 'capital' 
+      ? ["L-09", "L-10", "L-11", "L-13", "L-14", "L-15", "L-16", "L-18", "L-19", "L-20", "L-22"]
+      : ["PPT", "PTM", "PT", "PTV", "PTN", "COR"];
 
     /** milhares do 1º ao 5º prêmio, sempre com 4 casas (zero nunca é cortado) */
     const milhares = (row: any): string[] => {
@@ -888,7 +894,9 @@ export const getPuxadasStats = createServerFn({ method: "GET" })
 
     if (error) throw error;
 
-    const schedules = ["PPT", "PTM", "PT", "PTV", "PTN", "COR"];
+    const schedules = data.location === 'capital' 
+      ? ["L-09", "L-10", "L-11", "L-13", "L-14", "L-15", "L-16", "L-18", "L-19", "L-20", "L-22"]
+      : ["PPT", "PTM", "PT", "PTV", "PTN", "COR"];
     const empty = {
       totalDraws: 0,
       period: null as { start: string | null; end: string | null } | null,
