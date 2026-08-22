@@ -967,7 +967,13 @@ export const getPuxadasStats = createServerFn({ method: "GET" })
     };
 
     const table = PUXADAS_TABLE.map((p) => {
-      const targets = p.puxa.map((t) => t.id).filter(Boolean);
+      // Combina a puxada tradicional com a estatística calculada
+      const traditionalTargets = p.puxa.map((t) => t.id).filter(Boolean);
+      const statsTargets = (statisticalPuxadas[p.groupId] || []).map((t: any) => t.id);
+      
+      // União de alvos (alvos únicos)
+      const allTargets = Array.from(new Set([...traditionalTargets, ...statsTargets]));
+      
       let occurrences = 0;
       let hits = 0;
       const targetCount: Record<string, number> = {};
@@ -983,7 +989,10 @@ export const getPuxadasStats = createServerFn({ method: "GET" })
         const st = String(cur.time_type || "").toUpperCase();
         if (schedStats[st]) schedStats[st].occurrences++;
         const nextGroup = groupOf(next);
-        const hit = !!nextGroup && targets.includes(nextGroup);
+        
+        // Uma puxada é considerada "hit" se o próximo grupo está na lista combinada (tradicional + estatística)
+        const hit = !!nextGroup && allTargets.includes(nextGroup);
+        
         if (hit) {
           hits++;
           if (schedStats[st]) schedStats[st].hits++;
@@ -1001,16 +1010,31 @@ export const getPuxadasStats = createServerFn({ method: "GET" })
         };
       }
 
+      // Constrói a lista final de alvos, priorizando os que realmente saem (stats)
+      const finalPuxa = allTargets.map(id => {
+        const animal = ANIMAL_GROUPS_MAP[id];
+        const stats = (statisticalPuxadas[p.groupId] || []).find((t: any) => t.id === id);
+        return {
+          id,
+          name: animal?.name || '?',
+          icon: animal?.icon || '',
+          probability: stats?.probability || 0,
+          isTraditional: traditionalTargets.includes(id)
+        };
+      }).sort((a, b) => b.probability - a.probability);
+
       return {
         ...p,
+        puxa: finalPuxa,
         occurrences,
         hits,
         hitRate: occurrences > 0 ? Number(((hits / occurrences) * 100).toFixed(1)) : 0,
-        byTarget: p.puxa.map((t) => ({
+        byTarget: finalPuxa.map((t) => ({
           id: t.id,
           name: t.name,
           icon: t.icon,
           count: targetCount[t.id] ?? 0,
+          probability: t.probability
         })),
         bySchedule: schedules.map((s) => ({
           schedule: s,
@@ -1023,6 +1047,7 @@ export const getPuxadasStats = createServerFn({ method: "GET" })
         lastOccurrence,
       };
     });
+
 
     const oldest = asc[0] as any;
     const newest = desc[0] as any;
