@@ -396,8 +396,9 @@ function Index() {
                               [1, 2, 3, 4, 5].map((idx) => (
                                 <div key={idx} className="flex gap-4 text-sm font-bold items-baseline">
                                   <span className="text-white/20 w-4">{idx}º</span>
-                                  <span className="font-mono tracking-widest text-lg text-red-500 italic">Aguardando... <span className="animate-pulse">...</span></span>
+                                  <span className="font-mono tracking-widest text-lg text-red-500/80 italic text-[11px] whitespace-nowrap">Aguardando... <span className="animate-pulse">...</span></span>
                                 </div>
+
                               ))
                             )}
                           </div>
