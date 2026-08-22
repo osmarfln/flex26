@@ -383,7 +383,17 @@ function EstatisticasPage() {
                       disabled={recalculating}
                       className="px-2.5 py-1.5 rounded-lg bg-white/5 border border-white/10 text-[10px] font-black uppercase text-white/60 hover:border-primary/40 hover:text-primary transition-all disabled:opacity-50"
                     >
-                      Dezenas
+                      Dezenas Rio
+                    </button>
+                    <button
+                      onClick={() => {
+                        setLocation('capital');
+                        recalcPart("Dezenas atrasadas Capital", ["ten-delay-stats", "digit-delay-stats"]);
+                      }}
+                      disabled={recalculating}
+                      className="px-2.5 py-1.5 rounded-lg bg-white/5 border border-white/10 text-[10px] font-black uppercase text-white/60 hover:border-blue-400/40 hover:text-blue-400 transition-all disabled:opacity-50"
+                    >
+                      Dezenas Capital
                     </button>
                     <button
                       onClick={() => recalcPart("Grupos", ["group-delay-stats", "puxadas-stats"])}
