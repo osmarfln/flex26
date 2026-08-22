@@ -302,7 +302,7 @@ function EstatisticasPage() {
             <h1 className="text-4xl md:text-5xl lg:text-7xl font-black italic tracking-tighter uppercase mb-4">
               Monitoramento {location === 'rio' ? 'Rio' : 'Capital'}
             </h1>
-            <p className="text-white/40 text-lg mb-8 font-medium">Dezena em atraso Rio e Capital baseada em resultados diários e históricos</p>
+            <p className="text-white/40 text-lg mb-8 font-medium">Dezena em atraso {location === 'rio' ? 'Rio' : 'Capital'} baseada em resultados diários e históricos</p>
           </div>
         </section>
 
