@@ -15,9 +15,10 @@ export interface LotteryResult {
   results: string[];
   animal: string | null;
   animal_group: string | null;
-  location: 'rio' | 'capital';
+  location: any;
   created_at: string;
 }
+
 
 const ANIMAL_GROUPS_DATA = ANIMAL_GROUPS_MAP;
 
