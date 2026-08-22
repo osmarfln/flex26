@@ -2,6 +2,9 @@
 export const TIME_ORDER_RIO = ["PPT", "PTM", "PT", "PTV", "PTN", "COR"] as const;
 export const TIME_ORDER_CAPITAL = ["L-09", "L-10", "L-11", "L-13", "L-14", "L-15", "L-16", "L-18", "L-19", "L-20", "L-22"] as const;
 
+/** Legado para manter compatibilidade com componentes que ainda não foram migrados para suporte a Capital */
+export const TIME_ORDER = TIME_ORDER_RIO;
+
 const PRIORITY_RIO: Record<string, number> = {
   PPT: 0,
   PTM: 1,
@@ -47,6 +50,9 @@ export const DRAW_SCHEDULE_RIO: { timeType: string; timeValue: string; label: st
   { timeType: "COR", timeValue: "21:20", label: "COROADO" },
 ];
 
+/** Legado para manter compatibilidade */
+export const DRAW_SCHEDULE = DRAW_SCHEDULE_RIO;
+
 /** Horários oficiais da Capital (Florianópolis). */
 export const DRAW_SCHEDULE_CAPITAL: { timeType: string; timeValue: string; label: string }[] = [
   { timeType: "L-09", timeValue: "09:00", label: "LCap 09:00" },
@@ -66,4 +72,5 @@ export const DRAW_SCHEDULE_CAPITAL: { timeType: string; timeValue: string; label
 export function brasiliaDateISO(d: Date = new Date()): string {
   return new Date(d.getTime() - 3 * 60 * 60 * 1000).toISOString().split("T")[0]!;
 }
+
 
