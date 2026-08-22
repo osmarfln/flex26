@@ -91,7 +91,9 @@ export const getResultsRange = createServerFn({ method: "GET" })
 
 export const getStats = createServerFn({ method: "GET" })
   .validator((data: unknown) => z.object({
-    location: z.enum(['rio', 'capital']).optional().default('rio')
+    location: z.enum(['rio', 'capital']).optional().default('rio'),
+    date: z.string().optional(),
+    dateEnd: z.string().optional()
   }).parse(data))
   .handler(async ({ data }) => {
     const { data: rawResults, error } = await supabase
