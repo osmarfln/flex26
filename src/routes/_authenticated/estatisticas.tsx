@@ -341,8 +341,8 @@ function EstatisticasPage() {
             </button>
           </div>
 
-          <div className="mb-8 flex flex-wrap gap-4">
-            <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl min-w-[150px] hover:border-yellow-500/30 transition-all cursor-pointer relative group/select">
+          <div className="mb-8 flex flex-col sm:flex-row gap-4">
+            <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl w-full sm:min-w-[150px] hover:border-yellow-500/30 transition-all cursor-pointer relative group/select">
               <Calendar className="w-5 h-5 text-white/40" />
               <div className="flex-1">
                 <p className="text-[10px] text-white/40 font-bold uppercase tracking-wider">Início</p>
@@ -355,7 +355,7 @@ function EstatisticasPage() {
               </div>
             </div>
 
-            <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl min-w-[150px] hover:border-yellow-500/30 transition-all cursor-pointer relative group/select">
+            <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl w-full sm:min-w-[150px] hover:border-yellow-500/30 transition-all cursor-pointer relative group/select">
               <Calendar className="w-5 h-5 text-white/40" />
               <div className="flex-1">
                 <p className="text-[10px] text-white/40 font-bold uppercase tracking-wider">Fim</p>
