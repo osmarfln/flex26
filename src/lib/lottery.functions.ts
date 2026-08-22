@@ -193,12 +193,9 @@ export const getTenDelayStats = createServerFn({ method: "GET" })
       .order("date", { ascending: false })
       .limit(600);
 
-
-
     if (error) throw error;
     if (!rawRows) return [];
     const results = sortDrawsDesc(rawRows);
-
 
     const stats: any[] = [];
     const allTens = Array.from({ length: 100 }, (_, i) => String(i).padStart(2, '0'));
@@ -208,6 +205,7 @@ export const getTenDelayStats = createServerFn({ method: "GET" })
 
     allTens.forEach(ten => {
       let currentDelay = -1;
+      let dailyDelay = 0; // Atraso em horários do mesmo dia
       const intervals: number[] = [];
       let lastIndex = -1;
       let hitInFirstPrize = false;
@@ -221,6 +219,19 @@ export const getTenDelayStats = createServerFn({ method: "GET" })
       
       const prevFreq300 = previous300.filter(r => r.results?.slice(0, 5).some(p => p.slice(-2) === ten)).length;
       const periodComparison = prevFreq300 > 0 ? ((freq300 - prevFreq300) / prevFreq300) * 100 : (freq300 > 0 ? 100 : 0);
+
+      // Cálculo do atraso diário (horários do dia atual sem sair)
+      if (results.length > 0) {
+        const lastDate = results[0].date;
+        let dDelay = 0;
+        for (const res of results) {
+          if (res.date !== lastDate) break;
+          const hit = res.results?.slice(0, 5).some(p => p?.slice(-2) === ten);
+          if (hit) break;
+          dDelay++;
+        }
+        dailyDelay = dDelay;
+      }
 
       results.forEach((res, index) => {
         const hit = res.results?.slice(0, 5).some(p => p?.slice(-2) === ten);
@@ -254,7 +265,7 @@ export const getTenDelayStats = createServerFn({ method: "GET" })
       const minDelay = intervals.length > 0 ? Math.min(...intervals) : currentDelay;
       const relativeIndex = currentDelay / avgDelay;
 
-      // Regularidade (Coeficiente de Variação Inverso do Atraso)
+      // Regularidade
       const variance = intervals.length > 1 ? intervals.reduce((acc, val) => acc + Math.pow(val - avgDelay, 2), 0) / (intervals.length - 1) : 0;
       const stdDev = Math.sqrt(variance);
       const regularityScore = avgDelay > 0 ? stdDev / avgDelay : 1;
@@ -266,6 +277,7 @@ export const getTenDelayStats = createServerFn({ method: "GET" })
       stats.push({
         ten,
         currentDelay,
+        dailyDelay,
         avgDelay: Number(avgDelay.toFixed(2)),
         medianDelay,
         maxDelay,
