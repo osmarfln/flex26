@@ -889,9 +889,24 @@ export const getDigitDelayStats = createServerFn({ method: "GET" })
     const oldest = results[results.length - 1] as any;
     const newest = results[0] as any;
 
-    // Cálculo das dezenas mais atrasadas para Rio e Capital simultaneamente (usado nos alertas)
-    // Se a localização atual for Rio, buscamos também um snapshot de Capital para os alertas, ou vice-versa
-    // No entanto, para o retorno da função, mantemos o foco na localização pedida.
+    // Correlação Esquerda x Direita: identifica pares frequentes no mesmo milhar
+    const correlationMap: Record<string, Record<string, number>> = {};
+    results.forEach(r => {
+      const m = milhar(r);
+      if (m) {
+        const l = m.slice(0, 2);
+        const right = m.slice(2, 4);
+        if (!correlationMap[l]) correlationMap[l] = {};
+        correlationMap[l][right] = (correlationMap[l][right] || 0) + 1;
+      }
+    });
+
+    const correlations = Object.entries(correlationMap).flatMap(([l, rights]) => 
+      Object.entries(rights).map(([r, count]) => ({ left: l, right: r, count }))
+    ).sort((a, b) => b.count - a.count).slice(0, 20);
+
+    const oldest = results[results.length - 1] as any;
+    const newest = results[0] as any;
     
     return {
       left: build("left"),
@@ -900,7 +915,9 @@ export const getDigitDelayStats = createServerFn({ method: "GET" })
       schedules,
       period: { start: oldest?.date ?? null, end: newest?.date ?? null },
       daily,
+      correlations
     };
+
   });
 
 
