@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+Leia o arquivo instrucoes.md em anexo e siga as instruções contidas nele.
 
 import { UserMenu } from "@/components/layout/UserMenu";
 import { ANIMAL_GROUPS } from "@/lib/animals";
