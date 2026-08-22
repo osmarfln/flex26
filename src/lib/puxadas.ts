@@ -34,6 +34,7 @@ const RAW: Record<string, string[]> = {
   "23": ["Leão", "Elefante", "Camelo", "Cabra"],
   "24": ["Peru", "Burro", "Cabra"],
   "25": ["Touro", "Avestruz", "Carneiro"],
+
 };
 
 
