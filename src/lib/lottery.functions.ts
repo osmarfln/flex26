@@ -616,12 +616,17 @@ export const getRepetitionStats = createServerFn({ method: "GET" })
  * O zero à esquerda NUNCA é cortado: 5 é sempre exibido como 05.
  */
 export const getDigitDelayStats = createServerFn({ method: "GET" })
-  .handler(async () => {
+  .validator((data: unknown) => z.object({
+    location: z.enum(['rio', 'capital']).optional().default('rio')
+  }).parse(data))
+  .handler(async ({ data }) => {
     const { data: rawRows, error } = await supabase
       .from("lottery_results")
-      .select("results, date, time_type, time_value")
+      .select("results, date, time_type, time_value, location")
+      .eq("location", data.location)
       .order("date", { ascending: false })
       .limit(600);
+
 
     if (error) throw error;
     if (!rawRows || rawRows.length === 0) {
