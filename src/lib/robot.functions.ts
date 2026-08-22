@@ -128,15 +128,16 @@ export const getScheduleSyncMatrix = createServerFn({ method: "GET" })
 /** Dispara uma sincronização imediata do robô. */
 export const runSyncNow = createServerFn({ method: "POST" })
   .validator((data: unknown) => z.object({
-    location: z.enum(['rio', 'capital']).optional().default('rio')
+    location: z.enum(['rio', 'capital']).optional().default('rio'),
+    daysToSync: z.number().optional().default(2)
   }).parse(data))
-  .handler(async ({ data: { location } }) => {
+  .handler(async ({ data: { location, daysToSync } }) => {
 
   const origin = new URL(getRequest().url).origin;
   const res = await fetch(`${origin}/api/public/sync-results`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ daysToSync: 2, location }),
+    body: JSON.stringify({ daysToSync, location }),
   });
   const payload = (await res.json().catch(() => ({}))) as any;
   return {
