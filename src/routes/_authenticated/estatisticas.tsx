@@ -653,6 +653,11 @@ function EstatisticasPage() {
                                         </div>
                                       </div>
                                     </td>
+                                    <td className="p-4 text-center">
+                                      <div className={`text-[10px] font-black px-2 py-1 rounded-lg border ${group.dailyDelay > 2 ? 'bg-red-500/10 text-red-500 border-red-500/20 animate-pulse' : 'bg-white/5 text-white/40 border-white/10'}`}>
+                                        {group.dailyDelay} horários
+                                      </div>
+                                    </td>
                                     <td className="p-4 text-[10px] font-bold text-white/40">{group.lastSeen}</td>
                                     <td className="p-4 text-center">
                                       <Badge variant="outline" className="border-white/10 text-white font-black">{group.days}d</Badge>
