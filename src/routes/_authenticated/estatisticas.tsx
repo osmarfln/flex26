@@ -278,7 +278,33 @@ function EstatisticasPage() {
         <section className="mb-12">
           <AvisoObrigatorio />
 
-          <div className="mb-8 flex justify-end">
+          <div className="mb-8 flex flex-wrap justify-end gap-4">
+            <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl min-w-[150px] hover:border-yellow-500/30 transition-all cursor-pointer relative group/select">
+              <Calendar className="w-5 h-5 text-white/40" />
+              <div className="flex-1">
+                <p className="text-[10px] text-white/40 font-bold uppercase tracking-wider">Início</p>
+                <input 
+                  type="date" 
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  className="bg-transparent border-none outline-none text-sm font-bold w-full text-white color-scheme-dark"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl min-w-[150px] hover:border-yellow-500/30 transition-all cursor-pointer relative group/select">
+              <Calendar className="w-5 h-5 text-white/40" />
+              <div className="flex-1">
+                <p className="text-[10px] text-white/40 font-bold uppercase tracking-wider">Fim</p>
+                <input 
+                  type="date" 
+                  value={dateEnd}
+                  onChange={(e) => setDateEnd(e.target.value)}
+                  className="bg-transparent border-none outline-none text-sm font-bold w-full text-white color-scheme-dark"
+                />
+              </div>
+            </div>
+
             <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl min-w-[200px] hover:border-yellow-500/30 transition-all cursor-pointer relative group/select">
               <Network className="w-5 h-5 text-white/40" />
               <div className="flex-1">
