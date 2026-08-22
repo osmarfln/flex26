@@ -28,14 +28,14 @@ const SCHEDULE_CAPITAL = [
   { type: "L-09", value: "09:00" },
   { type: "L-10", value: "10:00" },
   { type: "L-11", value: "11:00" },
-  { type: "L-12", value: "12:00" },
   { type: "L-13", value: "13:00" },
   { type: "L-14", value: "14:00" },
+  { type: "L-15", value: "15:00" },
   { type: "L-16", value: "16:00" },
-  { type: "L-17", value: "17:00" },
   { type: "L-18", value: "18:00" },
   { type: "L-19", value: "19:00" },
-  { type: "L-20", value: "20:00" },
+  { type: "L-20", value: "20:30" },
+  { type: "L-22", value: "22:30" },
 ];
 
 
