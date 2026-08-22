@@ -2,7 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { UserMenu } from "@/components/layout/UserMenu";
 import { ANIMAL_GROUPS } from "@/lib/animals";
 import { getResults, getTenDelayStats, getGroupDelayStats, getDigitDelayStats, getStats } from "@/lib/lottery.functions";
-import { DRAW_SCHEDULE_RIO, DRAW_SCHEDULE_CAPITAL } from "@/lib/draw-order";
+import { DRAW_SCHEDULE_RIO, DRAW_SCHEDULE_CAPITAL, getNextDraw } from "@/lib/draw-order";
+import { useMemo } from "react";
 
 import { AlertaDezenasAtrasadas } from "@/components/AlertaDezenasAtrasadas";
 import { format } from "date-fns";
@@ -119,6 +120,7 @@ function Index() {
   }, [location]);
 
   const today = brasiliaDateISO();
+  const nextDraw = useMemo(() => getNextDraw(location), [location, currentTime]);
 
   const { data: games, isLoading: isLoadingGames, refetch } = useQuery({
     queryKey: ["homepage-games", today, location],
