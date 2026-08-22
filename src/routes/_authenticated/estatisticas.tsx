@@ -133,7 +133,7 @@ function EstatisticasPage() {
     mutationFn: async () => {
       (window as any).__syncStart = performance.now();
       setSyncStep("Buscando novos resultados na origem...");
-      const res: any = await triggerSync();
+      const res: any = await triggerSync({ data: { location } });
       setSyncStep("Recalculando dezenas atrasadas, grupos e bicho em alta...");
       await queryClient.invalidateQueries();
       await queryClient.refetchQueries({ type: "active" });
