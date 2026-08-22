@@ -5,7 +5,13 @@
 import { ANIMAL_GROUPS } from "@/lib/animals";
 
 const NAME_TO_ID: Record<string, string> = Object.fromEntries(
-  ANIMAL_GROUPS.map((a) => [a.name.toLowerCase().replace(/á/g, 'a').replace(/é/g, 'e').replace(/í/g, 'i').replace(/ó/g, 'o').replace(/ú/g, 'u').replace(/ç/g, 'c'), a.id]),
+  ANIMAL_GROUPS.map((a) => [
+    a.name.toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/ç/g, "c"), 
+    a.id
+  ]),
 );
 
 const RAW: Record<string, string[]> = {
@@ -48,9 +54,16 @@ export const PUXADAS: PuxadaEntry[] = ANIMAL_GROUPS.map((a) => ({
   name: a.name,
   icon: a.icon,
   puxa: (RAW[a.id] ?? []).map((n) => {
-    const cleanName = n.toLowerCase().replace(/á/g, 'a').replace(/é/g, 'e').replace(/í/g, 'i').replace(/ó/g, 'o').replace(/ú/g, 'u').replace(/ç/g, 'c');
+    const cleanName = n.toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/ç/g, "c");
     const id = NAME_TO_ID[cleanName] ?? "";
-    return { id, name: n, icon: id ? ANIMAL_GROUPS.find((g) => g.id === id)!.icon : "" };
+    return { 
+      id, 
+      name: n, 
+      icon: id ? ANIMAL_GROUPS.find((g) => g.id === id)!.icon : "❓" 
+    };
   }),
 }));
 
