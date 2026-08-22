@@ -59,7 +59,7 @@ const MiniSparkline = ({ data, color = "#EAB308" }: { data: number[], color?: st
 };
 
 function EstatisticasPage() {
-  const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'logica-atraso' | 'ranking-completo' | 'logica-grupos' | 'repeticoes' | 'esquerda-direita' | 'puxadas' | 'analise-premium' | 'atraso-horario'>('quentes');
+  const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'logica-atraso' | 'ranking-completo' | 'logica-grupos' | 'repeticoes' | 'esquerda-direita' | 'puxadas' | 'analise-premium'>('quentes');
   const [location, setLocation] = useState<'rio' | 'capital'>('rio');
   const [date, setDate] = useState("");
   const [dateEnd, setDateEnd] = useState("");
@@ -456,7 +456,7 @@ function EstatisticasPage() {
 
 
           {/* Tools Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-16">
              <Card 
                onClick={() => setActiveTab('quentes')}
                className={`dashboard-card p-6 transition-all cursor-pointer group ${activeTab === 'quentes' ? 'border-primary/50 ring-1 ring-primary/20 shadow-lg shadow-primary/5' : 'hover:border-primary/30'}`}
@@ -546,16 +546,6 @@ function EstatisticasPage() {
                  <p className="text-sm text-white/40 font-medium leading-snug">Inteligência aplicada aos resultados históricos: Capital e Rio.</p>
              </Card>
 
-             <Card 
-               onClick={() => setActiveTab('atraso-horario')}
-               className={`bg-[#0D121F] border-primary/20 rounded-2xl p-6 transition-all cursor-pointer group ${activeTab === 'atraso-horario' ? 'border-primary/50 ring-1 ring-primary/20 shadow-lg shadow-primary/5' : 'hover:border-primary/30'}`}
-             >
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'atraso-horario' ? 'bg-primary text-primary-foreground' : 'bg-primary/10 text-primary'}`}>
-                   <Clock className="w-6 h-6" />
-                </div>
-                <h3 className="text-xl font-black italic uppercase mb-2">Atraso por Horário</h3>
-                <p className="text-sm text-white/40 font-medium leading-snug">Dezenas mais atrasadas segmentadas por horário (logística do dia).</p>
-             </Card>
           </div>
 
           {/* Dynamic Content Based on Tabs */}
@@ -1429,16 +1419,6 @@ function EstatisticasPage() {
                 </motion.div>
               )}
 
-              {activeTab === 'atraso-horario' && (
-                <motion.div
-                  key="atraso-horario"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                >
-                  <TenDelayBySchedule data={scheduleDelayStats as any} loading={scheduleDelayLoading} location={location} />
-                </motion.div>
-              )}
             </AnimatePresence>
 
           </section>
