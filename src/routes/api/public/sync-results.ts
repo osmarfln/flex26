@@ -21,7 +21,7 @@ export const Route = createFileRoute('/api/public/sync-results')({
           const dateParam = body.date || brasiliaToday();
           const daysToSync = body.daysToSync || 2;
           const syncAll = body.syncAll || false;
-          const location = body.location || 'rio'; // 'rio' ou 'capital'
+          const location = (body.location === 'capital' || body.location === 'rio') ? body.location : 'rio';
           
           const auto = body.auto || false; // Se true, sincroniza ambos se necessário
           
@@ -160,7 +160,7 @@ export const Route = createFileRoute('/api/public/sync-results')({
               if (offset > 100000) break;
             }
           } else {
-            const locationsToSync = auto ? ['rio', 'capital'] : [location];
+            const locationsToSync = ['rio', 'capital']; // Restringe apenas a Rio e Capital
             for (const loc of locationsToSync) {
               for (let i = 0; i < daysToSync; i++) {
                 const currentSyncDate = new Date(dateParam);
