@@ -629,6 +629,7 @@ function Index() {
                     <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40">Animal</th>
                     <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40 text-center">Atraso</th>
                     <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40 text-center">Índice</th>
+                    <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40 text-center">Atraso Hoje</th>
                     <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40">Classificação</th>
                   </tr>
                 </thead>
