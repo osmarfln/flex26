@@ -1009,12 +1009,14 @@ function EstatisticasPage() {
 
                             <div className="grid grid-cols-2 gap-y-3 gap-x-4 mb-6">
                               <div className="flex flex-col">
-                                <span className="text-[8px] font-bold text-white/20 uppercase">Atraso Atual</span>
+                                <span className="text-[8px] font-bold text-white/20 uppercase">Atraso Concursos</span>
                                 <span className="text-sm font-black text-white">{item.currentDelay}</span>
                               </div>
                               <div className="flex flex-col">
-                                <span className="text-[8px] font-bold text-white/20 uppercase">Índice Atraso</span>
-                                <span className={`text-sm font-black ${colorClass}`}>{item.relativeIndex}</span>
+                                <span className="text-[8px] font-bold text-white/20 uppercase">Atraso Diário</span>
+                                <span className={`text-sm font-black ${item.dailyDelay > 2 ? 'text-red-400' : 'text-white/60'}`}>
+                                  {item.dailyDelay} <span className="text-[8px] text-white/30">h</span>
+                                </span>
                               </div>
                               <div className="flex flex-col">
                                 <span className="text-[8px] font-bold text-white/20 uppercase">Regularidade</span>
