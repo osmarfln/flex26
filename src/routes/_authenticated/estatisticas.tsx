@@ -905,7 +905,7 @@ function EstatisticasPage() {
                     </div>
 
                     {!statsLoading && (
-                      <Card className="dashboard-card p-6 bg-white/[0.03] border-white/10 mt-8">
+                      <Card className="dashboard-card p-6 bg-white/[0.03] border-white/10 mt-8 min-w-0">
                         <h3 className="text-sm font-black uppercase italic mb-8 flex items-center gap-2">
                           <TrendingUp className="w-4 h-4 text-purple-400" />
                           Tendência de Atraso Médio (Últimos Concursos)
