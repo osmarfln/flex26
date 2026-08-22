@@ -273,6 +273,7 @@ function Index() {
             <p className="text-white/40 text-lg mb-8 font-medium italic">Resultados diários automatizados Rio e Capital via robô ai automatizado sem intervenção humana</p>
 
 
+
             
             <Card className="dashboard-card p-6 mb-8 border-primary/20 bg-primary/5">
               <div className="flex flex-wrap items-center justify-between gap-6">
