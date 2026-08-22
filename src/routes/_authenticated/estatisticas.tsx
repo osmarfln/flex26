@@ -607,24 +607,32 @@ function EstatisticasPage() {
                         const animal = getAnimalByTen(item.ten);
                         const isHitNow = item.hitInFirstPrize && item.currentDelay === 0;
                         return (
-                          <Card key={i} className={`dashboard-card p-4 text-center hover:border-primary/50 transition-all bg-white/[0.03] group ${isHitNow ? 'border-red-500/50 bg-red-500/5 ring-1 ring-red-500/20' : ''}`}>
+                          <Card key={i} className={`dashboard-card p-4 text-center hover:border-primary/50 transition-all bg-white/[0.03] group relative ${isHitNow ? 'border-red-500/50 bg-red-500/5 ring-1 ring-red-500/20' : ''}`}>
                             {isHitNow && (
-                              <div className="absolute top-0 right-0 p-1 bg-red-500 text-white text-[6px] font-black px-1.5 uppercase z-10">1º Prêmio</div>
+                              <div className="absolute top-0 right-0 p-1 bg-red-500 text-white text-[8px] font-black px-2 uppercase z-10 rounded-bl-lg shadow-lg">1º Prêmio</div>
                             )}
+                            <div className="flex justify-between items-start mb-1">
+                              <Badge variant="outline" className="text-[9px] border-white/10 text-white/40">{item.percentile}% rank</Badge>
+                              {item.dailyDelay > 0 && <Badge variant="outline" className="text-[9px] border-orange-500/30 text-orange-400">Atraso Diário</Badge>}
+                            </div>
                             <span className={`text-4xl font-black mb-2 block drop-shadow-[0_0_10px_rgba(var(--primary),0.3)] ${isHitNow ? 'text-red-500' : 'text-primary'}`}>{item.ten}</span>
                             <div className="space-y-1">
-                              <p className="text-xs font-bold uppercase text-white/40">{item.freqs[300]} sorteios (300)</p>
+                              <p className="text-xs font-bold uppercase text-white/40">{item.freqs[300]}x em 300</p>
                               <div className="h-4 w-full px-2">
                                 <MiniSparkline data={item.history} color={isHitNow ? '#EF4444' : '#EAB308'} />
                               </div>
                             </div>
-                            <div className="mt-2 flex items-center justify-center gap-2">
+                            <div className="mt-2 flex items-center justify-center gap-2 border-t border-white/5 pt-2">
                               <span className="text-lg">{animal?.icon}</span>
-                              <span className="text-[10px] font-black uppercase text-white/60">{animal?.name}</span>
+                              <div className="text-left">
+                                <span className="text-[9px] font-black uppercase text-white/60 block leading-none">{animal?.name}</span>
+                                <span className="text-[8px] text-white/30 uppercase font-bold">Logística OK</span>
+                              </div>
                             </div>
                           </Card>
                         );
                       })
+
 
                     )}
                   </div>

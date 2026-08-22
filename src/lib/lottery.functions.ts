@@ -886,8 +886,8 @@ export const getDigitDelayStats = createServerFn({ method: "GET" })
       .sort((a: any, b: any) => (a.date < b.date ? 1 : -1))
       .slice(0, 12);
 
-    const oldest = results[results.length - 1] as any;
-    const newest = results[0] as any;
+    const oldestRecord = results[results.length - 1] as any;
+    const newestRecord = results[0] as any;
 
     // Correlação Esquerda x Direita: identifica pares frequentes no mesmo milhar
     const correlationMap: Record<string, Record<string, number>> = {};
@@ -895,28 +895,26 @@ export const getDigitDelayStats = createServerFn({ method: "GET" })
       const m = milhar(r);
       if (m) {
         const l = m.slice(0, 2);
-        const right = m.slice(2, 4);
+        const rightDigit = m.slice(2, 4);
         if (!correlationMap[l]) correlationMap[l] = {};
-        correlationMap[l][right] = (correlationMap[l][right] || 0) + 1;
+        correlationMap[l][rightDigit] = (correlationMap[l][rightDigit] || 0) + 1;
       }
     });
 
     const correlations = Object.entries(correlationMap).flatMap(([l, rights]) => 
-      Object.entries(rights).map(([r, count]) => ({ left: l, right: r, count }))
+      Object.entries(rights).map(([rDigit, count]) => ({ left: l, right: rDigit, count }))
     ).sort((a, b) => b.count - a.count).slice(0, 20);
 
-    const oldest = results[results.length - 1] as any;
-    const newest = results[0] as any;
-    
     return {
       left: build("left"),
       right: build("right"),
       totalDraws: results.length,
       schedules,
-      period: { start: oldest?.date ?? null, end: newest?.date ?? null },
+      period: { start: oldestRecord?.date ?? null, end: newestRecord?.date ?? null },
       daily,
       correlations
     };
+
 
   });
 
@@ -1066,12 +1064,13 @@ export const getPuxadasStats = createServerFn({ method: "GET" })
     });
 
 
-    const oldest = asc[0] as any;
-    const newest = desc[0] as any;
+    const oldestPuxada = asc[0] as any;
+    const newestPuxada = desc[0] as any;
 
     return {
       totalDraws: desc.length,
-      period: { start: oldest?.date ?? null, end: newest?.date ?? null },
+      period: { start: oldestPuxada?.date ?? null, end: newestPuxada?.date ?? null },
+
       schedules,
       table,
     };
