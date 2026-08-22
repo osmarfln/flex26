@@ -1009,32 +1009,6 @@ function EstatisticasPage() {
                             </div>
 
                             <div className="space-y-4 pt-4 border-t border-white/5 mt-auto">
-                              <div>
-                                <span className="text-[7px] font-black text-white/20 uppercase tracking-widest block mb-2">
-                                  Dezena do Grupo Mais Atrasada · Freq / Atraso / Histórico
-                                </span>
-
-                                <div className="grid grid-cols-4 gap-1">
-                                  {(item.dezenaStats ?? []).map((d: any) => (
-                                    <div
-                                      key={d.dezena}
-                                      className={`flex flex-col items-center rounded border border-white/5 bg-white/[0.02] py-1 px-1 transition-all ${d.hitInFirstPrize && d.delay === 0 ? 'bg-red-500/20 border-red-500/30 shadow-[0_0_10px_rgba(239,68,68,0.2)]' : ''}`}
-                                      title={`Dezena do Grupo: ${d.dezena} (1º ao 5º)`}
-                                    >
-                                      <span className={`text-[11px] font-black ${d.hitInFirstPrize && d.delay === 0 ? 'text-red-500' : 'text-white'}`}>{d.dezena}</span>
-                                      <div className="flex flex-col items-center gap-0.5 my-0.5">
-                                        <span className="text-[7px] font-bold text-emerald-500" title="Frequência total">{d.freq}x</span>
-                                        <span className={`text-[7px] font-bold ${d.delay === 0 ? 'text-emerald-500' : 'text-white/30'}`} title="Atraso em concursos">{d.delay} conc.</span>
-                                        <span className={`text-[7px] font-bold ${d.dailyDelay > 2 ? 'text-red-400' : 'text-white/20'}`} title="Horários seguidos sem sair hoje">{d.dailyDelay}h hoje</span>
-                                      </div>
-
-                                      <div className="w-full mt-1">
-                                        <MiniSparkline data={d.history} color={d.hitInFirstPrize && d.delay === 0 ? '#EF4444' : colorClass.includes('emerald') ? '#10B981' : colorClass.includes('yellow') ? '#EAB308' : '#3B82F6'} />
-                                      </div>
-                                    </div>
-                                  ))}
-                                </div>
-                              </div>
 
                               <div>
 
