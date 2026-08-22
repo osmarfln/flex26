@@ -30,6 +30,8 @@ function fmt(iso?: string | null) {
 
 /** Painel de saúde do robô: conexão em tempo real, última execução e erros por ferramenta. */
 export function RobotHealthPanel() {
+  const [location, setLocation] = useState<'rio' | 'capital'>('rio');
+
   const [channelState, setChannelState] = useState<"conectando" | "online" | "offline">("conectando");
 
   useEffect(() => {
@@ -49,25 +51,28 @@ export function RobotHealthPanel() {
   const live = { staleTime: 0, gcTime: 0, retry: 0 } as const;
 
   const tools = [
-    { key: "resultados", label: "Coleta de resultados", q: useQuery({ queryKey: ["health-stats"], queryFn: () => getStats(), ...live }) },
-    { key: "dezenas", label: "Atraso das dezenas", q: useQuery({ queryKey: ["health-ten"], queryFn: () => getTenDelayStats(), ...live }) },
-    { key: "grupos", label: "Atraso dos grupos", q: useQuery({ queryKey: ["health-group"], queryFn: () => getGroupDelayStats(), ...live }) },
-    { key: "repeticoes", label: "Repetições", q: useQuery({ queryKey: ["health-rep"], queryFn: () => getRepetitionStats(), ...live }) },
-    { key: "digitos", label: "Dezena esquerda/direita", q: useQuery({ queryKey: ["health-digit"], queryFn: () => getDigitDelayStats(), ...live }) },
-    { key: "puxadas", label: "Tabela de puxadas", q: useQuery({ queryKey: ["health-puxadas"], queryFn: () => getPuxadasStats(), ...live }) },
+    { key: "resultados", label: "Coleta de resultados", q: useQuery({ queryKey: ["health-stats", location], queryFn: () => getStats({ data: { location } }), ...live }) },
+    { key: "dezenas", label: "Atraso das dezenas", q: useQuery({ queryKey: ["health-ten", location], queryFn: () => getTenDelayStats({ data: { location } }), ...live }) },
+    { key: "grupos", label: "Atraso dos grupos", q: useQuery({ queryKey: ["health-group", location], queryFn: () => getGroupDelayStats({ data: { location } }), ...live }) },
+    { key: "repeticoes", label: "Repetições", q: useQuery({ queryKey: ["health-rep", location], queryFn: () => getRepetitionStats({ data: { location } }), ...live }) },
+    { key: "digitos", label: "Dezena esquerda/direita", q: useQuery({ queryKey: ["health-digit", location], queryFn: () => getDigitDelayStats({ data: { location } }), ...live }) },
+    { key: "puxadas", label: "Tabela de puxadas", q: useQuery({ queryKey: ["health-puxadas", location], queryFn: () => getPuxadasStats({ data: { location } }), ...live }) },
+
   ];
 
   const fetchMatrix = useServerFn(getScheduleSyncMatrix);
   const matrixQuery = useQuery({
-    queryKey: ["health-matrix"],
-    queryFn: () => fetchMatrix({}),
+    queryKey: ["health-matrix", location],
+    queryFn: () => fetchMatrix({ data: { location } }),
+
     refetchInterval: 30_000,
     retry: 0,
   });
 
   const logsQuery = useQuery({
-    queryKey: ["health-logs"],
-    queryFn: () => getSyncStatus(),
+    queryKey: ["health-logs", location],
+    queryFn: () => getSyncStatus({ data: { location } }),
+
     refetchInterval: 15_000,
     retry: 0,
   });
@@ -89,8 +94,18 @@ export function RobotHealthPanel() {
             Sincronização em tempo real, última execução e erros
           </p>
         </div>
-        <span
-          className={`inline-flex items-center gap-2 rounded-xl border px-3 py-1.5 text-[10px] font-black uppercase ${
+        <div className="flex items-center gap-2">
+          <select 
+            className="h-8 rounded-xl border border-white/10 bg-white/5 px-2 text-[10px] font-bold text-white outline-none focus:border-primary/50"
+            value={location}
+            onChange={(e) => setLocation(e.target.value as any)}
+          >
+            <option value="rio">Rio</option>
+            <option value="capital">Capital</option>
+          </select>
+          <span
+            className={`inline-flex items-center gap-2 rounded-xl border px-3 py-1.5 text-[10px] font-black uppercase ${
+
             channelState === "online"
               ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
               : channelState === "offline"
@@ -104,7 +119,9 @@ export function RobotHealthPanel() {
             : channelState === "offline"
               ? "Tempo real offline"
               : "Conectando..."}
-        </span>
+          </span>
+        </div>
+
       </div>
 
       <div className="grid gap-3 sm:grid-cols-3">
