@@ -263,6 +263,33 @@ function Index() {
 
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-4 italic">Resultados {location === 'rio' ? 'Rio' : 'Capital'}</h1>
             <p className="text-white/40 text-lg mb-8 font-medium">Resultados diários automatizados via robô ai automatizado sem intervenção humana</p>
+            
+            <Card className="dashboard-card p-6 mb-8 border-primary/20 bg-primary/5">
+              <div className="flex flex-wrap items-center justify-between gap-6">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-primary/10 rounded-2xl border border-primary/20">
+                    <Clock className="w-8 h-8 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-black italic uppercase tracking-tighter">Próximo Resultado</h3>
+                    <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest mt-1">Sempre atualizado com o horário oficial</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-6">
+                  <div className="text-center">
+                    <p className="text-[10px] text-white/40 font-black uppercase tracking-widest mb-1">Horário</p>
+                    <p className="text-2xl font-black text-white font-mono">
+                      {location === 'rio' ? '18:20 PTN' : '18:15 L-18'}
+                    </p>
+                  </div>
+                  <div className="h-10 w-px bg-white/10" />
+                  <div className="text-center">
+                    <p className="text-[10px] text-white/40 font-black uppercase tracking-widest mb-1">Data</p>
+                    <p className="text-2xl font-black text-white font-mono">{format(new Date(), "dd/MM")}</p>
+                  </div>
+                </div>
+              </div>
+            </Card>
 
 
 

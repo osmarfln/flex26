@@ -71,7 +71,7 @@ export function AlertaDezenasAtrasadas({ data, loading }: { data?: DigitDelayDat
         <div className="flex-1 min-w-[200px]">
           <h3 className="text-lg font-black italic uppercase">Alerta automático de atraso</h3>
           <p className="text-xs text-white/40 font-medium">
-            Dezena = 2 casas (ex.: 05, 25). Recalculado a cada resultado do dia — avisa quando muda a dezena esquerda/direita mais atrasada.
+            Dezena = 2 casas (ex.: 05, 25). Recalculado a cada resultado do dia — avisa quando muda a dezena esquerda/direita mais atrasada. Monitoramento Rio e Capital com base em atrasos diários e arquivos históricos.
           </p>
         </div>
         <Badge variant="outline" className="text-[10px] font-bold border-white/10 bg-white/5 text-white/50">

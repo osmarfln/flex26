@@ -277,9 +277,9 @@ function EstatisticasPage() {
         <section className="mb-12 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           <div className="lg:col-span-8">
             <h1 className="text-4xl md:text-5xl lg:text-7xl font-black italic tracking-tighter uppercase mb-4">
-              Estatísticas Premium
+              Análise Rio e Capital
             </h1>
-            <p className="text-white/40 text-lg mb-8 font-medium">Resultados diários automatizados via robô ai automatizado sem intervenção humana</p>
+            <p className="text-white/40 text-lg mb-8 font-medium">Dezena em atraso Rio e Capital baseada em resultados diários e históricos</p>
           </div>
         </section>
 
@@ -343,8 +343,8 @@ function EstatisticasPage() {
                   <BarChart3 className="w-8 h-8 text-primary" />
                 </div>
                 <div>
-                  <h1 className="text-4xl font-black italic tracking-tighter uppercase">Análise Premium</h1>
-                  <p className="text-white/40 font-bold text-xs uppercase tracking-widest mt-1">Resultados diários automatizados via robô ai automatizado sem intervenção humana</p>
+                  <h1 className="text-4xl font-black italic tracking-tighter uppercase">Análise Rio e Capital</h1>
+                  <p className="text-white/40 font-bold text-xs uppercase tracking-widest mt-1">Dezena em atraso Rio e Capital baseada em resultados diários e históricos</p>
                 </div>
               </div>
               <p className="max-w-2xl text-white/60 text-lg leading-relaxed">
@@ -379,11 +379,11 @@ function EstatisticasPage() {
                   </button>
                   <div className="flex flex-wrap gap-1.5">
                     <button
-                      onClick={() => recalcPart("Dezenas atrasadas", ["ten-delay-stats", "digit-delay-stats"])}
+                      onClick={() => recalcPart("Dezenas Rio/Capital", ["ten-delay-stats", "digit-delay-stats"])}
                       disabled={recalculating}
                       className="px-2.5 py-1.5 rounded-lg bg-white/5 border border-white/10 text-[10px] font-black uppercase text-white/60 hover:border-primary/40 hover:text-primary transition-all disabled:opacity-50"
                     >
-                      Dezenas
+                      Atrasos Rio/Capital
                     </button>
                     <button
                       onClick={() => recalcPart("Grupos", ["group-delay-stats", "puxadas-stats"])}
