@@ -211,7 +211,7 @@ function RobotStatus() {
               Status do Robô
             </h1>
             <p className="text-white/40 text-[10px] md:text-sm mt-1 uppercase tracking-widest">
-              Monitoramento de sincronização em tempo real
+              Resultados diários automatizados via robô ai automatizado sem intervenção humana
             </p>
           </div>
           <div className="flex items-center gap-3">
