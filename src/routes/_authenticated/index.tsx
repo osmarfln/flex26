@@ -279,13 +279,13 @@ function Index() {
                   <div className="text-center">
                     <p className="text-[10px] text-white/40 font-black uppercase tracking-widest mb-1">Horário</p>
                     <p className="text-2xl font-black text-white font-mono">
-                      {location === 'rio' ? '18:20 PTN' : '18:15 L-18'}
+                      {nextDraw.timeValue} {nextDraw.timeType}
                     </p>
                   </div>
                   <div className="h-10 w-px bg-white/10" />
                   <div className="text-center">
                     <p className="text-[10px] text-white/40 font-black uppercase tracking-widest mb-1">Data</p>
-                    <p className="text-2xl font-black text-white font-mono">{format(new Date(), "dd/MM")}</p>
+                    <p className="text-2xl font-black text-white font-mono">{format(nextDraw.date, "dd/MM")}</p>
                   </div>
                 </div>
               </div>
