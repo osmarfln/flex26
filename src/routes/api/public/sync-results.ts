@@ -151,7 +151,7 @@ export const Route = createFileRoute('/api/public/sync-results')({
                     results: results,
                     animal: res.prize_1_bicho,
                     animal_group: groupStr,
-                    location: location,
+                    location: location === 'capital' || location === 'rio' ? location : 'rio',
                     created_at: new Date().toISOString()
                   }, { onConflict: 'date,time_type,location' });
 
@@ -248,7 +248,7 @@ export const Route = createFileRoute('/api/public/sync-results')({
                           results: results,
                           animal: res.prize_1_bicho,
                           animal_group: groupStr,
-                          location: loc
+                          location: loc === 'capital' || loc === 'rio' ? loc : 'rio'
                         }, { onConflict: 'date,time_type,location' });
                       
                       totalSynced++;
