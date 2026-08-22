@@ -486,22 +486,30 @@ function Index() {
 
             <Card className="bg-[#0D121F] border-white/10 rounded-2xl overflow-hidden group hover:border-yellow-500/30 transition-all">
               <CardHeader className="bg-yellow-500/5 p-4 border-b border-white/5 flex flex-row items-center justify-between">
-                <CardTitle className="text-xs font-black uppercase tracking-widest">Grupos Atrasados</CardTitle>
+                <CardTitle className="text-xs font-black uppercase tracking-widest">Dezena do Grupo Mais Atrasada</CardTitle>
                 <Clock className="w-4 h-4 text-yellow-500" />
+
               </CardHeader>
               <CardContent className="p-6 space-y-4">
-                {groupStats?.slice(0, 3).map((item: any) => (
-                  <div key={item.groupId} className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5">
-                    <div className="flex items-center gap-3">
-                      <span className="text-2xl">{ANIMAL_GROUPS.find(a => a.id === item.groupId)?.icon}</span>
-                      <span className="text-sm font-black uppercase italic">{item.animal}</span>
+                {groupStats?.slice(0, 3).map((item: any) => {
+                  const mostDelayedDz = (item.dezenaStats ?? []).sort((a: any, b: any) => b.delay - a.delay)[0];
+                  return (
+                    <div key={item.groupId} className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5">
+                      <div className="flex items-center gap-3">
+                        <span className="text-2xl">{ANIMAL_GROUPS.find(a => a.id === item.groupId)?.icon}</span>
+                        <div className="flex flex-col">
+                          <span className="text-sm font-black uppercase italic">{item.animal}</span>
+                          <span className="text-[8px] font-bold text-white/30 uppercase">Mais Atrasada: <span className="text-yellow-500">{mostDelayedDz?.dezena || '--'}</span></span>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-lg font-black text-yellow-500 block leading-none">{item.currentDelay}d</span>
+                        <span className="text-[9px] font-bold text-red-500/80 uppercase">{item.dailyDelay} horários</span>
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <span className="text-lg font-black text-yellow-500 block leading-none">{item.currentDelay}d</span>
-                      <span className="text-[9px] font-bold text-red-500/80 uppercase">{item.dailyDelay} horários</span>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
+
               </CardContent>
             </Card>
 
