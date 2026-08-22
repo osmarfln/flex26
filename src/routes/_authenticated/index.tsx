@@ -262,6 +262,7 @@ function Index() {
                 <p className="text-[10px] text-primary/40 font-black uppercase tracking-[0.3em] mt-2 border-t border-white/5 pt-2">Resultados diários automatizados via robô ai automatizado sem intervenção humana</p>
 
 
+
               </div>
             </motion.div>
 
