@@ -60,6 +60,8 @@ const MiniSparkline = ({ data, color = "#EAB308" }: { data: number[], color?: st
 function EstatisticasPage() {
   const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'palpites' | 'logica-atraso' | 'ranking-completo' | 'logica-grupos' | 'repeticoes' | 'esquerda-direita' | 'puxadas'>('quentes');
   const [location, setLocation] = useState<'rio' | 'capital'>('rio');
+  const [date, setDate] = useState("");
+  const [dateEnd, setDateEnd] = useState("");
   const [cruzData, setCruzData] = useState<string[]>([]);
 
   
@@ -67,8 +69,8 @@ function EstatisticasPage() {
   const live = { staleTime: 0, gcTime: 0, refetchOnWindowFocus: true, refetchOnMount: true } as const;
 
   const { data: stats, isLoading: statsLoading } = useQuery({
-    queryKey: ["stats-page", location],
-    queryFn: () => getStats({ data: { location } }),
+    queryKey: ["stats-page", location, date, dateEnd],
+    queryFn: () => getStats({ data: { location, date, dateEnd } }),
     ...live,
   });
 
@@ -79,33 +81,33 @@ function EstatisticasPage() {
   });
 
   const { data: delayStats, isLoading: delayStatsLoading } = useQuery({
-    queryKey: ["ten-delay-stats", location],
-    queryFn: () => getTenDelayStats({ data: { location } }),
+    queryKey: ["ten-delay-stats", location, date, dateEnd],
+    queryFn: () => getTenDelayStats({ data: { location, date, dateEnd } }),
     ...live,
   });
 
   const { data: groupDelayStats, isLoading: groupDelayStatsLoading } = useQuery({
-    queryKey: ["group-delay-stats", location],
-    queryFn: () => getGroupDelayStats({ data: { location } }),
+    queryKey: ["group-delay-stats", location, date, dateEnd],
+    queryFn: () => getGroupDelayStats({ data: { location, date, dateEnd } }),
     ...live,
   });
 
 
   const { data: digitStats, isLoading: digitLoading } = useQuery({
-    queryKey: ["digit-delay-stats", location],
-    queryFn: () => getDigitDelayStats({ data: { location } }),
+    queryKey: ["digit-delay-stats", location, date, dateEnd],
+    queryFn: () => getDigitDelayStats({ data: { location, date, dateEnd } }),
     ...live,
   });
 
   const { data: puxadasStats, isLoading: puxadasLoading } = useQuery({
-    queryKey: ["puxadas-stats", location],
-    queryFn: () => getPuxadasStats({ data: { location } }),
+    queryKey: ["puxadas-stats", location, date, dateEnd],
+    queryFn: () => getPuxadasStats({ data: { location, date, dateEnd } }),
     ...live,
   });
 
   const { data: repetitionStats, isLoading: repetitionLoading } = useQuery({
-    queryKey: ["repetition-stats", location],
-    queryFn: () => getRepetitionStats({ data: { location } }),
+    queryKey: ["repetition-stats", location, date, dateEnd],
+    queryFn: () => getRepetitionStats({ data: { location, date, dateEnd } }),
     ...live,
   });
 
