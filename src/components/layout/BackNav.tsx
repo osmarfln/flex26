@@ -25,10 +25,10 @@ export function BackNav({ hideOnHome = true, className = "" }: BackNavProps) {
     }
   };
 
-  if (isHome && hideOnHome) return null;
+  // Removido hideOnHome para mostrar sempre
 
   return (
-    <div className={`flex shrink-0 items-center gap-2 ${className}`}>
+    <div className={`flex shrink-0 items-center gap-2 mb-4 md:mb-0 ${className}`}>
       <button
         type="button"
         onClick={handleBack}

@@ -231,7 +231,7 @@ export default function ManagementLayout({ children, currentPageName }: LayoutPr
                 </nav>
               </SheetContent>
             </Sheet>
-            <BackNav />
+            <BackNav hideOnHome={false} />
             <Link to="/" className="flex items-center gap-2 font-bold text-xl">
               <Sparkles className="h-6 w-6 text-primary" />
               <span>Flex Gerenciamentos</span>

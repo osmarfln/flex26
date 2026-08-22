@@ -192,9 +192,10 @@ function Historico() {
                         {res.results.map((num, idx) => (
                           <div key={idx} className="flex gap-3 text-xs font-bold items-baseline">
                             <span className="text-white/20 w-4">{idx + 1}º</span>
-                            <span className="font-mono tracking-widest text-sm">{num}</span>
+                            <span className="font-mono tracking-widest text-sm">{num.padStart(4, '0')}</span>
                           </div>
                         ))}
+
                       </div>
                       <div className="flex flex-col items-center justify-center bg-white/[0.02] rounded-xl p-4 border border-white/5">
                         <div className="text-4xl mb-2">{ANIMAL_GROUPS[res.animal_group || ""] || "✨"}</div>

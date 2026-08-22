@@ -321,8 +321,9 @@ function Index() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {(location === 'rio' ? DRAW_SCHEDULE_RIO : DRAW_SCHEDULE_CAPITAL).map((schedule) => {
                   const game = (games || []).find(
-                    (g: any) => String(g.time_type).toUpperCase().trim() === schedule.timeType.toUpperCase(),
+                    (g: any) => String(g.time_type).toUpperCase().trim().replace("PTT", "PPT") === schedule.timeType.toUpperCase(),
                   );
+
                   // Encontra o mais recente entre os que já saíram hoje
                   const sortedGames = [...(games || [])].sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
                   const isLatest = game && sortedGames[0]?.id === game.id;
@@ -351,9 +352,10 @@ function Index() {
                               ((game.results || []).length > 0 ? game.results.slice(0, 5) : ['----', '----', '----', '----', '----']).map((res: string, idx: number) => (
                                 <div key={idx} className="flex gap-4 text-sm font-bold items-baseline">
                                   <span className="text-white/20 w-4">{idx + 1}º</span>
-                                  <span className="font-mono tracking-widest text-lg">{res}</span>
+                                  <span className="font-mono tracking-widest text-lg">{res.padStart(4, '0')}</span>
                                 </div>
                               ))
+
                             ) : (
                               [1, 2, 3, 4, 5].map((idx) => (
                                 <div key={idx} className="flex gap-4 text-sm font-bold items-baseline">
