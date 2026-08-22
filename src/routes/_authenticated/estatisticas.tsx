@@ -682,7 +682,7 @@ function EstatisticasPage() {
                                     '#f43f5e', '#64748b', '#71717a', '#737373', '#78716c'
                                   ];
                                   return Array.from({ length: 25 }).map((_, index) => (
-                                    <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+                                    <Cell key={`cell-${index}`} fill={colors[index % colors.length] as string} />
                                   ));
                                 })()}
                               </Pie>
