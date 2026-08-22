@@ -23,7 +23,10 @@ export const Route = createFileRoute('/api/public/sync-results')({
           const syncAll = body.syncAll || false;
           const location = body.location || 'rio'; // 'rio' ou 'capital'
           
-          console.log(`[SYNC] Request received. Date: ${dateParam}, Days: ${daysToSync}, Location: ${location}`);
+          const auto = body.auto || false; // Se true, sincroniza ambos se necessário
+          
+          console.log(`[SYNC] Request received. Date: ${dateParam}, Days: ${daysToSync}, Location: ${location}, Auto: ${auto}`);
+
 
           // Fecha execuções travadas (sem finished_at) de tentativas anteriores
           await supabase
@@ -124,13 +127,16 @@ export const Route = createFileRoute('/api/public/sync-results')({
               if (offset > 10000) break; 
             }
           } else {
-            for (let i = 0; i < daysToSync; i++) {
+            const locationsToSync = auto ? ['rio', 'capital'] : [location];
+            for (const loc of locationsToSync) {
+              for (let i = 0; i < daysToSync; i++) {
+
               const currentSyncDate = new Date(dateParam);
               currentSyncDate.setDate(currentSyncDate.getDate() - i);
               const isoString = currentSyncDate.toISOString();
               const dateStr = isoString.split('T')[0]!;
               
-              const apiUrl = `${EXTERNAL_REST_URL}/draw_results?draw_date=eq.${dateStr}&location=eq.${location}&select=*`;
+              const apiUrl = `${EXTERNAL_REST_URL}/draw_results?draw_date=eq.${dateStr}&location=eq.${loc}&select=*`;
               
               const response = await fetch(apiUrl, {
                 headers: {
@@ -143,7 +149,8 @@ export const Route = createFileRoute('/api/public/sync-results')({
                 const externalResults = await response.json();
                 if (Array.isArray(externalResults) && externalResults.length > 0) {
                   for (const res of externalResults) {
-                    const recordLocation = res.location || location;
+                    const recordLocation = res.location || loc;
+
                     
                     const results = [
                       res.prize_1_milhar,
@@ -185,7 +192,9 @@ export const Route = createFileRoute('/api/public/sync-results')({
                 }
               }
             }
-          }
+              }
+            }
+
 
           if (logEntry) {
             await supabase
