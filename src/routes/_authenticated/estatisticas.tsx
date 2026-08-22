@@ -1339,7 +1339,7 @@ function EstatisticasPage() {
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
                       <Sparkles className="w-6 h-6 text-yellow-500" />
-                      <h2 className="text-2xl font-black italic uppercase">Análise Premium de Atrasos</h2>
+                      <h2 className="text-2xl font-black italic uppercase">Monitoramento Inteligente {location === 'rio' ? 'Rio' : 'Capital'}</h2>
                     </div>
                     <Badge variant="outline" className="border-yellow-500/20 text-yellow-500 bg-yellow-500/5 px-4 py-2 font-black uppercase text-[10px] tracking-widest">
                       Inteligência aplicada aos resultados históricos
