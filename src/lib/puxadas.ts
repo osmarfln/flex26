@@ -5,8 +5,9 @@
 import { ANIMAL_GROUPS } from "@/lib/animals";
 
 const NAME_TO_ID: Record<string, string> = Object.fromEntries(
-  ANIMAL_GROUPS.map((a) => [a.name.toLowerCase(), a.id]),
+  ANIMAL_GROUPS.map((a) => [a.name.toLowerCase().replace(/á/g, 'a').replace(/é/g, 'e').replace(/í/g, 'i').replace(/ó/g, 'o').replace(/ú/g, 'u').replace(/ç/g, 'c'), a.id]),
 );
+
 
 const RAW: Record<string, string[]> = {
   "01": ["Vaca", "Águia", "Galo", "Pavão", "Peru"],
