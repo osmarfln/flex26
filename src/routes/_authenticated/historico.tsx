@@ -125,25 +125,35 @@ function Historico() {
 
               <Button 
                 onClick={async () => {
+                  if (!confirm(`Deseja iniciar a sincronização completa de 2026 para a banca ${location === 'rio' ? 'Rio' : 'Capital'}? Isso pode levar alguns segundos.`)) return;
+                  
+                  setIsSyncing(true);
                   try {
                     const res = await fetch('/api/public/sync-results', {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ syncAll: true, location })
-
                     });
                     if (res.ok) {
-                      alert('Sincronização completa iniciada com sucesso!');
+                      const data = await res.json();
+                      alert(`Sincronização concluída! ${data.synced} registros foram atualizados.`);
                       refetch();
+                    } else {
+                      alert('Erro ao sincronizar. Tente novamente mais tarde.');
                     }
                   } catch (e) {
                     console.error(e);
+                    alert('Erro de conexão ao tentar sincronizar.');
+                  } finally {
+                    setIsSyncing(false);
                   }
                 }}
+                disabled={isSyncing}
                 variant="outline"
-                className="h-[52px] px-6 border-white/10 bg-white/5 hover:bg-white/10 text-white font-bold uppercase text-[10px] tracking-widest rounded-xl gap-2 transition-all"
+                className="h-[52px] px-6 border-white/10 bg-white/5 hover:bg-white/10 text-white font-bold uppercase text-[10px] tracking-widest rounded-xl gap-2 transition-all disabled:opacity-50"
               >
-                <Sparkles className="w-4 h-4 text-primary" /> Sincronizar Tudo
+                <Sparkles className={`w-4 h-4 text-primary ${isSyncing ? 'animate-spin' : ''}`} /> 
+                {isSyncing ? 'Sincronizando...' : 'Sincronizar Tudo'}
               </Button>
             </div>
           </Card>
