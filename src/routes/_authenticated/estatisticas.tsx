@@ -712,8 +712,46 @@ function EstatisticasPage() {
                       </Card>
                     ))}
 
-                  </div>
-                </motion.div>
+                    </div>
+
+                    {!groupDelayStatsLoading && groupDelayStats && groupDelayStats.length > 0 && (
+                      <Card className="dashboard-card p-6 bg-white/[0.03] border-white/10 mt-8">
+                        <h3 className="text-sm font-black uppercase italic mb-8 flex items-center gap-2">
+                          <TrendingUp className="w-4 h-4 text-blue-400" />
+                          Ranking de Atraso (Top 10 Grupos)
+                        </h3>
+                        <div className="h-[400px] w-full">
+                          <ResponsiveContainer width="100%" height="100%">
+                            <BarChart 
+                              layout="vertical" 
+                              data={groupDelayStats.slice(0, 10).map(g => ({ name: g.animal, delay: g.currentDelay }))}
+                              margin={{ left: 40, right: 40 }}
+                            >
+                              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" horizontal={false} />
+                              <XAxis type="number" hide />
+                              <YAxis 
+                                dataKey="name" 
+                                type="category" 
+                                axisLine={false} 
+                                tickLine={false} 
+                                tick={{ fill: 'rgba(255,255,255,0.6)', fontSize: 11, fontWeight: 'bold' }} 
+                              />
+                              <Tooltip 
+                                cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                                contentStyle={{ backgroundColor: '#0D121F', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
+                                itemStyle={{ color: '#3B82F6', fontWeight: 'bold' }}
+                              />
+                              <Bar dataKey="delay" radius={[0, 4, 4, 0]}>
+                                {groupDelayStats.slice(0, 10).map((entry, index) => (
+                                  <Cell key={`cell-${index}`} fill={index === 0 ? '#3B82F6' : '#3B82F680'} />
+                                ))}
+                              </Bar>
+                            </BarChart>
+                          </ResponsiveContainer>
+                        </div>
+                      </Card>
+                    )}
+                  </motion.div>
               )}
 
 
