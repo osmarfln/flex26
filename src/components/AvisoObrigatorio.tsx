@@ -15,7 +15,7 @@ export function AvisoObrigatorio() {
         <div className="space-y-2">
           <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-400/80">Aviso Obrigatório</h4>
           <p className="text-xs md:text-sm text-white/50 font-medium leading-relaxed">
-            “Os indicadores apresentados são cálculos baseados em resultados históricos. Atraso, frequência, repetição e associação não garantem resultados futuros. Esta plataforma possui finalidade exclusivamente informativa e não realiza apostas, não tem patrocio de ninguem, bet, aposta , comercial de nada pagina livre de anuncios não tem relação com jogos nenhuma pagina sobre logisticas, estudos sem fins lucrativos.”
+            “Os indicadores apresentados são cálculos baseados em resultados históricos. Atraso, frequência, repetição e associação não garantem resultados futuros. Esta plataforma possui finalidade exclusivamente informativa e não realiza apostas. Resultados diários automatizados via robô ai automatizado sem intervenção humana.”
           </p>
         </div>
       </div>
