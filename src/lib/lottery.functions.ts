@@ -337,10 +337,18 @@ export const getGroupDelayStats = createServerFn({ method: "GET" })
     dateEnd: z.string().optional()
   }).parse(data))
   .handler(async ({ data }) => {
-    const { data: rawRows, error } = await supabase
+    let query = supabase
       .from("lottery_results")
       .select("results, date, time_type, animal_group, location")
-      .eq("location" as any, data.location)
+      .eq("location" as any, data.location);
+
+    if (data.date && data.dateEnd) {
+      query = query.gte("date", data.date).lte("date", data.dateEnd);
+    } else if (data.date) {
+      query = query.eq("date", data.date);
+    }
+
+    const { data: rawRows, error } = await query
       .order("date", { ascending: false })
       .limit(600);
 
