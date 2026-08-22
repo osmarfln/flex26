@@ -35,13 +35,13 @@ export const deleteUserAccount = createServerFn({ method: "POST" })
     await supabaseAdmin.from("profiles").delete().eq("id", data.userId);
 
     // Auditoria
-    await supabaseAdmin.from("admin_audit").insert({
+    await supabaseAdmin.from("admin_audit" as any).insert({
       admin_id: context.userId,
       action: "excluir",
       target_user_id: data.userId,
       target_user_email: targetProfile?.email,
       details: { reason: "Exclusão administrativa" }
-    });
+    } as any);
 
     return { ok: true as const };
   });
@@ -66,12 +66,12 @@ export const clearUserActivity = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
 
     // Auditoria
-    await supabaseAdmin.from("admin_audit").insert({
+    await supabaseAdmin.from("admin_audit" as any).insert({
       admin_id: context.userId,
       action: "limpar",
       target_user_id: data.userId || null,
       details: { scope: data.userId ? "usuário específico" : "todos os usuários" }
-    });
+    } as any);
 
     return { ok: true as const, scope: data.userId ? "user" : "all" };
   });
