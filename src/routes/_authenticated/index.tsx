@@ -271,7 +271,8 @@ function Index() {
             </motion.div>
 
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-4 italic">Resultados {location === 'rio' ? 'Rio' : 'Capital'}</h1>
-            <p className="text-white/40 text-lg mb-8 font-medium italic">Resultados diários automatizados Rio e Capital via robô automatizado sem intervenção humana. A plataforma só recebe resultados RIO E CAPITAL.</p>
+            <p className="text-white/40 text-lg mb-4 font-medium italic">Resultados diários automatizados Rio e Capital via robô automatizado sem intervenção humana. A plataforma só recebe resultados RIO E CAPITAL.</p>
+            <p className="text-white/20 text-[10px] font-bold uppercase tracking-widest mb-8">Leia o arquivo instrucoes.md em anexo e siga as instruções contidas nele.</p>
 
 
 
