@@ -52,10 +52,12 @@ export const PUXADAS: PuxadaEntry[] = ANIMAL_GROUPS.map((a) => ({
   name: a.name,
   icon: a.icon,
   puxa: (RAW[a.id] ?? []).map((n) => {
-    const id = NAME_TO_ID[n.toLowerCase()] ?? "";
+    const cleanName = n.toLowerCase().replace(/á/g, 'a').replace(/é/g, 'e').replace(/í/g, 'i').replace(/ó/g, 'o').replace(/ú/g, 'u').replace(/ç/g, 'c');
+    const id = NAME_TO_ID[cleanName] ?? "";
     return { id, name: n, icon: id ? ANIMAL_GROUPS.find((g) => g.id === id)!.icon : "" };
   }),
 }));
+
 
 export const PUXADAS_MAP: Record<string, string[]> = Object.fromEntries(
   PUXADAS.map((p) => [p.groupId, p.puxa.map((x) => x.id).filter(Boolean)]),
