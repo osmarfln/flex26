@@ -181,7 +181,7 @@ export function PuxadasPanel({ data, loading }: { data?: PuxadasData | null; loa
         <h4 className="text-xs font-black uppercase tracking-widest text-white/50 mb-4">
           {current.name} — horário por horário
         </h4>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+        <div className="grid grid-cols-2 lg:grid-cols-6 gap-3">
           {current.bySchedule.map((s) => (
             <div key={s.schedule} className="bg-white/5 border border-white/10 rounded-xl p-3 text-center">
               <p className="text-[10px] uppercase tracking-widest text-white/40 font-black">{s.schedule}</p>

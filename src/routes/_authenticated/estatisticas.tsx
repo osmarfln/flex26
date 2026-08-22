@@ -300,7 +300,7 @@ function EstatisticasPage() {
     <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/30 overflow-x-hidden">
       <SiteHeader subtitle={`CENTRAL DE ESTATÍSTICAS ${location.toUpperCase()}`} />
 
-      <main className="container mx-auto px-3 sm:px-4 md:px-6 py-6 md:py-12">
+      <main className="container mx-auto px-4 py-6 md:py-12 overflow-hidden">
 
 
         {/* Header Section */}
@@ -372,7 +372,7 @@ function EstatisticasPage() {
           <AnaliseFiltros initialLocation={location} />
 
 
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 overflow-hidden">
             <div>
               <div className="flex items-center gap-4 mb-4">
                 <div className="p-3 bg-primary/10 border border-primary/20 rounded-2xl shadow-[0_0_20px_rgba(var(--primary),0.1)]">
@@ -389,7 +389,7 @@ function EstatisticasPage() {
               </p>
             </div>
             
-            <div className="flex gap-3">
+            <div className="flex flex-wrap md:flex-nowrap gap-3">
                <div className="px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-center min-w-[140px]">
                   <p className="text-[10px] text-white/40 font-black uppercase tracking-widest mb-1">Precisão</p>
                   <p className="text-2xl font-black text-primary uppercase">Sincronizado</p>

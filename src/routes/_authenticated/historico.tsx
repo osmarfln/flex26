@@ -62,7 +62,7 @@ function Historico() {
     <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/30 overflow-x-hidden">
       <SiteHeader subtitle={location === 'rio' ? 'HISTÓRICO RIO' : 'HISTÓRICO CAPITAL'} />
 
-      <main className="container mx-auto px-3 sm:px-4 md:px-6 py-6 md:py-12">
+      <main className="container mx-auto px-4 py-6 md:py-12 overflow-hidden">
 
         <section className="mb-12">
           <div className="flex items-center gap-4 mb-6">
