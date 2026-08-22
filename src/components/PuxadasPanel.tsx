@@ -6,7 +6,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell,
 } from "recharts";
 
-interface PuxadaTarget { id: string; name: string; icon: string; count: number }
+interface PuxadaTarget { id: string; name: string; icon: string; count: number; isTraditional?: boolean }
 interface PuxadaRow {
   groupId: string;
   name: string;
@@ -116,8 +116,12 @@ export function PuxadasPanel({ data, loading }: { data?: PuxadasData | null; loa
           </div>
 
           <div className="flex flex-wrap gap-2">
-            {current.puxa.map((t) => (
-              <Badge key={t.id + t.name} variant="outline" className="border-white/10 bg-white/5 text-white/70 font-bold">
+            {current.byTarget.map((t) => (
+              <Badge 
+                key={t.id + t.name} 
+                variant="outline" 
+                className={`border-white/10 font-bold ${t.isTraditional ? 'bg-primary/20 text-primary border-primary/30' : 'bg-white/5 text-white/70'}`}
+              >
                 {t.icon} {t.id} {t.name}
               </Badge>
             ))}

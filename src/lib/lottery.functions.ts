@@ -1046,7 +1046,8 @@ export const getPuxadasStats = createServerFn({ method: "GET" })
           name: t.name,
           icon: t.icon,
           count: targetCount[t.id] ?? 0,
-          probability: t.probability
+          probability: t.probability,
+          isTraditional: t.isTraditional
         })),
         bySchedule: schedules.map((s) => ({
           schedule: s,
