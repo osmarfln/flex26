@@ -40,14 +40,15 @@ const ANIMAL_GROUPS = ANIMAL_ICONS;
 
 function Historico() {
   const [date, setDate] = useState("");
+  const [dateEnd, setDateEnd] = useState("");
   const [location, setLocation] = useState<'rio' | 'capital'>('rio');
   const [offset, setOffset] = useState(0);
 
   const limit = 20;
 
   const { data: results, isLoading, refetch } = useQuery({
-    queryKey: ["history-results", date, offset, location],
-    queryFn: () => getResults({ data: { date, offset, limit, location } }),
+    queryKey: ["history-results", date, dateEnd, offset, location],
+    queryFn: () => getResults({ data: { date, dateEnd, offset, limit, location } }),
   });
 
 
@@ -87,14 +88,27 @@ function Historico() {
                 </select>
               </div>
 
-              <div className="flex-1 min-w-[200px]">
-                <label className="text-[10px] text-white/40 font-bold uppercase tracking-wider mb-2 block">Selecione a Data</label>
+              <div className="flex-1 min-w-[150px]">
+                <label className="text-[10px] text-white/40 font-bold uppercase tracking-wider mb-2 block">Início</label>
                 <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl hover:border-primary/30 transition-all">
                   <Calendar className="w-5 h-5 text-white/40" />
                   <input 
                     type="date" 
                     value={date}
                     onChange={(e) => { setDate(e.target.value); setOffset(0); }}
+                    className="bg-transparent border-none outline-none text-sm font-bold w-full text-white color-scheme-dark"
+                  />
+                </div>
+              </div>
+
+              <div className="flex-1 min-w-[150px]">
+                <label className="text-[10px] text-white/40 font-bold uppercase tracking-wider mb-2 block">Fim (Opcional)</label>
+                <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl hover:border-primary/30 transition-all">
+                  <Calendar className="w-5 h-5 text-white/40" />
+                  <input 
+                    type="date" 
+                    value={dateEnd}
+                    onChange={(e) => { setDateEnd(e.target.value); setOffset(0); }}
                     className="bg-transparent border-none outline-none text-sm font-bold w-full text-white color-scheme-dark"
                   />
                 </div>

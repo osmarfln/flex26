@@ -38,29 +38,31 @@ export const Route = createFileRoute("/_authenticated/palpite")({
 
 function PalpitePage() {
   const [location, setLocation] = useState<'rio' | 'capital'>('rio');
+  const [date, setDate] = useState("");
+  const [dateEnd, setDateEnd] = useState("");
   const { lastUpdate } = useLotteryRealtime("palpite-db-changes");
   const fetchStats = useServerFn(getStats);
   const fetchTens = useServerFn(getTenDelayStats);
   const fetchGroups = useServerFn(getGroupDelayStats);
 
 
-  const key = `${location}-${lastUpdate?.toISOString() ?? "base"}`;
+  const key = `${location}-${date}-${dateEnd}-${lastUpdate?.toISOString() ?? "base"}`;
 
   const statsQuery = useQuery({
     queryKey: ["palpite", "stats", key],
-    queryFn: () => fetchStats({ data: { location } }),
+    queryFn: () => fetchStats({ data: { location, date, dateEnd } }),
     staleTime: 0,
     gcTime: 0,
   });
   const tensQuery = useQuery({
     queryKey: ["palpite", "tens", key],
-    queryFn: () => fetchTens({ data: { location } }),
+    queryFn: () => fetchTens({ data: { location, date, dateEnd } }),
     staleTime: 0,
     gcTime: 0,
   });
   const groupsQuery = useQuery({
     queryKey: ["palpite", "groups", key],
-    queryFn: () => fetchGroups({ data: { location } }),
+    queryFn: () => fetchGroups({ data: { location, date, dateEnd } }),
     staleTime: 0,
     gcTime: 0,
   });
@@ -91,6 +93,22 @@ function PalpitePage() {
               <option value="rio">Rio</option>
               <option value="capital">Capital</option>
             </select>
+            <div className="flex gap-2">
+              <input 
+                type="date" 
+                value={date} 
+                onChange={e => setDate(e.target.value)}
+                className="h-9 rounded-md border border-input bg-background px-3 text-[10px] font-bold outline-none color-scheme-dark"
+                placeholder="Início"
+              />
+              <input 
+                type="date" 
+                value={dateEnd} 
+                onChange={e => setDateEnd(e.target.value)}
+                className="h-9 rounded-md border border-input bg-background px-3 text-[10px] font-bold outline-none color-scheme-dark"
+                placeholder="Fim"
+              />
+            </div>
           </CardHeader>
 
           <CardContent className="grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
