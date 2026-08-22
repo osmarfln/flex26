@@ -334,7 +334,7 @@ export const getTenDelayStats = createServerFn({ method: "GET" })
 
 
 export const getGroupDelayStats = createServerFn({ method: "GET" })
-  .validator((data: unknown) => z.object({
+  .inputValidator((data: unknown) => z.object({
     location: z.enum(['rio', 'capital']).optional().default('rio'),
     date: z.string().optional(),
     dateEnd: z.string().optional()
