@@ -1447,7 +1447,7 @@ function EstatisticasPage() {
                          <div className="space-y-6">
                             <div className="flex items-center gap-2 mb-2">
                                <div className="w-1.5 h-6 bg-blue-500 rounded-full" />
-                               <h3 className="text-xl font-black italic uppercase">Milhar Destaque</h3>
+                               <h3 className="text-xl font-black italic uppercase">Milhar Destaque {location === 'rio' ? 'Rio' : 'Capital'}</h3>
                             </div>
                             <Card className="dashboard-card p-8 bg-gradient-to-br from-primary/10 to-transparent border-primary/20 flex flex-col items-center justify-center text-center">
                                <Sparkles className="w-12 h-12 text-primary mb-6 animate-pulse" />
