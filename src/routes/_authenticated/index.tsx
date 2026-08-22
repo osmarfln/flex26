@@ -406,6 +406,7 @@ function Index() {
                                   <span className="font-mono tracking-widest text-lg text-red-500/80 italic text-[11px] whitespace-nowrap">Aguardando... <span className="animate-pulse">...</span></span>
                                 </div>
 
+
                               ))
                             )}
                           </div>
