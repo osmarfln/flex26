@@ -34,7 +34,6 @@ export const getResults = createServerFn({ method: "GET" })
     let query = supabase
       .from("lottery_results")
       .select("*")
-      .eq("location", data.location)
       .order("date", { ascending: false })
       .order("time_type", { ascending: true });
 
@@ -66,7 +65,6 @@ export const getResultsRange = createServerFn({ method: "GET" })
     let query = supabase
       .from("lottery_results")
       .select("*")
-      .eq("location", data.location)
       .gte("date", data.start)
       .lte("date", data.end)
       .order("date", { ascending: false })
@@ -92,7 +90,7 @@ export const getStats = createServerFn({ method: "GET" })
     const { data: rawResults, error } = await supabase
       .from("lottery_results")
       .select("*")
-      .eq("location", data.location)
+      
       .order("date", { ascending: false })
       .limit(300);
 
