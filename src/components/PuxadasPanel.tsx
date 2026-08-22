@@ -71,7 +71,7 @@ export function PuxadasPanel({ data, loading }: { data?: PuxadasData | null; loa
           <div>
             <h2 className="text-2xl font-black italic uppercase">Tabela de Puxadas Tradicional</h2>
             <p className="text-xs text-white/40 font-medium">
-              O que cada bicho puxa seguindo a logística tradicional cruzada com estatísticas reais.
+              O que cada bicho puxa seguindo a logística tradicional de grupos.
             </p>
           </div>
         </div>
