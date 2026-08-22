@@ -307,9 +307,9 @@ function EstatisticasPage() {
         <section className="mb-12 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           <div className="lg:col-span-8">
             <h1 className="text-4xl md:text-5xl lg:text-7xl font-black italic tracking-tighter uppercase mb-4">
-              Monitoramento {location === 'rio' ? 'Rio' : 'Capital'}
+              Monitoramento Inteligente {location === 'rio' ? 'Rio' : 'Capital'}
             </h1>
-            <p className="text-white/40 text-lg mb-8 font-medium">Dezena em atraso {location === 'rio' ? 'Rio' : 'Capital'} baseada em resultados diários e históricos</p>
+            <p className="text-white/40 text-lg mb-8 font-medium italic">Monitoramento logístico {location === 'rio' ? 'Rio' : 'Capital'} baseado em dezenas quentes, grupos e arquivos históricos.</p>
           </div>
         </section>
 
@@ -379,13 +379,13 @@ function EstatisticasPage() {
                   <BarChart3 className="w-8 h-8 text-primary" />
                 </div>
                 <div>
-                  <h1 className="text-4xl font-black italic tracking-tighter uppercase">Análise {location === 'rio' ? 'Rio' : 'Capital'}</h1>
-                  <p className="text-white/40 font-bold text-xs uppercase tracking-widest mt-1">Monitoramento inteligente baseado em dados históricos e diários da {location === 'rio' ? 'loteria Rio' : 'loteria Capital'}</p>
+                  <h1 className="text-4xl font-black italic tracking-tighter uppercase">Inteligência {location === 'rio' ? 'Rio' : 'Capital'}</h1>
+                  <p className="text-white/40 font-bold text-xs uppercase tracking-widest mt-1">Estatísticas sincronizadas e auditadas letra por letra via robo ai</p>
                 </div>
               </div>
               <p className="max-w-2xl text-white/60 text-lg leading-relaxed">
-                Explore nossas ferramentas matemáticas e estatísticas avançadas. 
-                Desenvolvemos algoritmos baseados em tendências históricas para auxiliar na sua tomada de decisão.
+                Explore nossas ferramentas matemáticas e estatísticas avançadas para as loterias <strong>Rio</strong> e <strong>Capital</strong>. 
+                Nossos algoritmos analisam tendências diárias e históricas em tempo real, sem intervenção humana.
               </p>
             </div>
             
@@ -479,7 +479,7 @@ function EstatisticasPage() {
                    <Target className="w-6 h-6" />
                 </div>
                 <h3 className="text-xl font-black italic uppercase mb-2">Dezenas Quentes</h3>
-                <p className="text-sm text-white/40 font-medium leading-snug">As dezenas que mais apareceram nos últimos sorteios do banco de dados.</p>
+                <p className="text-sm text-white/40 font-medium leading-snug">As dezenas com maior recorrência no banco de dados sincronizado (100% Real).</p>
              </Card>
 
              <Card 
@@ -533,9 +533,9 @@ function EstatisticasPage() {
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'esquerda-direita' ? 'bg-sky-500 text-white' : 'bg-sky-500/10 text-sky-400'}`}>
                    <ArrowLeftRight className="w-6 h-6" />
                 </div>
-                <h3 className="text-xl font-black italic uppercase">Esquerda x Direita</h3>
-                <p className="text-sm text-white/40 font-medium leading-snug">Dígitos da dezena mais atrasados que ainda não saíram, por dia e horário.</p>
-             </Card>
+                 <h3 className="text-xl font-black italic uppercase">Esquerda x Direita</h3>
+                 <p className="text-sm text-white/40 font-medium leading-snug">Logística de dígitos cruzada com dezenas quentes e correlações diárias.</p>
+              </Card>
 
              <Card 
                onClick={() => setActiveTab('puxadas')}
@@ -544,8 +544,8 @@ function EstatisticasPage() {
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'puxadas' ? 'bg-emerald-500 text-white' : 'bg-emerald-500/10 text-emerald-400'}`}>
                    <Network className="w-6 h-6" />
                 </div>
-                <h3 className="text-xl font-black italic uppercase">Puxadas</h3>
-                <p className="text-sm text-white/40 font-medium leading-snug">Tabela 01 a 25 do que cada bicho puxa, horário por horário, com gráficos.</p>
+                 <h3 className="text-xl font-black italic uppercase">Puxadas IA</h3>
+                 <p className="text-sm text-white/40 font-medium leading-snug">Probabilidade condicional (P(B|A)) baseada em 1000 resultados reais.</p>
              </Card>
 
              <Card 
@@ -607,24 +607,32 @@ function EstatisticasPage() {
                         const animal = getAnimalByTen(item.ten);
                         const isHitNow = item.hitInFirstPrize && item.currentDelay === 0;
                         return (
-                          <Card key={i} className={`dashboard-card p-4 text-center hover:border-primary/50 transition-all bg-white/[0.03] group ${isHitNow ? 'border-red-500/50 bg-red-500/5 ring-1 ring-red-500/20' : ''}`}>
+                          <Card key={i} className={`dashboard-card p-4 text-center hover:border-primary/50 transition-all bg-white/[0.03] group relative ${isHitNow ? 'border-red-500/50 bg-red-500/5 ring-1 ring-red-500/20' : ''}`}>
                             {isHitNow && (
-                              <div className="absolute top-0 right-0 p-1 bg-red-500 text-white text-[6px] font-black px-1.5 uppercase z-10">1º Prêmio</div>
+                              <div className="absolute top-0 right-0 p-1 bg-red-500 text-white text-[8px] font-black px-2 uppercase z-10 rounded-bl-lg shadow-lg">1º Prêmio</div>
                             )}
+                            <div className="flex justify-between items-start mb-1">
+                              <Badge variant="outline" className="text-[9px] border-white/10 text-white/40">{item.percentile}% rank</Badge>
+                              {item.dailyDelay > 0 && <Badge variant="outline" className="text-[9px] border-orange-500/30 text-orange-400">Atraso Diário</Badge>}
+                            </div>
                             <span className={`text-4xl font-black mb-2 block drop-shadow-[0_0_10px_rgba(var(--primary),0.3)] ${isHitNow ? 'text-red-500' : 'text-primary'}`}>{item.ten}</span>
                             <div className="space-y-1">
-                              <p className="text-xs font-bold uppercase text-white/40">{item.freqs[300]} sorteios (300)</p>
+                              <p className="text-xs font-bold uppercase text-white/40">{item.freqs[300]}x em 300</p>
                               <div className="h-4 w-full px-2">
                                 <MiniSparkline data={item.history} color={isHitNow ? '#EF4444' : '#EAB308'} />
                               </div>
                             </div>
-                            <div className="mt-2 flex items-center justify-center gap-2">
+                            <div className="mt-2 flex items-center justify-center gap-2 border-t border-white/5 pt-2">
                               <span className="text-lg">{animal?.icon}</span>
-                              <span className="text-[10px] font-black uppercase text-white/60">{animal?.name}</span>
+                              <div className="text-left">
+                                <span className="text-[9px] font-black uppercase text-white/60 block leading-none">{animal?.name}</span>
+                                <span className="text-[8px] text-white/30 uppercase font-bold">Logística OK</span>
+                              </div>
                             </div>
                           </Card>
                         );
                       })
+
 
                     )}
                   </div>

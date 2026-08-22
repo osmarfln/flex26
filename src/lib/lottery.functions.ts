@@ -2,8 +2,9 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { ANIMAL_GROUPS_MAP, getGroupFromTen as tenToGroup, getAnimalByTen } from "@/lib/animals";
-import { sortDrawsDesc } from "@/lib/draw-order";
+import { sortDrawsDesc, timePriority } from "@/lib/draw-order";
 import { PUXADAS as PUXADAS_TABLE } from "@/lib/puxadas";
+import { calculateStatisticalPuxadas } from "./puxadas.server";
 
 
 // Tipos para os resultados
@@ -885,21 +886,36 @@ export const getDigitDelayStats = createServerFn({ method: "GET" })
       .sort((a: any, b: any) => (a.date < b.date ? 1 : -1))
       .slice(0, 12);
 
-    const oldest = results[results.length - 1] as any;
-    const newest = results[0] as any;
+    const oldestRecord = results[results.length - 1] as any;
+    const newestRecord = results[0] as any;
 
-    // Cálculo das dezenas mais atrasadas para Rio e Capital simultaneamente (usado nos alertas)
-    // Se a localização atual for Rio, buscamos também um snapshot de Capital para os alertas, ou vice-versa
-    // No entanto, para o retorno da função, mantemos o foco na localização pedida.
-    
+    // Correlação Esquerda x Direita: identifica pares frequentes no mesmo milhar
+    const correlationMap: Record<string, Record<string, number>> = {};
+    results.forEach(r => {
+      const m = milhar(r);
+      if (m) {
+        const l = m.slice(0, 2);
+        const rightDigit = m.slice(2, 4);
+        if (!correlationMap[l]) correlationMap[l] = {};
+        correlationMap[l][rightDigit] = (correlationMap[l][rightDigit] || 0) + 1;
+      }
+    });
+
+    const correlations = Object.entries(correlationMap).flatMap(([l, rights]) => 
+      Object.entries(rights).map(([rDigit, count]) => ({ left: l, right: rDigit, count }))
+    ).sort((a, b) => b.count - a.count).slice(0, 20);
+
     return {
       left: build("left"),
       right: build("right"),
       totalDraws: results.length,
       schedules,
-      period: { start: oldest?.date ?? null, end: newest?.date ?? null },
+      period: { start: oldestRecord?.date ?? null, end: newestRecord?.date ?? null },
       daily,
+      correlations
     };
+
+
   });
 
 
@@ -927,10 +943,14 @@ export const getPuxadasStats = createServerFn({ method: "GET" })
 
     const { data: rawRows, error } = await query
       .order("date", { ascending: false })
-      .limit(600);
-
+      .limit(1000);
 
     if (error) throw error;
+    if (!rawRows || rawRows.length === 0) return { table: [], totalDraws: 0, period: null, schedules: [] };
+
+    const results = sortDrawsDesc(rawRows as any[]);
+    const statisticalPuxadas = calculateStatisticalPuxadas(results);
+
 
     const schedules = data.location === 'capital' 
       ? ["L-09", "L-10", "L-11", "L-13", "L-14", "L-15", "L-16", "L-18", "L-19", "L-20", "L-22"]
@@ -962,7 +982,13 @@ export const getPuxadasStats = createServerFn({ method: "GET" })
     };
 
     const table = PUXADAS_TABLE.map((p) => {
-      const targets = p.puxa.map((t) => t.id).filter(Boolean);
+      // Combina a puxada tradicional com a estatística calculada
+      const traditionalTargets = p.puxa.map((t) => t.id).filter(Boolean);
+      const statsTargets = (statisticalPuxadas[p.groupId] || []).map((t: any) => t.id);
+      
+      // União de alvos (alvos únicos)
+      const allTargets = Array.from(new Set([...traditionalTargets, ...statsTargets]));
+      
       let occurrences = 0;
       let hits = 0;
       const targetCount: Record<string, number> = {};
@@ -978,7 +1004,10 @@ export const getPuxadasStats = createServerFn({ method: "GET" })
         const st = String(cur.time_type || "").toUpperCase();
         if (schedStats[st]) schedStats[st].occurrences++;
         const nextGroup = groupOf(next);
-        const hit = !!nextGroup && targets.includes(nextGroup);
+        
+        // Uma puxada é considerada "hit" se o próximo grupo está na lista combinada (tradicional + estatística)
+        const hit = !!nextGroup && allTargets.includes(nextGroup);
+        
         if (hit) {
           hits++;
           if (schedStats[st]) schedStats[st].hits++;
@@ -996,16 +1025,31 @@ export const getPuxadasStats = createServerFn({ method: "GET" })
         };
       }
 
+      // Constrói a lista final de alvos, priorizando os que realmente saem (stats)
+      const finalPuxa = allTargets.map(id => {
+        const animal = ANIMAL_GROUPS_MAP[id];
+        const stats = (statisticalPuxadas[p.groupId] || []).find((t: any) => t.id === id);
+        return {
+          id,
+          name: animal?.name || '?',
+          icon: animal?.icon || '',
+          probability: stats?.probability || 0,
+          isTraditional: traditionalTargets.includes(id)
+        };
+      }).sort((a, b) => b.probability - a.probability);
+
       return {
         ...p,
+        puxa: finalPuxa,
         occurrences,
         hits,
         hitRate: occurrences > 0 ? Number(((hits / occurrences) * 100).toFixed(1)) : 0,
-        byTarget: p.puxa.map((t) => ({
+        byTarget: finalPuxa.map((t) => ({
           id: t.id,
           name: t.name,
           icon: t.icon,
           count: targetCount[t.id] ?? 0,
+          probability: t.probability
         })),
         bySchedule: schedules.map((s) => ({
           schedule: s,
@@ -1019,12 +1063,14 @@ export const getPuxadasStats = createServerFn({ method: "GET" })
       };
     });
 
-    const oldest = asc[0] as any;
-    const newest = desc[0] as any;
+
+    const oldestPuxada = asc[0] as any;
+    const newestPuxada = desc[0] as any;
 
     return {
       totalDraws: desc.length,
-      period: { start: oldest?.date ?? null, end: newest?.date ?? null },
+      period: { start: oldestPuxada?.date ?? null, end: newestPuxada?.date ?? null },
+
       schedules,
       table,
     };
