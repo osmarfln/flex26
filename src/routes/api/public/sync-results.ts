@@ -162,8 +162,22 @@ export const Route = createFileRoute('/api/public/sync-results')({
               }
               offset += batchSize;
               // Permitir sincronização de todo o 2026 (aprox 365 dias * 11 horários = ~4000 registros)
-              if (offset > 10000) break; 
+              // Se o ambiente estiver lento, podemos reduzir o limite para 5000
+              if (offset > 5000) break; 
             }
+
+            if (logEntry) {
+              await supabase
+                .from('sync_logs')
+                .update({ status: 'success', finished_at: new Date().toISOString(), records_synced: totalSynced })
+                .eq('id', logEntry.id);
+            }
+
+            return new Response(JSON.stringify({ success: true, synced: totalSynced }), { 
+              headers: { 'Content-Type': 'application/json' } 
+            });
+          }
+
           } else {
             const locationsToSync = auto ? ['rio', 'capital'] : [location];
             for (const loc of locationsToSync) {
