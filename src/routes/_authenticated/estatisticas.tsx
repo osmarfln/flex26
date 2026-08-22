@@ -58,7 +58,7 @@ const MiniSparkline = ({ data, color = "#EAB308" }: { data: number[], color?: st
 };
 
 function EstatisticasPage() {
-  const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'palpites' | 'logica-atraso' | 'ranking-completo' | 'logica-grupos' | 'repeticoes' | 'esquerda-direita' | 'puxadas'>('quentes');
+  const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'palpites' | 'logica-atraso' | 'ranking-completo' | 'logica-grupos' | 'repeticoes' | 'esquerda-direita' | 'puxadas' | 'analise-premium'>('quentes');
   const [location, setLocation] = useState<'rio' | 'capital'>('rio');
   const [date, setDate] = useState("");
   const [dateEnd, setDateEnd] = useState("");
@@ -264,6 +264,29 @@ function EstatisticasPage() {
         animal: getAnimalByTen(item.ten)
       }));
   }, [tenStats]);
+
+  const premiumStats = useMemo(() => {
+    if (!groupDelayStats || !tenStats || !digitStats) return null;
+
+    // Lógica para Capital Florida / Rio
+    const listGroups = [...groupDelayStats].sort((a, b) => b.days - a.days);
+    const mostDelayedGroup = listGroups[0];
+    
+    // Dezenas do grupo mais atrasado
+    const groupDezenas = mostDelayedGroup?.dezenaStats || [];
+    const mostDelayedTenOfGroup = [...groupDezenas].sort((a, b) => b.delay - a.delay)[0];
+
+    // Bicho em Alta (Maior frequência recente no 1º prêmio)
+    const bichoEmAlta = [...groupDelayStats].sort((a, b) => (b.freqs?.[30] || 0) - (a.freqs?.[30] || 0))[0];
+
+    return {
+      mostDelayedGroup,
+      mostDelayedTenOfGroup,
+      bichoEmAlta,
+      leftTop: digitStats.left[0],
+      rightTop: digitStats.right[0]
+    };
+  }, [groupDelayStats, tenStats, digitStats]);
 
 
   return (
