@@ -1419,16 +1419,6 @@ function EstatisticasPage() {
                 </motion.div>
               )}
 
-              {activeTab === 'atraso-horario' && (
-                <motion.div
-                  key="atraso-horario"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                >
-                  <TenDelayBySchedule data={scheduleDelayStats as any} loading={scheduleDelayLoading} location={location} />
-                </motion.div>
-              )}
             </AnimatePresence>
 
           </section>
