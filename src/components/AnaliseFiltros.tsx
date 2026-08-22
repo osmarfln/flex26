@@ -300,7 +300,7 @@ export function AnaliseFiltros({ initialLocation = 'rio' }: { initialLocation?: 
   const loading = currentQuery.isLoading || (compare && previousQuery.isLoading);
 
   return (
-    <section className="mb-12 rounded-3xl border border-white/10 bg-white/[0.02] p-5 md:p-7">
+    <section className="mb-12 rounded-3xl border border-white/10 bg-white/[0.02] p-4 md:p-7 overflow-hidden">
       <div className="mb-5 flex items-center gap-3">
         <div className="rounded-2xl border border-primary/20 bg-primary/10 p-2.5">
           <Filter className="h-5 w-5 text-primary" />
@@ -313,7 +313,7 @@ export function AnaliseFiltros({ initialLocation = 'rio' }: { initialLocation?: 
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-5">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-5">
         <label className="flex flex-col gap-1.5">
           <span className="text-[10px] font-black uppercase tracking-widest text-white/40">Local</span>
           <select 
@@ -349,7 +349,7 @@ export function AnaliseFiltros({ initialLocation = 'rio' }: { initialLocation?: 
           />
         </label>
 
-        <label className="flex flex-col gap-1.5 md:col-span-2">
+        <label className="flex flex-col gap-1.5 sm:col-span-2 md:col-span-2">
           <span className="text-[10px] font-black uppercase tracking-widest text-white/40">
             Buscar por dezena (2), centena (3), milhar (4), grupo ou bicho
           </span>

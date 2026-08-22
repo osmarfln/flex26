@@ -105,7 +105,7 @@ function SideBlock({ title, subtitle, stats, schedules, accent }: {
                 {s.digit}
               </div>
 
-              <div className="flex-1 min-w-[220px] space-y-2">
+              <div className="flex-1 w-full sm:min-w-[220px] space-y-2">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="text-sm font-bold">
                     {s.currentDelay} concursos · <span className={s.dailyDelay > 2 ? 'text-red-500' : 'text-white/40'}>{s.dailyDelay}h hoje</span>
@@ -124,7 +124,7 @@ function SideBlock({ title, subtitle, stats, schedules, accent }: {
                 </div>
 
 
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
+                <div className="grid grid-cols-2 gap-2 text-[11px]">
                   <div className="bg-white/5 rounded-lg px-2 py-1.5">
                     <span className="text-white/40">Médio</span> <b>{s.avgDelay}</b>
                   </div>

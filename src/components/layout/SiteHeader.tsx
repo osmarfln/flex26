@@ -22,8 +22,8 @@ export function SiteHeader({ subtitle = "VEM COM A GENTE" }: SiteHeaderProps) {
 
 
   return (
-    <header className="border-b border-white/5 bg-background/60 backdrop-blur-2xl sticky top-0 z-50">
-      <div className="container mx-auto px-3 sm:px-4 md:px-6 py-2 md:h-20 flex flex-col md:flex-row md:items-center gap-2 md:gap-8">
+    <header className="border-b border-white/5 bg-background/60 backdrop-blur-2xl sticky top-0 z-50 overflow-x-hidden">
+      <div className="container mx-auto px-4 py-2 md:h-20 flex flex-col md:flex-row md:items-center gap-2 md:gap-8 overflow-hidden">
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 md:flex md:items-center md:gap-3">
           <div className="flex min-w-0 items-center gap-2">
             <BackNav />

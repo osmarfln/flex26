@@ -233,7 +233,7 @@ function Index() {
 
 
 
-      <main className="container mx-auto px-3 sm:px-4 md:px-6 py-6 md:py-12 relative">
+      <main className="container mx-auto px-4 py-6 md:py-12 relative overflow-hidden">
         {/* Floating Butterfly Graphic */}
         <div className="absolute top-0 right-0 hidden xl:block opacity-10 translate-x-1/4 -translate-y-12">
            <svg width="400" height="400" viewBox="0 0 24 24" fill="none" className="text-primary">
@@ -297,7 +297,7 @@ function Index() {
 
 
             <div className="flex flex-wrap gap-4 items-center mb-6">
-              <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl min-w-[200px] hover:border-yellow-500/30 transition-all cursor-pointer">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl w-full sm:min-w-[200px] hover:border-yellow-500/30 transition-all cursor-pointer">
                 <Calendar className="w-5 h-5 text-white/40" />
                 <div className="flex-1">
                   <p className="text-[10px] text-white/40 font-bold uppercase tracking-wider">Data</p>
@@ -308,7 +308,7 @@ function Index() {
                 </div>
               </div>
               
-              <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl min-w-[200px] hover:border-yellow-500/30 transition-all cursor-pointer relative group/select">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl w-full sm:min-w-[200px] hover:border-yellow-500/30 transition-all cursor-pointer relative group/select">
                 <MapPin className="w-5 h-5 text-white/40" />
                 <div className="flex-1">
                   <p className="text-[10px] text-white/40 font-bold uppercase tracking-wider">Localidade</p>
@@ -329,7 +329,7 @@ function Index() {
 
 
               <Link to="/historico">
-                <Button className="h-[54px] px-10 bg-primary hover:bg-primary/90 text-primary-foreground font-black uppercase tracking-tighter rounded-xl gap-2 shadow-lg shadow-primary/10 active:scale-95 transition-all">
+                <Button className="w-full sm:w-auto h-[54px] px-10 bg-primary hover:bg-primary/90 text-primary-foreground font-black uppercase tracking-tighter rounded-xl gap-2 shadow-lg shadow-primary/10 active:scale-95 transition-all">
                   <Search className="w-5 h-5" /> Buscar resultados
                 </Button>
               </Link>
