@@ -557,7 +557,7 @@ export const getGroupDelayStats = createServerFn({ method: "GET" })
 
 
 export const getRepetitionStats = createServerFn({ method: "GET" })
-  .validator((data: unknown) => z.object({
+  .inputValidator((data: unknown) => z.object({
     location: z.enum(['rio', 'capital']).optional().default('rio'),
     date: z.string().optional(),
     dateEnd: z.string().optional()
@@ -714,7 +714,7 @@ export const getRepetitionStats = createServerFn({ method: "GET" })
  * O zero à esquerda NUNCA é cortado: 5 é sempre exibido como 05.
  */
 export const getDigitDelayStats = createServerFn({ method: "GET" })
-  .validator((data: unknown) => z.object({
+  .inputValidator((data: unknown) => z.object({
     location: z.enum(['rio', 'capital']).optional().default('rio'),
     date: z.string().optional(),
     dateEnd: z.string().optional()
@@ -908,7 +908,7 @@ export const getDigitDelayStats = createServerFn({ method: "GET" })
  * no 1º prêmio "puxou" um dos seus grupos associados no sorteio seguinte.
  */
 export const getPuxadasStats = createServerFn({ method: "GET" })
-  .validator((data: unknown) => z.object({
+  .inputValidator((data: unknown) => z.object({
     location: z.enum(['rio', 'capital']).optional().default('rio'),
     date: z.string().optional(),
     dateEnd: z.string().optional()
@@ -1037,7 +1037,7 @@ export const getPuxadasStats = createServerFn({ method: "GET" })
  * cruzando a frequência histórica daquele horário com o atraso atual.
  */
 export const getTenDelayByScheduleStats = createServerFn({ method: "GET" })
-  .validator((data: unknown) => z.object({
+  .inputValidator((data: unknown) => z.object({
     location: z.enum(['rio', 'capital']).optional().default('rio')
   }).parse(data))
   .handler(async ({ data }) => {
