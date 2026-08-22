@@ -300,7 +300,7 @@ function EstatisticasPage() {
         <section className="mb-12 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           <div className="lg:col-span-8">
             <h1 className="text-4xl md:text-5xl lg:text-7xl font-black italic tracking-tighter uppercase mb-4">
-              Análise Rio e Capital
+              Monitoramento {location === 'rio' ? 'Rio' : 'Capital'}
             </h1>
             <p className="text-white/40 text-lg mb-8 font-medium">Dezena em atraso Rio e Capital baseada em resultados diários e históricos</p>
           </div>
