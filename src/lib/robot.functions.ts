@@ -22,16 +22,16 @@ type ScheduleRow = {
 };
 
 async function fetchSource(date: string, location: string = 'rio') {
-  const res = await fetch(
-    `${EXTERNAL_REST_URL}/draw_results?draw_date=eq.${date}&location=eq.${location}&select=*`,
-
-    {
-      headers: {
-        apikey: EXTERNAL_ANON_KEY,
-        Authorization: `Bearer ${EXTERNAL_ANON_KEY}`,
-      },
+  const externalTable = location === 'capital' ? 'capital_results' : 'draw_results';
+  const url = `${EXTERNAL_REST_URL}/${externalTable}?draw_date=eq.${date}&select=*`;
+  
+  const res = await fetch(url, {
+    headers: {
+      apikey: EXTERNAL_ANON_KEY,
+      Authorization: `Bearer ${EXTERNAL_ANON_KEY}`,
     },
-  );
+  });
+  
   if (!res.ok) throw new Error(`Fonte respondeu ${res.status}`);
   return (await res.json()) as any[];
 }
@@ -70,7 +70,20 @@ export const getScheduleSyncMatrix = createServerFn({ method: "GET" })
 
     const rows: ScheduleRow[] = (location === 'rio' ? DRAW_SCHEDULE_RIO : DRAW_SCHEDULE_CAPITAL).map((s: any) => {
       const mine = (ours ?? []).find((r) => r.time_type === s.timeType);
-      const src = source.find((r) => r.draw_time === s.timeType);
+      const src = source.find((r) => {
+        // Mapeamento especial para Capital na origem
+        if (location === 'capital') {
+          const capMap: Record<string, string> = {
+            'LCAP_09': 'L-09', 'LCAP_10': 'L-10', 'LCAP_11': 'L-11',
+            'PTSP_13': 'L-13', 'LCAP_13': 'L-13', 'CAP_14': 'L-14',
+            'BAND_15': 'L-15', 'LCAP_16': 'L-16', 'CAP_18': 'L-18',
+            'LCAP_19': 'L-19', 'LCAP_20': 'L-20', 'PTNSP_20': 'L-20',
+            'LCAP_2230': 'L-22'
+          };
+          return (capMap[r.draw_time] || r.draw_time) === s.timeType;
+        }
+        return r.draw_time === s.timeType;
+      });
       const [hh, mm] = s.timeValue.split(":").map(Number);
       const drawMinutes = (hh ?? 0) * 60 + (mm ?? 0);
 
