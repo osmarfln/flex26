@@ -585,10 +585,24 @@ function Index() {
                     <h3 className="text-sm font-black uppercase italic tracking-tighter group-hover:text-primary transition-colors">{data.animal}</h3>
                     <div className="mt-4 flex flex-col items-center">
                        <span className={`text-xl font-black ${data.dailyDelay > 2 ? 'text-red-400' : 'text-primary'} leading-none`}>{data.currentDelay}</span>
-                       <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest mt-1">
+                       <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest mt-1 mb-2">
                          Atraso ({data.dailyDelay}h hoje)
                        </span>
+                       
+                       {/* Dezena do Grupo Mais Atrasada (1º ao 5º) */}
+                       <div className="w-full mt-2 pt-2 border-t border-white/5 flex flex-col items-center">
+                         <span className="text-[7px] font-black text-white/20 uppercase tracking-widest mb-1">Dezena Atrasada</span>
+                         <div className="flex items-center gap-1.5">
+                           <span className="text-xs font-black text-white italic">
+                             {([...(data.dezenaStats || [])].sort((a, b) => b.delay - a.delay)[0]?.dezena) || '--'}
+                           </span>
+                           <span className="text-[8px] font-bold text-red-500/60">
+                             ({([...(data.dezenaStats || [])].sort((a, b) => b.delay - a.delay)[0]?.delay) || 0}c)
+                           </span>
+                         </div>
+                       </div>
                     </div>
+
                   </div>
                 </motion.div>
              ))}
