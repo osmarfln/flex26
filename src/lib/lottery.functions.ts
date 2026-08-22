@@ -206,7 +206,7 @@ export const getStats = createServerFn({ method: "GET" })
 
 
 export const getTenDelayStats = createServerFn({ method: "GET" })
-  .validator((data: unknown) => z.object({
+  .inputValidator((data: unknown) => z.object({
     location: z.enum(['rio', 'capital']).optional().default('rio')
   }).parse(data))
   .handler(async ({ data }) => {
