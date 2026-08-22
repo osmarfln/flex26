@@ -36,6 +36,7 @@ const RAW: Record<string, string[]> = {
   "25": ["Touro", "Avestruz", "Carneiro"],
 };
 
+
 export interface PuxadaEntry {
   groupId: string;
   name: string;
