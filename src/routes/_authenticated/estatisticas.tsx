@@ -257,7 +257,7 @@ function EstatisticasPage() {
   }, [recentResults]);
 
 
-  const palpitesIA = useMemo(() => {
+  const palpitesSugeridos = useMemo(() => {
     if (!tenStats || tenStats.length === 0) return [];
     
     // IA Logic: Most delayed tens from delayed groups
@@ -544,8 +544,8 @@ function EstatisticasPage() {
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'puxadas' ? 'bg-emerald-500 text-white' : 'bg-emerald-500/10 text-emerald-400'}`}>
                    <Network className="w-6 h-6" />
                 </div>
-                  <h3 className="text-xl font-black italic uppercase">Puxadas IA</h3>
-                  <p className="text-sm text-white/40 font-medium leading-snug">Probabilidade baseada na Tabela Tradicional e em 1000 resultados reais.</p>
+                   <h3 className="text-xl font-black italic uppercase">Puxadas</h3>
+                  <p className="text-sm text-white/40 font-medium leading-snug">Probabilidade baseada na Tabela Tradicional e em resultados históricos.</p>
              </Card>
 
              <Card 
@@ -555,8 +555,8 @@ function EstatisticasPage() {
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'palpites' ? 'bg-primary text-primary-foreground' : 'bg-primary/10 text-primary'}`}>
                    <BrainCircuit className="w-6 h-6" />
                 </div>
-                <h3 className="text-xl font-black italic uppercase mb-2">Palpites IA</h3>
-                <p className="text-sm text-white/40 font-medium leading-snug">Cruzamento inteligente: Dados históricos + Cruz do Dia para palpites fortes.</p>
+                 <h3 className="text-xl font-black italic uppercase mb-2">Palpites Sugeridos</h3>
+                <p className="text-sm text-white/40 font-medium leading-snug">Cruzamento logístico: Dados históricos + Cruz do Dia para palpites fortes.</p>
              </Card>
 
              <Card 
@@ -682,10 +682,10 @@ function EstatisticasPage() {
                 >
                   <div className="flex items-center gap-3 mb-4">
                     <Sparkles className="w-6 h-6 text-emerald-500" />
-                    <h2 className="text-2xl font-black italic uppercase">Palpites Superinteligentes</h2>
+                     <h2 className="text-2xl font-black italic uppercase">Palpites Sugeridos</h2>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {palpitesIA.length > 0 ? palpitesIA.map((p, i) => (
+                    {palpitesSugeridos.length > 0 ? palpitesSugeridos.map((p, i) => (
                       <Card key={i} className="bg-emerald-500/5 border-emerald-500/20 p-6 text-center relative overflow-hidden">
                         <div className="absolute top-0 right-0 p-1 bg-emerald-500 text-[#0B0F19] text-[8px] font-black px-2 uppercase">Forte</div>
                         <span className="text-5xl font-black text-emerald-500 block mb-2">{p.ten}</span>
@@ -1486,7 +1486,7 @@ function EstatisticasPage() {
                             </div>
                             <Card className="dashboard-card p-8 bg-gradient-to-br from-primary/10 to-transparent border-primary/20 flex flex-col items-center justify-center text-center">
                                <Sparkles className="w-12 h-12 text-primary mb-6 animate-pulse" />
-                               <h4 className="text-xs font-black uppercase tracking-[0.2em] text-white/40 mb-4">Combinação Sugerida (IA)</h4>
+                               <h4 className="text-xs font-black uppercase tracking-[0.2em] text-white/40 mb-4">Combinação Sugerida</h4>
                                <div className="text-7xl font-black text-white font-mono tracking-tighter mb-4">
                                   {premiumStats.leftTop?.digit}{premiumStats.rightTop?.digit}
                                </div>
