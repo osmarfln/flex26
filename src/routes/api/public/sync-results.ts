@@ -130,70 +130,66 @@ export const Route = createFileRoute('/api/public/sync-results')({
             const locationsToSync = auto ? ['rio', 'capital'] : [location];
             for (const loc of locationsToSync) {
               for (let i = 0; i < daysToSync; i++) {
+                const currentSyncDate = new Date(dateParam);
+                currentSyncDate.setDate(currentSyncDate.getDate() - i);
+                const dateStr = currentSyncDate.toISOString().split('T')[0]!;
+                
+                // Busca resultados da data específica e localização
+                const apiUrl = `${EXTERNAL_REST_URL}/draw_results?draw_date=eq.${dateStr}&location=eq.${loc}&select=*`;
+                
+                const response = await fetch(apiUrl, {
+                  headers: {
+                    'apikey': EXTERNAL_ANON_KEY,
+                    'Authorization': `Bearer ${EXTERNAL_ANON_KEY}`
+                  }
+                });
+                
+                if (response.ok) {
+                  const externalResults = await response.json();
+                  if (Array.isArray(externalResults) && externalResults.length > 0) {
+                    for (const res of externalResults) {
+                      const recordLocation = res.location || loc;
+                      const results = [
+                        res.prize_1_milhar,
+                        res.prize_2_milhar,
+                        res.prize_3_milhar,
+                        res.prize_4_milhar,
+                        res.prize_5_milhar
+                      ].filter(p => !!p);
+                      
+                      const groupStr = res.prize_1_group !== null && res.prize_1_group !== undefined 
+                        ? String(res.prize_1_group).padStart(2, '0') 
+                        : null;
 
-              const currentSyncDate = new Date(dateParam);
-              currentSyncDate.setDate(currentSyncDate.getDate() - i);
-              const isoString = currentSyncDate.toISOString();
-              const dateStr = isoString.split('T')[0]!;
-              
-              const apiUrl = `${EXTERNAL_REST_URL}/draw_results?draw_date=eq.${dateStr}&location=eq.${loc}&select=*`;
-              
-              const response = await fetch(apiUrl, {
-                headers: {
-                  'apikey': EXTERNAL_ANON_KEY,
-                  'Authorization': `Bearer ${EXTERNAL_ANON_KEY}`
-                }
-              });
-              
-              if (response.ok) {
-                const externalResults = await response.json();
-                if (Array.isArray(externalResults) && externalResults.length > 0) {
-                  for (const res of externalResults) {
-                    const recordLocation = res.location || loc;
+                      const drawTimeValue = res.draw_time_value || (
+                        res.draw_time === 'PPT' ? '09:20' :
+                        res.draw_time === 'PTM' ? '11:20' :
+                        res.draw_time === 'PT' ? '14:20' :
+                        res.draw_time === 'PTV' ? '16:20' :
+                        res.draw_time === 'PTN' ? '18:20' :
+                        res.draw_time === 'COR' ? '21:20' : 
+                        res.draw_time.startsWith('L-') ? res.draw_time.replace('L-', '') + ':00' : null
+                      );
 
-                    
-                    const results = [
-                      res.prize_1_milhar,
-                      res.prize_2_milhar,
-                      res.prize_3_milhar,
-                      res.prize_4_milhar,
-                      res.prize_5_milhar
-                    ].filter(p => !!p);
-                    
-                    const groupStr = res.prize_1_group !== null && res.prize_1_group !== undefined 
-                      ? String(res.prize_1_group).padStart(2, '0') 
-                      : null;
-
-                    const drawTimeValue = res.draw_time_value || (
-                      res.draw_time === 'PPT' ? '09:20' :
-                      res.draw_time === 'PTM' ? '11:20' :
-                      res.draw_time === 'PT' ? '14:20' :
-                      res.draw_time === 'PTV' ? '16:20' :
-                      res.draw_time === 'PTN' ? '18:20' :
-                      res.draw_time === 'COR' ? '21:20' : 
-                      res.draw_time.startsWith('L-') ? res.draw_time.replace('L-', '') + ':00' : null
-                    );
-
-
-                    await supabase
-                      .from('lottery_results')
-                      .upsert({
-                        date: res.draw_date,
-                        time_type: res.draw_time,
-                        time_value: drawTimeValue,
-                        results: results,
-                        animal: res.prize_1_bicho,
-                        animal_group: groupStr,
-                        location: recordLocation
-                      }, { onConflict: 'date,time_type,location' });
-                    
-                    totalSynced++;
+                      await supabase
+                        .from('lottery_results')
+                        .upsert({
+                          date: res.draw_date,
+                          time_type: res.draw_time,
+                          time_value: drawTimeValue,
+                          results: results,
+                          animal: res.prize_1_bicho,
+                          animal_group: groupStr,
+                          location: recordLocation
+                        }, { onConflict: 'date,time_type,location' });
+                      
+                      totalSynced++;
+                    }
                   }
                 }
               }
             }
-              }
-            }
+          }
 
 
           if (logEntry) {
