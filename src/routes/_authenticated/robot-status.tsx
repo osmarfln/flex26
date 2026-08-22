@@ -103,7 +103,7 @@ function RobotStatus() {
   const [location, setLocation] = useState<'rio' | 'capital'>('rio');
   const { data: logs, isLoading, refetch, isError } = useQuery({
     queryKey: ["sync-logs", location],
-    queryFn: () => getSyncStatus({ location }),
+    queryFn: () => getSyncStatus({ data: { location } }),
     refetchInterval: 15000,
   });
 
