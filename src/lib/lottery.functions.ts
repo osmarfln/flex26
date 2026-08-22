@@ -854,6 +854,10 @@ export const getDigitDelayStats = createServerFn({ method: "GET" })
     const oldest = results[results.length - 1] as any;
     const newest = results[0] as any;
 
+    // Cálculo das dezenas mais atrasadas para Rio e Capital simultaneamente (usado nos alertas)
+    // Se a localização atual for Rio, buscamos também um snapshot de Capital para os alertas, ou vice-versa
+    // No entanto, para o retorno da função, mantemos o foco na localização pedida.
+    
     return {
       left: build("left"),
       right: build("right"),
