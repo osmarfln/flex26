@@ -332,7 +332,9 @@ export const getTenDelayStats = createServerFn({ method: "GET" })
 
 export const getGroupDelayStats = createServerFn({ method: "GET" })
   .validator((data: unknown) => z.object({
-    location: z.enum(['rio', 'capital']).optional().default('rio')
+    location: z.enum(['rio', 'capital']).optional().default('rio'),
+    date: z.string().optional(),
+    dateEnd: z.string().optional()
   }).parse(data))
   .handler(async ({ data }) => {
     const { data: rawRows, error } = await supabase
@@ -510,13 +512,23 @@ export const getGroupDelayStats = createServerFn({ method: "GET" })
 
 export const getRepetitionStats = createServerFn({ method: "GET" })
   .validator((data: unknown) => z.object({
-    location: z.enum(['rio', 'capital']).optional().default('rio')
+    location: z.enum(['rio', 'capital']).optional().default('rio'),
+    date: z.string().optional(),
+    dateEnd: z.string().optional()
   }).parse(data))
   .handler(async ({ data }) => {
-    const { data: rawRows, error } = await supabase
+    let query = supabase
       .from("lottery_results")
       .select("results, date, time_type, animal_group, location")
-      .eq("location" as any, data.location)
+      .eq("location" as any, data.location);
+
+    if (data.date && data.dateEnd) {
+      query = query.gte("date", data.date).lte("date", data.dateEnd);
+    } else if (data.date) {
+      query = query.eq("date", data.date);
+    }
+
+    const { data: rawRows, error } = await query
       .order("date", { ascending: false })
       .limit(300);
 
@@ -657,13 +669,23 @@ export const getRepetitionStats = createServerFn({ method: "GET" })
  */
 export const getDigitDelayStats = createServerFn({ method: "GET" })
   .validator((data: unknown) => z.object({
-    location: z.enum(['rio', 'capital']).optional().default('rio')
+    location: z.enum(['rio', 'capital']).optional().default('rio'),
+    date: z.string().optional(),
+    dateEnd: z.string().optional()
   }).parse(data))
   .handler(async ({ data }) => {
-    const { data: rawRows, error } = await supabase
+    let query = supabase
       .from("lottery_results")
       .select("results, date, time_type, time_value, location")
-      .eq("location" as any, data.location)
+      .eq("location" as any, data.location);
+
+    if (data.date && data.dateEnd) {
+      query = query.gte("date", data.date).lte("date", data.dateEnd);
+    } else if (data.date) {
+      query = query.eq("date", data.date);
+    }
+
+    const { data: rawRows, error } = await query
       .order("date", { ascending: false })
       .limit(600);
 
@@ -835,13 +857,23 @@ export const getDigitDelayStats = createServerFn({ method: "GET" })
  */
 export const getPuxadasStats = createServerFn({ method: "GET" })
   .validator((data: unknown) => z.object({
-    location: z.enum(['rio', 'capital']).optional().default('rio')
+    location: z.enum(['rio', 'capital']).optional().default('rio'),
+    date: z.string().optional(),
+    dateEnd: z.string().optional()
   }).parse(data))
   .handler(async ({ data }) => {
-    const { data: rawRows, error } = await supabase
+    let query = supabase
       .from("lottery_results")
       .select("results, date, time_type, time_value, location")
-      .eq("location" as any, data.location)
+      .eq("location" as any, data.location);
+
+    if (data.date && data.dateEnd) {
+      query = query.gte("date", data.date).lte("date", data.dateEnd);
+    } else if (data.date) {
+      query = query.eq("date", data.date);
+    }
+
+    const { data: rawRows, error } = await query
       .order("date", { ascending: false })
       .limit(600);
 
