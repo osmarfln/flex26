@@ -15,14 +15,6 @@ const NAME_TO_ID: Record<string, string> = Object.fromEntries(
 );
 
 const RAW: Record<string, string[]> = {
-  "01": ["Vaca", "Águia", "Galo", "Pavão", "Peru"],
-  "02": ["Coelho", "Avestruz", "Galo", "Pavão", "Peru"],
-  "03": ["Cavalo", "Elefante", "Touro", "Veado", "Coelho", "Cobra"],
-  "04": ["Cabra", "Elefante", "Gato", "Leão", "Cachorro", "Galo"],
-  "05": ["Galo", "Gato", "Camelo", "Macaco", "Porco", "Pavão"],
-  "06": ["Carneiro", "Macaco", "Elefante", "Touro", "Tigre", "Urso"],
-  "07": ["Cabra", "Coelho", "Vaca"],
-  "08": ["Cachorro", "Elefante", "Urso"],
   "09": ["Jacaré", "Porco", "Burro", "Gato"],
   "10": ["Carneiro", "Águia", "Burro"],
   "11": ["Burro", "Cabra", "Touro"],
@@ -40,6 +32,14 @@ const RAW: Record<string, string[]> = {
   "23": ["Leão", "Elefante", "Camelo", "Cabra"],
   "24": ["Peru", "Burro", "Cabra"],
   "25": ["Touro", "Avestruz", "Carneiro"],
+  "01": ["Vaca", "Águia", "Galo", "Pavão", "Peru"],
+  "02": ["Coelho", "Avestruz", "Galo", "Pavão", "Peru"],
+  "03": ["Cavalo", "Elefante", "Touro", "Veado", "Coelho", "Cobra"],
+  "04": ["Cabra", "Elefante", "Gato", "Leão", "Cachorro", "Galo"],
+  "05": ["Galo", "Gato", "Camelo", "Macaco", "Porco", "Pavão"],
+  "06": ["Carneiro", "Macaco", "Elefante", "Touro", "Tigre", "Urso"],
+  "07": ["Cabra", "Coelho", "Vaca"],
+  "08": ["Cachorro", "Elefante", "Urso"],
 };
 
 export interface PuxadaEntry {
