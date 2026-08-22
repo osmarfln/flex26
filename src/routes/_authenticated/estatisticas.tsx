@@ -943,7 +943,7 @@ function EstatisticasPage() {
                                 contentStyle={{ backgroundColor: '#0D121F', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
                                 itemStyle={{ color: '#A855F7', fontWeight: 'bold' }}
                               />
-                              <Area type="monotone" dataKey="avg" stroke="#A855F7" fillOpacity={1} fill="url(#colorAvg)" strokeWidth={3} />
+                              <Area type="monotone" dataKey="avg" stroke="#A855F7" fillOpacity={1} fill="url(#colorTrend)" strokeWidth={3} />
                             </AreaChart>
                           </ResponsiveContainer>
                         </div>
