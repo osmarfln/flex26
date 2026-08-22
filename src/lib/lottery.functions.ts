@@ -225,7 +225,7 @@ export const getTenDelayStats = createServerFn({ method: "GET" })
         const lastDate = results[0].date;
         let dDelay = 0;
         for (const res of results) {
-          if (res.date !== lastDate) break;
+          if (!res || res.date !== lastDate) break;
           const hit = res.results?.slice(0, 5).some(p => p?.slice(-2) === ten);
           if (hit) break;
           dDelay++;
