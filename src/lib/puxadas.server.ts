@@ -1,4 +1,4 @@
-import { ANIMAL_GROUPS_MAP, tenToGroup } from "@/lib/animals";
+import { ANIMAL_GROUPS_MAP, getGroupFromTen } from "@/lib/animals";
 import { sortDrawsDesc } from "@/lib/draw-order";
 
 /**
@@ -33,11 +33,11 @@ export function calculateStatisticalPuxadas(results: any[]) {
     const currTen = current.results?.[0]?.slice(-2);
 
     if (prevTen && currTen) {
-      const prevGroup = tenToGroup(prevTen);
-      const currGroup = tenToGroup(currTen);
+      const prevGroup = getGroupFromTen(prevTen);
+      const currGroup = getGroupFromTen(currTen);
 
       if (prevGroup && currGroup) {
-        totals[prevGroup]++;
+        totals[prevGroup] = (totals[prevGroup] || 0) + 1;
         pairs[prevGroup][currGroup] = (pairs[prevGroup][currGroup] || 0) + 1;
       }
     }
@@ -46,15 +46,18 @@ export function calculateStatisticalPuxadas(results: any[]) {
   // Converte em probabilidades e retorna o Top 5 para cada grupo
   const stats: Record<string, any[]> = {};
   Object.keys(pairs).forEach(groupId => {
-    const total = totals[groupId];
+    const total = totals[groupId] || 0;
     const targets = Object.entries(pairs[groupId])
-      .map(([targetId, count]) => ({
-        id: targetId,
-        name: ANIMAL_GROUPS_MAP[targetId]?.name || '?',
-        icon: ANIMAL_GROUPS_MAP[targetId]?.icon || '',
-        probability: total > 0 ? Number(((count / total) * 100).toFixed(1)) : 0,
-        count
-      }))
+      .map(([targetId, count]) => {
+        const animal = ANIMAL_GROUPS_MAP[targetId];
+        return {
+          id: targetId,
+          name: animal?.name || '?',
+          icon: animal?.icon || '',
+          probability: total > 0 ? Number(((count / total) * 100).toFixed(1)) : 0,
+          count
+        };
+      })
       .sort((a, b) => b.probability - a.probability)
       .slice(0, 5);
     
