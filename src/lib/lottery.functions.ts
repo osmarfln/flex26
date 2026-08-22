@@ -460,11 +460,49 @@ export const getGroupDelayStats = createServerFn({ method: "GET" })
       const dezenaStats = groupDezenas.map((dz) => {
         let freq = 0;
         let delay = -1;
+        let dailyDelay = 0;
         const delayHistory: number[] = [];
         let hitInFirstPrize = false;
 
+        // Atraso diário da dezena
+        if (results.length > 0 && results[0]) {
+          const lastDate = results[0].date;
+          let dDelay = 0;
+          for (const res of results) {
+            if (!res || res.date !== lastDate) break;
+            const hit = res.results?.slice(0, 5).some((p: string) => p?.slice(-2) === dz);
+            if (hit) break;
+            dDelay++;
+          }
+          dailyDelay = dDelay;
+        }
+
         results.forEach((res: any, index: number) => {
+          const hit = res.results?.slice(0, 5).some((p: string) => p?.slice(-2) === dz);
           const firstPrizeHit = res.results?.[0]?.slice(-2) === dz;
+
+          if (hit) {
+            freq++;
+            if (delay === -1) {
+              delay = index;
+              hitInFirstPrize = firstPrizeHit;
+            }
+          }
+        });
+
+        if (delay === -1) delay = results.length;
+
+        return {
+          dezena: dz,
+          freq,
+          delay,
+          dailyDelay,
+          hitInFirstPrize
+        };
+      });
+
+      const mostDelayedTenOfGroup = [...dezenaStats].sort((a, b) => b.delay - a.delay)[0];
+
           const hit = res.results?.slice(0, 5).some((prize: string) => prize?.slice(-2) === dz);
           
           if (hit) {
