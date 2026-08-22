@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+
 import { UserMenu } from "@/components/layout/UserMenu";
 import { ANIMAL_GROUPS } from "@/lib/animals";
 import { getResults, getTenDelayStats, getGroupDelayStats, getDigitDelayStats, getStats } from "@/lib/lottery.functions";
@@ -264,11 +265,13 @@ function Index() {
 
 
 
+
               </div>
             </motion.div>
 
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-4 italic">Resultados {location === 'rio' ? 'Rio' : 'Capital'}</h1>
             <p className="text-white/40 text-lg mb-8 font-medium italic">Resultados diários automatizados Rio e Capital via robô ai automatizado sem intervenção humana</p>
+
 
 
             
@@ -402,6 +405,7 @@ function Index() {
                                   <span className="text-white/20 w-4">{idx}º</span>
                                   <span className="font-mono tracking-widest text-lg text-red-500/80 italic text-[11px] whitespace-nowrap">Aguardando... <span className="animate-pulse">...</span></span>
                                 </div>
+
 
                               ))
                             )}
