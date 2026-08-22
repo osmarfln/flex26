@@ -82,8 +82,9 @@ export function getBrasiliaTime(): Date {
 /** Calcula o próximo sorteio baseado na localização e hora atual de Brasília */
 export function getNextDraw(location: 'rio' | 'capital' = 'rio') {
   const now = new Date();
-  // Horário atual em Brasília para comparação (HH:mm)
-  const brasilia = new Intl.DateTimeFormat('pt-BR', {
+  
+  // Format current Brasília time as HH:mm
+  const brasiliaTimeStr = new Intl.DateTimeFormat('pt-BR', {
     timeZone: 'America/Sao_Paulo',
     hour: '2-digit',
     minute: '2-digit',
@@ -92,18 +93,25 @@ export function getNextDraw(location: 'rio' | 'capital' = 'rio') {
   
   const schedule = location === 'capital' ? DRAW_SCHEDULE_CAPITAL : DRAW_SCHEDULE_RIO;
   
-  // Encontra o primeiro horário que ainda não passou
-  const next = schedule.find(s => s.timeValue > brasilia);
+  // Find the first draw in the schedule that is later than the current time
+  const next = schedule.find(s => s.timeValue > brasiliaTimeStr);
   
   if (next) {
+    // Current date in Brasília context
+    const brasiliaToday = new Date(new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/Sao_Paulo'
+    }).format(now));
+    
     return {
       ...next,
-      date: new Date() // Hoje
+      date: brasiliaToday
     };
   }
   
-  // Se todos passaram, o próximo é o primeiro de amanhã
-  const tomorrow = new Date();
+  // If all draws for today have passed, get the first draw of tomorrow
+  const tomorrow = new Date(new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/Sao_Paulo'
+  }).format(now));
   tomorrow.setDate(tomorrow.getDate() + 1);
   
   return {
