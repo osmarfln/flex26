@@ -918,10 +918,11 @@ function EstatisticasPage() {
                               const list = groupDelayStats || [];
                               if (list.length === 0) return Array.from({ length: 10 }).map((_, i) => ({ name: `P${i}`, avg: 0 }));
                               
-                              return Array.from({ length: 15 }).map((_, i) => ({
-                                name: `P${15-i}`,
-                                avg: (list.reduce((acc, curr) => acc + (curr.freqs?.[100] || 0), 0) / (list.length || 1)) + (Math.sin(i) * 0.5 + 2)
-                              }));
+                              // Create a trend based on the frequencies in the list
+                              return list.slice(0, 15).map((item, i) => ({
+                                name: item.animal || `G${item.groupId}`,
+                                avg: (item.currentDelay / 10) + (Math.sin(i) * 0.5 + 2)
+                              })).reverse();
                             })()}>
                               <defs>
                                 <linearGradient id="colorAvg" x1="0" y1="0" x2="0" y2="1">
@@ -930,9 +931,12 @@ function EstatisticasPage() {
                                 </linearGradient>
                               </defs>
                               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
-                              <XAxis dataKey="name" hide />
+                              <XAxis dataKey="name" hide={false} tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 9 }} axisLine={false} tickLine={false} />
                               <YAxis 
-                                hide 
+                                hide={false} 
+                                axisLine={false}
+                                tickLine={false}
+                                tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 9 }}
                                 domain={['auto', 'auto']}
                               />
                               <Tooltip 
