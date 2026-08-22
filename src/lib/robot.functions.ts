@@ -22,16 +22,16 @@ type ScheduleRow = {
 };
 
 async function fetchSource(date: string, location: string = 'rio') {
-  const res = await fetch(
-    `${EXTERNAL_REST_URL}/draw_results?draw_date=eq.${date}&location=eq.${location}&select=*`,
-
-    {
-      headers: {
-        apikey: EXTERNAL_ANON_KEY,
-        Authorization: `Bearer ${EXTERNAL_ANON_KEY}`,
-      },
+  const externalTable = location === 'capital' ? 'capital_results' : 'draw_results';
+  const url = `${EXTERNAL_REST_URL}/${externalTable}?draw_date=eq.${date}&select=*`;
+  
+  const res = await fetch(url, {
+    headers: {
+      apikey: EXTERNAL_ANON_KEY,
+      Authorization: `Bearer ${EXTERNAL_ANON_KEY}`,
     },
-  );
+  });
+  
   if (!res.ok) throw new Error(`Fonte respondeu ${res.status}`);
   return (await res.json()) as any[];
 }
