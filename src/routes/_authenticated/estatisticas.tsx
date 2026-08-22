@@ -133,6 +133,7 @@ function EstatisticasPage() {
   const syncMutation = useMutation({
     mutationFn: async () => {
       (window as any).__syncStart = performance.now();
+      setIsSyncing(true);
       setSyncStep("Buscando novos resultados na origem...");
       const res: any = await triggerSync({ data: { location } });
       setSyncStep("Recalculando dezenas atrasadas, grupos e bicho em alta...");
