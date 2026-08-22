@@ -15,6 +15,7 @@ export interface LotteryResult {
   results: string[];
   animal: string | null;
   animal_group: string | null;
+  location: 'rio' | 'capital';
   created_at: string;
 }
 
@@ -23,9 +24,11 @@ const ANIMAL_GROUPS_DATA = ANIMAL_GROUPS_MAP;
 export const getResults = createServerFn({ method: "GET" })
   .validator((data: unknown) => z.object({
     date: z.string().optional(),
+    location: z.enum(['rio', 'capital']).optional().default('rio'),
     limit: z.number().optional().default(20),
     offset: z.number().optional().default(0)
   }).parse(data))
+
   .handler(async ({ data }) => {
     let query = supabase
       .from("lottery_results")
