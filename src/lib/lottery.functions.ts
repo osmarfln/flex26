@@ -89,7 +89,7 @@ export const getResultsRange = createServerFn({ method: "GET" })
 
 
 export const getStats = createServerFn({ method: "GET" })
-  .validator((data: unknown) => z.object({
+  .inputValidator((data: unknown) => z.object({
     location: z.enum(['rio', 'capital']).optional().default('rio'),
     date: z.string().optional(),
     dateEnd: z.string().optional()
