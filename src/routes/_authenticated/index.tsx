@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { UserMenu } from "@/components/layout/UserMenu";
 import { ANIMAL_GROUPS } from "@/lib/animals";
 import { getResults, getTenDelayStats, getGroupDelayStats, getDigitDelayStats } from "@/lib/lottery.functions";
+import { DRAW_SCHEDULE_RIO, DRAW_SCHEDULE_CAPITAL } from "@/lib/draw-order";
+
 import { AlertaDezenasAtrasadas } from "@/components/AlertaDezenasAtrasadas";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -88,9 +90,16 @@ function getGreeting() {
 
 function Index() {
   // Estado inicial estável para evitar divergência entre servidor e navegador
+  const [location, setLocation] = useState<'rio' | 'capital'>(() => {
+    if (typeof window !== 'undefined') {
+      return (localStorage.getItem('preferred-location') as 'rio' | 'capital') || 'rio';
+    }
+    return 'rio';
+  });
   const [greeting, setGreeting] = useState<{ text: string; icon: typeof Coffee }>({ text: "Olá", icon: Sun });
   const [currentTime, setCurrentTime] = useState(new Date());
   const firstName = useUserFirstName();
+
 
 
   useEffect(() => {
@@ -103,28 +112,35 @@ function Index() {
   }, []);
 
 
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('preferred-location', location);
+    }
+  }, [location]);
+
   const today = brasiliaDateISO();
 
   const { data: games, isLoading: isLoadingGames, refetch } = useQuery({
-    queryKey: ["homepage-games", today],
-    queryFn: () => getResults({ data: { limit: 10, date: today } }),
+    queryKey: ["homepage-games", today, location],
+    queryFn: () => getResults({ data: { limit: 12, date: today, location } }),
   });
 
   const { data: groupStats, isLoading: isLoadingStats } = useQuery({
-    queryKey: ["homepage-group-stats"],
-    queryFn: () => getGroupDelayStats(),
+    queryKey: ["homepage-group-stats", location],
+    queryFn: () => getGroupDelayStats({ data: { location } }),
   });
 
   const { data: tenStats } = useQuery({
-    queryKey: ["homepage-ten-stats"],
-    queryFn: () => getTenDelayStats(),
+    queryKey: ["homepage-ten-stats", location],
+    queryFn: () => getTenDelayStats({ data: { location } }),
   });
 
   const { data: digitStats, isLoading: digitLoading } = useQuery({
-    queryKey: ["homepage-digit-stats"],
-    queryFn: () => getDigitDelayStats(),
+    queryKey: ["homepage-digit-stats", location],
+    queryFn: () => getDigitDelayStats({ data: { location } }),
     staleTime: 0,
   });
+
 
 
 
@@ -240,8 +256,10 @@ function Index() {
               </div>
             </motion.div>
 
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-4 italic">Resultados Rio</h1>
-            <p className="text-white/40 text-lg mb-8 font-medium">Resultados diários automatizados via robô</p>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-4 italic">Resultados {location === 'rio' ? 'Rio' : 'Capital'}</h1>
+            <p className="text-white/40 text-lg mb-8 font-medium">Resultados diários automatizados via robô ai automatizado sem interveção humana</p>
+
+
 
 
             <div className="flex flex-wrap gap-4 items-center mb-6">
@@ -256,16 +274,25 @@ function Index() {
                 </div>
               </div>
               
-              <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl min-w-[200px] hover:border-yellow-500/30 transition-all cursor-pointer">
+              <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl min-w-[200px] hover:border-yellow-500/30 transition-all cursor-pointer relative group/select">
                 <MapPin className="w-5 h-5 text-white/40" />
                 <div className="flex-1">
                   <p className="text-[10px] text-white/40 font-bold uppercase tracking-wider">Localidade</p>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-bold">Rio de Janeiro</span>
+                    <span className="text-sm font-bold">{location === 'rio' ? 'Rio de Janeiro' : 'Capital (Floripa)'}</span>
                     <ChevronDown className="w-4 h-4 text-white/40" />
                   </div>
                 </div>
+                <select 
+                  className="absolute inset-0 opacity-0 cursor-pointer"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value as any)}
+                >
+                  <option value="rio">Rio de Janeiro</option>
+                  <option value="capital">Capital (Florianópolis)</option>
+                </select>
               </div>
+
 
               <Link to="/historico">
                 <Button className="h-[54px] px-10 bg-primary hover:bg-primary/90 text-primary-foreground font-black uppercase tracking-tighter rounded-xl gap-2 shadow-lg shadow-primary/10 active:scale-95 transition-all">
@@ -285,36 +312,31 @@ function Index() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16" id="resultados">
           <div className="lg:col-span-12">
             {isLoadingGames ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {Array.from({ length: 6 }).map((_, i) => (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {Array.from({ length: location === 'rio' ? 6 : 11 }).map((_, i) => (
                   <div key={i} className="h-64 rounded-2xl bg-white/5 animate-pulse border border-white/10" />
                 ))}
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[
-                  { type: 'PPT', time: '09:00' },
-                  { type: 'PTM', time: '11:00' },
-                  { type: 'PT', time: '14:00' },
-                  { type: 'PTV', time: '16:00' },
-                  { type: 'PTN', time: '18:00' },
-                  { type: 'COR', time: '21:00' }
-                ].map((schedule) => {
-                  const sortedGames = [...(games || [])].sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
-                  const game = sortedGames.find(
-                    (g: any) => String(g.time_type).toUpperCase().trim() === schedule.type,
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {(location === 'rio' ? DRAW_SCHEDULE_RIO : DRAW_SCHEDULE_CAPITAL).map((schedule) => {
+                  const game = (games || []).find(
+                    (g: any) => String(g.time_type).toUpperCase().trim().replace("PTT", "PPT") === schedule.timeType.toUpperCase(),
                   );
+
+                  // Encontra o mais recente entre os que já saíram hoje
+                  const sortedGames = [...(games || [])].sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
                   const isLatest = game && sortedGames[0]?.id === game.id;
                   
                   return (
-                    <Card key={schedule.type} className={`dashboard-card rounded-3xl overflow-hidden group hover:border-primary/40 transition-all duration-500 relative ${!game ? 'opacity-70 bg-white/[0.02]' : 'bg-card'}`}>
+                    <Card key={schedule.timeType} className={`dashboard-card rounded-3xl overflow-hidden group hover:border-primary/40 transition-all duration-500 relative ${!game ? 'opacity-70 bg-white/[0.02]' : 'bg-card'}`}>
                       {isLatest && (
                         <div className="absolute inset-0 border-2 border-primary/20 rounded-3xl pointer-events-none z-10" />
                       )}
                       <CardHeader className="p-6 pb-2">
                         <div className="flex justify-between items-start mb-4">
                           <CardTitle className="text-xl font-black italic tracking-tighter uppercase group-hover:text-primary transition-colors">
-                            {schedule.type} RIO — {schedule.time}hs
+                            {schedule.label} — {schedule.timeValue}hs
                           </CardTitle>
                           {isLatest && (
                             <div className="px-3 py-1 bg-primary text-primary-foreground text-[10px] font-black uppercase rounded-lg shadow-xl shadow-primary/20">
@@ -330,9 +352,10 @@ function Index() {
                               ((game.results || []).length > 0 ? game.results.slice(0, 5) : ['----', '----', '----', '----', '----']).map((res: string, idx: number) => (
                                 <div key={idx} className="flex gap-4 text-sm font-bold items-baseline">
                                   <span className="text-white/20 w-4">{idx + 1}º</span>
-                                  <span className="font-mono tracking-widest text-lg">{res}</span>
+                                  <span className="font-mono tracking-widest text-lg">{res.padStart(4, '0')}</span>
                                 </div>
                               ))
+
                             ) : (
                               [1, 2, 3, 4, 5].map((idx) => (
                                 <div key={idx} className="flex gap-4 text-sm font-bold items-baseline">
@@ -357,6 +380,7 @@ function Index() {
                 })}
               </div>
             )}
+
           </div>
         </div>
 

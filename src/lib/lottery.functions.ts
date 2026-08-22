@@ -34,8 +34,10 @@ export const getResults = createServerFn({ method: "GET" })
     let query = supabase
       .from("lottery_results")
       .select("*")
+      .eq("location" as any, data.location)
       .order("date", { ascending: false })
       .order("time_type", { ascending: true });
+
 
     if (data.date) {
       query = query.eq("date", data.date);
@@ -65,10 +67,12 @@ export const getResultsRange = createServerFn({ method: "GET" })
     let query = supabase
       .from("lottery_results")
       .select("*")
+      .eq("location" as any, data.location)
       .gte("date", data.start)
       .lte("date", data.end)
       .order("date", { ascending: false })
       .limit(data.limit);
+
 
     if (data.timeTypes && data.timeTypes.length > 0) {
       query = query.in("time_type", data.timeTypes);
@@ -90,9 +94,10 @@ export const getStats = createServerFn({ method: "GET" })
     const { data: rawResults, error } = await supabase
       .from("lottery_results")
       .select("*")
-      
+      .eq("location" as any, data.location)
       .order("date", { ascending: false })
       .limit(300);
+
 
 
     if (error) throw error;
@@ -183,10 +188,11 @@ export const getTenDelayStats = createServerFn({ method: "GET" })
   .handler(async ({ data }) => {
     const { data: rawRows, error } = await supabase
       .from("lottery_results")
-      .select("results, date, time_type")
-
+      .select("results, date, time_type, location")
+      .eq("location" as any, data.location)
       .order("date", { ascending: false })
       .limit(600);
+
 
 
     if (error) throw error;
@@ -298,10 +304,11 @@ export const getGroupDelayStats = createServerFn({ method: "GET" })
   .handler(async ({ data }) => {
     const { data: rawRows, error } = await supabase
       .from("lottery_results")
-      .select("results, date, time_type, animal_group")
-
+      .select("results, date, time_type, animal_group, location")
+      .eq("location" as any, data.location)
       .order("date", { ascending: false })
       .limit(600);
+
 
 
     if (error) throw error;
@@ -475,10 +482,11 @@ export const getRepetitionStats = createServerFn({ method: "GET" })
   .handler(async ({ data }) => {
     const { data: rawRows, error } = await supabase
       .from("lottery_results")
-      .select("results, date, time_type, animal_group")
-
+      .select("results, date, time_type, animal_group, location")
+      .eq("location" as any, data.location)
       .order("date", { ascending: false })
       .limit(300);
+
 
 
     if (error) throw error;
@@ -621,10 +629,11 @@ export const getDigitDelayStats = createServerFn({ method: "GET" })
   .handler(async ({ data }) => {
     const { data: rawRows, error } = await supabase
       .from("lottery_results")
-      .select("results, date, time_type, time_value")
-
+      .select("results, date, time_type, time_value, location")
+      .eq("location" as any, data.location)
       .order("date", { ascending: false })
       .limit(600);
+
 
 
     if (error) throw error;
@@ -777,12 +786,17 @@ export const getDigitDelayStats = createServerFn({ method: "GET" })
  * no 1º prêmio "puxou" um dos seus grupos associados no sorteio seguinte.
  */
 export const getPuxadasStats = createServerFn({ method: "GET" })
-  .handler(async () => {
+  .validator((data: unknown) => z.object({
+    location: z.enum(['rio', 'capital']).optional().default('rio')
+  }).parse(data))
+  .handler(async ({ data }) => {
     const { data: rawRows, error } = await supabase
       .from("lottery_results")
-      .select("results, date, time_type, time_value")
+      .select("results, date, time_type, time_value, location")
+      .eq("location" as any, data.location)
       .order("date", { ascending: false })
       .limit(600);
+
 
     if (error) throw error;
 

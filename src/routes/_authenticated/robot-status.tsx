@@ -100,24 +100,27 @@ const CHART_TOOLTIP = {
 function RobotStatus() {
   const { isAdmin, loading: adminLoading } = useIsAdmin();
   useLotteryRealtime("robot-status-db-changes");
+  const [location, setLocation] = useState<'rio' | 'capital'>('rio');
   const { data: logs, isLoading, refetch, isError } = useQuery({
-    queryKey: ["sync-logs"],
-    queryFn: () => getSyncStatus(),
+    queryKey: ["sync-logs", location],
+    queryFn: () => getSyncStatus({ data: { location } }),
     refetchInterval: 15000,
   });
+
 
   const queryClient = useQueryClient();
   const [syncMessage, setSyncMessage] = useState<string | null>(null);
 
   const { data: matrix } = useQuery({
-    queryKey: ["schedule-sync-matrix"],
-    queryFn: () => getScheduleSyncMatrix(),
+    queryKey: ["schedule-sync-matrix", location],
+    queryFn: () => getScheduleSyncMatrix({ data: { location } }),
     refetchInterval: 30000,
   });
 
+
   const triggerSync = useServerFn(runSyncNow);
   const syncMutation = useMutation({
-    mutationFn: () => triggerSync(),
+    mutationFn: () => triggerSync({ data: { location } }),
     onSuccess: (res: any) => {
       setSyncMessage(
         res?.ok
@@ -211,14 +214,25 @@ function RobotStatus() {
               Monitoramento de sincronização em tempo real
             </p>
           </div>
-          <button
-            onClick={() => refetch()}
-            className="p-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all shrink-0"
-            aria-label="Atualizar"
-          >
-            <RefreshCw className={`w-5 h-5 ${isLoading ? "animate-spin" : ""}`} />
-          </button>
+          <div className="flex items-center gap-3">
+            <select 
+              className="h-10 rounded-xl border border-white/10 bg-white/5 px-3 text-xs font-bold text-white outline-none focus:border-primary/50"
+              value={location}
+              onChange={(e) => setLocation(e.target.value as any)}
+            >
+              <option value="rio">Rio de Janeiro</option>
+              <option value="capital">Capital (Floripa)</option>
+            </select>
+            <button
+              onClick={() => refetch()}
+              className="p-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all shrink-0"
+              aria-label="Atualizar"
+            >
+              <RefreshCw className={`w-5 h-5 ${isLoading ? "animate-spin" : ""}`} />
+            </button>
+          </div>
         </header>
+
 
 
         {/* Para que serve */}

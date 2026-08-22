@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Bar,
@@ -15,7 +15,7 @@ import { AlertTriangle, BrainCircuit, CheckCircle2, Clock } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 
-const SCHEDULE = [
+const SCHEDULE_RIO = [
   { type: "PPT", value: "09:00" },
   { type: "PTM", value: "11:00" },
   { type: "PT", value: "14:00" },
@@ -23,6 +23,21 @@ const SCHEDULE = [
   { type: "PTN", value: "18:00" },
   { type: "COR", value: "21:00" },
 ];
+
+const SCHEDULE_CAPITAL = [
+  { type: "L-09", value: "09:00" },
+  { type: "L-10", value: "10:00" },
+  { type: "L-11", value: "11:00" },
+  { type: "L-12", value: "12:00" },
+  { type: "L-13", value: "13:00" },
+  { type: "L-14", value: "14:00" },
+  { type: "L-16", value: "16:00" },
+  { type: "L-17", value: "17:00" },
+  { type: "L-18", value: "18:00" },
+  { type: "L-19", value: "19:00" },
+  { type: "L-20", value: "20:00" },
+];
+
 
 function brasiliaNow() {
   const parts = new Intl.DateTimeFormat("en-CA", {
@@ -43,6 +58,8 @@ function brasiliaNow() {
 
 /** Análise inteligente: analytics da plataforma, atrasos e falhas internas em tempo real. */
 export function AnaliseInteligentePanel({ enabled }: { enabled: boolean }) {
+  const [location, setLocation] = useState<'rio' | 'capital'>('rio');
+
   const { date: today, minutes: nowMin } = brasiliaNow();
 
   const activityQuery = useQuery({
@@ -71,29 +88,33 @@ export function AnaliseInteligentePanel({ enabled }: { enabled: boolean }) {
   });
 
   const todayQuery = useQuery({
-    queryKey: ["admin", "ia-today", today],
+    queryKey: ["admin", "ia-today", today, location],
     enabled,
     staleTime: 0,
     refetchInterval: 20_000,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("lottery_results")
-        .select("time_type, time_value, created_at")
-        .eq("date", today);
+        .select("time_type, time_value, created_at, location")
+        .eq("date", today)
+        .eq("location", location);
+
       if (error) throw error;
       return data ?? [];
     },
   });
 
   const logsQuery = useQuery({
-    queryKey: ["admin", "ia-logs"],
+    queryKey: ["admin", "ia-logs", location],
     enabled,
     staleTime: 0,
     refetchInterval: 20_000,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("sync_logs")
-        .select("id, status, started_at, finished_at, records_synced, error_message")
+        .select("id, status, started_at, finished_at, records_synced, error_message, location")
+        .eq("location", location)
+
         .order("started_at", { ascending: false })
         .limit(50);
       if (error) throw error;
@@ -137,7 +158,7 @@ export function AnaliseInteligentePanel({ enabled }: { enabled: boolean }) {
   }, [acts]);
 
   const results = todayQuery.data ?? [];
-  const atrasados = SCHEDULE.map((s) => {
+  const atrasados = (location === 'rio' ? SCHEDULE_RIO : SCHEDULE_CAPITAL).map((s) => {
     const [h, m] = s.value.split(":").map(Number);
     const due = (h ?? 0) * 60 + (m ?? 0);
     const got = results.find(
@@ -156,6 +177,17 @@ export function AnaliseInteligentePanel({ enabled }: { enabled: boolean }) {
 
   return (
     <div className="space-y-5">
+      <div className="flex justify-end">
+        <select 
+          className="h-9 rounded-xl border border-white/10 bg-white/5 px-3 text-xs font-bold text-white outline-none focus:border-primary/50"
+          value={location}
+          onChange={(e) => setLocation(e.target.value as any)}
+        >
+          <option value="rio">Rio</option>
+          <option value="capital">Capital</option>
+        </select>
+      </div>
+
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <Kpi label="Eventos (24 h)" value={acts.length} />
         <Kpi label="Usuários ativos (30 min)" value={usuariosAtivos} tone="text-emerald-400" />

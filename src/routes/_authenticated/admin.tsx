@@ -81,6 +81,8 @@ function AdminPage() {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<{ id: string; name: string } | null>(null);
   const [tab, setTab] = useState("geral");
+  const [location, setLocation] = useState<'rio' | 'capital'>('rio');
+
 
   const fetchMatrix = useServerFn(getScheduleSyncMatrix);
   const syncNow = useServerFn(runSyncNow);
@@ -107,20 +109,23 @@ function AdminPage() {
   });
 
   const matrixQuery = useQuery({
-    queryKey: ["admin", "matrix", lastUpdate?.toISOString()],
+    queryKey: ["admin", "matrix", lastUpdate?.toISOString(), location],
     enabled: isAdmin,
     staleTime: 0,
-    queryFn: () => fetchMatrix({}),
+    queryFn: () => fetchMatrix({ data: { location } }),
   });
 
+
   const logsQuery = useQuery({
-    queryKey: ["admin", "logs", lastUpdate?.toISOString()],
+    queryKey: ["admin", "logs", lastUpdate?.toISOString(), location],
     enabled: isAdmin,
     staleTime: 0,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("sync_logs")
         .select("*")
+        .eq("location", location)
+
         .order("started_at", { ascending: false })
         .limit(25);
       if (error) throw error;
@@ -129,13 +134,15 @@ function AdminPage() {
   });
 
   const resultsQuery = useQuery({
-    queryKey: ["admin", "results", lastUpdate?.toISOString()],
+    queryKey: ["admin", "results", lastUpdate?.toISOString(), location],
     enabled: isAdmin,
     staleTime: 0,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("lottery_results")
-        .select("date, time_type, time_value, results, animal, animal_group, created_at")
+        .select("date, time_type, time_value, results, animal, animal_group, created_at, location")
+        .eq("location", location)
+
         .order("date", { ascending: false })
         .order("time_value", { ascending: false })
         .limit(40);
@@ -145,7 +152,7 @@ function AdminPage() {
   });
 
   const syncMutation = useMutation({
-    mutationFn: () => syncNow({}),
+    mutationFn: () => syncNow({ data: { location } }),
     onSuccess: (r) => {
       if (r.ok) toast.success(`Sincronização concluída — ${r.synced} registros`);
       else toast.error(r.error ?? "Falha na sincronização");
@@ -235,15 +242,26 @@ function AdminPage() {
               Última atualização: {lastUpdate ? fmtDateTime(lastUpdate.toISOString()) : "—"}
             </p>
           </div>
-          <Button onClick={() => syncMutation.mutate()} disabled={syncMutation.isPending}>
-            {syncMutation.isPending ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <RefreshCw className="mr-2 h-4 w-4" />
-            )}
-            Sincronizar agora
-          </Button>
+          <div className="flex gap-2">
+            <select 
+              className="h-10 rounded-md border border-input bg-background px-3 text-sm font-bold"
+              value={location}
+              onChange={(e) => setLocation(e.target.value as any)}
+            >
+              <option value="rio">Rio</option>
+              <option value="capital">Capital</option>
+            </select>
+            <Button onClick={() => syncMutation.mutate()} disabled={syncMutation.isPending}>
+              {syncMutation.isPending ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <RefreshCw className="mr-2 h-4 w-4" />
+              )}
+              Sincronizar agora
+            </Button>
+          </div>
         </div>
+
 
         <Tabs value={tab} onValueChange={setTab} className="w-full">
           <TabsList className="mb-6 flex w-full flex-wrap justify-start gap-1.5 h-auto p-1.5">

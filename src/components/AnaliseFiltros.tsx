@@ -14,7 +14,7 @@ import {
 } from "recharts";
 
 import { getResultsRange, type LotteryResult } from "@/lib/lottery.functions";
-import { DRAW_SCHEDULE } from "@/lib/draw-order";
+import { DRAW_SCHEDULE_RIO, DRAW_SCHEDULE_CAPITAL } from "@/lib/draw-order";
 import { ANIMAL_GROUPS, ANIMAL_GROUPS_MAP, getAnimalByTen, getGroupFromTen } from "@/lib/animals";
 
 const CHART_TOOLTIP = {
@@ -142,13 +142,16 @@ function Delta({ current, previous }: { current: number; previous: number }) {
 }
 
 /** Filtros e busca das Análises: período, horário e tipo, com comparação de períodos. */
-export function AnaliseFiltros() {
+export function AnaliseFiltros({ initialLocation = 'rio' }: { initialLocation?: 'rio' | 'capital' }) {
   const todayISO = iso(new Date());
   const [start, setStart] = useState(todayISO);
   const [end, setEnd] = useState(todayISO);
+  const [location, setLocation] = useState<'rio' | 'capital'>(initialLocation);
+
   const [times, setTimes] = useState<string[]>([]);
   const [term, setTerm] = useState("");
   const [compare, setCompare] = useState(false);
+
 
   const fetchRange = useServerFn(getResultsRange);
 
@@ -169,21 +172,22 @@ export function AnaliseFiltros() {
   const prevEnd = iso(subDays(new Date(safeStart + "T12:00:00"), 1));
 
   const currentQuery = useQuery({
-    queryKey: ["analise-filtro", safeStart, safeEnd, times],
+    queryKey: ["analise-filtro", safeStart, safeEnd, times, location],
     queryFn: () =>
-      fetchRange({ data: { start: safeStart, end: safeEnd, timeTypes: times, limit: 2000 } }),
+      fetchRange({ data: { start: safeStart, end: safeEnd, timeTypes: times, limit: 2000, location } }),
     staleTime: 0,
     gcTime: 0,
   });
 
   const previousQuery = useQuery({
-    queryKey: ["analise-filtro-prev", prevStart, prevEnd, times],
+    queryKey: ["analise-filtro-prev", prevStart, prevEnd, times, location],
     enabled: compare,
     queryFn: () =>
-      fetchRange({ data: { start: prevStart, end: prevEnd, timeTypes: times, limit: 2000 } }),
+      fetchRange({ data: { start: prevStart, end: prevEnd, timeTypes: times, limit: 2000, location } }),
     staleTime: 0,
     gcTime: 0,
   });
+
 
 
   const query = useMemo(() => parseTerm(term), [term]);
@@ -273,9 +277,11 @@ export function AnaliseFiltros() {
 
   const byTime = useMemo(() => {
     const counts: Record<string, { name: string; atual: number; anterior: number }> = {};
-    DRAW_SCHEDULE.forEach((s) => {
+    const schedule = location === 'rio' ? DRAW_SCHEDULE_RIO : DRAW_SCHEDULE_CAPITAL;
+    schedule.forEach((s) => {
       counts[s.timeType] = { name: s.timeType, atual: 0, anterior: 0 };
     });
+
     currentRows.forEach((r) => {
       const e = counts[r.time_type] ?? (counts[r.time_type] = { name: r.time_type, atual: 0, anterior: 0 });
       e.atual += 1;
@@ -306,7 +312,19 @@ export function AnaliseFiltros() {
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-5">
+        <label className="flex flex-col gap-1.5">
+          <span className="text-[10px] font-black uppercase tracking-widest text-white/40">Local</span>
+          <select 
+            className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm font-bold outline-none focus:border-primary/50 text-white"
+            value={location}
+            onChange={(e) => { setLocation(e.target.value as any); setTimes([]); }}
+          >
+            <option value="rio">Rio</option>
+            <option value="capital">Capital</option>
+          </select>
+        </label>
+
         <label className="flex flex-col gap-1.5">
           <span className="text-[10px] font-black uppercase tracking-widest text-white/40">De</span>
           <input
@@ -380,7 +398,7 @@ export function AnaliseFiltros() {
 
       <div className="mt-4 flex flex-wrap items-center gap-2">
         <span className="text-[10px] font-black uppercase tracking-widest text-white/40">Horários:</span>
-        {DRAW_SCHEDULE.map((s) => {
+        {(location === 'rio' ? DRAW_SCHEDULE_RIO : DRAW_SCHEDULE_CAPITAL).map((s) => {
           const active = times.includes(s.timeType);
           return (
             <button
