@@ -33,6 +33,7 @@ export const getResults = createServerFn({ method: "GET" })
     let query = supabase
       .from("lottery_results")
       .select("*")
+      .eq("location", data.location)
       .order("date", { ascending: false })
       .order("time_type", { ascending: true });
 
@@ -54,6 +55,7 @@ export const getResultsRange = createServerFn({ method: "GET" })
       .object({
         start: z.string(),
         end: z.string(),
+        location: z.enum(['rio', 'capital']).optional().default('rio'),
         timeTypes: z.array(z.string()).optional(),
         limit: z.number().optional().default(2000),
       })
@@ -63,6 +65,7 @@ export const getResultsRange = createServerFn({ method: "GET" })
     let query = supabase
       .from("lottery_results")
       .select("*")
+      .eq("location", data.location)
       .gte("date", data.start)
       .lte("date", data.end)
       .order("date", { ascending: false })
@@ -79,13 +82,19 @@ export const getResultsRange = createServerFn({ method: "GET" })
 
 
 
+
 export const getStats = createServerFn({ method: "GET" })
-  .handler(async () => {
+  .validator((data: unknown) => z.object({
+    location: z.enum(['rio', 'capital']).optional().default('rio')
+  }).parse(data))
+  .handler(async ({ data }) => {
     const { data: rawResults, error } = await supabase
       .from("lottery_results")
       .select("*")
+      .eq("location", data.location)
       .order("date", { ascending: false })
       .limit(300);
+
 
     if (error) throw error;
     if (!rawResults) return { mostDelayedGroups: [], mostFrequentTens: [], delayedBySchedule: {} };
@@ -169,12 +178,17 @@ export const getStats = createServerFn({ method: "GET" })
 
 
 export const getTenDelayStats = createServerFn({ method: "GET" })
-  .handler(async () => {
+  .validator((data: unknown) => z.object({
+    location: z.enum(['rio', 'capital']).optional().default('rio')
+  }).parse(data))
+  .handler(async ({ data }) => {
     const { data: rawRows, error } = await supabase
       .from("lottery_results")
-      .select("results, date, time_type")
+      .select("results, date, time_type, location")
+      .eq("location", data.location)
       .order("date", { ascending: false })
-      .limit(600); // Need more data for comparative periods (300 current + 300 previous)
+      .limit(600);
+
 
     if (error) throw error;
     if (!rawRows) return [];
@@ -279,12 +293,17 @@ export const getTenDelayStats = createServerFn({ method: "GET" })
 
 
 export const getGroupDelayStats = createServerFn({ method: "GET" })
-  .handler(async () => {
+  .validator((data: unknown) => z.object({
+    location: z.enum(['rio', 'capital']).optional().default('rio')
+  }).parse(data))
+  .handler(async ({ data }) => {
     const { data: rawRows, error } = await supabase
       .from("lottery_results")
-      .select("results, date, time_type, animal_group")
+      .select("results, date, time_type, animal_group, location")
+      .eq("location", data.location)
       .order("date", { ascending: false })
       .limit(600);
+
 
     if (error) throw error;
     if (!rawRows) return [];
@@ -451,12 +470,17 @@ export const getGroupDelayStats = createServerFn({ method: "GET" })
 
 
 export const getRepetitionStats = createServerFn({ method: "GET" })
-  .handler(async () => {
+  .validator((data: unknown) => z.object({
+    location: z.enum(['rio', 'capital']).optional().default('rio')
+  }).parse(data))
+  .handler(async ({ data }) => {
     const { data: rawRows, error } = await supabase
       .from("lottery_results")
-      .select("results, date, time_type, animal_group")
+      .select("results, date, time_type, animal_group, location")
+      .eq("location", data.location)
       .order("date", { ascending: false })
       .limit(300);
+
 
     if (error) throw error;
     if (!rawRows || rawRows.length < 2) return null;
