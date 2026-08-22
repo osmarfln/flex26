@@ -604,7 +604,7 @@ function EstatisticasPage() {
                   </div>
 
                   {!isLoading && hottestTens.length > 0 && (
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8 min-w-0">
                       <Card className="dashboard-card p-6 bg-white/[0.03] border-white/10">
                         <h3 className="text-sm font-black uppercase italic mb-6 flex items-center gap-2">
                           <BarChart3 className="w-4 h-4 text-primary" />
