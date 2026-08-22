@@ -97,16 +97,18 @@ export function AlertaDezenasAtrasadas({ data, loading }: { data?: DigitDelayDat
                     {stat.digit}
                   </div>
                   <div className="text-xs text-white/60 space-y-1">
-                    <p className="text-sm font-bold text-white">{stat.currentDelay} sorteios sem sair</p>
+                    <p className="text-sm font-bold text-white">
+                      {stat.currentDelay} sorteios · <span className={stat.dailyDelay > 2 ? 'text-red-500' : 'text-white/40'}>{stat.dailyDelay}h hoje</span>
+                    </p>
                     <p>
                       Última vez:{" "}
                       {stat.last
                         ? `${fmt(stat.last.date)} · ${stat.last.time_type} · milhar ${stat.last.prize} · dezena ${stat.last.ten}`
                         : "fora da amostra"}
                     </p>
-                    {stat.worstSchedule && (
-                      <p className="text-yellow-300/80">
-                        Horário mais atrasado: <b>{stat.worstSchedule.schedule}</b> ({stat.worstSchedule.delay} sorteios)
+                    {(stat.dailyDelay >= 3 || stat.worstSchedule?.delay >= 15) && (
+                      <p className="text-red-400 font-bold animate-pulse">
+                        ALERTA CRÍTICO: {stat.dailyDelay >= 3 ? `${stat.dailyDelay} horários sem sair hoje` : `Atraso de ${stat.worstSchedule.delay} sorteios no horário ${stat.worstSchedule.schedule}`}
                       </p>
                     )}
                   </div>
