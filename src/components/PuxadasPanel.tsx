@@ -142,7 +142,7 @@ export function PuxadasPanel({ data, loading }: { data?: PuxadasData | null; loa
         </Card>
 
         <Card className="bg-[#0D121F] border-white/10 rounded-2xl p-5">
-          <h4 className="text-xs font-black uppercase tracking-widest text-white/50 mb-4">Puxadas confirmadas por bicho</h4>
+          <h4 className="text-xs font-black uppercase tracking-widest text-white/50 mb-4">Puxadas tradicionais confirmadas</h4>
           <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={targetChart} layout="vertical" margin={{ left: 10 }}>
@@ -198,7 +198,7 @@ export function PuxadasPanel({ data, loading }: { data?: PuxadasData | null; loa
 
       {/* Ranking geral */}
       <Card className="bg-[#0D121F] border-white/10 rounded-2xl p-5">
-        <h4 className="text-xs font-black uppercase tracking-widest text-white/50 mb-4">Top 10 bichos com puxada mais confiável</h4>
+        <h4 className="text-xs font-black uppercase tracking-widest text-white/50 mb-4">Top 10 bichos com puxada tradicional mais confiável</h4>
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={ranking}>
