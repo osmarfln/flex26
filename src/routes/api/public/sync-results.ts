@@ -26,6 +26,10 @@ export const Route = createFileRoute('/api/public/sync-results')({
           const auto = body.auto || false; // Se true, sincroniza ambos se necessário
           
           console.log(`[SYNC] Request received. Date: ${dateParam}, Days: ${daysToSync}, Location: ${location}, Auto: ${auto}`);
+          
+          // Se auto=true e location=rio, vamos garantir que Capital também seja atualizada em sequência se for uma chamada via cron
+          // A lógica abaixo já itera sobre locationsToSync no handler de else.
+
 
 
           // Fecha execuções travadas (sem finished_at) de tentativas anteriores
