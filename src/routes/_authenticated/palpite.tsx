@@ -10,7 +10,7 @@ import { AvisoObrigatorio } from "@/components/AvisoObrigatorio";
 import { getStats, getTenDelayStats, getGroupDelayStats } from "@/lib/lottery.functions";
 import { useLotteryRealtime } from "@/hooks/useLotteryRealtime";
 import { getAnimalByGroup, getAnimalByTen } from "@/lib/animals";
-import { DRAW_SCHEDULE } from "@/lib/draw-order";
+import { DRAW_SCHEDULE_RIO, DRAW_SCHEDULE_CAPITAL } from "@/lib/draw-order";
 
 export const Route = createFileRoute("/_authenticated/palpite")({
   head: () => ({
@@ -19,7 +19,7 @@ export const Route = createFileRoute("/_authenticated/palpite")({
       {
         name: "description",
         content:
-          "Palpites do dia calculados automaticamente a partir dos resultados reais do Rio: dezenas atrasadas, grupos em atraso e sugestões por horário.",
+          "Palpites do dia calculados automaticamente a partir dos resultados reais do Rio e Capital: dezenas atrasadas, grupos em atraso e sugestões por horário.",
       },
       { name: "robots", content: "noindex" },
       { property: "og:title", content: "Palpite do Dia | Flex Gerenciador" },
@@ -35,28 +35,30 @@ export const Route = createFileRoute("/_authenticated/palpite")({
 });
 
 function PalpitePage() {
+  const [location, setLocation] = useState<'rio' | 'capital'>('rio');
   const { lastUpdate } = useLotteryRealtime("palpite-db-changes");
   const fetchStats = useServerFn(getStats);
   const fetchTens = useServerFn(getTenDelayStats);
   const fetchGroups = useServerFn(getGroupDelayStats);
 
-  const key = lastUpdate?.toISOString() ?? "base";
+
+  const key = `${location}-${lastUpdate?.toISOString() ?? "base"}`;
 
   const statsQuery = useQuery({
     queryKey: ["palpite", "stats", key],
-    queryFn: () => fetchStats({}),
+    queryFn: () => fetchStats({ data: { location } }),
     staleTime: 0,
     gcTime: 0,
   });
   const tensQuery = useQuery({
     queryKey: ["palpite", "tens", key],
-    queryFn: () => fetchTens({}),
+    queryFn: () => fetchTens({ data: { location } }),
     staleTime: 0,
     gcTime: 0,
   });
   const groupsQuery = useQuery({
     queryKey: ["palpite", "groups", key],
-    queryFn: () => fetchGroups({}),
+    queryFn: () => fetchGroups({ data: { location } }),
     staleTime: 0,
     gcTime: 0,
   });
@@ -70,14 +72,25 @@ function PalpitePage() {
     <ManagementLayout currentPageName="Palpite do Dia">
       <div className="space-y-6">
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-yellow-500" /> Palpites gerados dos resultados reais
-            </CardTitle>
-            <CardDescription>
-              Cálculo automático a cada novo resultado — sem intervenção humana.
-            </CardDescription>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-yellow-500" /> Palpites gerados dos resultados reais
+              </CardTitle>
+              <CardDescription>
+                Cálculo automático a cada novo resultado — sem intervenção humana.
+              </CardDescription>
+            </div>
+            <select 
+              className="h-9 rounded-md border border-input bg-background px-3 text-xs font-bold"
+              value={location}
+              onChange={(e) => setLocation(e.target.value as any)}
+            >
+              <option value="rio">Rio</option>
+              <option value="capital">Capital</option>
+            </select>
           </CardHeader>
+
           <CardContent className="grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
             {topTens.length === 0 && (
               <p className="text-sm text-muted-foreground">Aguardando resultados...</p>
@@ -156,7 +169,7 @@ function PalpitePage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {DRAW_SCHEDULE.map((slot) => {
+            {(location === 'rio' ? DRAW_SCHEDULE_RIO : DRAW_SCHEDULE_CAPITAL).map((slot) => {
               const info = (bySchedule as any)[slot.timeType];
               const animal = info ? getAnimalByGroup(info.group) : undefined;
               return (
