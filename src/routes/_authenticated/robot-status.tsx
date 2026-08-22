@@ -19,6 +19,7 @@ import {
   Activity,
   ArrowLeft,
   Info,
+  AlertCircle,
   Timer,
   Database,
   Percent,
