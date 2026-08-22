@@ -10,7 +10,7 @@ export function useDrawNotifications(location: 'rio' | 'capital') {
   useEffect(() => {
     const checkNotification = () => {
       const nextDraw = getNextDraw(location);
-      if (!nextDraw) return;
+      if (!nextDraw || !nextDraw.timeValue) return;
 
       const now = new Date();
       const brasiliaTimeStr = new Intl.DateTimeFormat('pt-BR', {
@@ -20,12 +20,20 @@ export function useDrawNotifications(location: 'rio' | 'capital') {
         hour12: false
       }).format(now);
 
-      const [nowH, nowM] = brasiliaTimeStr.split(":").map(Number);
-      const [drawH, drawM] = nextDraw.timeValue.split(":").map(Number);
+      const nowParts = brasiliaTimeStr.split(":").map(Number);
+      const drawParts = nextDraw.timeValue.split(":").map(Number);
+      
+      const nowH = nowParts[0] ?? 0;
+      const nowM = nowParts[1] ?? 0;
+      const drawH = drawParts[0] ?? 0;
+      const drawM = drawParts[1] ?? 0;
 
       const nowMinutes = nowH * 60 + nowM;
       const drawMinutes = drawH * 60 + drawM;
-      const diff = drawMinutes - nowMinutes;
+      let diff = drawMinutes - nowMinutes;
+
+      // Se diff for negativo, é porque o sorteio é amanhã (ex: agora 23:00, sorteio 09:00)
+      if (diff < 0) return;
 
       // Notify if within 5 minutes of the draw
       const notificationKey = `${nextDraw.timeType}-${nextDraw.timeValue}-${nextDraw.date.toDateString()}`;
