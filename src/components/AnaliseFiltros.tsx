@@ -382,7 +382,7 @@ export function AnaliseFiltros({ initialLocation = 'rio' }: { initialLocation?: 
             </span>
           ) : (
             <span className="text-[10px] font-bold uppercase tracking-widest text-white/20">
-              Dados zerados — ative a busca para processar os resultados
+              Aguardando pesquisa — digite um número, bicho ou grupo para analisar
             </span>
           )}
         </label>
