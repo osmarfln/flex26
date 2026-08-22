@@ -544,8 +544,8 @@ function EstatisticasPage() {
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'puxadas' ? 'bg-emerald-500 text-white' : 'bg-emerald-500/10 text-emerald-400'}`}>
                    <Network className="w-6 h-6" />
                 </div>
-                 <h3 className="text-xl font-black italic uppercase">Puxadas IA</h3>
-                 <p className="text-sm text-white/40 font-medium leading-snug">Probabilidade condicional (P(B|A)) baseada em 1000 resultados reais.</p>
+                  <h3 className="text-xl font-black italic uppercase">Puxadas IA</h3>
+                  <p className="text-sm text-white/40 font-medium leading-snug">Probabilidade baseada na Tabela Tradicional e em 1000 resultados reais.</p>
              </Card>
 
              <Card 

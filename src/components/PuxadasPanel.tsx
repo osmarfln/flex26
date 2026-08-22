@@ -6,7 +6,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell,
 } from "recharts";
 
-interface PuxadaTarget { id: string; name: string; icon: string; count: number }
+interface PuxadaTarget { id: string; name: string; icon: string; count: number; isTraditional?: boolean }
 interface PuxadaRow {
   groupId: string;
   name: string;
@@ -69,9 +69,9 @@ export function PuxadasPanel({ data, loading }: { data?: PuxadasData | null; loa
         <div className="flex items-center gap-3">
           <Network className="w-6 h-6 text-primary" />
           <div>
-            <h2 className="text-2xl font-black italic uppercase">Tabela de Puxadas</h2>
+            <h2 className="text-2xl font-black italic uppercase">Tabela de Puxadas Tradicional</h2>
             <p className="text-xs text-white/40 font-medium">
-              O que cada bicho puxa e com que frequência a puxada se confirmou no horário seguinte.
+              O que cada bicho puxa seguindo a logística tradicional cruzada com estatísticas reais.
             </p>
           </div>
         </div>
@@ -116,8 +116,12 @@ export function PuxadasPanel({ data, loading }: { data?: PuxadasData | null; loa
           </div>
 
           <div className="flex flex-wrap gap-2">
-            {current.puxa.map((t) => (
-              <Badge key={t.id + t.name} variant="outline" className="border-white/10 bg-white/5 text-white/70 font-bold">
+            {current.byTarget.map((t) => (
+              <Badge 
+                key={t.id + t.name} 
+                variant="outline" 
+                className={`border-white/10 font-bold ${t.isTraditional ? 'bg-primary/20 text-primary border-primary/30' : 'bg-white/5 text-white/70'}`}
+              >
                 {t.icon} {t.id} {t.name}
               </Badge>
             ))}
