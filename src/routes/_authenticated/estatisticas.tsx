@@ -145,7 +145,7 @@ function EstatisticasPage() {
       setLastSync({ at: new Date(), ms: start ? performance.now() - start : 0 });
       setSyncMessage(
         res?.ok
-          ? `Dados validados e recalculados (${res.synced ?? 0} registros verificados).`
+          ? `Dados validados e logística atualizada (${res.synced ?? 0} registros verificados).`
           : `Falha na sincronização: ${res?.error ?? "erro desconhecido"}`,
       );
     },
