@@ -76,7 +76,7 @@ export const getScheduleSyncMatrix = createServerFn({ method: "GET" })
           const capMap: Record<string, string> = {
             'LCAP_09': 'L-09', 'LCAP_10': 'L-10', 'LCAP_11': 'L-11',
             'PTSP_13': 'L-13', 'LCAP_13': 'L-13', 'CAP_14': 'L-14', 'LCAP_14': 'L-14',
-            'BAND_15': 'L-15', 'LCAP_15': 'L-15', 'LCAP_16': 'L-16', 
+            'PTSP_15': 'L-15', 'LCAP_15': 'L-15', 'LCAP_16': 'L-16', 
             'CAP_18': 'L-18', 'LCAP_18': 'L-18', 'LCAP_19': 'L-19', 'LCAP_20': 'L-20', 
             'PTNSP_20': 'L-20', 'LCAP_2230': 'L-22'
           };

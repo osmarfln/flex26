@@ -261,7 +261,7 @@ function Index() {
                 <p className="text-white/40 font-bold text-xs uppercase tracking-widest mt-1">
                   {firstName ? `É um prazer ter você aqui, ${firstName}. Fique à vontade.` : "Seja bem-vindo ao nosso espaço, fique à vontade."}
                 </p>
-                <p className="text-[10px] text-primary/40 font-black uppercase tracking-[0.3em] mt-2 border-t border-white/5 pt-2">Resultados diários automatizados via robô automatizado sem intervenção humana</p>
+                <p className="text-[10px] text-primary/40 font-black uppercase tracking-[0.3em] mt-2 border-t border-white/5 pt-2">Resultados diários automatizados Rio e Capital via robô automatizado sem intervenção humana</p>
 
 
 
@@ -271,7 +271,7 @@ function Index() {
             </motion.div>
 
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-4 italic">Resultados {location === 'rio' ? 'Rio' : 'Capital'}</h1>
-            <p className="text-white/40 text-lg mb-8 font-medium italic">Resultados diários automatizados Rio e Capital via robô automatizado sem intervenção humana</p>
+            <p className="text-white/40 text-lg mb-8 font-medium italic">Resultados diários automatizados Rio e Capital via robô automatizado sem intervenção humana. A plataforma só recebe resultados RIO E CAPITAL.</p>
 
 
 
@@ -323,7 +323,7 @@ function Index() {
                 <div className="flex-1">
                   <p className="text-[10px] text-white/40 font-bold uppercase tracking-wider">Localidade</p>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-bold">{location === 'rio' ? 'Rio de Janeiro' : 'Capital (Floripa)'}</span>
+                    <span className="text-sm font-bold">{location === 'rio' ? 'Rio de Janeiro' : 'Capital (Florianópolis)'}</span>
                     <ChevronDown className="w-4 h-4 text-white/40" />
                   </div>
                 </div>

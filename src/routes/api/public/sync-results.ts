@@ -111,7 +111,6 @@ export const Route = createFileRoute('/api/public/sync-results')({
                     'LCAP_14': { type: 'L-14', value: '14:00' },
                     'CAP_14':  { type: 'L-14', value: '14:00' },
                     'LCAP_15': { type: 'L-15', value: '15:00' },
-                    'BAND_15': { type: 'L-15', value: '15:00' },
                     'PTSP_15': { type: 'L-15', value: '15:00' }, // Added PTSP_15
                     'LCAP_16': { type: 'L-16', value: '16:00' },
                     'LCAP_18': { type: 'L-18', value: '18:00' },
@@ -151,7 +150,7 @@ export const Route = createFileRoute('/api/public/sync-results')({
                     results: results,
                     animal: res.prize_1_bicho,
                     animal_group: groupStr,
-                    location: location,
+                    location: location === 'capital' || location === 'rio' ? location : 'rio',
                     created_at: new Date().toISOString()
                   }, { onConflict: 'date,time_type,location' });
 
@@ -209,7 +208,6 @@ export const Route = createFileRoute('/api/public/sync-results')({
                           'LCAP_14': { type: 'L-14', value: '14:00' },
                           'CAP_14':  { type: 'L-14', value: '14:00' },
                           'LCAP_15': { type: 'L-15', value: '15:00' },
-                          'BAND_15': { type: 'L-15', value: '15:00' },
                           'PTSP_15': { type: 'L-15', value: '15:00' }, // Added PTSP_15
                           'LCAP_16': { type: 'L-16', value: '16:00' },
                           'LCAP_18': { type: 'L-18', value: '18:00' },
@@ -248,7 +246,7 @@ export const Route = createFileRoute('/api/public/sync-results')({
                           results: results,
                           animal: res.prize_1_bicho,
                           animal_group: groupStr,
-                          location: loc
+                          location: loc === 'capital' || loc === 'rio' ? loc : 'rio'
                         }, { onConflict: 'date,time_type,location' });
                       
                       totalSynced++;
