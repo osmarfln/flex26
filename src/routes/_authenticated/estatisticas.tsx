@@ -1044,8 +1044,11 @@ function EstatisticasPage() {
                                       className={`flex flex-col items-center rounded border border-white/5 bg-white/[0.02] py-1 px-1 transition-all ${d.hitInFirstPrize && d.delay === 0 ? 'bg-red-500/20 border-red-500/30' : ''}`}
                                     >
                                       <span className={`text-[11px] font-black ${d.hitInFirstPrize && d.delay === 0 ? 'text-red-500' : 'text-white'}`}>{d.dezena}</span>
-                                      <span className="text-[7px] font-bold text-emerald-500">{d.freq}x</span>
-                                      <span className={`text-[7px] font-bold ${d.delay === 0 ? 'text-emerald-500' : 'text-white/30'}`}>atr {d.delay}</span>
+                                      <div className="flex flex-col items-center gap-0.5 my-0.5">
+                                        <span className="text-[7px] font-bold text-emerald-500">{d.freq}x</span>
+                                        <span className={`text-[7px] font-bold ${d.delay === 0 ? 'text-emerald-500' : 'text-white/30'}`}>{d.delay} conc.</span>
+                                        <span className={`text-[7px] font-bold ${d.dailyDelay > 2 ? 'text-red-400' : 'text-white/20'}`}>{d.dailyDelay}h hoje</span>
+                                      </div>
                                       <div className="w-full mt-1">
                                         <MiniSparkline data={d.history} color={d.hitInFirstPrize && d.delay === 0 ? '#EF4444' : colorClass.includes('emerald') ? '#10B981' : colorClass.includes('yellow') ? '#EAB308' : '#3B82F6'} />
                                       </div>
