@@ -173,6 +173,7 @@ export function AnaliseFiltros({ initialLocation = 'rio' }: { initialLocation?: 
 
   const currentQuery = useQuery({
     queryKey: ["analise-filtro", safeStart, safeEnd, times, location],
+    enabled: term.trim().length > 0 || datesValid,
     queryFn: () =>
       fetchRange({ data: { start: safeStart, end: safeEnd, timeTypes: times, limit: 2000, location } }),
     staleTime: 0,
@@ -181,7 +182,7 @@ export function AnaliseFiltros({ initialLocation = 'rio' }: { initialLocation?: 
 
   const previousQuery = useQuery({
     queryKey: ["analise-filtro-prev", prevStart, prevEnd, times, location],
-    enabled: compare,
+    enabled: compare && (term.trim().length > 0 || datesValid),
     queryFn: () =>
       fetchRange({ data: { start: prevStart, end: prevEnd, timeTypes: times, limit: 2000, location } }),
     staleTime: 0,
