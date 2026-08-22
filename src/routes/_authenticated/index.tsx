@@ -563,8 +563,10 @@ function Index() {
                     <div className="text-4xl mb-3">{ANIMAL_GROUPS.find(a => a.id === data.groupId)?.icon}</div>
                     <h3 className="text-sm font-black uppercase italic tracking-tighter group-hover:text-primary transition-colors">{data.animal}</h3>
                     <div className="mt-4 flex flex-col items-center">
-                       <span className="text-xl font-black text-primary leading-none">{data.currentDelay}</span>
-                       <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest mt-1">Dias de atraso</span>
+                       <span className={`text-xl font-black ${data.dailyDelay > 2 ? 'text-red-400' : 'text-primary'} leading-none`}>{data.currentDelay}</span>
+                       <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest mt-1">
+                         Atraso ({data.dailyDelay}h hoje)
+                       </span>
                     </div>
                   </div>
                 </motion.div>
@@ -627,6 +629,7 @@ function Index() {
                     <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40">Animal</th>
                     <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40 text-center">Atraso</th>
                     <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40 text-center">Índice</th>
+                    <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40 text-center">Atraso Hoje</th>
                     <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40">Classificação</th>
                   </tr>
                 </thead>
@@ -664,10 +667,15 @@ function Index() {
                           <td className="p-4 text-center font-mono text-xs text-white/40">
                             {item.relativeIndex?.toFixed(2)}
                           </td>
+                          <td className="p-4 text-center">
+                            <span className={`text-[10px] font-black uppercase ${item.dailyDelay > 2 ? 'text-red-400' : 'text-white/40'}`}>
+                              {item.dailyDelay}h
+                            </span>
+                          </td>
                           <td className="p-4">
                             <span className={`text-[10px] font-black uppercase px-2 py-1 rounded ${
-                              item.classification === 'Crítico' ? 'bg-orange-500/10 text-orange-500' : 
-                              item.classification === 'Elevado' ? 'bg-primary/10 text-primary' : 
+                              item.classification === 'Muito acima da média' ? 'bg-red-500/10 text-red-500' : 
+                              item.classification === 'Atraso elevado' ? 'bg-primary/10 text-primary' : 
                               'bg-emerald-500/10 text-emerald-500'
                             }`}>
                               {item.classification}

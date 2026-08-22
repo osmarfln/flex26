@@ -366,8 +366,8 @@ function EstatisticasPage() {
                   <BarChart3 className="w-8 h-8 text-primary" />
                 </div>
                 <div>
-                  <h1 className="text-4xl font-black italic tracking-tighter uppercase">Análise Rio e Capital</h1>
-                  <p className="text-white/40 font-bold text-xs uppercase tracking-widest mt-1">Dezena em atraso Rio e Capital baseada em resultados diários e históricos</p>
+                  <h1 className="text-4xl font-black italic tracking-tighter uppercase">Análise {location === 'rio' ? 'Rio' : 'Capital'}</h1>
+                  <p className="text-white/40 font-bold text-xs uppercase tracking-widest mt-1">Monitoramento inteligente baseado em dados históricos e diários da {location === 'rio' ? 'loteria Rio' : 'loteria Capital'}</p>
                 </div>
               </div>
               <p className="max-w-2xl text-white/60 text-lg leading-relaxed">
@@ -1009,12 +1009,14 @@ function EstatisticasPage() {
 
                             <div className="grid grid-cols-2 gap-y-3 gap-x-4 mb-6">
                               <div className="flex flex-col">
-                                <span className="text-[8px] font-bold text-white/20 uppercase">Atraso Atual</span>
+                                <span className="text-[8px] font-bold text-white/20 uppercase">Atraso Concursos</span>
                                 <span className="text-sm font-black text-white">{item.currentDelay}</span>
                               </div>
                               <div className="flex flex-col">
-                                <span className="text-[8px] font-bold text-white/20 uppercase">Índice Atraso</span>
-                                <span className={`text-sm font-black ${colorClass}`}>{item.relativeIndex}</span>
+                                <span className="text-[8px] font-bold text-white/20 uppercase">Atraso Diário</span>
+                                <span className={`text-sm font-black ${item.dailyDelay > 2 ? 'text-red-400' : 'text-white/60'}`}>
+                                  {item.dailyDelay} <span className="text-[8px] text-white/30">h</span>
+                                </span>
                               </div>
                               <div className="flex flex-col">
                                 <span className="text-[8px] font-bold text-white/20 uppercase">Regularidade</span>
@@ -1042,8 +1044,11 @@ function EstatisticasPage() {
                                       className={`flex flex-col items-center rounded border border-white/5 bg-white/[0.02] py-1 px-1 transition-all ${d.hitInFirstPrize && d.delay === 0 ? 'bg-red-500/20 border-red-500/30' : ''}`}
                                     >
                                       <span className={`text-[11px] font-black ${d.hitInFirstPrize && d.delay === 0 ? 'text-red-500' : 'text-white'}`}>{d.dezena}</span>
-                                      <span className="text-[7px] font-bold text-emerald-500">{d.freq}x</span>
-                                      <span className={`text-[7px] font-bold ${d.delay === 0 ? 'text-emerald-500' : 'text-white/30'}`}>atr {d.delay}</span>
+                                      <div className="flex flex-col items-center gap-0.5 my-0.5">
+                                        <span className="text-[7px] font-bold text-emerald-500">{d.freq}x</span>
+                                        <span className={`text-[7px] font-bold ${d.delay === 0 ? 'text-emerald-500' : 'text-white/30'}`}>{d.delay} conc.</span>
+                                        <span className={`text-[7px] font-bold ${d.dailyDelay > 2 ? 'text-red-400' : 'text-white/20'}`}>{d.dailyDelay}h hoje</span>
+                                      </div>
                                       <div className="w-full mt-1">
                                         <MiniSparkline data={d.history} color={d.hitInFirstPrize && d.delay === 0 ? '#EF4444' : colorClass.includes('emerald') ? '#10B981' : colorClass.includes('yellow') ? '#EAB308' : '#3B82F6'} />
                                       </div>
@@ -1334,7 +1339,7 @@ function EstatisticasPage() {
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
                       <Sparkles className="w-6 h-6 text-yellow-500" />
-                      <h2 className="text-2xl font-black italic uppercase">Análise Premium de Atrasos</h2>
+                      <h2 className="text-2xl font-black italic uppercase">Monitoramento Inteligente {location === 'rio' ? 'Rio' : 'Capital'}</h2>
                     </div>
                     <Badge variant="outline" className="border-yellow-500/20 text-yellow-500 bg-yellow-500/5 px-4 py-2 font-black uppercase text-[10px] tracking-widest">
                       Inteligência aplicada aos resultados históricos
@@ -1442,7 +1447,7 @@ function EstatisticasPage() {
                          <div className="space-y-6">
                             <div className="flex items-center gap-2 mb-2">
                                <div className="w-1.5 h-6 bg-blue-500 rounded-full" />
-                               <h3 className="text-xl font-black italic uppercase">Milhar Destaque</h3>
+                               <h3 className="text-xl font-black italic uppercase">Milhar Destaque {location === 'rio' ? 'Rio' : 'Capital'}</h3>
                             </div>
                             <Card className="dashboard-card p-8 bg-gradient-to-br from-primary/10 to-transparent border-primary/20 flex flex-col items-center justify-center text-center">
                                <Sparkles className="w-12 h-12 text-primary mb-6 animate-pulse" />
