@@ -520,49 +520,75 @@ export function AnaliseFiltros({ initialLocation = 'rio' }: { initialLocation?: 
           </div>
 
           <div className="mt-6 grid gap-6 lg:grid-cols-2">
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-              <p className="mb-3 text-[10px] font-black uppercase tracking-widest text-white/40">
-                Sorteios por horário {compare ? "(atual x anterior)" : ""}
-              </p>
-              <div className="h-56">
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-4 md:p-6 shadow-xl">
+              <div className="flex items-center justify-between mb-6">
+                <p className="text-[10px] font-black uppercase tracking-widest text-white/40">
+                  Sorteios por horário {compare ? "(atual x anterior)" : ""}
+                </p>
+                <div className="flex gap-2">
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-2 h-2 rounded-full bg-primary" />
+                    <span className="text-[8px] font-black text-white/40 uppercase">Atual</span>
+                  </div>
+                  {compare && (
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-2 h-2 rounded-full bg-white/20" />
+                      <span className="text-[8px] font-black text-white/40 uppercase">Anterior</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={byTime}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
-                    <XAxis dataKey="name" tick={{ fontSize: 11, fill: "rgba(255,255,255,0.5)" }} />
-                    <YAxis tick={{ fontSize: 11, fill: "rgba(255,255,255,0.5)" }} allowDecimals={false} />
-                    <Tooltip {...CHART_TOOLTIP} />
-                    <Bar dataKey="atual" fill="#EAB308" radius={[6, 6, 0, 0]} />
-                    {compare && <Bar dataKey="anterior" fill="rgba(255,255,255,0.25)" radius={[6, 6, 0, 0]} />}
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" vertical={false} />
+                    <XAxis 
+                      dataKey="name" 
+                      tick={{ fontSize: 10, fill: "rgba(255,255,255,0.4)", fontWeight: "bold" }} 
+                      axisLine={false}
+                      tickLine={false}
+                    />
+                    <YAxis 
+                      tick={{ fontSize: 10, fill: "rgba(255,255,255,0.4)" }} 
+                      allowDecimals={false} 
+                      axisLine={false}
+                      tickLine={false}
+                    />
+                    <Tooltip {...CHART_TOOLTIP} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
+                    <Bar dataKey="atual" fill="#EAB308" radius={[4, 4, 0, 0]} barSize={compare ? 20 : 35} />
+                    {compare && <Bar dataKey="anterior" fill="rgba(255,255,255,0.2)" radius={[4, 4, 0, 0]} barSize={20} />}
                   </BarChart>
                 </ResponsiveContainer>
               </div>
               {compare && (
-                <p className="mt-2 text-[10px] font-bold uppercase text-white/40">
+                <p className="mt-4 text-[9px] font-bold uppercase text-white/30 italic text-center border-t border-white/5 pt-3">
                   Período anterior: {prevStart} → {prevEnd}
                 </p>
               )}
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-              <p className="mb-2 text-[10px] font-black uppercase tracking-widest text-white/40">
-                Resultados filtrados ({hits.length} {query.kind === "none" ? "sorteios" : "aparições"})
-              </p>
-              {query.kind !== "none" && (
-                <div className="mb-3 flex flex-wrap gap-1.5">
-                  {byPosition.map((p) => (
-                    <span
-                      key={p.pos}
-                      className={`rounded-lg border px-2 py-1 text-[10px] font-black ${
-                        p.pos === 1
-                          ? "border-red-500/40 bg-red-500/10 text-red-400"
-                          : "border-white/10 bg-white/5 text-white/60"
-                      }`}
-                    >
-                      {p.pos}º · {p.count}x
-                    </span>
-                  ))}
-                </div>
-              )}
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-4 md:p-6 shadow-xl">
+              <div className="flex items-center justify-between mb-4">
+                <p className="text-[10px] font-black uppercase tracking-widest text-white/40">
+                  Resultados filtrados ({hits.length} {query.kind === "none" ? "sorteios" : "aparições"})
+                </p>
+                {query.kind !== "none" && (
+                  <div className="flex flex-wrap gap-1">
+                    {byPosition.map((p) => (
+                      <span
+                        key={p.pos}
+                        className={`rounded-md border px-1.5 py-0.5 text-[8px] font-black ${
+                          p.pos === 1
+                            ? "border-red-500/40 bg-red-500/10 text-red-400"
+                            : "border-white/10 bg-white/5 text-white/40"
+                        }`}
+                      >
+                        {p.pos}º:{p.count}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
               <div className="max-h-56 overflow-auto pr-1">
                 {hits.length === 0 ? (
                   <p className="py-8 text-center text-sm font-bold text-white/40">
