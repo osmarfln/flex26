@@ -8,7 +8,6 @@ const NAME_TO_ID: Record<string, string> = Object.fromEntries(
   ANIMAL_GROUPS.map((a) => [a.name.toLowerCase().replace(/á/g, 'a').replace(/é/g, 'e').replace(/í/g, 'i').replace(/ó/g, 'o').replace(/ú/g, 'u').replace(/ç/g, 'c'), a.id]),
 );
 
-
 const RAW: Record<string, string[]> = {
   "01": ["Vaca", "Águia", "Galo", "Pavão", "Peru"],
   "02": ["Coelho", "Avestruz", "Galo", "Pavão", "Peru"],
@@ -35,11 +34,7 @@ const RAW: Record<string, string[]> = {
   "23": ["Leão", "Elefante", "Camelo", "Cabra"],
   "24": ["Peru", "Burro", "Cabra"],
   "25": ["Touro", "Avestruz", "Carneiro"],
-
-
 };
-
-
 
 export interface PuxadaEntry {
   groupId: string;
@@ -58,7 +53,6 @@ export const PUXADAS: PuxadaEntry[] = ANIMAL_GROUPS.map((a) => ({
     return { id, name: n, icon: id ? ANIMAL_GROUPS.find((g) => g.id === id)!.icon : "" };
   }),
 }));
-
 
 export const PUXADAS_MAP: Record<string, string[]> = Object.fromEntries(
   PUXADAS.map((p) => [p.groupId, p.puxa.map((x) => x.id).filter(Boolean)]),
