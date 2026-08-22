@@ -668,7 +668,7 @@ function EstatisticasPage() {
                                 paddingAngle={5}
                                 dataKey="value"
                                 stroke="none"
-                                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                                label={({ name, percent }) => `${name} ${(percent ? percent * 100 : 0).toFixed(0)}%`}
                                 labelLine={false}
                               >
                                 {Array.from({ length: 25 }).map((_, index) => (
