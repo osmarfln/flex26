@@ -624,6 +624,7 @@ function EstatisticasPage() {
                             <tr className="border-b border-white/5 bg-white/[0.02]">
                               <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40">Pos</th>
                               <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40">Bicho</th>
+                              <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40 text-center">Atraso Diário</th>
                               <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40">Última</th>
                               <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40 text-center">Atraso</th>
                               <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/40 text-center">Índice</th>

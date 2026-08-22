@@ -148,10 +148,26 @@ export const getStats = createServerFn({ method: "GET" })
         const idx = lastIndexByGroup[group];
         const days = idx === undefined ? results.length : idx;
         const animalInfo = ANIMAL_GROUPS_DATA[group];
+        
+        // Atraso diário para grupos
+        let dailyDelay = 0;
+        if (results.length > 0 && results[0]) {
+          const lastDate = results[0].date;
+          let dDelay = 0;
+          for (const res of results) {
+            if (!res || res.date !== lastDate) break;
+            const hit = res.results?.slice(0, 5).some(p => tenToGroup(p.slice(-2)) === group);
+            if (hit) break;
+            dDelay++;
+          }
+          dailyDelay = dDelay;
+        }
+
         return {
           group,
           animal: animalInfo ? animalInfo.name : "Desconhecido",
           days,
+          dailyDelay,
           lastSeen: formatDate(lastDateByGroup[group])
         };
       })
