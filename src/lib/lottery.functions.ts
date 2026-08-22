@@ -928,10 +928,14 @@ export const getPuxadasStats = createServerFn({ method: "GET" })
 
     const { data: rawRows, error } = await query
       .order("date", { ascending: false })
-      .limit(600);
-
+      .limit(1000);
 
     if (error) throw error;
+    if (!rawRows || rawRows.length === 0) return { table: [], totalDraws: 0, period: null, schedules: [] };
+
+    const results = sortDrawsDesc(rawRows as any[]);
+    const statisticalPuxadas = calculateStatisticalPuxadas(results);
+
 
     const schedules = data.location === 'capital' 
       ? ["L-09", "L-10", "L-11", "L-13", "L-14", "L-15", "L-16", "L-18", "L-19", "L-20", "L-22"]
