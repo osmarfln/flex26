@@ -657,9 +657,11 @@ function EstatisticasPage() {
                                       groupCounts[animal.name] = (groupCounts[animal.name] || 0) + 1;
                                     }
                                   });
-                                  return Object.entries(groupCounts)
+                                  const data = Object.entries(groupCounts)
                                     .map(([name, value]) => ({ name, value }))
                                     .sort((a, b) => b.value - a.value);
+                                  
+                                  return data.length > 0 ? data : [{ name: 'Sem Dados', value: 1 }];
                                 })()}
                                 cx="50%"
                                 cy="45%"
@@ -669,7 +671,7 @@ function EstatisticasPage() {
                                 dataKey="value"
                                 stroke="none"
                                 label={({ name, percent }) => `${name} ${(percent ? percent * 100 : 0).toFixed(0)}%`}
-                                labelLine={false}
+                                labelLine={true}
                               >
                                 {Array.from({ length: 25 }).map((_, index) => (
                                   <Cell key={`cell-${index}`} fill={`hsl(var(--primary) / ${1 - (index * 0.04)})`} />
