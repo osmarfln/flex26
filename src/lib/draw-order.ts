@@ -47,7 +47,7 @@ export const DRAW_SCHEDULE_RIO: { timeType: string; timeValue: string; label: st
   { timeType: "PT", timeValue: "14:20", label: "PT" },
   { timeType: "PTV", timeValue: "16:20", label: "PTV" },
   { timeType: "PTN", timeValue: "18:20", label: "PTN" },
-  { timeType: "COR", timeValue: "21:20", label: "COROADO" },
+  { timeType: "COR", timeValue: "21:30", label: "COROADO" },
 ];
 
 /** Legado para manter compatibilidade */
@@ -71,4 +71,43 @@ export const DRAW_SCHEDULE_CAPITAL: { timeType: string; timeValue: string; label
 /** Data de hoje no fuso de Brasília (UTC-3) no formato YYYY-MM-DD. */
 export function brasiliaDateISO(d: Date = new Date()): string {
   return new Date(d.getTime() - 3 * 60 * 60 * 1000).toISOString().split("T")[0]!;
+}
+
+/** Obtém a data e hora atual em Brasília (UTC-3) */
+export function getBrasiliaTime(): Date {
+  const now = new Date();
+  return new Date(now.getTime() - 3 * 60 * 60 * 1000);
+}
+
+/** Calcula o próximo sorteio baseado na localização e hora atual de Brasília */
+export function getNextDraw(location: 'rio' | 'capital' = 'rio') {
+  const now = new Date();
+  // Horário atual em Brasília para comparação (HH:mm)
+  const brasilia = new Intl.DateTimeFormat('pt-BR', {
+    timeZone: 'America/Sao_Paulo',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  }).format(now);
+  
+  const schedule = location === 'capital' ? DRAW_SCHEDULE_CAPITAL : DRAW_SCHEDULE_RIO;
+  
+  // Encontra o primeiro horário que ainda não passou
+  const next = schedule.find(s => s.timeValue > brasilia);
+  
+  if (next) {
+    return {
+      ...next,
+      date: new Date() // Hoje
+    };
+  }
+  
+  // Se todos passaram, o próximo é o primeiro de amanhã
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  
+  return {
+    ...schedule[0],
+    date: tomorrow
+  };
 }
