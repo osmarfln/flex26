@@ -21,6 +21,7 @@ export type Database = {
           created_at: string | null
           date: string
           id: string
+          location: Database["public"]["Enums"]["lottery_location"] | null
           results: string[]
           time_type: string
           time_value: string | null
@@ -31,6 +32,7 @@ export type Database = {
           created_at?: string | null
           date: string
           id?: string
+          location?: Database["public"]["Enums"]["lottery_location"] | null
           results: string[]
           time_type: string
           time_value?: string | null
@@ -41,6 +43,7 @@ export type Database = {
           created_at?: string | null
           date?: string
           id?: string
+          location?: Database["public"]["Enums"]["lottery_location"] | null
           results?: string[]
           time_type?: string
           time_value?: string | null
@@ -90,6 +93,7 @@ export type Database = {
           error_message: string | null
           finished_at: string | null
           id: string
+          location: Database["public"]["Enums"]["lottery_location"] | null
           records_synced: number | null
           started_at: string | null
           status: string
@@ -100,6 +104,7 @@ export type Database = {
           error_message?: string | null
           finished_at?: string | null
           id?: string
+          location?: Database["public"]["Enums"]["lottery_location"] | null
           records_synced?: number | null
           started_at?: string | null
           status: string
@@ -110,6 +115,7 @@ export type Database = {
           error_message?: string | null
           finished_at?: string | null
           id?: string
+          location?: Database["public"]["Enums"]["lottery_location"] | null
           records_synced?: number | null
           started_at?: string | null
           status?: string
@@ -186,6 +192,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "user"
+      lottery_location: "rio" | "capital"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -314,6 +321,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user"],
+      lottery_location: ["rio", "capital"],
     },
   },
 } as const
