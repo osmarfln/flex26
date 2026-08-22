@@ -645,8 +645,8 @@ function EstatisticasPage() {
                           <PieChart className="w-4 h-4 text-primary" />
                           Distribuição por Grupo (Top 20 Dezenas)
                         </h3>
-                        <div className="h-[300px] w-full">
-                          <ResponsiveContainer width="100%" height="100%">
+                        <div className="h-[300px] w-full min-h-[300px]">
+                          <ResponsiveContainer width="100%" height="100%" minHeight={300}>
                             <PieChart>
                               <Pie
                                 data={(() => {
@@ -657,22 +657,32 @@ function EstatisticasPage() {
                                       groupCounts[animal.name] = (groupCounts[animal.name] || 0) + 1;
                                     }
                                   });
-                                  return Object.entries(groupCounts).map(([name, value]) => ({ name, value }));
+                                  return Object.entries(groupCounts)
+                                    .map(([name, value]) => ({ name, value }))
+                                    .sort((a, b) => b.value - a.value);
                                 })()}
                                 cx="50%"
-                                cy="50%"
+                                cy="45%"
                                 innerRadius={60}
                                 outerRadius={80}
                                 paddingAngle={5}
                                 dataKey="value"
                                 stroke="none"
+                                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                                labelLine={false}
                               >
                                 {Array.from({ length: 25 }).map((_, index) => (
-                                  <Cell key={`cell-${index}`} fill={`hsl(var(--primary) / ${1 - (index * 0.05)})`} />
+                                  <Cell key={`cell-${index}`} fill={`hsl(var(--primary) / ${1 - (index * 0.04)})`} />
                                 ))}
                               </Pie>
                               <Tooltip 
                                 contentStyle={{ backgroundColor: '#0D121F', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
+                              />
+                              <Legend 
+                                verticalAlign="bottom" 
+                                height={36} 
+                                iconType="circle"
+                                wrapperStyle={{ fontSize: '10px', textTransform: 'uppercase', fontWeight: 'bold', paddingTop: '20px' }}
                               />
                             </PieChart>
                           </ResponsiveContainer>
