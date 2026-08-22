@@ -151,7 +151,7 @@ export const Route = createFileRoute('/api/public/sync-results')({
                 totalSynced++;
               }
               offset += batchSize;
-              if (offset > 5000) break; 
+              if (offset > 100000) break; // Limite de 100k para histórico completo
             }
           } else {
             const locationsToSync = auto ? ['rio', 'capital'] : [location];
