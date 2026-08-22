@@ -307,7 +307,7 @@ function EstatisticasPage() {
         <section className="mb-12 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           <div className="lg:col-span-8">
             <h1 className="text-4xl md:text-5xl lg:text-7xl font-black italic tracking-tighter uppercase mb-4">
-              Monitoramento {location === 'rio' ? 'Rio' : 'Capital'}
+              Monitoramento Inteligente {location === 'rio' ? 'Rio' : 'Capital'}
             </h1>
             <p className="text-white/40 text-lg mb-8 font-medium">Dezena em atraso {location === 'rio' ? 'Rio' : 'Capital'} baseada em resultados diários e históricos</p>
           </div>
@@ -384,8 +384,8 @@ function EstatisticasPage() {
                 </div>
               </div>
               <p className="max-w-2xl text-white/60 text-lg leading-relaxed">
-                Explore nossas ferramentas matemáticas e estatísticas avançadas. 
-                Desenvolvemos algoritmos baseados em tendências históricas para auxiliar na sua tomada de decisão.
+                Explore nossas ferramentas matemáticas e estatísticas avançadas para as loterias <strong>Rio</strong> e <strong>Capital</strong>. 
+                Nossos algoritmos analisam tendências diárias e históricas em tempo real, sem intervenção humana.
               </p>
             </div>
             
@@ -479,7 +479,7 @@ function EstatisticasPage() {
                    <Target className="w-6 h-6" />
                 </div>
                 <h3 className="text-xl font-black italic uppercase mb-2">Dezenas Quentes</h3>
-                <p className="text-sm text-white/40 font-medium leading-snug">As dezenas que mais apareceram nos últimos sorteios do banco de dados.</p>
+                <p className="text-sm text-white/40 font-medium leading-snug">As dezenas com maior recorrência no banco de dados sincronizado (100% Real).</p>
              </Card>
 
              <Card 
