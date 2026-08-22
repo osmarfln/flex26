@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useLotteryRealtime } from "@/hooks/useLotteryRealtime";
 import { AvisoObrigatorio } from "@/components/AvisoObrigatorio";
-import { brasiliaDateISO, TIME_ORDER } from "@/lib/draw-order";
+import { brasiliaDateISO, TIME_ORDER_RIO, TIME_ORDER_CAPITAL } from "@/lib/draw-order";
 
 export const Route = createFileRoute("/_authenticated/calendario")({
   head: () => ({
@@ -46,23 +46,27 @@ function pad(n: number) {
 
 function CalendarioPage() {
   const todayISO = brasiliaDateISO();
+  const [location, setLocation] = useState<'rio' | 'capital'>('rio');
   const [year, setYear] = useState(Number(todayISO.slice(0, 4)));
   const [month, setMonth] = useState(Number(todayISO.slice(5, 7)) - 1);
   const { lastUpdate } = useLotteryRealtime("calendario-db-changes");
+
 
   const start = `${year}-${pad(month + 1)}-01`;
   const lastDay = new Date(year, month + 1, 0).getDate();
   const end = `${year}-${pad(month + 1)}-${pad(lastDay)}`;
 
   const { data, isLoading } = useQuery({
-    queryKey: ["calendario", start, end, lastUpdate?.toISOString()],
+    queryKey: ["calendario", start, end, lastUpdate?.toISOString(), location],
     staleTime: 0,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("lottery_results")
-        .select("date, time_type")
+        .select("date, time_type, location")
+        .eq("location", location)
         .gte("date", start)
         .lte("date", end);
+
       if (error) throw error;
       return data ?? [];
     },
@@ -111,7 +115,15 @@ function CalendarioPage() {
                 {isLoading ? "Carregando..." : `${totalDraws} sorteios sincronizados neste mês`}
               </CardDescription>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-center">
+              <select 
+                className="h-9 rounded-md border border-input bg-background px-3 text-xs font-bold mr-4"
+                value={location}
+                onChange={(e) => setLocation(e.target.value as any)}
+              >
+                <option value="rio">Rio</option>
+                <option value="capital">Capital</option>
+              </select>
               <Button variant="outline" size="icon" onClick={() => shift(-1)} aria-label="Mês anterior">
                 <ChevronLeft className="h-4 w-4" />
               </Button>
@@ -119,6 +131,7 @@ function CalendarioPage() {
                 <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
+
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-7 gap-1 text-center text-xs text-muted-foreground">
@@ -144,7 +157,7 @@ function CalendarioPage() {
                   >
                     <div className="text-xs font-bold">{pad(day)}</div>
                     <div className="mt-1 flex flex-wrap gap-0.5">
-                      {TIME_ORDER.filter((t) => times.includes(t)).map((t) => (
+                      {(location === 'rio' ? TIME_ORDER_RIO : TIME_ORDER_CAPITAL).filter((t) => times.includes(t)).map((t) => (
                         <Badge key={t} variant="secondary" className="px-1 py-0 text-[9px]">
                           {t}
                         </Badge>
