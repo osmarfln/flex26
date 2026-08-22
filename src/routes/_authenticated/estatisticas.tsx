@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ANIMAL_GROUPS, getAnimalByTen } from "@/lib/animals";
-import { ArrowLeft, BarChart3, Calculator, Sparkles, TrendingUp, Zap, Target, BrainCircuit, History, Flame, Clock, LayoutGrid, Hash, Users, Repeat, ArrowLeftRight, FileText, Upload, Calendar, AlertCircle, Database, CheckCircle2, XCircle, Activity, Timer, ChevronRight, Trophy, RefreshCw, Loader2, Network, Info } from "lucide-react";
+import { ArrowLeft, BarChart3, Calculator, Sparkles, TrendingUp, Zap, Target, BrainCircuit, History, Flame, Clock, LayoutGrid, Hash, Users, Repeat, ArrowLeftRight, FileText, Upload, Calendar, AlertCircle, Database, CheckCircle2, XCircle, Activity, Timer, ChevronRight, Trophy, RefreshCw, Loader2, Network, Info, MapPin } from "lucide-react";
 import { CruzDoDia } from "@/components/CruzDoDia";
 import { AvisoObrigatorio } from "@/components/AvisoObrigatorio";
 import { AnaliseFiltros } from "@/components/AnaliseFiltros";
