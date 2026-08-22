@@ -378,6 +378,10 @@ export const getGroupDelayStats = createServerFn({ method: "GET" })
       const positionFreq: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
       let totalFreq = 0;
       
+      const schedules = data.location === 'capital' 
+        ? ["L-09", "L-10", "L-11", "L-13", "L-14", "L-15", "L-16", "L-18", "L-19", "L-20", "L-22"]
+        : ["PPT", "PTM", "PT", "PTV", "PTN", "COR"];
+
       const countGroup = (list: any[]) => list.filter(r => 
         r.results?.slice(0, 5).some((prize: string) => {
           const ten = prize.slice(-2);
@@ -394,6 +398,20 @@ export const getGroupDelayStats = createServerFn({ method: "GET" })
       const prevFreq300 = countGroup(previous300);
       
       const periodComparison = prevFreq300 > 0 ? ((freq300 - prevFreq300) / prevFreq300) * 100 : (freq300 > 0 ? 100 : 0);
+
+      // Atraso diário para grupos (Capital/Rio)
+      let dailyDelay = 0;
+      if (results.length > 0 && results[0]) {
+        const lastDate = results[0].date;
+        let dDelay = 0;
+        for (const res of results) {
+          if (!res || res.date !== lastDate) break;
+          const hit = res.results?.slice(0, 5).some((p: string) => tenToGroup(p.slice(-2)) === groupId);
+          if (hit) break;
+          dDelay++;
+        }
+        dailyDelay = dDelay;
+      }
 
       results.forEach((res: any, index: number) => {
         let foundInThisResult = false;

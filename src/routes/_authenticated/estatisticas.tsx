@@ -366,8 +366,8 @@ function EstatisticasPage() {
                   <BarChart3 className="w-8 h-8 text-primary" />
                 </div>
                 <div>
-                  <h1 className="text-4xl font-black italic tracking-tighter uppercase">Análise Rio e Capital</h1>
-                  <p className="text-white/40 font-bold text-xs uppercase tracking-widest mt-1">Dezena em atraso Rio e Capital baseada em resultados diários e históricos</p>
+                  <h1 className="text-4xl font-black italic tracking-tighter uppercase">Análise {location === 'rio' ? 'Rio' : 'Capital'}</h1>
+                  <p className="text-white/40 font-bold text-xs uppercase tracking-widest mt-1">Monitoramento inteligente baseado em dados históricos e diários da {location === 'rio' ? 'loteria Rio' : 'loteria Capital'}</p>
                 </div>
               </div>
               <p className="max-w-2xl text-white/60 text-lg leading-relaxed">
