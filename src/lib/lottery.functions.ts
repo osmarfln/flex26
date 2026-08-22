@@ -461,7 +461,7 @@ export const getGroupDelayStats = createServerFn({ method: "GET" })
         let freq = 0;
         let delay = -1;
         let dailyDelay = 0;
-        const delayHistory: number[] = [];
+        const sparklineData: number[] = [];
         let hitInFirstPrize = false;
 
         // Atraso diário da dezena
@@ -490,35 +490,7 @@ export const getGroupDelayStats = createServerFn({ method: "GET" })
           }
         });
 
-        if (delay === -1) delay = results.length;
-
-        return {
-          dezena: dz,
-          freq,
-          delay,
-          dailyDelay,
-          hitInFirstPrize
-        };
-      });
-
-      const mostDelayedTenOfGroup = [...dezenaStats].sort((a, b) => b.delay - a.delay)[0];
-
-          const hit = res.results?.slice(0, 5).some((prize: string) => prize?.slice(-2) === dz);
-          
-          if (hit) {
-            freq++;
-            if (delay === -1) delay = index;
-            if (firstPrizeHit) hitInFirstPrize = true;
-          }
-          
-          // Track delay evolution (last 30 draws for sparkline)
-          if (index < 30) {
-            delayHistory.push(delay === -1 ? index + 1 : index - (results.findIndex((r, idx) => idx <= index && r.results?.slice(0, 5).some((p: string) => p?.slice(-2) === dz)) ?? index));
-          }
-        });
-
-        // Simplified history for sparkline: just current delay at each point
-        const sparklineData: number[] = [];
+        // Simplified history for sparkline
         let tempDelay = 0;
         for (let j = 29; j >= 0; j--) {
           const res = results[j];
@@ -528,29 +500,16 @@ export const getGroupDelayStats = createServerFn({ method: "GET" })
           sparklineData.push(tempDelay);
         }
 
-        // Daily delay per dezena (Capital/Rio)
-        let dzDailyDelay = 0;
-        if (results.length > 0 && results[0]) {
-          const lastDate = results[0].date;
-          let dDelay = 0;
-          for (const res of results) {
-            if (!res || res.date !== lastDate) break;
-            const hit = res.results?.slice(0, 5).some((p: string) => p?.slice(-2) === dz);
-            if (hit) break;
-            dDelay++;
-          }
-          dzDailyDelay = dDelay;
-        }
-
-        return { 
-          dezena: dz, 
-          freq, 
+        return {
+          dezena: dz,
+          freq,
           delay: delay === -1 ? results.length : delay,
-          dailyDelay: dzDailyDelay,
+          dailyDelay,
           hitInFirstPrize,
           history: sparklineData
         };
       });
+
 
       const anyDezenaInFirstPrize = dezenaStats.some(d => d.hitInFirstPrize && d.delay === 0);
 
