@@ -47,7 +47,7 @@ export const DRAW_SCHEDULE_RIO: { timeType: string; timeValue: string; label: st
   { timeType: "PT", timeValue: "14:20", label: "PT" },
   { timeType: "PTV", timeValue: "16:20", label: "PTV" },
   { timeType: "PTN", timeValue: "18:20", label: "PTN" },
-  { timeType: "COR", timeValue: "21:30", label: "COROADO" },
+  { timeType: "COR", timeValue: "21:30", label: "COR" },
 ];
 
 /** Legado para manter compatibilidade */

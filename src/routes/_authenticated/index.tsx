@@ -370,7 +370,7 @@ function Index() {
                       <CardHeader className="p-6 pb-2">
                         <div className="flex justify-between items-start mb-4">
                           <CardTitle className="text-xl font-black italic tracking-tighter uppercase group-hover:text-primary transition-colors">
-                            {schedule.label} — {schedule.timeValue}hs
+                            {schedule.label} {schedule.timeValue} h
                           </CardTitle>
                           {isLatest && (
                             <div className="px-3 py-1 bg-primary text-primary-foreground text-[10px] font-black uppercase rounded-lg shadow-xl shadow-primary/20">
