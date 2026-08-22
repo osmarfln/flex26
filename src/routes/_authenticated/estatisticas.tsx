@@ -392,7 +392,7 @@ function EstatisticasPage() {
             <div className="flex gap-3">
                <div className="px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-center min-w-[140px]">
                   <p className="text-[10px] text-white/40 font-black uppercase tracking-widest mb-1">Precisão</p>
-                  <p className="text-2xl font-black text-primary">100%</p>
+                  <p className="text-2xl font-black text-primary uppercase">Sincronizado</p>
                </div>
                <div className="px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-center min-w-[140px]">
                   <p className="text-[10px] text-white/40 font-black uppercase tracking-widest mb-1">Processamento</p>
