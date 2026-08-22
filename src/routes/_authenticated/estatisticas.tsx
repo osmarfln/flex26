@@ -304,7 +304,7 @@ function EstatisticasPage() {
 
 
         {/* Header Section */}
-        <section className="mb-12 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <section className="mb-12 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start overflow-hidden">
           <div className="lg:col-span-8">
             <h1 className="text-4xl md:text-5xl lg:text-7xl font-black italic tracking-tighter uppercase mb-4">
               Monitoramento Inteligente {location === 'rio' ? 'Rio' : 'Capital'}
