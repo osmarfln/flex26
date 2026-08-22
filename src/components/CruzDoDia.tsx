@@ -55,7 +55,7 @@ export function CruzDoDia({ onCalculate }: { onCalculate?: (dezenas: string[]) =
           Cruz do Dia - Técnica Tradicional
         </h2>
         <p className="text-white/40 text-sm font-medium uppercase tracking-widest">
-          Cálculos matemáticos baseados no dia atual + Análise Superinteligente com IA
+          Cálculos baseados na data e horários Rio e Capital sem intervenção humana
         </p>
         
         <div className="flex justify-center gap-4 mt-6">
