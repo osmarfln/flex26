@@ -563,8 +563,10 @@ function Index() {
                     <div className="text-4xl mb-3">{ANIMAL_GROUPS.find(a => a.id === data.groupId)?.icon}</div>
                     <h3 className="text-sm font-black uppercase italic tracking-tighter group-hover:text-primary transition-colors">{data.animal}</h3>
                     <div className="mt-4 flex flex-col items-center">
-                       <span className="text-xl font-black text-primary leading-none">{data.currentDelay}</span>
-                       <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest mt-1">Dias de atraso</span>
+                       <span className={`text-xl font-black ${data.dailyDelay > 2 ? 'text-red-400' : 'text-primary'} leading-none`}>{data.currentDelay}</span>
+                       <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest mt-1">
+                         Atraso ({data.dailyDelay}h hoje)
+                       </span>
                     </div>
                   </div>
                 </motion.div>
