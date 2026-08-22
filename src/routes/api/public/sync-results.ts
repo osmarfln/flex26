@@ -19,9 +19,9 @@ export const Route = createFileRoute('/api/public/sync-results')({
         try {
           const body = (await request.json().catch(() => ({}))) as any;
           const dateParam = body.date || brasiliaToday();
-          const daysToSync = body.daysToSync || 2;
+          const daysToSync = body.daysToSync || 3;
           const syncAll = body.syncAll || false;
-          const location = (body.location === 'capital' || body.location === 'rio') ? body.location : 'rio';
+          const location = body.location; // Pode ser undefined para auto-sync ambos
           
           const auto = body.auto || false; // Se true, sincroniza ambos se necessário
           
@@ -107,12 +107,17 @@ export const Route = createFileRoute('/api/public/sync-results')({
                     'LCAP_10': { type: 'L-10', value: '10:00' },
                     'LCAP_11': { type: 'L-11', value: '11:00' },
                     'LCAP_13': { type: 'L-13', value: '13:00' },
+                    'PTSP_13': { type: 'L-13', value: '13:00' },
                     'LCAP_14': { type: 'L-14', value: '14:00' },
+                    'CAP_14':  { type: 'L-14', value: '14:00' },
                     'LCAP_15': { type: 'L-15', value: '15:00' },
+                    'BAND_15': { type: 'L-15', value: '15:00' },
                     'LCAP_16': { type: 'L-16', value: '16:00' },
                     'LCAP_18': { type: 'L-18', value: '18:00' },
+                    'CAP_18':  { type: 'L-18', value: '18:00' },
                     'LCAP_19': { type: 'L-19', value: '19:00' },
                     'LCAP_20': { type: 'L-20', value: '20:30' },
+                    'PTNSP_20': { type: 'L-20', value: '20:30' },
                     'LCAP_2230': { type: 'L-22', value: '22:30' }
                   };
                   
@@ -155,7 +160,7 @@ export const Route = createFileRoute('/api/public/sync-results')({
               if (offset > 100000) break;
             }
           } else {
-            const locationsToSync = ['rio', 'capital']; // Restringe apenas a Rio e Capital
+            const locationsToSync = location ? [location] : ['rio', 'capital'];
             for (const loc of locationsToSync) {
               for (let i = 0; i < daysToSync; i++) {
                 const currentSyncDate = new Date(dateParam);
@@ -199,12 +204,17 @@ export const Route = createFileRoute('/api/public/sync-results')({
                           'LCAP_10': { type: 'L-10', value: '10:00' },
                           'LCAP_11': { type: 'L-11', value: '11:00' },
                           'LCAP_13': { type: 'L-13', value: '13:00' },
+                          'PTSP_13': { type: 'L-13', value: '13:00' },
                           'LCAP_14': { type: 'L-14', value: '14:00' },
+                          'CAP_14':  { type: 'L-14', value: '14:00' },
                           'LCAP_15': { type: 'L-15', value: '15:00' },
+                          'BAND_15': { type: 'L-15', value: '15:00' },
                           'LCAP_16': { type: 'L-16', value: '16:00' },
                           'LCAP_18': { type: 'L-18', value: '18:00' },
+                          'CAP_18':  { type: 'L-18', value: '18:00' },
                           'LCAP_19': { type: 'L-19', value: '19:00' },
                           'LCAP_20': { type: 'L-20', value: '20:30' },
+                          'PTNSP_20': { type: 'L-20', value: '20:30' },
                           'LCAP_2230': { type: 'L-22', value: '22:30' }
                         };
                         
