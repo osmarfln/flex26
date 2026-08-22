@@ -392,7 +392,7 @@ function EstatisticasPage() {
             <div className="flex gap-3">
                <div className="px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-center min-w-[140px]">
                   <p className="text-[10px] text-white/40 font-black uppercase tracking-widest mb-1">Precisão</p>
-                  <p className="text-2xl font-black text-primary">94.2%</p>
+                  <p className="text-2xl font-black text-primary">100%</p>
                </div>
                <div className="px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-center min-w-[140px]">
                   <p className="text-[10px] text-white/40 font-black uppercase tracking-widest mb-1">Processamento</p>
@@ -1533,7 +1533,7 @@ function EstatisticasPage() {
       </main>
 
       <footer className="border-t border-white/5 py-12 bg-background/80 text-center text-[10px] text-white/20 font-bold uppercase tracking-[0.2em]">
-        Flex Gerenciador © 2026 • Resultados diários automatizados via robô ai automatizado sem interveção humana
+        Flex Gerenciador © 2026 • Resultados diários automatizados via robô ai automatizado sem intervenção humana
       </footer>
 
     </div>
