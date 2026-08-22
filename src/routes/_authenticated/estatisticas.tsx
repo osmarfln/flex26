@@ -59,54 +59,56 @@ const MiniSparkline = ({ data, color = "#EAB308" }: { data: number[], color?: st
 
 function EstatisticasPage() {
   const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'palpites' | 'logica-atraso' | 'ranking-completo' | 'logica-grupos' | 'repeticoes' | 'esquerda-direita' | 'puxadas'>('quentes');
-
+  const [location, setLocation] = useState<'rio' | 'capital'>('rio');
   const [cruzData, setCruzData] = useState<string[]>([]);
+
   
   // Todas as análises recalculam a cada novo resultado (sem cache velho)
   const live = { staleTime: 0, gcTime: 0, refetchOnWindowFocus: true, refetchOnMount: true } as const;
 
   const { data: stats, isLoading: statsLoading } = useQuery({
-    queryKey: ["stats-page"],
-    queryFn: () => getStats(),
+    queryKey: ["stats-page", location],
+    queryFn: () => getStats({ data: { location } }),
     ...live,
   });
 
   const { data: recentResults, isLoading: resultsLoading } = useQuery({
-    queryKey: ["recent-results-stats"],
-    queryFn: () => getResults({ data: { limit: 100, offset: 0 } }),
+    queryKey: ["recent-results-stats", location],
+    queryFn: () => getResults({ data: { limit: 100, offset: 0, location } }),
     ...live,
   });
 
   const { data: delayStats, isLoading: delayStatsLoading } = useQuery({
-    queryKey: ["ten-delay-stats"],
-    queryFn: () => getTenDelayStats(),
+    queryKey: ["ten-delay-stats", location],
+    queryFn: () => getTenDelayStats({ data: { location } }),
     ...live,
   });
 
   const { data: groupDelayStats, isLoading: groupDelayStatsLoading } = useQuery({
-    queryKey: ["group-delay-stats"],
-    queryFn: () => getGroupDelayStats(),
+    queryKey: ["group-delay-stats", location],
+    queryFn: () => getGroupDelayStats({ data: { location } }),
     ...live,
   });
 
 
   const { data: digitStats, isLoading: digitLoading } = useQuery({
-    queryKey: ["digit-delay-stats"],
-    queryFn: () => getDigitDelayStats(),
+    queryKey: ["digit-delay-stats", location],
+    queryFn: () => getDigitDelayStats({ data: { location } }),
     ...live,
   });
 
   const { data: puxadasStats, isLoading: puxadasLoading } = useQuery({
-    queryKey: ["puxadas-stats"],
-    queryFn: () => getPuxadasStats(),
+    queryKey: ["puxadas-stats", location],
+    queryFn: () => getPuxadasStats({ data: { location } }),
     ...live,
   });
 
   const { data: repetitionStats, isLoading: repetitionLoading } = useQuery({
-    queryKey: ["repetition-stats"],
-    queryFn: () => getRepetitionStats(),
+    queryKey: ["repetition-stats", location],
+    queryFn: () => getRepetitionStats({ data: { location } }),
     ...live,
   });
+
 
   // Recalcula todas as análises a cada novo resultado publicado
   const { lastUpdate } = useLotteryRealtime("estatisticas-db-changes");
@@ -274,7 +276,29 @@ function EstatisticasPage() {
         <section className="mb-12">
           <AvisoObrigatorio />
 
+          <div className="mb-8 flex justify-end">
+            <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl min-w-[200px] hover:border-yellow-500/30 transition-all cursor-pointer relative group/select">
+              <Network className="w-5 h-5 text-white/40" />
+              <div className="flex-1">
+                <p className="text-[10px] text-white/40 font-bold uppercase tracking-wider">Localidade</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-bold">{location === 'rio' ? 'Rio de Janeiro' : 'Capital (Floripa)'}</span>
+                  <ChevronRight className="w-4 h-4 text-white/40" />
+                </div>
+              </div>
+              <select 
+                className="absolute inset-0 opacity-0 cursor-pointer"
+                value={location}
+                onChange={(e) => setLocation(e.target.value as any)}
+              >
+                <option value="rio">Rio de Janeiro</option>
+                <option value="capital">Capital (Florianópolis)</option>
+              </select>
+            </div>
+          </div>
+
           <AnaliseFiltros />
+
 
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
             <div>
