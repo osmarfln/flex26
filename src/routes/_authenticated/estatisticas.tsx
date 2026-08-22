@@ -59,7 +59,7 @@ const MiniSparkline = ({ data, color = "#EAB308" }: { data: number[], color?: st
 };
 
 function EstatisticasPage() {
-  const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'palpites' | 'logica-atraso' | 'ranking-completo' | 'logica-grupos' | 'repeticoes' | 'esquerda-direita' | 'puxadas' | 'analise-premium' | 'atraso-horario'>('quentes');
+  const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'logica-atraso' | 'ranking-completo' | 'logica-grupos' | 'repeticoes' | 'esquerda-direita' | 'puxadas' | 'analise-premium' | 'atraso-horario'>('quentes');
   const [location, setLocation] = useState<'rio' | 'capital'>('rio');
   const [date, setDate] = useState("");
   const [dateEnd, setDateEnd] = useState("");
@@ -257,20 +257,6 @@ function EstatisticasPage() {
   }, [recentResults]);
 
 
-  const palpitesSugeridos = useMemo(() => {
-    if (!tenStats || tenStats.length === 0) return [];
-    
-    // IA Logic: Most delayed tens from delayed groups
-    return tenStats
-      .filter((t: any) => t.classification === "Muito acima da média" || t.classification === "Atraso elevado")
-      .slice(0, 4)
-      .map((item: any, i: number) => ({
-        ten: item.ten,
-        type: i % 2 === 0 ? "Tendência" : "Atraso Crítico",
-        strength: 90 - (i * 2),
-        animal: getAnimalByTen(item.ten)
-      }));
-  }, [tenStats]);
 
   const premiumStats = useMemo(() => {
     if (!groupDelayStats || !tenStats || !digitStats) return null;
@@ -548,16 +534,6 @@ function EstatisticasPage() {
                   <p className="text-sm text-white/40 font-medium leading-snug">Probabilidade baseada na Tabela Tradicional e em resultados históricos.</p>
              </Card>
 
-             <Card 
-               onClick={() => setActiveTab('palpites')}
-               className={`bg-[#0D121F] border-white/10 rounded-2xl p-6 transition-all cursor-pointer group ${activeTab === 'palpites' ? 'border-orange-500/50 ring-1 ring-orange-500/20' : 'hover:border-orange-500/30'}`}
-             >
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'palpites' ? 'bg-primary text-primary-foreground' : 'bg-primary/10 text-primary'}`}>
-                   <BrainCircuit className="w-6 h-6" />
-                </div>
-                 <h3 className="text-xl font-black italic uppercase mb-2">Palpites Sugeridos</h3>
-                <p className="text-sm text-white/40 font-medium leading-snug">Cruzamento logístico: Dados históricos + Cruz do Dia para palpites fortes.</p>
-             </Card>
 
              <Card 
                onClick={() => setActiveTab('analise-premium')}
@@ -672,38 +648,6 @@ function EstatisticasPage() {
                 </motion.div>
               )}
 
-              {activeTab === 'palpites' && (
-                <motion.div
-                  key="palpites"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  className="space-y-6"
-                >
-                  <div className="flex items-center gap-3 mb-4">
-                    <Sparkles className="w-6 h-6 text-emerald-500" />
-                     <h2 className="text-2xl font-black italic uppercase">Palpites Sugeridos</h2>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {palpitesSugeridos.length > 0 ? palpitesSugeridos.map((p, i) => (
-                      <Card key={i} className="bg-emerald-500/5 border-emerald-500/20 p-6 text-center relative overflow-hidden">
-                        <div className="absolute top-0 right-0 p-1 bg-emerald-500 text-[#0B0F19] text-[8px] font-black px-2 uppercase">Forte</div>
-                        <span className="text-5xl font-black text-emerald-500 block mb-2">{p.ten}</span>
-                        <p className="text-xs font-bold text-white/40 uppercase mb-4">{p.type} • {p.strength}% força</p>
-                        <div className="flex items-center justify-center gap-2 bg-white/5 py-2 rounded-lg">
-                          <span className="text-xl">{p.animal?.icon}</span>
-                          <span className="text-xs font-black uppercase text-white/80">{p.animal?.name}</span>
-                        </div>
-                      </Card>
-                    )) : (
-                      <div className="col-span-full py-12 text-center border-2 border-dashed border-white/10 rounded-2xl">
-                        <BrainCircuit className="w-12 h-12 mx-auto mb-4 opacity-20" />
-                        <p className="text-white/40 font-bold uppercase tracking-widest">Calcule a Cruz do Dia abaixo para ativar palpites híbridos</p>
-                      </div>
-                    )}
-                  </div>
-                </motion.div>
-              )}
 
               {activeTab === 'ranking-completo' && (
                 <motion.div
