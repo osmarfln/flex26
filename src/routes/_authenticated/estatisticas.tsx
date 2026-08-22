@@ -309,7 +309,7 @@ function EstatisticasPage() {
             <h1 className="text-4xl md:text-5xl lg:text-7xl font-black italic tracking-tighter uppercase mb-4">
               Monitoramento Inteligente {location === 'rio' ? 'Rio' : 'Capital'}
             </h1>
-            <p className="text-white/40 text-lg mb-8 font-medium">Dezena em atraso {location === 'rio' ? 'Rio' : 'Capital'} baseada em resultados diários e históricos</p>
+            <p className="text-white/40 text-lg mb-8 font-medium italic">Monitoramento logístico {location === 'rio' ? 'Rio' : 'Capital'} baseado em dezenas quentes, grupos e arquivos históricos.</p>
           </div>
         </section>
 
@@ -379,8 +379,8 @@ function EstatisticasPage() {
                   <BarChart3 className="w-8 h-8 text-primary" />
                 </div>
                 <div>
-                  <h1 className="text-4xl font-black italic tracking-tighter uppercase">Análise {location === 'rio' ? 'Rio' : 'Capital'}</h1>
-                  <p className="text-white/40 font-bold text-xs uppercase tracking-widest mt-1">Monitoramento inteligente baseado em dados históricos e diários da {location === 'rio' ? 'loteria Rio' : 'loteria Capital'}</p>
+                  <h1 className="text-4xl font-black italic tracking-tighter uppercase">Inteligência {location === 'rio' ? 'Rio' : 'Capital'}</h1>
+                  <p className="text-white/40 font-bold text-xs uppercase tracking-widest mt-1">Estatísticas sincronizadas e auditadas letra por letra via robo ai</p>
                 </div>
               </div>
               <p className="max-w-2xl text-white/60 text-lg leading-relaxed">
