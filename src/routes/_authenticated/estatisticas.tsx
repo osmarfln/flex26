@@ -154,6 +154,7 @@ function EstatisticasPage() {
     },
     onError: (err: any) => {
       setSyncStep(null);
+      setIsSyncing(false);
       setSyncMessage(`Falha na sincronização: ${err?.message ?? "erro"}`);
     },
   });
