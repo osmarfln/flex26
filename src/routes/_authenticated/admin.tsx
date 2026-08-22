@@ -33,6 +33,7 @@ import { deleteUserAccount } from "@/lib/admin.functions";
 import { RedesPanel } from "@/components/admin/RedesPanel";
 import { StatusUsuariosPanel } from "@/components/admin/StatusUsuariosPanel";
 import { AnaliseInteligentePanel } from "@/components/admin/AnaliseInteligentePanel";
+import { AuditoriaPanel } from "@/components/admin/AuditoriaPanel";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -303,6 +304,11 @@ function AdminPage() {
               <span className="hidden sm:inline">Análise inteligente</span>
               <span className="sm:hidden">Análise</span>
             </TabsTrigger>
+            <TabsTrigger value="auditoria" className="gap-1.5 px-2.5 py-1.5">
+              <ShieldCheck className="h-4 w-4 shrink-0" />
+              <span className="hidden sm:inline">Auditoria</span>
+              <span className="sm:hidden">Audit</span>
+            </TabsTrigger>
             <TabsTrigger value="robo" className="gap-1.5 px-2.5 py-1.5">
               <Activity className="h-4 w-4 shrink-0" />
               <span className="hidden sm:inline">Robô</span>
@@ -320,6 +326,10 @@ function AdminPage() {
 
           <TabsContent value="ia">
             <AnaliseInteligentePanel enabled={tab === "ia"} />
+          </TabsContent>
+
+          <TabsContent value="auditoria">
+            <AuditoriaPanel enabled={tab === "auditoria"} />
           </TabsContent>
 
           {/* PAINEL GERAL */}
