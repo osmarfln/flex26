@@ -690,6 +690,7 @@ export const getDigitDelayStats = createServerFn({ method: "GET" })
       return Array.from({ length: 100 }, (_, d) => {
         const dezena = String(d).padStart(2, "0");
         let currentDelay = -1;
+        let dailyDelay = 0;
         let last: any = null;
         const intervals: number[] = [];
         let lastIndex = -1;
@@ -738,6 +739,19 @@ export const getDigitDelayStats = createServerFn({ method: "GET" })
           lastIndex = index;
         });
 
+        // Cálculo do atraso diário para dezenas esquerda/direita
+        if (results.length > 0 && results[0]) {
+          const lastDate = results[0].date;
+          let dDelay = 0;
+          for (const res of results) {
+            if (!res || res.date !== lastDate) break;
+            const hit = sideDezenas(res, side).indexOf(dezena) >= 0;
+            if (hit) break;
+            dDelay++;
+          }
+          dailyDelay = dDelay;
+        }
+
         if (currentDelay === -1) currentDelay = results.length;
         const freqIn = (n: number) => results.slice(0, n).filter(matches).length;
         const avgDelay = intervals.length > 0 ? intervals.reduce((a, b) => a + b, 0) / intervals.length : results.length;
@@ -759,9 +773,10 @@ export const getDigitDelayStats = createServerFn({ method: "GET" })
         return {
           side,
           digit: dezena,
-          dezena,
-          currentDelay,
-          avgDelay: Number(avgDelay.toFixed(2)),
+           dezena,
+           currentDelay,
+           dailyDelay,
+           avgDelay: Number(avgDelay.toFixed(2)),
           medianDelay,
           maxDelay,
           minDelay,
