@@ -58,7 +58,7 @@ function Historico() {
 
   return (
     <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/30 overflow-x-hidden">
-      <SiteHeader subtitle="HISTÓRICO RIO" />
+      <SiteHeader subtitle={location === 'rio' ? 'HISTÓRICO RIO' : 'HISTÓRICO CAPITAL'} />
 
       <main className="container mx-auto px-3 sm:px-4 md:px-6 py-6 md:py-12">
 
@@ -114,7 +114,8 @@ function Historico() {
                     const res = await fetch('/api/public/sync-results', {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({ syncAll: true })
+                      body: JSON.stringify({ syncAll: true, location })
+
                     });
                     if (res.ok) {
                       alert('Sincronização completa iniciada com sucesso!');

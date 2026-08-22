@@ -142,11 +142,12 @@ function Delta({ current, previous }: { current: number; previous: number }) {
 }
 
 /** Filtros e busca das Análises: período, horário e tipo, com comparação de períodos. */
-export function AnaliseFiltros() {
+export function AnaliseFiltros({ initialLocation = 'rio' }: { initialLocation?: 'rio' | 'capital' }) {
   const todayISO = iso(new Date());
   const [start, setStart] = useState(todayISO);
   const [end, setEnd] = useState(todayISO);
-  const [location, setLocation] = useState<'rio' | 'capital'>('rio');
+  const [location, setLocation] = useState<'rio' | 'capital'>(initialLocation);
+
   const [times, setTimes] = useState<string[]>([]);
   const [term, setTerm] = useState("");
   const [compare, setCompare] = useState(false);
