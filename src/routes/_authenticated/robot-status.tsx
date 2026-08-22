@@ -19,6 +19,7 @@ import {
   Activity,
   ArrowLeft,
   Info,
+  AlertCircle,
   Timer,
   Database,
   Percent,
@@ -339,6 +340,16 @@ function RobotStatus() {
               significa que o sorteio ainda não foi publicado; "Pendente" indica que já existe na
               origem e entrará na próxima execução do robô (a cada 10 minutos).
             </p>
+            <div className="mt-4 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-xs font-black text-red-500 uppercase tracking-widest mb-1">Restrição de Origem</p>
+                <p className="text-[11px] text-red-200/60 leading-relaxed">
+                  O robô está configurado para coletar <strong>exclusivamente</strong> resultados RIO e CAPITAL. 
+                  Qualquer tentativa de sincronização de outras loterias será descartada para garantir a integridade dos cálculos logísticos.
+                </p>
+              </div>
+            </div>
           </CardContent>
         </Card>
 

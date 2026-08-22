@@ -126,12 +126,14 @@ function EstatisticasPage() {
   const queryClient = useQueryClient();
   const triggerSync = useServerFn(runSyncNow);
   const [syncMessage, setSyncMessage] = useState<string | null>(null);
+  const [isSyncing, setIsSyncing] = useState(false);
   const [syncStep, setSyncStep] = useState<string | null>(null);
   const [lastSync, setLastSync] = useState<{ at: Date; ms: number } | null>(null);
   const [partialStep, setPartialStep] = useState<string | null>(null);
   const syncMutation = useMutation({
     mutationFn: async () => {
       (window as any).__syncStart = performance.now();
+      setIsSyncing(true);
       setSyncStep("Buscando novos resultados na origem...");
       const res: any = await triggerSync({ data: { location } });
       setSyncStep("Recalculando dezenas atrasadas, grupos e bicho em alta...");
@@ -141,16 +143,18 @@ function EstatisticasPage() {
     },
     onSuccess: (res: any) => {
       setSyncStep(null);
+      setIsSyncing(false);
       const start = (window as any).__syncStart as number | undefined;
       setLastSync({ at: new Date(), ms: start ? performance.now() - start : 0 });
       setSyncMessage(
         res?.ok
-          ? `Dados validados e recalculados (${res.synced ?? 0} registros verificados).`
+          ? `Dados validados e logística atualizada (${res.synced ?? 0} registros verificados).`
           : `Falha na sincronização: ${res?.error ?? "erro desconhecido"}`,
       );
     },
     onError: (err: any) => {
       setSyncStep(null);
+      setIsSyncing(false);
       setSyncMessage(`Falha na sincronização: ${err?.message ?? "erro"}`);
     },
   });
@@ -171,7 +175,7 @@ function EstatisticasPage() {
     setSyncMessage(`${label} recalculado em ${(ms / 1000).toFixed(1)}s.`);
   };
   const recalculating =
-    syncMutation.isPending || !!partialStep ||
+    isSyncing || !!partialStep ||
     statsLoading || resultsLoading || delayStatsLoading || groupDelayStatsLoading || repetitionLoading || digitLoading || puxadasLoading || scheduleDelayLoading;
 
 
