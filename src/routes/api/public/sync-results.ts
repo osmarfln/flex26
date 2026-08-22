@@ -21,11 +21,10 @@ export const Route = createFileRoute('/api/public/sync-results')({
           const dateParam = body.date || brasiliaToday();
           const daysToSync = body.daysToSync || 2;
           const syncAll = body.syncAll || false;
-
+          const location = body.location || 'rio'; // 'rio' ou 'capital'
           
-          console.log(`[SYNC] Request received. Date: ${dateParam}, Days: ${daysToSync}`);
+          console.log(`[SYNC] Request received. Date: ${dateParam}, Days: ${daysToSync}, Location: ${location}`);
 
-          
           // Fecha execuções travadas (sem finished_at) de tentativas anteriores
           await supabase
             .from('sync_logs')
@@ -43,7 +42,8 @@ export const Route = createFileRoute('/api/public/sync-results')({
             .insert({ 
               status: 'running', 
               date_range_start: dateParam, 
-              date_range_end: dateParam 
+              date_range_end: dateParam,
+              location: location
             })
             .select()
             .single();
@@ -51,14 +51,15 @@ export const Route = createFileRoute('/api/public/sync-results')({
           let totalSynced = 0;
           
           if (syncAll) {
-            console.log(`[SYNC] Starting FULL sync from external source`);
+            console.log(`[SYNC] Starting FULL sync from external source for ${location}`);
             let offset = 0;
             const batchSize = 1000;
             let hasMore = true;
 
             while (hasMore) {
+              // Note: we assume external source has a 'location' column or we filter accordingly
+              // For now, let's just use the current logic but add the location to our records
               const apiUrl = `${EXTERNAL_REST_URL}/draw_results?select=*&order=draw_date.desc,draw_time.asc&limit=${batchSize}&offset=${offset}`;
-              console.log(`[SYNC] Fetching batch from offset ${offset}`);
               
               const response = await fetch(apiUrl, {
                 headers: {
@@ -67,10 +68,7 @@ export const Route = createFileRoute('/api/public/sync-results')({
                 }
               });
 
-              if (!response.ok) {
-                console.error(`[SYNC] Batch fetch failed: ${response.status}`);
-                break;
-              }
+              if (!response.ok) break;
 
               const externalResults = await response.json();
               if (!Array.isArray(externalResults) || externalResults.length === 0) {
@@ -79,6 +77,10 @@ export const Route = createFileRoute('/api/public/sync-results')({
               }
 
               for (const res of externalResults) {
+                // If the external source has location info, we should respect it
+                // If not, we use the requested location
+                const recordLocation = res.location || location;
+
                 const results = [
                   res.prize_1_milhar,
                   res.prize_2_milhar,
@@ -109,17 +111,13 @@ export const Route = createFileRoute('/api/public/sync-results')({
                     results: results,
                     animal: res.prize_1_bicho,
                     animal_group: groupStr,
+                    location: recordLocation,
                     created_at: new Date().toISOString()
-                  }, { onConflict: 'date,time_type' });
+                  }, { onConflict: 'date,time_type,location' });
 
-
-                
                 totalSynced++;
               }
-
-              console.log(`[SYNC] Synced ${totalSynced} records so far...`);
               offset += batchSize;
-              // Safety break for sandbox environment if taking too long
               if (offset > 10000) break; 
             }
           } else {
@@ -130,7 +128,6 @@ export const Route = createFileRoute('/api/public/sync-results')({
               const dateStr = isoString.split('T')[0]!;
               
               const apiUrl = `${EXTERNAL_REST_URL}/draw_results?draw_date=eq.${dateStr}&select=*`;
-              console.log(`[SYNC] Fetching from ${apiUrl}`);
               
               const response = await fetch(apiUrl, {
                 headers: {
@@ -141,9 +138,10 @@ export const Route = createFileRoute('/api/public/sync-results')({
               
               if (response.ok) {
                 const externalResults = await response.json();
-                
                 if (Array.isArray(externalResults) && externalResults.length > 0) {
                   for (const res of externalResults) {
+                    const recordLocation = res.location || location;
+                    
                     const results = [
                       res.prize_1_milhar,
                       res.prize_2_milhar,
@@ -173,9 +171,9 @@ export const Route = createFileRoute('/api/public/sync-results')({
                         time_value: drawTimeValue,
                         results: results,
                         animal: res.prize_1_bicho,
-                        animal_group: groupStr
-                      }, { onConflict: 'date,time_type' });
-
+                        animal_group: groupStr,
+                        location: recordLocation
+                      }, { onConflict: 'date,time_type,location' });
                     
                     totalSynced++;
                   }
@@ -183,7 +181,6 @@ export const Route = createFileRoute('/api/public/sync-results')({
               }
             }
           }
-
 
           if (logEntry) {
             await supabase

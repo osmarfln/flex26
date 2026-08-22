@@ -15,17 +15,21 @@ export interface LotteryResult {
   results: string[];
   animal: string | null;
   animal_group: string | null;
+  location: any;
   created_at: string;
 }
+
 
 const ANIMAL_GROUPS_DATA = ANIMAL_GROUPS_MAP;
 
 export const getResults = createServerFn({ method: "GET" })
   .validator((data: unknown) => z.object({
     date: z.string().optional(),
+    location: z.enum(['rio', 'capital']).optional().default('rio'),
     limit: z.number().optional().default(20),
     offset: z.number().optional().default(0)
   }).parse(data))
+
   .handler(async ({ data }) => {
     let query = supabase
       .from("lottery_results")
@@ -51,6 +55,7 @@ export const getResultsRange = createServerFn({ method: "GET" })
       .object({
         start: z.string(),
         end: z.string(),
+        location: z.enum(['rio', 'capital']).optional().default('rio'),
         timeTypes: z.array(z.string()).optional(),
         limit: z.number().optional().default(2000),
       })
@@ -76,13 +81,19 @@ export const getResultsRange = createServerFn({ method: "GET" })
 
 
 
+
 export const getStats = createServerFn({ method: "GET" })
-  .handler(async () => {
+  .validator((data: unknown) => z.object({
+    location: z.enum(['rio', 'capital']).optional().default('rio')
+  }).parse(data))
+  .handler(async ({ data }) => {
     const { data: rawResults, error } = await supabase
       .from("lottery_results")
       .select("*")
+      
       .order("date", { ascending: false })
       .limit(300);
+
 
     if (error) throw error;
     if (!rawResults) return { mostDelayedGroups: [], mostFrequentTens: [], delayedBySchedule: {} };
@@ -166,12 +177,17 @@ export const getStats = createServerFn({ method: "GET" })
 
 
 export const getTenDelayStats = createServerFn({ method: "GET" })
-  .handler(async () => {
+  .validator((data: unknown) => z.object({
+    location: z.enum(['rio', 'capital']).optional().default('rio')
+  }).parse(data))
+  .handler(async ({ data }) => {
     const { data: rawRows, error } = await supabase
       .from("lottery_results")
       .select("results, date, time_type")
+
       .order("date", { ascending: false })
-      .limit(600); // Need more data for comparative periods (300 current + 300 previous)
+      .limit(600);
+
 
     if (error) throw error;
     if (!rawRows) return [];
@@ -276,12 +292,17 @@ export const getTenDelayStats = createServerFn({ method: "GET" })
 
 
 export const getGroupDelayStats = createServerFn({ method: "GET" })
-  .handler(async () => {
+  .validator((data: unknown) => z.object({
+    location: z.enum(['rio', 'capital']).optional().default('rio')
+  }).parse(data))
+  .handler(async ({ data }) => {
     const { data: rawRows, error } = await supabase
       .from("lottery_results")
       .select("results, date, time_type, animal_group")
+
       .order("date", { ascending: false })
       .limit(600);
+
 
     if (error) throw error;
     if (!rawRows) return [];
@@ -448,12 +469,17 @@ export const getGroupDelayStats = createServerFn({ method: "GET" })
 
 
 export const getRepetitionStats = createServerFn({ method: "GET" })
-  .handler(async () => {
+  .validator((data: unknown) => z.object({
+    location: z.enum(['rio', 'capital']).optional().default('rio')
+  }).parse(data))
+  .handler(async ({ data }) => {
     const { data: rawRows, error } = await supabase
       .from("lottery_results")
       .select("results, date, time_type, animal_group")
+
       .order("date", { ascending: false })
       .limit(300);
+
 
     if (error) throw error;
     if (!rawRows || rawRows.length < 2) return null;
@@ -589,12 +615,17 @@ export const getRepetitionStats = createServerFn({ method: "GET" })
  * O zero à esquerda NUNCA é cortado: 5 é sempre exibido como 05.
  */
 export const getDigitDelayStats = createServerFn({ method: "GET" })
-  .handler(async () => {
+  .validator((data: unknown) => z.object({
+    location: z.enum(['rio', 'capital']).optional().default('rio')
+  }).parse(data))
+  .handler(async ({ data }) => {
     const { data: rawRows, error } = await supabase
       .from("lottery_results")
       .select("results, date, time_type, time_value")
+
       .order("date", { ascending: false })
       .limit(600);
+
 
     if (error) throw error;
     if (!rawRows || rawRows.length === 0) {
