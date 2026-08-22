@@ -40,13 +40,16 @@ const ANIMAL_GROUPS = ANIMAL_ICONS;
 
 function Historico() {
   const [date, setDate] = useState("");
+  const [location, setLocation] = useState<'rio' | 'capital'>('rio');
   const [offset, setOffset] = useState(0);
+
   const limit = 20;
 
   const { data: results, isLoading, refetch } = useQuery({
-    queryKey: ["history-results", date, offset],
-    queryFn: () => getResults({ data: { date, offset, limit } }),
+    queryKey: ["history-results", date, offset, location],
+    queryFn: () => getResults({ data: { date, offset, limit, location } }),
   });
+
 
   // Novos resultados entram automaticamente no histórico
   useLotteryRealtime("history-db-changes");
@@ -73,6 +76,18 @@ function Historico() {
           <Card className="dashboard-card p-6 mb-8">
             <div className="flex flex-wrap gap-4 items-end">
               <div className="flex-1 min-w-[200px]">
+                <label className="text-[10px] text-white/40 font-bold uppercase tracking-wider mb-2 block">Localização</label>
+                <select 
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl hover:border-primary/30 transition-all text-sm font-bold text-white outline-none"
+                  value={location}
+                  onChange={(e) => { setLocation(e.target.value as any); setOffset(0); }}
+                >
+                  <option value="rio">Rio de Janeiro</option>
+                  <option value="capital">Capital (Florianópolis)</option>
+                </select>
+              </div>
+
+              <div className="flex-1 min-w-[200px]">
                 <label className="text-[10px] text-white/40 font-bold uppercase tracking-wider mb-2 block">Selecione a Data</label>
                 <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl hover:border-primary/30 transition-all">
                   <Calendar className="w-5 h-5 text-white/40" />
@@ -84,6 +99,7 @@ function Historico() {
                   />
                 </div>
               </div>
+
               
               <Button 
                 onClick={() => refetch()}
@@ -143,8 +159,9 @@ function Historico() {
                     <div className="flex justify-between items-start">
                       <div>
                         <CardTitle className="text-lg font-black italic tracking-tighter uppercase mb-1">
-                          {res.time_type} RIO
+                          {res.time_type} {res.location === 'capital' ? 'CAPITAL' : 'RIO'}
                         </CardTitle>
+
                         <div className="flex items-center gap-2 text-[10px] text-white/40 font-bold uppercase">
                           <Calendar className="w-3 h-3" />
                           {res.date ? format(parseISO(res.date), "dd/MM/yyyy") : "Data não disponível"}
