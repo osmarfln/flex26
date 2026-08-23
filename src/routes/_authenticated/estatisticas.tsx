@@ -541,7 +541,7 @@ function EstatisticasPage() {
 
              <Card 
                onClick={() => setActiveTab('analise-premium')}
-               className={`bg-[#0D121F] border-red-500/20 rounded-2xl p-6 transition-all cursor-pointer group ${activeTab === 'analise-premium' ? 'border-red-500/50 ring-1 ring-yellow-500/20 shadow-lg shadow-yellow-500/5' : 'hover:border-red-500/30'}`}
+               className={`bg-[#0D121F] border-red-500/20 rounded-2xl p-6 transition-all cursor-pointer group ${activeTab === 'analise-premium' ? 'border-red-500/50 ring-1 ring-red-500/20 shadow-lg shadow-red-500/5' : 'hover:border-red-500/30'}`}
              >
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'analise-premium' ? 'bg-red-500 text-black' : 'bg-red-500/10 text-red-500'}`}>
                    <Sparkles className="w-6 h-6" />

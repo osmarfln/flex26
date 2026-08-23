@@ -56,8 +56,8 @@ const navigationItems = [
     title: "Palpite do Dia",
     url: createPageUrl("PalpiteDoDia"),
     icon: Sparkles,
-    color: "from-yellow-400 to-orange-500",
-    bgColor: "bg-gradient-to-r from-yellow-400/10 to-orange-500/10",
+    color: "from-red-400 to-red-600",
+    bgColor: "bg-gradient-to-r from-red-400/10 to-red-600/10",
     textColor: "text-red-600"
   },
   {
@@ -120,8 +120,8 @@ const getNivelInfo = (nivel: string) => {
       return {
         nome: 'Ouro',
         icon: Award,
-        color: 'from-yellow-400 via-orange-500 to-yellow-600',
-        bgColor: 'bg-gradient-to-r from-yellow-100 to-orange-100 dark:from-yellow-900/30 dark:to-orange-900/30',
+        color: 'from-red-400 via-red-500 to-red-600',
+        bgColor: 'bg-gradient-to-r from-red-100 to-red-200 dark:from-red-900/30 dark:to-red-800/30',
         textColor: 'text-red-600 dark:text-red-400',
         description: 'Intermediário'
       };
