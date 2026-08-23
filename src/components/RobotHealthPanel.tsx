@@ -157,7 +157,7 @@ export function RobotHealthPanel() {
               className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-3 py-2.5"
             >
               {state === "sync" ? (
-                <Loader2 className="h-4 w-4 animate-spin text-yellow-400" />
+                <Loader2 className="h-4 w-4 animate-spin text-red-400" />
               ) : state === "erro" ? (
                 <AlertTriangle className="h-4 w-4 text-red-400" />
               ) : (
@@ -173,7 +173,7 @@ export function RobotHealthPanel() {
                   state === "erro"
                     ? "bg-red-500/15 text-red-400"
                     : state === "sync"
-                      ? "bg-yellow-500/15 text-yellow-400"
+                      ? "bg-red-500/15 text-red-400"
                       : "bg-emerald-500/15 text-emerald-400"
                 }`}
               >

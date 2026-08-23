@@ -96,7 +96,7 @@ function PendentePage() {
           <div className="flex items-center justify-between gap-3">
             <span className="text-white/40 font-bold uppercase tracking-wider">Situação</span>
             <span
-              className={`flex items-center gap-1.5 font-bold ${rejected ? "text-destructive" : "text-yellow-400"}`}
+              className={`flex items-center gap-1.5 font-bold ${rejected ? "text-destructive" : "text-red-400"}`}
             >
               <Clock className="h-3.5 w-3.5" />
               {rejected ? "Recusado" : "Aguardando aprovação"}

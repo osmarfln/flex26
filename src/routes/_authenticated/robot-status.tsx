@@ -71,7 +71,7 @@ const STATUS_LABEL: Record<string, string> = {
 const STATUS_STYLE: Record<string, string> = {
   sincronizado: "bg-emerald-500/15 text-emerald-400",
   divergente: "bg-red-500/15 text-red-400",
-  pendente: "bg-yellow-500/15 text-yellow-400",
+  pendente: "bg-red-500/15 text-red-400",
   aguardando: "bg-white/10 text-white/50",
 };
 
@@ -239,7 +239,7 @@ function RobotStatus() {
         {/* Para que serve */}
         <Card className="bg-[#0D121F] border-white/10 rounded-3xl mb-8">
           <CardContent className="p-6 flex gap-4">
-            <Info className="w-5 h-5 text-yellow-500 shrink-0 mt-0.5" />
+            <Info className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
             <div className="text-sm text-white/60 leading-relaxed">
               <span className="text-white font-bold">Para que serve esta página: </span>
               o robô é o serviço automático que coleta e grava os resultados da plataforma Rio e Capital sem
@@ -286,7 +286,7 @@ function RobotStatus() {
               <button
                 onClick={handleSyncNow}
                 disabled={syncMutation.isPending}
-                className="px-4 py-2 rounded-xl bg-yellow-500/15 border border-yellow-500/30 text-yellow-400 text-xs font-black uppercase hover:bg-yellow-500/25 transition-all disabled:opacity-50 flex items-center gap-2"
+                className="px-4 py-2 rounded-xl bg-red-500/15 border border-red-500/30 text-red-400 text-xs font-black uppercase hover:bg-red-500/25 transition-all disabled:opacity-50 flex items-center gap-2"
               >
                 <RefreshCw className={`w-4 h-4 ${syncMutation.isPending ? "animate-spin" : ""}`} />
                 Sincronizar agora
@@ -364,7 +364,7 @@ function RobotStatus() {
               ) : lastSync?.status === "error" ? (
                 <XCircle className="w-5 h-5 text-red-500" />
               ) : (
-                <Activity className="w-5 h-5 text-yellow-500 animate-pulse" />
+                <Activity className="w-5 h-5 text-red-500 animate-pulse" />
               )
             }
             value={
@@ -377,7 +377,7 @@ function RobotStatus() {
           />
           <Kpi
             title="Última Sincronização"
-            icon={<Clock className="w-5 h-5 text-yellow-500" />}
+            icon={<Clock className="w-5 h-5 text-red-500" />}
             value={
               lastSync?.finished_at
                 ? new Intl.DateTimeFormat("pt-BR", {
@@ -416,7 +416,7 @@ function RobotStatus() {
           />
           <Kpi
             title="Duração Média"
-            icon={<Timer className="w-5 h-5 text-yellow-500" />}
+            icon={<Timer className="w-5 h-5 text-red-500" />}
             value={`${avgDuration}s`}
             sub="por execução"
           />
@@ -441,8 +441,8 @@ function RobotStatus() {
                   <AreaChart data={timeline}>
                     <defs>
                       <linearGradient id="gRec" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#EAB308" stopOpacity={0.5} />
-                        <stop offset="100%" stopColor="#EAB308" stopOpacity={0} />
+                        <stop offset="0%" stopColor="#EF4444" stopOpacity={0.5} />
+                        <stop offset="100%" stopColor="#EF4444" stopOpacity={0} />
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
@@ -452,7 +452,7 @@ function RobotStatus() {
                     <Area
                       type="monotone"
                       dataKey="registros"
-                      stroke="#EAB308"
+                      stroke="#EF4444"
                       strokeWidth={2}
                       fill="url(#gRec)"
                     />
@@ -516,7 +516,7 @@ function RobotStatus() {
                               ? "#10B981"
                               : d.status === "error"
                                 ? "#EF4444"
-                                : "#EAB308"
+                                : "#EF4444"
                           }
                         />
                       ))}
@@ -597,7 +597,7 @@ function RobotStatus() {
                                 ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
                                 : log.status === "error"
                                   ? "bg-red-500/10 text-red-500 border-red-500/20"
-                                  : "bg-yellow-500/10 text-yellow-500 border-yellow-500/20"
+                                  : "bg-red-500/10 text-red-500 border-red-500/20"
                             }
                           >
                             {log.status}

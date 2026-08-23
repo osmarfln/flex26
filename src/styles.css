@@ -6,7 +6,7 @@
 
 /*
  * Flex Gerenciador — High-end lottery data platform.
- * Dark dashboard system: Deep Navy on Golden.
+ * Dark dashboard system: Deep Navy on Red.
  */
 
 @theme inline {
@@ -61,8 +61,8 @@
   --popover: oklch(0.14 0.02 250);
   --popover-foreground: oklch(0.98 0.005 250);
 
-  /* Refined Gold Theme */
-  --primary: oklch(0.75 0.12 85);              /* Elegant Gold */
+  /* Refined Red Theme */
+  --primary: oklch(0.62 0.22 25);              /* Strong Red */
   --primary-foreground: oklch(0.1 0.015 250);
 
   --secondary: oklch(0.22 0.02 250);
@@ -72,18 +72,18 @@
   --muted-foreground: oklch(0.55 0.015 250);
   
   --accent: oklch(0.75 0.12 85 / 0.15);
-  --accent-foreground: oklch(0.75 0.12 85);
+  --accent-foreground: oklch(0.62 0.22 25);
 
   --success: oklch(0.7 0.15 150);              /* Green for confirmation */
-  --warning: oklch(0.8 0.15 85);               /* Yellow for attention */
+  --warning: oklch(0.68 0.2 25);               /* Red for attention */
   --destructive: oklch(0.55 0.15 25);          /* Red ONLY for errors/divergence */
   --destructive-foreground: oklch(0.98 0.005 250);
   
   --border: oklch(1 0 0 / 8%);
   --input: oklch(1 0 0 / 10%);
-  --ring: oklch(0.75 0.12 85);
+  --ring: oklch(0.62 0.22 25);
 
-  --chart-1: oklch(0.75 0.12 85);
+  --chart-1: oklch(0.62 0.22 25);
   --chart-2: oklch(0.5 0.015 250);
 }
 

@@ -291,7 +291,7 @@ function AdminPage() {
               <span className="hidden sm:inline">Usuários</span>
               <span className="sm:hidden">Usuários</span>
               {pending.length > 0 && (
-                <span className="ml-0.5 rounded-full bg-yellow-400/20 px-1.5 text-[10px] font-bold text-yellow-400">
+                <span className="ml-0.5 rounded-full bg-red-400/20 px-1.5 text-[10px] font-bold text-red-400">
                   {pending.length}
                 </span>
               )}
@@ -430,7 +430,7 @@ function AdminPage() {
                                 disabled={
                                   busyId === u.id || u.status === "blocked" || u.roles.includes("admin")
                                 }
-                                className="text-yellow-400 hover:bg-yellow-500/15"
+                                className="text-red-400 hover:bg-red-500/15"
                               >
                                 <Ban className="h-4 w-4" />
                               </IconAction>
@@ -637,7 +637,7 @@ function Kpi({
     tone === "ok"
       ? "text-emerald-400"
       : tone === "warn"
-        ? "text-yellow-400"
+        ? "text-red-400"
         : tone === "error"
           ? "text-destructive"
           : "text-foreground";
@@ -671,7 +671,7 @@ function StatusBadge({ status }: { status: string }) {
     );
   if (status === "blocked")
     return (
-      <span className="inline-flex items-center gap-1 text-xs font-bold text-yellow-400">
+      <span className="inline-flex items-center gap-1 text-xs font-bold text-red-400">
         <Ban className="h-3.5 w-3.5" /> Bloqueado
       </span>
     );
@@ -682,7 +682,7 @@ function StatusBadge({ status }: { status: string }) {
       </span>
     );
   return (
-    <span className="inline-flex items-center gap-1 text-xs font-bold text-yellow-400">
+    <span className="inline-flex items-center gap-1 text-xs font-bold text-red-400">
       <Clock className="h-3.5 w-3.5" /> Pendente
     </span>
   );
@@ -692,7 +692,7 @@ function SyncBadge({ status }: { status: string }) {
   const map: Record<string, { label: string; cls: string }> = {
     sincronizado: { label: "Sincronizado", cls: "text-emerald-400" },
     divergente: { label: "Divergente", cls: "text-destructive" },
-    pendente: { label: "Pendente", cls: "text-yellow-400" },
+    pendente: { label: "Pendente", cls: "text-red-400" },
     aguardando: { label: "Aguardando", cls: "text-white/40" },
   };
   const it = map[status] ?? map["aguardando"]!;
@@ -710,7 +710,7 @@ function LogList({ logs }: { logs: any[] }) {
           ) : l.status === "error" ? (
             <AlertTriangle className="h-4 w-4 shrink-0 text-destructive" />
           ) : (
-            <Loader2 className="h-4 w-4 shrink-0 animate-spin text-yellow-400" />
+            <Loader2 className="h-4 w-4 shrink-0 animate-spin text-red-400" />
           )}
           <span className="font-bold uppercase">{l.status}</span>
           <span className="text-white/40">{fmtDateTime(l.started_at)}</span>

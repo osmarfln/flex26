@@ -79,7 +79,7 @@ function PalpitePage() {
           <CardHeader className="flex flex-row items-center justify-between space-y-0">
             <div>
               <CardTitle className="flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-yellow-500" /> Palpites gerados dos resultados reais
+                <Sparkles className="h-5 w-5 text-red-500" /> Palpites gerados dos resultados reais
               </CardTitle>
               <CardDescription>
                 Cálculo automático a cada novo resultado — sem intervenção humana.

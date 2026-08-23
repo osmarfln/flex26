@@ -306,7 +306,7 @@ export function AnaliseInteligentePanel({ enabled }: { enabled: boolean }) {
               ) : a.status === "atrasado" ? (
                 <AlertTriangle className="h-4 w-4 text-destructive" />
               ) : (
-                <Clock className="h-4 w-4 text-yellow-400" />
+                <Clock className="h-4 w-4 text-red-400" />
               )}
               <span className="font-bold">{a.type}</span>
               <span className="text-xs text-white/40">{a.value}</span>
@@ -316,7 +316,7 @@ export function AnaliseInteligentePanel({ enabled }: { enabled: boolean }) {
                     ? "text-emerald-400"
                     : a.status === "atrasado"
                       ? "text-destructive"
-                      : "text-yellow-400"
+                      : "text-red-400"
                 }`}
               >
                 {a.status}
