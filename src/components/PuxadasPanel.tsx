@@ -51,7 +51,7 @@ export function PuxadasPanel({ data, loading }: { data?: PuxadasData | null; loa
   if (!data || !data.table?.length) {
     return (
       <Card className="bg-[#0D121F] border-white/10 rounded-2xl p-8 text-center text-white/50">
-        <AlertCircle className="w-6 h-6 mx-auto mb-3 text-yellow-400" />
+        <AlertCircle className="w-6 h-6 mx-auto mb-3 text-red-400" />
         Aguardando resultados sincronizados para calcular as puxadas.
       </Card>
     );
@@ -133,7 +133,7 @@ export function PuxadasPanel({ data, loading }: { data?: PuxadasData | null; loa
               <div className="flex items-center gap-1 mt-1">
                 <ArrowRight className="w-3 h-3" />
                 Próximo sorteio ({current.lastOccurrence.nextTime}):{" "}
-                <b className={current.lastOccurrence.hit ? "text-emerald-400" : "text-yellow-400"}>
+                <b className={current.lastOccurrence.hit ? "text-emerald-400" : "text-red-400"}>
                   grupo {current.lastOccurrence.nextGroup ?? "—"} {current.lastOccurrence.hit ? "· puxada confirmada" : "· não confirmou"}
                 </b>
               </div>
@@ -150,7 +150,7 @@ export function PuxadasPanel({ data, loading }: { data?: PuxadasData | null; loa
                 <XAxis type="number" stroke="rgba(255,255,255,0.35)" fontSize={11} />
                 <YAxis type="category" dataKey="name" width={80} stroke="rgba(255,255,255,0.35)" fontSize={11} />
                 <Tooltip contentStyle={{ background: "#0D121F", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12 }} />
-                <Bar dataKey="valor" fill="#EAB308" radius={[0, 6, 6, 0]} />
+                <Bar dataKey="valor" fill="#EF4444" radius={[0, 6, 6, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -171,7 +171,7 @@ export function PuxadasPanel({ data, loading }: { data?: PuxadasData | null; loa
                 />
                 <Bar dataKey="taxa" radius={[6, 6, 0, 0]}>
                   {scheduleChart.map((s, i) => (
-                    <Cell key={i} fill={s.taxa >= 40 ? "#34D399" : s.taxa >= 20 ? "#FACC15" : "#38BDF8"} />
+                    <Cell key={i} fill={s.taxa >= 40 ? "#34D399" : s.taxa >= 20 ? "#EF4444" : "#38BDF8"} />
                   ))}
                 </Bar>
               </BarChart>
@@ -208,7 +208,7 @@ export function PuxadasPanel({ data, loading }: { data?: PuxadasData | null; loa
               <Tooltip contentStyle={{ background: "#0D121F", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12 }} />
               <Bar dataKey="taxa" radius={[6, 6, 0, 0]}>
                 {ranking.map((r, i) => (
-                  <Cell key={r.name} fill={i === 0 ? "#EAB308" : "rgba(255,255,255,0.2)"} />
+                  <Cell key={r.name} fill={i === 0 ? "#EF4444" : "rgba(255,255,255,0.2)"} />
                 ))}
               </Bar>
             </BarChart>
@@ -246,7 +246,7 @@ export function PuxadasPanel({ data, loading }: { data?: PuxadasData | null; loa
                   <td className="py-2 px-2 text-center text-white/60">{row.occurrences}</td>
                   <td className="py-2 px-2 text-center text-white/60">{row.hits}</td>
                   <td className="py-2 px-2 text-center">
-                    <span className={`font-black ${row.hitRate >= 40 ? "text-emerald-400" : row.hitRate >= 20 ? "text-yellow-400" : "text-white/50"}`}>
+                    <span className={`font-black ${row.hitRate >= 40 ? "text-emerald-400" : row.hitRate >= 20 ? "text-red-400" : "text-white/50"}`}>
                       {row.hitRate}%
                     </span>
                   </td>

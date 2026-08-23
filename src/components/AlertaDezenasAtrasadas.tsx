@@ -57,16 +57,16 @@ export function AlertaDezenasAtrasadas({ data, loading }: { data?: DigitDelayDat
   if (!data || data.totalDraws === 0) return null;
 
   const blocks: { side: SideKey; label: string; icon: typeof ArrowLeft; accent: string; stat: any }[] = [
-    { side: "left", label: "Dezena Esquerda", icon: ArrowLeft, accent: "#EAB308", stat: leaders.left },
+    { side: "left", label: "Dezena Esquerda", icon: ArrowLeft, accent: "#EF4444", stat: leaders.left },
     { side: "right", label: "Dezena Direita", icon: ArrowRight, accent: "#38BDF8", stat: leaders.right },
   ];
 
 
   return (
-    <Card className="bg-gradient-to-br from-[#141A28] to-[#0D121F] border-yellow-400/25 rounded-2xl p-5 space-y-5">
+    <Card className="bg-gradient-to-br from-[#141A28] to-[#0D121F] border-red-400/25 rounded-2xl p-5 space-y-5">
       <div className="flex items-center gap-3 flex-wrap">
-        <div className="w-10 h-10 rounded-xl bg-yellow-500/15 border border-yellow-400/30 flex items-center justify-center">
-          <BellRing className="w-5 h-5 text-yellow-400" />
+        <div className="w-10 h-10 rounded-xl bg-red-500/15 border border-red-400/30 flex items-center justify-center">
+          <BellRing className="w-5 h-5 text-red-400" />
         </div>
         <div className="flex-1 min-w-[200px]">
           <h3 className="text-lg font-black italic uppercase">Alerta automático de atraso</h3>

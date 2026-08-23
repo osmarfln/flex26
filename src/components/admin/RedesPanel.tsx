@@ -99,7 +99,7 @@ export function RedesPanel() {
       : last.servidor < 200
         ? { label: "Excelente", cls: "text-emerald-400" }
         : last.servidor < 600
-          ? { label: "Boa", cls: "text-yellow-400" }
+          ? { label: "Boa", cls: "text-red-400" }
           : { label: "Instável", cls: "text-destructive" };
 
   return (

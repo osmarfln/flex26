@@ -39,7 +39,7 @@ export function AuditoriaPanel({ enabled }: { enabled: boolean }) {
   const getActionIcon = (action: string) => {
     switch (action) {
       case 'permitir': return <CheckCircle2 className="h-4 w-4 text-emerald-400" />;
-      case 'bloquear': return <Ban className="h-4 w-4 text-yellow-400" />;
+      case 'bloquear': return <Ban className="h-4 w-4 text-red-400" />;
       case 'excluir': return <Trash2 className="h-4 w-4 text-destructive" />;
       case 'limpar': return <RotateCcw className="h-4 w-4 text-blue-400" />;
       default: return <ShieldCheck className="h-4 w-4 text-white/40" />;

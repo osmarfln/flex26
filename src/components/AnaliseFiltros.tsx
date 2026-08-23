@@ -389,7 +389,7 @@ export function AnaliseFiltros({ initialLocation = 'rio' }: { initialLocation?: 
       </div>
 
       {!datesValid && (
-        <p className="mt-3 text-[10px] font-bold uppercase tracking-widest text-amber-400">
+        <p className="mt-3 text-[10px] font-bold uppercase tracking-widest text-red-400">
           Data incompleta — completando com hoje ({todayISO.split("-").reverse().join("/")}) até você
           terminar de digitar
         </p>
@@ -430,7 +430,7 @@ export function AnaliseFiltros({ initialLocation = 'rio' }: { initialLocation?: 
             type="checkbox"
             checked={compare}
             onChange={(e) => setCompare(e.target.checked)}
-            className="h-3.5 w-3.5 accent-yellow-500"
+            className="h-3.5 w-3.5 accent-red-500"
           />
           Comparar com período anterior
         </label>
@@ -555,7 +555,7 @@ export function AnaliseFiltros({ initialLocation = 'rio' }: { initialLocation?: 
                       tickLine={false}
                     />
                     <Tooltip {...CHART_TOOLTIP} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
-                    <Bar dataKey="atual" fill="#EAB308" radius={[4, 4, 0, 0]} barSize={compare ? 20 : 35} />
+                    <Bar dataKey="atual" fill="#EF4444" radius={[4, 4, 0, 0]} barSize={compare ? 20 : 35} />
                     {compare && <Bar dataKey="anterior" fill="rgba(255,255,255,0.2)" radius={[4, 4, 0, 0]} barSize={20} />}
                   </BarChart>
                 </ResponsiveContainer>

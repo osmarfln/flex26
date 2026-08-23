@@ -197,7 +197,7 @@ function Index() {
           </div>
 
           <nav className="-mx-3 flex items-center gap-3 overflow-x-auto no-scrollbar px-3 pb-1 md:mx-0 md:gap-8 md:px-0 md:pb-0 md:py-2">
-            <Link to="/" className="text-xs md:text-sm font-bold border-b-2 border-yellow-500 pb-1 flex items-center gap-1.5 md:gap-2 whitespace-nowrap shrink-0">
+            <Link to="/" className="text-xs md:text-sm font-bold border-b-2 border-red-500 pb-1 flex items-center gap-1.5 md:gap-2 whitespace-nowrap shrink-0">
               <Users className="w-4 h-4 shrink-0" /> Início
             </Link>
             <Link to="/historico" className="text-xs md:text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-1.5 md:gap-2 whitespace-nowrap shrink-0">
@@ -308,7 +308,7 @@ function Index() {
 
 
             <div className="flex flex-wrap gap-4 items-center mb-6">
-              <div className="flex flex-col sm:flex-row sm:items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl w-full sm:min-w-[200px] hover:border-yellow-500/30 transition-all cursor-pointer">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl w-full sm:min-w-[200px] hover:border-red-500/30 transition-all cursor-pointer">
                 <Calendar className="w-5 h-5 text-white/40" />
                 <div className="flex-1">
                   <p className="text-[10px] text-white/40 font-bold uppercase tracking-wider">Data</p>
@@ -319,7 +319,7 @@ function Index() {
                 </div>
               </div>
               
-              <div className="flex flex-col sm:flex-row sm:items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl w-full sm:min-w-[200px] hover:border-yellow-500/30 transition-all cursor-pointer relative group/select">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl w-full sm:min-w-[200px] hover:border-red-500/30 transition-all cursor-pointer relative group/select">
                 <MapPin className="w-5 h-5 text-white/40" />
                 <div className="flex-1">
                   <p className="text-[10px] text-white/40 font-bold uppercase tracking-wider">Localidade</p>
@@ -439,7 +439,7 @@ function Index() {
 
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-yellow-500 flex items-center justify-center text-[#0B0F19]">
+              <div className="w-12 h-12 rounded-2xl bg-red-500 flex items-center justify-center text-[#0B0F19]">
                 <BarChart3 className="w-6 h-6" />
               </div>
               <div>
@@ -478,16 +478,16 @@ function Index() {
 
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-            <Card className="bg-[#0D121F] border-white/10 rounded-2xl overflow-hidden group hover:border-yellow-500/30 transition-all">
-              <CardHeader className="bg-yellow-500/5 p-4 border-b border-white/5 flex flex-row items-center justify-between">
+            <Card className="bg-[#0D121F] border-white/10 rounded-2xl overflow-hidden group hover:border-red-500/30 transition-all">
+              <CardHeader className="bg-red-500/5 p-4 border-b border-white/5 flex flex-row items-center justify-between">
                 <CardTitle className="text-xs font-black uppercase tracking-widest">Dezenas Atrasadas</CardTitle>
-                <Clock className="w-4 h-4 text-yellow-500" />
+                <Clock className="w-4 h-4 text-red-500" />
               </CardHeader>
               <CardContent className="p-6">
                 <div className="flex flex-wrap gap-4">
                   {tenStats?.slice(0, 5).map((item: any) => (
                     <div key={item.ten} className="flex flex-col items-center gap-2 group/item">
-                      <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center font-mono text-2xl font-black text-white group-hover/item:border-yellow-500/50 group-hover/item:text-yellow-500 transition-all relative">
+                      <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center font-mono text-2xl font-black text-white group-hover/item:border-red-500/50 group-hover/item:text-red-500 transition-all relative">
                         {item.ten}
                       </div>
                       <span className="text-[10px] font-black text-white/30 uppercase">{item.currentDelay}d / {item.dailyDelay}h</span>
@@ -497,10 +497,10 @@ function Index() {
               </CardContent>
             </Card>
 
-            <Card className="bg-[#0D121F] border-white/10 rounded-2xl overflow-hidden group hover:border-yellow-500/30 transition-all">
-              <CardHeader className="bg-yellow-500/5 p-4 border-b border-white/5 flex flex-row items-center justify-between">
+            <Card className="bg-[#0D121F] border-white/10 rounded-2xl overflow-hidden group hover:border-red-500/30 transition-all">
+              <CardHeader className="bg-red-500/5 p-4 border-b border-white/5 flex flex-row items-center justify-between">
                 <CardTitle className="text-xs font-black uppercase tracking-widest">Dezena do Grupo Mais Atrasada</CardTitle>
-                <Clock className="w-4 h-4 text-yellow-500" />
+                <Clock className="w-4 h-4 text-red-500" />
 
               </CardHeader>
               <CardContent className="p-6 space-y-4">
@@ -512,11 +512,11 @@ function Index() {
                         <span className="text-2xl">{ANIMAL_GROUPS.find(a => a.id === item.groupId)?.icon}</span>
                         <div className="flex flex-col">
                           <span className="text-sm font-black uppercase italic">{item.animal}</span>
-                          <span className="text-[8px] font-bold text-white/30 uppercase">Mais Atrasada: <span className="text-yellow-500">{mostDelayedDz?.dezena || '--'}</span></span>
+                          <span className="text-[8px] font-bold text-white/30 uppercase">Mais Atrasada: <span className="text-red-500">{mostDelayedDz?.dezena || '--'}</span></span>
                         </div>
                       </div>
                       <div className="text-right">
-                        <span className="text-lg font-black text-yellow-500 block leading-none">{item.currentDelay}d</span>
+                        <span className="text-lg font-black text-red-500 block leading-none">{item.currentDelay}d</span>
                         <span className="text-[9px] font-bold text-red-500/80 uppercase">{item.dailyDelay} horários</span>
                       </div>
                     </div>
@@ -526,10 +526,10 @@ function Index() {
               </CardContent>
             </Card>
 
-            <Card className="bg-[#0D121F] border-white/10 rounded-2xl overflow-hidden group hover:border-yellow-500/30 transition-all">
-              <CardHeader className="bg-yellow-500/5 p-4 border-b border-white/5 flex flex-row items-center justify-between">
+            <Card className="bg-[#0D121F] border-white/10 rounded-2xl overflow-hidden group hover:border-red-500/30 transition-all">
+              <CardHeader className="bg-red-500/5 p-4 border-b border-white/5 flex flex-row items-center justify-between">
                 <CardTitle className="text-xs font-black uppercase tracking-widest">Bicho em Alta</CardTitle>
-                <TrendingUp className="w-4 h-4 text-yellow-500" />
+                <TrendingUp className="w-4 h-4 text-red-500" />
               </CardHeader>
               <CardContent className="p-6">
                 {tenStats?.[0] && (
@@ -543,7 +543,7 @@ function Index() {
                         return a.id === String(groupNum).padStart(2, '0');
                       })?.icon}
                     </div>
-                    <h3 className="text-2xl font-black italic uppercase tracking-tighter text-yellow-500">
+                    <h3 className="text-2xl font-black italic uppercase tracking-tighter text-red-500">
                       {ANIMAL_GROUPS.find(a => {
                         const ten = tenStats?.[0]?.ten;
                         if (!ten) return false;
@@ -566,7 +566,7 @@ function Index() {
                <p className="text-white/40 text-sm font-medium mt-1 uppercase tracking-widest">Monitoramento inteligente baseado em dados históricos</p>
              </div>
              <div className="hidden md:flex gap-2">
-                <div className="p-2 bg-white/5 rounded-lg border border-white/10"><BarChart3 className="w-5 h-5 text-yellow-500" /></div>
+                <div className="p-2 bg-white/5 rounded-lg border border-white/10"><BarChart3 className="w-5 h-5 text-red-500" /></div>
              </div>
           </div>
 
@@ -577,7 +577,7 @@ function Index() {
                   whileHover={{ y: -5 }}
                   className="bg-[#0D121F] border border-white/10 p-5 rounded-2xl relative group overflow-hidden"
                 >
-                  <div className="absolute inset-0 bg-yellow-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="absolute inset-0 bg-red-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-sm font-mono font-bold text-white/40">G{data.groupId}</span>
                     <Clock className="w-3.5 h-3.5 text-primary/50" />

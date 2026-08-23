@@ -42,7 +42,7 @@ const classColor = (c: string) =>
   c === "Muito acima da média"
     ? "text-red-400 border-red-400/30 bg-red-500/10"
     : c === "Atraso elevado"
-      ? "text-yellow-400 border-yellow-400/30 bg-yellow-500/10"
+      ? "text-red-400 border-red-400/30 bg-red-500/10"
       : c === "Atraso baixo"
         ? "text-emerald-400 border-emerald-400/30 bg-emerald-500/10"
         : "text-white/60 border-white/10 bg-white/5";
@@ -147,7 +147,7 @@ function SideBlock({ title, subtitle, stats, schedules, accent }: {
                       <span
                         key={h}
                         className={`text-[10px] font-bold px-2 py-1 rounded-md border ${
-                          isWorst ? "border-yellow-400/40 bg-yellow-500/10 text-yellow-300" : "border-white/10 bg-white/5 text-white/50"
+                          isWorst ? "border-red-400/40 bg-red-500/10 text-red-300" : "border-white/10 bg-white/5 text-white/50"
                         }`}
                         title={`${h}: ${d} sorteios sem sair`}
                       >
@@ -186,7 +186,7 @@ export function DezenasEsquerdaDireita({ data, loading }: { data?: DigitDelayDat
   if (!data || data.totalDraws === 0) {
     return (
       <Card className="bg-[#0D121F] border-white/10 rounded-2xl p-8 text-center text-white/50">
-        <AlertCircle className="w-6 h-6 mx-auto mb-3 text-yellow-400" />
+        <AlertCircle className="w-6 h-6 mx-auto mb-3 text-red-400" />
         Aguardando resultados sincronizados para calcular os atrasos.
       </Card>
     );
@@ -217,7 +217,7 @@ export function DezenasEsquerdaDireita({ data, loading }: { data?: DigitDelayDat
           subtitle="2 primeiras casas de cada prêmio (1º ao 5º) — top 10 mais atrasadas"
           stats={data.left}
           schedules={data.schedules}
-          accent="#EAB308"
+          accent="#EF4444"
         />
         <SideBlock
           title="Dezena Direita"
@@ -253,7 +253,7 @@ export function DezenasEsquerdaDireita({ data, loading }: { data?: DigitDelayDat
                       <td key={h} className="py-2 px-2 text-center">
                         {d ? (
                           <span className="inline-flex items-center gap-1 font-mono font-bold">
-                            <span className="text-yellow-400">{d.left}</span>
+                            <span className="text-red-400">{d.left}</span>
                             <span className="text-sky-400">{d.right}</span>
                           </span>
                         ) : (
@@ -268,7 +268,7 @@ export function DezenasEsquerdaDireita({ data, loading }: { data?: DigitDelayDat
           </table>
         </div>
         <p className="text-[10px] text-white/30 mt-3">
-          <span className="text-yellow-400 font-bold">Amarelo</span> = dezena esquerda (2 casas) ·{" "}
+          <span className="text-red-400 font-bold">Amarelo</span> = dezena esquerda (2 casas) ·{" "}
           <span className="text-sky-400 font-bold">Azul</span> = dezena direita (2 casas) — o zero nunca é cortado
         </p>
       </Card>

@@ -37,7 +37,7 @@ export const Route = createFileRoute("/_authenticated/estatisticas")({
 });
 
 // Simple Sparkline Component for dezenas history
-const MiniSparkline = ({ data, color = "#EAB308" }: { data: number[], color?: string }) => {
+const MiniSparkline = ({ data, color = "#EF4444" }: { data: number[], color?: string }) => {
   if (!data || data.length === 0) return null;
   const chartData = data.map((val, i) => ({ val, i }));
   return (
@@ -332,7 +332,7 @@ function EstatisticasPage() {
           </div>
 
           <div className="mb-8 flex flex-col sm:flex-row gap-4 min-w-0">
-            <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl w-full sm:min-w-[150px] hover:border-yellow-500/30 transition-all cursor-pointer relative group/select">
+            <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl w-full sm:min-w-[150px] hover:border-red-500/30 transition-all cursor-pointer relative group/select">
               <Calendar className="w-5 h-5 text-white/40" />
               <div className="flex-1">
                 <p className="text-[10px] text-white/40 font-bold uppercase tracking-wider">Início</p>
@@ -345,7 +345,7 @@ function EstatisticasPage() {
               </div>
             </div>
 
-            <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl w-full sm:min-w-[150px] hover:border-yellow-500/30 transition-all cursor-pointer relative group/select">
+            <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl w-full sm:min-w-[150px] hover:border-red-500/30 transition-all cursor-pointer relative group/select">
               <Calendar className="w-5 h-5 text-white/40" />
               <div className="flex-1">
                 <p className="text-[10px] text-white/40 font-bold uppercase tracking-wider">Fim</p>
@@ -398,7 +398,7 @@ function EstatisticasPage() {
                   <button
                     onClick={handleSyncNow}
                     disabled={syncMutation.isPending}
-                    className="px-5 py-3 rounded-2xl bg-yellow-500/15 border border-yellow-500/30 text-yellow-400 text-xs font-black uppercase hover:bg-yellow-500/25 transition-all disabled:opacity-60 flex items-center gap-2"
+                    className="px-5 py-3 rounded-2xl bg-red-500/15 border border-red-500/30 text-red-400 text-xs font-black uppercase hover:bg-red-500/25 transition-all disabled:opacity-60 flex items-center gap-2"
                   >
                     <RefreshCw className={`w-4 h-4 ${syncMutation.isPending ? "animate-spin" : ""}`} />
                     Sincronizar agora
@@ -541,9 +541,9 @@ function EstatisticasPage() {
 
              <Card 
                onClick={() => setActiveTab('analise-premium')}
-               className={`bg-[#0D121F] border-yellow-500/20 rounded-2xl p-6 transition-all cursor-pointer group ${activeTab === 'analise-premium' ? 'border-yellow-500/50 ring-1 ring-yellow-500/20 shadow-lg shadow-yellow-500/5' : 'hover:border-yellow-500/30'}`}
+               className={`bg-[#0D121F] border-red-500/20 rounded-2xl p-6 transition-all cursor-pointer group ${activeTab === 'analise-premium' ? 'border-red-500/50 ring-1 ring-yellow-500/20 shadow-lg shadow-yellow-500/5' : 'hover:border-red-500/30'}`}
              >
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'analise-premium' ? 'bg-yellow-500 text-black' : 'bg-yellow-500/10 text-yellow-500'}`}>
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'analise-premium' ? 'bg-red-500 text-black' : 'bg-red-500/10 text-red-500'}`}>
                    <Sparkles className="w-6 h-6" />
                 </div>
                 <h3 className="text-xl font-black italic uppercase mb-2">Análise Premium</h3>
@@ -564,7 +564,7 @@ function EstatisticasPage() {
                   className="space-y-6"
                 >
                   <div className="flex items-center gap-3 mb-4">
-                    <Flame className="w-6 h-6 text-yellow-500" />
+                    <Flame className="w-6 h-6 text-red-500" />
                     <h2 className="text-2xl font-black italic uppercase">Dezenas Mais Frequentes</h2>
                   </div>
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
@@ -589,7 +589,7 @@ function EstatisticasPage() {
                             <div className="space-y-1">
                               <p className="text-xs font-bold uppercase text-white/40">{item.freqs[300]}x em 300</p>
                               <div className="h-4 w-full px-2">
-                                <MiniSparkline data={item.history} color={isHitNow ? '#EF4444' : '#EAB308'} />
+                                <MiniSparkline data={item.history} color={isHitNow ? '#EF4444' : '#EF4444'} />
                               </div>
                             </div>
                             <div className="mt-2 flex items-center justify-center gap-2 border-t border-white/5 pt-2">
@@ -632,11 +632,11 @@ function EstatisticasPage() {
                               <Tooltip 
                                 cursor={{ fill: 'rgba(255,255,255,0.05)' }}
                                 contentStyle={{ backgroundColor: '#0D121F', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
-                                itemStyle={{ color: '#EAB308', fontWeight: 'bold' }}
+                                itemStyle={{ color: '#EF4444', fontWeight: 'bold' }}
                               />
                               <Bar dataKey="freq" radius={[4, 4, 0, 0]}>
                                 {hottestTens.slice(0, 10).map((entry, index) => (
-                                  <Cell key={`cell-${index}`} fill={index === 0 ? '#EAB308' : '#EAB30880'} />
+                                  <Cell key={`cell-${index}`} fill={index === 0 ? '#EF4444' : '#EF444480'} />
                                 ))}
                               </Bar>
                             </BarChart>
@@ -680,7 +680,7 @@ function EstatisticasPage() {
                               >
                                 {(() => {
                                   const colors = [
-                                    '#ef4444', '#f97316', '#f59e0b', '#eab308', '#84cc16', 
+                                    '#ef4444', '#f97316', '#f59e0b', '#ef4444', '#84cc16', 
                                     '#22c55e', '#10b981', '#06b6d4', '#0ea5e9', '#3b82f6', 
                                     '#6366f1', '#8b5cf6', '#a855f7', '#d946ef', '#ec4899', 
                                     '#f43f5e', '#64748b', '#71717a', '#737373', '#78716c'
@@ -839,13 +839,13 @@ function EstatisticasPage() {
                                     <td className="p-4 text-center">
                                       <Badge variant="outline" className="border-white/10 text-white font-black">{group.days}d</Badge>
                                     </td>
-                                    <td className="p-4 text-center font-mono text-xs text-yellow-500">
+                                    <td className="p-4 text-center font-mono text-xs text-red-500">
                                       {(1 + (group.days / 30)).toFixed(2)}
                                     </td>
                                     <td className="p-4">
                                       <div className={`h-2 w-2 rounded-full animate-pulse ${
                                         group.days > 25 ? 'bg-red-500' : 
-                                        group.days > 15 ? 'bg-yellow-500' : 
+                                        group.days > 15 ? 'bg-red-500' : 
                                         'bg-emerald-500'
                                       }`} />
                                     </td>
@@ -861,17 +861,17 @@ function EstatisticasPage() {
                     <div className="lg:col-span-4 space-y-6">
                       <Card className="bg-white/5 border-white/10 rounded-2xl p-6">
                         <div className="flex items-center gap-3 mb-6">
-                          <Calculator className="w-5 h-5 text-yellow-500" />
+                          <Calculator className="w-5 h-5 text-red-500" />
                           <h3 className="text-sm font-black uppercase tracking-widest">Ciclo dos Resultados</h3>
                         </div>
                         <div className="space-y-6">
                           <div>
                             <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-white/40 mb-2">
                               <span>Completude do Ciclo</span>
-                              <span className="text-yellow-500">76%</span>
+                              <span className="text-red-500">76%</span>
                             </div>
                             <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                              <div className="h-full bg-yellow-500 w-[76%]" />
+                              <div className="h-full bg-red-500 w-[76%]" />
                             </div>
                             <p className="text-[9px] text-white/30 mt-2 leading-relaxed">
                               Dos 25 grupos, 19 já apareceram no 1º prêmio neste ciclo de 30 dias.
@@ -976,7 +976,7 @@ function EstatisticasPage() {
                 >
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
-                      <Calculator className="w-6 h-6 text-yellow-500" />
+                      <Calculator className="w-6 h-6 text-red-500" />
                       <h2 className="text-2xl font-black italic uppercase">Lógica de Atraso das Dezenas</h2>
                     </div>
                     
@@ -990,7 +990,7 @@ function EstatisticasPage() {
                         <span className="text-[9px] font-bold text-white/40 uppercase">Na Média (0.75-1.25)</span>
                       </div>
                       <div className="px-3 py-1 bg-white/5 border border-white/10 rounded-lg flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-yellow-500" />
+                        <div className="w-2 h-2 rounded-full bg-red-500" />
                         <span className="text-[9px] font-bold text-white/40 uppercase">Elevado (1.26-2.00)</span>
                       </div>
                       <div className="px-3 py-1 bg-white/5 border border-white/10 rounded-lg flex items-center gap-2">
@@ -1021,9 +1021,9 @@ function EstatisticasPage() {
                           bgColorClass = "bg-red-500/10";
                           borderColorClass = "border-red-500/20";
                         } else if (item.relativeIndex > 1.25) {
-                          colorClass = "text-yellow-500";
-                          bgColorClass = "bg-yellow-500/10";
-                          borderColorClass = "border-yellow-500/20";
+                          colorClass = "text-red-500";
+                          bgColorClass = "bg-red-500/10";
+                          borderColorClass = "border-red-500/20";
                         }
 
                         return (
@@ -1078,7 +1078,7 @@ function EstatisticasPage() {
                               </div>
 
                               <div className="mt-4 pt-4 border-t border-white/5">
-                                <MiniSparkline data={item.history} color={item.relativeIndex > 1.25 ? "#EAB308" : "#3B82F6"} />
+                                <MiniSparkline data={item.history} color={item.relativeIndex > 1.25 ? "#EF4444" : "#3B82F6"} />
                               </div>
 
                               {item.dailyDelay >= 3 && item.relativeIndex > 1.5 && (
@@ -1126,9 +1126,9 @@ function EstatisticasPage() {
                           bgColorClass = "bg-red-500/10";
                           borderColorClass = "border-red-500/20";
                         } else if (item.classification === "Atraso elevado") {
-                          colorClass = "text-yellow-500";
-                          bgColorClass = "bg-yellow-500/10";
-                          borderColorClass = "border-yellow-500/20";
+                          colorClass = "text-red-500";
+                          bgColorClass = "bg-red-500/10";
+                          borderColorClass = "border-red-500/20";
                         } else if (item.classification === "Dentro da média") {
                           colorClass = "text-blue-500";
                           bgColorClass = "bg-blue-500/10";
@@ -1136,7 +1136,7 @@ function EstatisticasPage() {
                         }
 
                         return (
-                          <Card key={item.groupId} className={`bg-[#0D121F] border-white/10 rounded-2xl p-6 hover:border-yellow-500/30 transition-all group relative overflow-hidden flex flex-col ${item.anyDezenaInFirstPrize ? 'ring-2 ring-red-500 ring-offset-2 ring-offset-[#0D121F]' : ''}`}>
+                          <Card key={item.groupId} className={`bg-[#0D121F] border-white/10 rounded-2xl p-6 hover:border-red-500/30 transition-all group relative overflow-hidden flex flex-col ${item.anyDezenaInFirstPrize ? 'ring-2 ring-red-500 ring-offset-2 ring-offset-[#0D121F]' : ''}`}>
                             {item.anyDezenaInFirstPrize && (
                               <div className="absolute top-0 right-0 p-1.5 bg-red-500 text-white text-[7px] font-black px-2 uppercase z-10">
                                 1º Prêmio agora!
@@ -1144,7 +1144,7 @@ function EstatisticasPage() {
                             )}
                             <div className="flex items-center justify-between mb-6">
                               <div className="flex items-center gap-3">
-                                <div className="text-3xl font-black text-white group-hover:text-yellow-500 transition-colors">{animal?.icon}</div>
+                                <div className="text-3xl font-black text-white group-hover:text-red-500 transition-colors">{animal?.icon}</div>
                                 <div className="flex flex-col">
                                   <span className="text-sm font-black uppercase italic text-white/80">{item.animal}</span>
                                   <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest">Grupo {item.groupId}</span>
@@ -1466,10 +1466,10 @@ function EstatisticasPage() {
                 >
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
-                      <Sparkles className="w-6 h-6 text-yellow-500" />
+                      <Sparkles className="w-6 h-6 text-red-500" />
                       <h2 className="text-2xl font-black italic uppercase">Monitoramento Inteligente {location === 'rio' ? 'Rio' : 'Capital'}</h2>
                     </div>
-                    <Badge variant="outline" className="border-yellow-500/20 text-yellow-500 bg-yellow-500/5 px-4 py-2 font-black uppercase text-[10px] tracking-widest">
+                    <Badge variant="outline" className="border-red-500/20 text-red-500 bg-red-500/5 px-4 py-2 font-black uppercase text-[10px] tracking-widest">
                       Inteligência aplicada aos resultados históricos
                     </Badge>
                   </div>
@@ -1544,7 +1544,7 @@ function EstatisticasPage() {
                       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                          <div className="space-y-6">
                             <div className="flex items-center gap-2 mb-2">
-                               <div className="w-1.5 h-6 bg-yellow-500 rounded-full" />
+                               <div className="w-1.5 h-6 bg-red-500 rounded-full" />
                                <h3 className="text-xl font-black italic uppercase">Alertas Estratégicos</h3>
                             </div>
                             
@@ -1558,7 +1558,7 @@ function EstatisticasPage() {
                                <div className="space-y-4">
                                   <div className="flex justify-between items-center py-2 border-b border-white/5">
                                      <span className="text-xs text-white/40 font-bold uppercase">Dezena Esquerda (Líder)</span>
-                                     <span className="font-black text-yellow-400">{premiumStats.leftTop?.digit} ({premiumStats.leftTop?.currentDelay}x)</span>
+                                     <span className="font-black text-red-400">{premiumStats.leftTop?.digit} ({premiumStats.leftTop?.currentDelay}x)</span>
                                   </div>
                                   <div className="flex justify-between items-center py-2 border-b border-white/5">
                                      <span className="text-xs text-white/40 font-bold uppercase">Dezena Direita (Líder)</span>
@@ -1588,10 +1588,10 @@ function EstatisticasPage() {
                                 </p>
                             </Card>
                             
-                            <div className="bg-yellow-500/5 border border-yellow-500/10 rounded-2xl p-6 flex gap-4">
-                               <Info className="w-6 h-6 text-yellow-500 shrink-0" />
+                            <div className="bg-red-500/5 border border-red-500/10 rounded-2xl p-6 flex gap-4">
+                               <Info className="w-6 h-6 text-red-500 shrink-0" />
                                <div className="space-y-1">
-                                 <p className="text-xs font-bold text-yellow-500 uppercase tracking-wider">Metodologia Premium</p>
+                                 <p className="text-xs font-bold text-red-500 uppercase tracking-wider">Metodologia Premium</p>
                                  <p className="text-xs text-white/40 leading-relaxed">
                                    O sistema analisa a milhar em blocos de 2 dígitos. O "Índice de Atraso Crítico" é atingido quando uma dezena ultrapassa 2.5x o seu atraso médio histórico.
                                  </p>

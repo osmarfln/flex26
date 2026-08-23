@@ -58,7 +58,7 @@ const navigationItems = [
     icon: Sparkles,
     color: "from-yellow-400 to-orange-500",
     bgColor: "bg-gradient-to-r from-yellow-400/10 to-orange-500/10",
-    textColor: "text-yellow-600"
+    textColor: "text-red-600"
   },
   {
     title: "Arquivo",
@@ -122,7 +122,7 @@ const getNivelInfo = (nivel: string) => {
         icon: Award,
         color: 'from-yellow-400 via-orange-500 to-yellow-600',
         bgColor: 'bg-gradient-to-r from-yellow-100 to-orange-100 dark:from-yellow-900/30 dark:to-orange-900/30',
-        textColor: 'text-yellow-600 dark:text-yellow-400',
+        textColor: 'text-red-600 dark:text-red-400',
         description: 'Intermediário'
       };
     case 'prata':
