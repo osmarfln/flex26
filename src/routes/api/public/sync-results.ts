@@ -8,6 +8,74 @@ function brasiliaToday(): string {
   return new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString().split('T')[0]!;
 }
 
+/**
+ * BLINDAGEM DE ORIGEM.
+ * Somente as siglas oficiais de CAPITAL (LCAP_/CAP_) e RIO são aceitas.
+ * Qualquer outra sigla (PTSP_, PTNSP_, LOTEP, LOOK, etc.) é descartada,
+ * pois pertence a outras loterias e gerava resultados "aleatórios"/errados.
+ */
+const CAP_MAP: Record<string, { type: string; value: string }> = {
+  LCAP_09: { type: 'L-09', value: '09:00' },
+  CAP_09: { type: 'L-09', value: '09:00' },
+  LCAP_10: { type: 'L-10', value: '10:00' },
+  CAP_10: { type: 'L-10', value: '10:00' },
+  LCAP_11: { type: 'L-11', value: '11:00' },
+  CAP_11: { type: 'L-11', value: '11:00' },
+  LCAP_13: { type: 'L-13', value: '13:00' },
+  CAP_13: { type: 'L-13', value: '13:00' },
+  LCAP_14: { type: 'L-14', value: '14:00' },
+  CAP_14: { type: 'L-14', value: '14:00' },
+  LCAP_15: { type: 'L-15', value: '15:00' },
+  CAP_15: { type: 'L-15', value: '15:00' },
+  LCAP_16: { type: 'L-16', value: '16:00' },
+  CAP_16: { type: 'L-16', value: '16:00' },
+  LCAP_18: { type: 'L-18', value: '18:00' },
+  CAP_18: { type: 'L-18', value: '18:00' },
+  LCAP_19: { type: 'L-19', value: '19:00' },
+  CAP_19: { type: 'L-19', value: '19:00' },
+  LCAP_20: { type: 'L-20', value: '20:30' },
+  CAP_20: { type: 'L-20', value: '20:30' },
+  LCAP_2230: { type: 'L-22', value: '22:30' },
+  CAP_2230: { type: 'L-22', value: '22:30' },
+};
+
+const RIO_MAP: Record<string, string> = {
+  PPT: '09:20',
+  PTM: '11:20',
+  PT: '14:20',
+  PTV: '16:20',
+  PTN: '18:20',
+  COR: '21:30',
+};
+
+type Normalized = { time_type: string; time_value: string } | null;
+
+/** Valida a sigla e devolve o horário normalizado, ou null quando deve ser bloqueada. */
+function normalizeDraw(loc: string, rawTime: unknown): Normalized {
+  const key = String(rawTime ?? '').trim().toUpperCase();
+  if (!key) return null;
+
+  if (loc === 'capital') {
+    // Blindagem extra: nunca aceitar prefixos de outras praças (ex.: PTSP_13, PTNSP_20).
+    if (!key.startsWith('LCAP_') && !key.startsWith('CAP_')) return null;
+    const mapped = CAP_MAP[key];
+    return mapped ? { time_type: mapped.type, time_value: mapped.value } : null;
+  }
+
+  if (loc === 'rio') {
+    const value = RIO_MAP[key];
+    return value ? { time_type: key, time_value: value } : null;
+  }
+
+  return null;
+}
+
+/** Valida a milhar: precisa ser exatamente 4 dígitos. */
+function validMilhar(v: unknown): v is string {
+  return typeof v === 'string' && /^\d{4}$/.test(v.trim());
+}
+
+
 export const Route = createFileRoute('/api/public/sync-results')({
   server: {
     handlers: {
@@ -83,96 +151,53 @@ export const Route = createFileRoute('/api/public/sync-results')({
               }
 
               for (const res of externalResults) {
+                const loc = location === 'capital' ? 'capital' : 'rio';
+
+                // 1) Blindagem de sigla/horário
+                const norm = normalizeDraw(loc, res.draw_time);
+                if (!norm) {
+                  console.warn(`[SYNC] Sigla bloqueada (${loc}): ${res.draw_time}`);
+                  continue;
+                }
+
+                // 2) Validação das 5 milhares (4 dígitos cada)
                 const results = [
                   res.prize_1_milhar,
                   res.prize_2_milhar,
                   res.prize_3_milhar,
                   res.prize_4_milhar,
-                  res.prize_5_milhar
-                ].filter(p => !!p);
-                
-                // Ignorar resultados incompletos (precisamos dos 5 prêmios)
-                if (results.length < 5) continue;
+                  res.prize_5_milhar,
+                ].map((p) => (typeof p === 'string' ? p.trim() : p));
+
+                if (results.length !== 5 || !results.every(validMilhar)) continue;
 
                 const groupStr = res.prize_1_group !== null && res.prize_1_group !== undefined 
                   ? String(res.prize_1_group).padStart(2, '0') 
                   : null;
 
-                let drawTime = res.draw_time;
-                let drawTimeValue = res.draw_time_value;
-
-                if (location === 'capital') {
-                  const capMap: Record<string, { type: string, value: string }> = {
-                    'LCAP_09': { type: 'L-09', value: '09:00' },
-                    'LCAP_10': { type: 'L-10', value: '10:00' },
-                    'LCAP_11': { type: 'L-11', value: '11:00' },
-                    'LCAP_13': { type: 'L-13', value: '13:00' },
-                    'PTSP_13': { type: 'L-13', value: '13:00' },
-                    'LCAP_14': { type: 'L-14', value: '14:00' },
-                    'CAP_14':  { type: 'L-14', value: '14:00' },
-                    'LCAP_15': { type: 'L-15', value: '15:00' },
-                    'PTSP_15': { type: 'L-15', value: '15:00' }, // Added PTSP_15
-                    'LCAP_16': { type: 'L-16', value: '16:00' },
-                    'LCAP_18': { type: 'L-18', value: '18:00' },
-                    'CAP_18':  { type: 'L-18', value: '18:00' },
-                    'LCAP_19': { type: 'L-19', value: '19:00' },
-                    'LCAP_20': { type: 'L-20', value: '20:30' },
-                    'PTNSP_20': { type: 'L-20', value: '20:30' },
-                    'LCAP_2230': { type: 'L-22', value: '22:30' }
-                  };
-                  
-                  const mapped = capMap[drawTime];
-                  if (!mapped) continue;
-                  
-                  drawTime = mapped.type;
-                  drawTimeValue = mapped.value;
-                } else {
-                  // Mapeamento preciso para o Rio
-                  const rioMap: Record<string, string> = {
-                    'PPT': '09:20',
-                    'PTM': '11:20',
-                    'PT': '14:20',
-                    'PTV': '16:20',
-                    'PTN': '18:20',
-                    'COR': '21:30'
-                  };
-                  drawTimeValue = rioMap[drawTime] || drawTimeValue;
-                }
-
-                if (!drawTimeValue) continue;
-
                 await supabase
                   .from('lottery_results')
                   .upsert({
                     date: res.draw_date,
-                    time_type: drawTime,
-                    time_value: drawTimeValue,
+                    time_type: norm.time_type,
+                    time_value: norm.time_value,
                     results: results,
                     animal: res.prize_1_bicho,
                     animal_group: groupStr,
-                    location: location === 'capital' || location === 'rio' ? location : 'rio',
+                    location: loc,
                     created_at: new Date().toISOString()
                   }, { onConflict: 'date,time_type,location' });
 
-                // Correção manual solicitada para LCAP 15:00 (7977)
-                if (location === 'capital' && res.draw_date === '2026-08-22' && drawTime === 'L-15') {
-                  await supabase
-                    .from('lottery_results')
-                    .update({ 
-                      results: ['7977', '4166', '0339', '0722', '9190'],
-                      animal: 'Peru',
-                      animal_group: '20'
-                    })
-                    .match({ date: '2026-08-22', time_type: 'L-15', location: 'capital' });
-                }
-
                 totalSynced++;
               }
+
               offset += batchSize;
               if (offset > 100000) break;
             }
           } else {
-            const locationsToSync = location ? [location] : ['rio', 'capital'];
+            const requested = location ? [location] : ['rio', 'capital'];
+            const locationsToSync = requested.filter((l) => l === 'rio' || l === 'capital');
+
             for (const loc of locationsToSync) {
               for (let i = 0; i < daysToSync; i++) {
                 const currentSyncDate = new Date(dateParam);
@@ -193,88 +218,42 @@ export const Route = createFileRoute('/api/public/sync-results')({
                   const externalResults = await response.json();
                   if (Array.isArray(externalResults) && externalResults.length > 0) {
                     for (const res of externalResults) {
+                      // Blindagem de sigla/horário: só LCAP_/CAP_ (Capital) e siglas do Rio
+                      const norm = normalizeDraw(loc, res.draw_time);
+                      if (!norm) {
+                        console.warn(`[SYNC] Sigla bloqueada (${loc}): ${res.draw_time}`);
+                        continue;
+                      }
+
                       const results = [
                         res.prize_1_milhar,
                         res.prize_2_milhar,
                         res.prize_3_milhar,
                         res.prize_4_milhar,
-                        res.prize_5_milhar
-                      ].filter(p => !!p);
-                      
-                      if (results.length < 5) continue;
+                        res.prize_5_milhar,
+                      ].map((p) => (typeof p === 'string' ? p.trim() : p));
+
+                      if (results.length !== 5 || !results.every(validMilhar)) continue;
 
                       const groupStr = res.prize_1_group !== null && res.prize_1_group !== undefined 
                         ? String(res.prize_1_group).padStart(2, '0') 
                         : null;
 
-                      let drawTime = res.draw_time;
-                      let drawTimeValue = res.draw_time_value;
-
-                      if (loc === 'capital') {
-                        const capMap: Record<string, { type: string, value: string }> = {
-                          'LCAP_09': { type: 'L-09', value: '09:00' },
-                          'LCAP_10': { type: 'L-10', value: '10:00' },
-                          'LCAP_11': { type: 'L-11', value: '11:00' },
-                          'LCAP_13': { type: 'L-13', value: '13:00' },
-                          'PTSP_13': { type: 'L-13', value: '13:00' },
-                          'LCAP_14': { type: 'L-14', value: '14:00' },
-                          'CAP_14':  { type: 'L-14', value: '14:00' },
-                          'LCAP_15': { type: 'L-15', value: '15:00' },
-                          'PTSP_15': { type: 'L-15', value: '15:00' }, // Added PTSP_15
-                          'LCAP_16': { type: 'L-16', value: '16:00' },
-                          'LCAP_18': { type: 'L-18', value: '18:00' },
-                          'CAP_18':  { type: 'L-18', value: '18:00' },
-                          'LCAP_19': { type: 'L-19', value: '19:00' },
-                          'LCAP_20': { type: 'L-20', value: '20:30' },
-                          'PTNSP_20': { type: 'L-20', value: '20:30' },
-                          'LCAP_2230': { type: 'L-22', value: '22:30' }
-                        };
-                        
-                        const mapped = capMap[drawTime];
-                        if (!mapped) continue;
-                        
-                        drawTime = mapped.type;
-                        drawTimeValue = mapped.value;
-                      } else {
-                        const rioMap: Record<string, string> = {
-                          'PPT': '09:20',
-                          'PTM': '11:20',
-                          'PT': '14:20',
-                          'PTV': '16:20',
-                          'PTN': '18:20',
-                          'COR': '21:30'
-                        };
-                        drawTimeValue = rioMap[drawTime] || drawTimeValue;
-                      }
-
-                      if (!drawTimeValue) continue;
-
                       await supabase
                         .from('lottery_results')
                         .upsert({
                           date: res.draw_date,
-                          time_type: drawTime,
-                          time_value: drawTimeValue,
+                          time_type: norm.time_type,
+                          time_value: norm.time_value,
                           results: results,
                           animal: res.prize_1_bicho,
                           animal_group: groupStr,
-                          location: loc === 'capital' || loc === 'rio' ? loc : 'rio'
+                          location: loc
                         }, { onConflict: 'date,time_type,location' });
 
-                      // Correção manual solicitada para LCAP 15:00 (7977) - Loop de dias
-                      if (loc === 'capital' && res.draw_date === '2026-08-22' && drawTime === 'L-15') {
-                        await supabase
-                          .from('lottery_results')
-                          .update({ 
-                            results: ['7977', '4166', '0339', '0722', '9190'],
-                            animal: 'Peru',
-                            animal_group: '20'
-                          })
-                          .match({ date: '2026-08-22', time_type: 'L-15', location: 'capital' });
-                      }
-                      
                       totalSynced++;
                     }
+
                   }
                 }
               }
