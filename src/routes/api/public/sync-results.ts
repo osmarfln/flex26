@@ -195,7 +195,9 @@ export const Route = createFileRoute('/api/public/sync-results')({
               if (offset > 100000) break;
             }
           } else {
-            const locationsToSync = location ? [location] : ['rio', 'capital'];
+            const requested = location ? [location] : ['rio', 'capital'];
+            const locationsToSync = requested.filter((l) => l === 'rio' || l === 'capital');
+
             for (const loc of locationsToSync) {
               for (let i = 0; i < daysToSync; i++) {
                 const currentSyncDate = new Date(dateParam);
