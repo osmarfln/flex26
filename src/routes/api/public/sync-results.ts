@@ -8,6 +8,74 @@ function brasiliaToday(): string {
   return new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString().split('T')[0]!;
 }
 
+/**
+ * BLINDAGEM DE ORIGEM.
+ * Somente as siglas oficiais de CAPITAL (LCAP_/CAP_) e RIO são aceitas.
+ * Qualquer outra sigla (PTSP_, PTNSP_, LOTEP, LOOK, etc.) é descartada,
+ * pois pertence a outras loterias e gerava resultados "aleatórios"/errados.
+ */
+const CAP_MAP: Record<string, { type: string; value: string }> = {
+  LCAP_09: { type: 'L-09', value: '09:00' },
+  CAP_09: { type: 'L-09', value: '09:00' },
+  LCAP_10: { type: 'L-10', value: '10:00' },
+  CAP_10: { type: 'L-10', value: '10:00' },
+  LCAP_11: { type: 'L-11', value: '11:00' },
+  CAP_11: { type: 'L-11', value: '11:00' },
+  LCAP_13: { type: 'L-13', value: '13:00' },
+  CAP_13: { type: 'L-13', value: '13:00' },
+  LCAP_14: { type: 'L-14', value: '14:00' },
+  CAP_14: { type: 'L-14', value: '14:00' },
+  LCAP_15: { type: 'L-15', value: '15:00' },
+  CAP_15: { type: 'L-15', value: '15:00' },
+  LCAP_16: { type: 'L-16', value: '16:00' },
+  CAP_16: { type: 'L-16', value: '16:00' },
+  LCAP_18: { type: 'L-18', value: '18:00' },
+  CAP_18: { type: 'L-18', value: '18:00' },
+  LCAP_19: { type: 'L-19', value: '19:00' },
+  CAP_19: { type: 'L-19', value: '19:00' },
+  LCAP_20: { type: 'L-20', value: '20:30' },
+  CAP_20: { type: 'L-20', value: '20:30' },
+  LCAP_2230: { type: 'L-22', value: '22:30' },
+  CAP_2230: { type: 'L-22', value: '22:30' },
+};
+
+const RIO_MAP: Record<string, string> = {
+  PPT: '09:20',
+  PTM: '11:20',
+  PT: '14:20',
+  PTV: '16:20',
+  PTN: '18:20',
+  COR: '21:30',
+};
+
+type Normalized = { time_type: string; time_value: string } | null;
+
+/** Valida a sigla e devolve o horário normalizado, ou null quando deve ser bloqueada. */
+function normalizeDraw(loc: string, rawTime: unknown): Normalized {
+  const key = String(rawTime ?? '').trim().toUpperCase();
+  if (!key) return null;
+
+  if (loc === 'capital') {
+    // Blindagem extra: nunca aceitar prefixos de outras praças (ex.: PTSP_13, PTNSP_20).
+    if (!key.startsWith('LCAP_') && !key.startsWith('CAP_')) return null;
+    const mapped = CAP_MAP[key];
+    return mapped ? { time_type: mapped.type, time_value: mapped.value } : null;
+  }
+
+  if (loc === 'rio') {
+    const value = RIO_MAP[key];
+    return value ? { time_type: key, time_value: value } : null;
+  }
+
+  return null;
+}
+
+/** Valida a milhar: precisa ser exatamente 4 dígitos. */
+function validMilhar(v: unknown): v is string {
+  return typeof v === 'string' && /^\d{4}$/.test(v.trim());
+}
+
+
 export const Route = createFileRoute('/api/public/sync-results')({
   server: {
     handlers: {
