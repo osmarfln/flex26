@@ -139,9 +139,11 @@ export function getNextDraw(location: 'rio' | 'capital' = 'rio') {
     timeZone: 'America/Sao_Paulo'
   }).format(now));
   tomorrow.setDate(tomorrow.getDate() + 1);
-  
+  const tomorrowISO = `${tomorrow.getFullYear()}-${String(tomorrow.getMonth() + 1).padStart(2, '0')}-${String(tomorrow.getDate()).padStart(2, '0')}`;
+  const tomorrowSchedule = getScheduleForDate(location, tomorrowISO);
+
   return {
-    ...schedule[0],
+    ...(tomorrowSchedule[0] ?? schedule[0]),
     date: tomorrow
   };
 }
