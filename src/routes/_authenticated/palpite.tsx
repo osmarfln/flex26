@@ -12,7 +12,7 @@ import { AvisoObrigatorio } from "@/components/AvisoObrigatorio";
 import { getStats, getTenDelayStats, getGroupDelayStats } from "@/lib/lottery.functions";
 import { useLotteryRealtime } from "@/hooks/useLotteryRealtime";
 import { getAnimalByGroup, getAnimalByTen } from "@/lib/animals";
-import { DRAW_SCHEDULE_RIO, DRAW_SCHEDULE_CAPITAL } from "@/lib/draw-order";
+import { getScheduleForDate } from "@/lib/draw-order";
 
 export const Route = createFileRoute("/_authenticated/palpite")({
   head: () => ({
@@ -189,7 +189,7 @@ function PalpitePage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {(location === 'rio' ? DRAW_SCHEDULE_RIO : DRAW_SCHEDULE_CAPITAL).map((slot) => {
+            {getScheduleForDate(location).map((slot) => {
               const info = (bySchedule as any)[slot.timeType];
               const animal = info ? getAnimalByGroup(info.group) : undefined;
               return (

@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { supabase } from "@/integrations/supabase/client";
-import { DRAW_SCHEDULE_RIO, DRAW_SCHEDULE_CAPITAL, brasiliaDateISO } from "@/lib/draw-order";
+import { getScheduleForDate, brasiliaDateISO } from "@/lib/draw-order";
 import { z } from "zod";
 
 
@@ -68,7 +68,7 @@ export const getScheduleSyncMatrix = createServerFn({ method: "GET" })
       sourceError = e?.message ?? "Falha ao consultar a base de origem";
     }
 
-    const rows: ScheduleRow[] = (location === 'rio' ? DRAW_SCHEDULE_RIO : DRAW_SCHEDULE_CAPITAL).map((s: any) => {
+    const rows: ScheduleRow[] = getScheduleForDate(location, date).map((s: any) => {
       const mine = (ours ?? []).find((r) => r.time_type === s.timeType);
       const src = source.find((r) => {
         // Capital: somente siglas oficiais LCAP_/CAP_ são aceitas na origem

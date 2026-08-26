@@ -14,7 +14,7 @@ import {
 } from "recharts";
 
 import { getResultsRange, type LotteryResult } from "@/lib/lottery.functions";
-import { DRAW_SCHEDULE_RIO, DRAW_SCHEDULE_CAPITAL } from "@/lib/draw-order";
+import { getScheduleForDate } from "@/lib/draw-order";
 import { ANIMAL_GROUPS, ANIMAL_GROUPS_MAP, getAnimalByTen, getGroupFromTen } from "@/lib/animals";
 
 const CHART_TOOLTIP = {
@@ -278,7 +278,7 @@ export function AnaliseFiltros({ initialLocation = 'rio' }: { initialLocation?: 
 
   const byTime = useMemo(() => {
     const counts: Record<string, { name: string; atual: number; anterior: number }> = {};
-    const schedule = location === 'rio' ? DRAW_SCHEDULE_RIO : DRAW_SCHEDULE_CAPITAL;
+    const schedule = getScheduleForDate(location);
     schedule.forEach((s) => {
       counts[s.timeType] = { name: s.timeType, atual: 0, anterior: 0 };
     });
@@ -399,7 +399,7 @@ export function AnaliseFiltros({ initialLocation = 'rio' }: { initialLocation?: 
 
       <div className="mt-4 flex flex-wrap items-center gap-2">
         <span className="text-[10px] font-black uppercase tracking-widest text-white/40">Horários:</span>
-        {(location === 'rio' ? DRAW_SCHEDULE_RIO : DRAW_SCHEDULE_CAPITAL).map((s) => {
+        {getScheduleForDate(location).map((s) => {
           const active = times.includes(s.timeType);
           return (
             <button

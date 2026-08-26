@@ -79,6 +79,31 @@ export function getBrasiliaTime(): Date {
   return new Date(now.getTime() - 3 * 60 * 60 * 1000);
 }
 
+/** Dia da semana (0=domingo ... 6=sábado) de uma data YYYY-MM-DD. */
+export function weekdayOfISO(dateISO?: string | null): number {
+  const iso = dateISO || brasiliaDateISO();
+  return new Date(`${iso}T12:00:00`).getDay();
+}
+
+/**
+ * Grade oficial válida para a data informada:
+ * - Rio: aos domingos há apenas PT (14:20) e PTV (16:20).
+ * - Capital: o horário das 19:00 (L-19) só existe aos sábados.
+ */
+export function getScheduleForDate(
+  location: 'rio' | 'capital' = 'rio',
+  dateISO?: string | null,
+) {
+  const weekday = weekdayOfISO(dateISO);
+  if (location === 'capital') {
+    return DRAW_SCHEDULE_CAPITAL.filter((s) => (s.timeType === 'L-19' ? weekday === 6 : true));
+  }
+  if (weekday === 0) {
+    return DRAW_SCHEDULE_RIO.filter((s) => s.timeType === 'PT' || s.timeType === 'PTV');
+  }
+  return DRAW_SCHEDULE_RIO;
+}
+
 /** Calcula o próximo sorteio baseado na localização e hora atual de Brasília */
 export function getNextDraw(location: 'rio' | 'capital' = 'rio') {
   const now = new Date();
@@ -91,10 +116,11 @@ export function getNextDraw(location: 'rio' | 'capital' = 'rio') {
     hour12: false
   }).format(now);
   
-  const schedule = location === 'capital' ? DRAW_SCHEDULE_CAPITAL : DRAW_SCHEDULE_RIO;
+  const schedule = getScheduleForDate(location, brasiliaDateISO());
   
   // Find the first draw in the schedule that is later than the current time
   const next = schedule.find(s => s.timeValue > brasiliaTimeStr);
+  
   
   if (next) {
     // Current date in Brasília context
@@ -113,9 +139,11 @@ export function getNextDraw(location: 'rio' | 'capital' = 'rio') {
     timeZone: 'America/Sao_Paulo'
   }).format(now));
   tomorrow.setDate(tomorrow.getDate() + 1);
-  
+  const tomorrowISO = `${tomorrow.getFullYear()}-${String(tomorrow.getMonth() + 1).padStart(2, '0')}-${String(tomorrow.getDate()).padStart(2, '0')}`;
+  const tomorrowSchedule = getScheduleForDate(location, tomorrowISO);
+
   return {
-    ...schedule[0],
+    ...(tomorrowSchedule[0] ?? schedule[0]),
     date: tomorrow
   };
 }

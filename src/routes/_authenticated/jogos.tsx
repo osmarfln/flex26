@@ -9,7 +9,7 @@ import { useServerFn } from '@tanstack/react-start';
 import { Trophy, Clock, Hash as NumbersIcon } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { getResults } from '@/lib/lottery.functions';
-import { DRAW_SCHEDULE, brasiliaDateISO } from '@/lib/draw-order';
+import { getScheduleForDate, brasiliaDateISO } from '@/lib/draw-order';
 import { getAnimalByGroup, getAnimalByTen } from '@/lib/animals';
 import { useLotteryRealtime } from '@/hooks/useLotteryRealtime';
 
@@ -30,7 +30,7 @@ function JogosManagementPage() {
     gcTime: 0,
   });
 
-  const games = DRAW_SCHEDULE.map((slot) => {
+  const games = getScheduleForDate('rio', brasiliaDateISO()).map((slot) => {
     const found = (results ?? []).find((r) => r.time_type === slot.timeType);
     const prizes = found?.results ?? [];
     const animal =

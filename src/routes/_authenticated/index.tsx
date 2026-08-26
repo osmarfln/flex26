@@ -4,7 +4,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { UserMenu } from "@/components/layout/UserMenu";
 import { ANIMAL_GROUPS } from "@/lib/animals";
 import { getResults, getTenDelayStats, getGroupDelayStats, getDigitDelayStats, getStats } from "@/lib/lottery.functions";
-import { DRAW_SCHEDULE_RIO, DRAW_SCHEDULE_CAPITAL, getNextDraw } from "@/lib/draw-order";
+import { getScheduleForDate, getNextDraw } from "@/lib/draw-order";
 import { useMemo } from "react";
 
 import { AlertaDezenasAtrasadas } from "@/components/AlertaDezenasAtrasadas";
@@ -358,13 +358,13 @@ function Index() {
           <div className="lg:col-span-12">
             {isLoadingGames ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {Array.from({ length: location === 'rio' ? 6 : 11 }).map((_, i) => (
+                {Array.from({ length: getScheduleForDate(location, today).length }).map((_, i) => (
                   <div key={i} className="h-64 rounded-2xl bg-white/5 animate-pulse border border-white/10" />
                 ))}
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {(location === 'rio' ? DRAW_SCHEDULE_RIO : DRAW_SCHEDULE_CAPITAL).map((schedule) => {
+                {getScheduleForDate(location, today).map((schedule) => {
                   const game = (games || []).find(
                     (g: any) => String(g.time_type).toUpperCase().trim().replace("PTT", "PPT") === schedule.timeType.toUpperCase(),
                   );

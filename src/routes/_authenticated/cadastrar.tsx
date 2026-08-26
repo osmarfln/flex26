@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
-import { DRAW_SCHEDULE_RIO, DRAW_SCHEDULE_CAPITAL, brasiliaDateISO } from "@/lib/draw-order";
+import { getScheduleForDate, brasiliaDateISO } from "@/lib/draw-order";
 import { getAnimalByTen } from "@/lib/animals";
 import { useLotteryRealtime } from "@/hooks/useLotteryRealtime";
 
@@ -45,7 +45,7 @@ function CadastrarPage() {
   const [location, setLocation] = useState<'rio' | 'capital'>('rio');
   const [date, setDate] = useState(brasiliaDateISO());
   
-  const schedules = location === 'rio' ? DRAW_SCHEDULE_RIO : DRAW_SCHEDULE_CAPITAL;
+  const schedules = getScheduleForDate(location);
   const [timeType, setTimeType] = useState(schedules[0]!.timeType);
   const [timeValue, setTimeValue] = useState(schedules[0]!.timeValue);
   const [prizes, setPrizes] = useState<string[]>(["", "", "", "", ""]);
@@ -154,7 +154,7 @@ function CadastrarPage() {
                   value={location}
                   onChange={(e) => {
                     const newLoc = e.target.value as 'rio' | 'capital';
-                    const newSchedules = newLoc === 'rio' ? DRAW_SCHEDULE_RIO : DRAW_SCHEDULE_CAPITAL;
+                    const newSchedules = getScheduleForDate(newLoc);
                     setLocation(newLoc);
                     setTimeType(newSchedules[0]!.timeType);
                     setTimeValue(newSchedules[0]!.timeValue);
@@ -176,12 +176,12 @@ function CadastrarPage() {
                   className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
                   value={timeType}
                   onChange={(e) => {
-                    const slot = (location === 'rio' ? DRAW_SCHEDULE_RIO : DRAW_SCHEDULE_CAPITAL).find((s) => s.timeType === e.target.value);
+                    const slot = getScheduleForDate(location).find((s) => s.timeType === e.target.value);
                     setTimeType(e.target.value);
                     if (slot) setTimeValue(slot.timeValue);
                   }}
                 >
-                  {(location === 'rio' ? DRAW_SCHEDULE_RIO : DRAW_SCHEDULE_CAPITAL).map((s) => (
+                  {getScheduleForDate(location).map((s) => (
                     <option key={s.timeType} value={s.timeType}>
                       {s.label} — {s.timeValue}
                     </option>
