@@ -203,7 +203,7 @@ function AuthPage() {
             </div>
           )}
 
-          <Button type="submit" className="w-full" disabled={loading}>
+          <Button type="submit" className="w-full bg-white text-black hover:bg-white/90" disabled={loading}>
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {mode === "login" ? "Entrar" : mode === "signup" ? "Criar conta" : "Enviar link de redefinição"}
           </Button>
