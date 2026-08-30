@@ -183,13 +183,13 @@ function Historico() {
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
             <LotteryColumn
-              title="Rio de Janeiro"
+              title="RIO DE JANEIRO"
               location="rio"
               dateISO={dateISO}
               results={rioResults}
             />
             <LotteryColumn
-              title="Capital (Florianópolis)"
+              title="CAPITAL & LCAP"
               location="capital"
               dateISO={dateISO}
               results={capitalResults}

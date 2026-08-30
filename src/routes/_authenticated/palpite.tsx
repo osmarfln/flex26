@@ -90,8 +90,8 @@ function PalpitePage() {
               value={location}
               onChange={(e) => setLocation(e.target.value as any)}
             >
-              <option value="rio">Rio</option>
-              <option value="capital">Capital</option>
+              <option value="rio">RIO DE JANEIRO</option>
+              <option value="capital">CAPITAL &amp; LCAP</option>
             </select>
             <div className="flex gap-2">
               <input 

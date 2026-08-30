@@ -221,8 +221,8 @@ function RobotStatus() {
               value={location}
               onChange={(e) => setLocation(e.target.value as any)}
             >
-              <option value="rio">Rio de Janeiro</option>
-              <option value="capital">Capital (Florianópolis)</option>
+              <option value="rio">RIO DE JANEIRO</option>
+              <option value="capital">CAPITAL & LCAP</option>
             </select>
             <button
               onClick={() => refetch()}
