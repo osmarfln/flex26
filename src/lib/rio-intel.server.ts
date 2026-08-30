@@ -10,18 +10,19 @@ import {
   normalizePrize,
   tensOfGroup,
 } from "./federal-intel.server";
-import { DRAW_SCHEDULE_RIO, drawLabel, getNextDraw } from "./draw-order";
+import { DRAW_SCHEDULE_CAPITAL, DRAW_SCHEDULE_RIO, drawLabel, getNextDraw } from "./draw-order";
 
 /**
- * Inteligência estatística da aba ANÁLISE RIO.
- * Usa SOMENTE o histórico já armazenado (lottery_results, location = 'rio').
- * O Rio publica até 6 resultados por dia (PPT, PTM, PT, PTV, PTN, COR),
- * 5 prêmios em cada um — 30 números analisados por dia.
+ * Inteligência estatística das abas ANÁLISE RIO e CAPITAL & LCAP.
+ * Usa SOMENTE o histórico já armazenado (lottery_results), medindo atraso em
+ * resultados confirmados e frequência esperada por prêmio analisado.
  */
 
-export type RioFaixa = "all" | string; // "all" ou time_type (PPT, PTM, PT, PTV, PTN, COR)
+export type IntelLocation = "rio" | "capital";
+export type RioFaixa = "all" | string; // "all" ou time_type
 
 export interface RioIntelInput {
+  location?: IntelLocation;
   position?: PositionFilter;
   faixa?: RioFaixa;
   window?: number; // últimos N resultados (0 = todo o histórico)
@@ -31,11 +32,16 @@ export interface RioIntelInput {
   topN?: number;
 }
 
+export function scheduleFor(location: IntelLocation) {
+  return location === "capital" ? DRAW_SCHEDULE_CAPITAL : DRAW_SCHEDULE_RIO;
+}
+
 export const RIO_FAIXAS = DRAW_SCHEDULE_RIO.map((s) => ({
   timeType: s.timeType,
   label: s.label,
   timeValue: s.timeValue,
 }));
+
 
 function classify(index: number | null): string {
   if (index === null) return "sem dados";
@@ -59,12 +65,16 @@ function normalize(values: number[]): (v: number) => number {
   return (v: number) => Math.max(0, Math.min(100, (v / max) * 100));
 }
 
-/** Lê o histórico do Rio já armazenado (mais recente primeiro), sem duplicidade. */
-export async function loadRioContests(dateStart?: string, dateEnd?: string): Promise<Contest[]> {
+/** Lê o histórico já armazenado da localidade (mais recente primeiro), sem duplicidade. */
+export async function loadRioContests(
+  location: IntelLocation = "rio",
+  dateStart?: string,
+  dateEnd?: string,
+): Promise<Contest[]> {
   let q = supabase
     .from("lottery_results")
     .select("date, time_type, time_value, results")
-    .eq("location", "rio")
+    .eq("location", location)
     .order("date", { ascending: false })
     .limit(6000);
   if (dateStart) q = q.gte("date", dateStart);
@@ -72,7 +82,7 @@ export async function loadRioContests(dateStart?: string, dateEnd?: string): Pro
   const { data, error } = await q;
   if (error) throw error;
 
-  const order = new Map(DRAW_SCHEDULE_RIO.map((s, i) => [s.timeType, i] as const));
+  const order = new Map(scheduleFor(location).map((s, i) => [s.timeType, i] as const));
   const seen = new Set<string>();
   const out: Contest[] = [];
   for (const r of data ?? []) {
@@ -98,9 +108,10 @@ export async function loadRioContests(dateStart?: string, dateEnd?: string): Pro
 }
 
 /** Atraso por faixa: quantas edições daquela faixa ocorreram desde a última aparição. */
-function delaysByFaixa(all: Contest[], position: PositionFilter) {
+function delaysByFaixa(all: Contest[], position: PositionFilter, location: IntelLocation) {
   const result = new Map<string, { tens: Map<string, number>; groups: Map<string, number>; editions: number }>();
-  for (const s of DRAW_SCHEDULE_RIO) {
+  for (const s of scheduleFor(location)) {
+
     const list = all.filter((c) => c.time_type === s.timeType);
     const tens = new Map<string, number>();
     const groups = new Map<string, number>();
@@ -126,6 +137,8 @@ export interface RioTenRow extends TenRow {
 
 /** Monta o pacote completo de inteligência do Rio. */
 export async function buildRioIntel(input: RioIntelInput) {
+  const location: IntelLocation = input.location === "capital" ? "capital" : "rio";
+  const schedule = scheduleFor(location);
   const position = (input.position ?? 0) as PositionFilter;
   let dateStart = input.dateStart;
   if (input.days && input.days > 0) {
@@ -135,14 +148,14 @@ export async function buildRioIntel(input: RioIntelInput) {
     dateStart = dateStart && dateStart > iso ? dateStart : iso;
   }
 
-  const all = await loadRioContests(dateStart, input.dateEnd);
+  const all = await loadRioContests(location, dateStart, input.dateEnd);
   const faixa = input.faixa && input.faixa !== "all" ? input.faixa : "all";
   let list = faixa === "all" ? all : all.filter((c) => c.time_type === faixa);
   const windowSize = input.window ?? 0;
   if (windowSize > 0) list = list.slice(0, windowSize);
 
   const core = computeIntel(list, position);
-  const faixaDelays = delaysByFaixa(all, position);
+  const faixaDelays = delaysByFaixa(all, position, location);
 
   // período anterior para comparação de tendência
   const prevList = windowSize > 0 ? (faixa === "all" ? all : all.filter((c) => c.time_type === faixa)).slice(windowSize, windowSize * 2) : [];
@@ -170,7 +183,7 @@ export async function buildRioIntel(input: RioIntelInput) {
     const trend: RioTenRow["trend"] =
       before === null ? "estável" : t.freqTotal > before ? "subindo" : t.freqTotal < before ? "caindo" : "estável";
     const delayInFaixa: Record<string, number> = {};
-    for (const s of DRAW_SCHEDULE_RIO) {
+    for (const s of schedule) {
       const f = faixaDelays.get(s.timeType);
       delayInFaixa[s.timeType] = f ? f.tens.get(t.ten) ?? f.editions : 0;
     }
@@ -188,7 +201,7 @@ export async function buildRioIntel(input: RioIntelInput) {
 
   const groups = core.groups.map((g) => {
     const delayInFaixa: Record<string, number> = {};
-    for (const s of DRAW_SCHEDULE_RIO) {
+    for (const s of schedule) {
       const f = faixaDelays.get(s.timeType);
       delayInFaixa[s.timeType] = f ? f.groups.get(g.group) ?? f.editions : 0;
     }
@@ -198,7 +211,7 @@ export async function buildRioIntel(input: RioIntelInput) {
   const latest = list[0] ?? all[0] ?? null;
   const today = all[0]?.date ?? null;
   const todayContests = today ? all.filter((c) => c.date === today) : [];
-  const next = getNextDraw("rio");
+  const next = getNextDraw(location);
   const topN = Math.max(3, Math.min(25, input.topN ?? 10));
 
   return {
@@ -212,21 +225,23 @@ export async function buildRioIntel(input: RioIntelInput) {
       dateEnd: input.dateEnd ?? null,
       sampleSize: list.length,
     },
-    faixas: RIO_FAIXAS,
+    faixas: schedule.map((s) => ({ timeType: s.timeType, label: s.label, timeValue: s.timeValue })),
+    location,
     summary: {
       lastDate: latest?.date ?? null,
-      lastFaixa: latest ? drawLabel("rio", latest.time_type) : null,
+      lastFaixa: latest ? drawLabel(location, latest.time_type) : null,
       publishedToday: todayContests.length,
+      expectedPerDay: schedule.length,
       numbersToday: todayContests.length * 5,
       nextDraw: next ? { label: next.label ?? null, timeValue: next.timeValue ?? null } : null,
       source: "soresultados.info (robô automatizado)",
-      status: todayContests.length >= 6 ? "dia completo" : "aguardando resultados do dia",
+      status: todayContests.length >= schedule.length ? "dia completo" : "aguardando resultados do dia",
       historyContests: all.length,
     },
     todayResults: todayContests.map((c) => ({
       date: c.date,
       timeType: c.time_type,
-      label: drawLabel("rio", c.time_type),
+      label: drawLabel(location, c.time_type),
       prizes: c.prizes.map((p, i) => ({ position: i + 1, ...normalizePrize(p) })),
     })),
     totals: {
@@ -237,7 +252,7 @@ export async function buildRioIntel(input: RioIntelInput) {
     latest: latest
       ? {
           date: latest.date,
-          label: drawLabel("rio", latest.time_type),
+          label: drawLabel(location, latest.time_type),
           prizes: latest.prizes.map((p, i) => ({ position: i + 1, ...normalizePrize(p) })),
         }
       : null,

@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getRioIntel } from "@/lib/rio-intel.functions";
 import { getAnimalByGroup } from "@/lib/animals";
-import { DRAW_SCHEDULE_RIO } from "@/lib/draw-order";
+import { DRAW_SCHEDULE_CAPITAL, DRAW_SCHEDULE_RIO, locationName } from "@/lib/draw-order";
 import { Loader2, Brain, Flame, Timer, Trophy, Percent, FlaskConical, Search, CalendarDays } from "lucide-react";
 
 const WINDOWS = [
@@ -33,13 +33,13 @@ const POSITIONS = [
 ];
 
 const TABS = [
-  { id: "resumo", label: "Resumo" },
+  { id: "resumo", label: "Visão geral" },
   { id: "dia", label: "Resultados do dia" },
-  { id: "atrasadas", label: "Dezenas atrasadas" },
-  { id: "puxadas", label: "Dezenas puxadas" },
-  { id: "grupos-atraso", label: "Grupos atrasados" },
-  { id: "grupos-puxados", label: "Grupos puxados" },
-  { id: "possibilidades", label: "Possibilidades estatísticas" },
+  { id: "atrasadas", label: "Ranking completo de dezenas" },
+  { id: "puxadas", label: "Dezenas mais puxadas" },
+  { id: "grupos-atraso", label: "Grupos mais atrasados" },
+  { id: "grupos-puxados", label: "Grupos mais puxados" },
+  { id: "possibilidades", label: "Atraso elevado + grupo atrasado" },
   { id: "backtest", label: "Validação histórica" },
 ] as const;
 
@@ -69,7 +69,8 @@ function Explain({ title, children }: { title: string; children: React.ReactNode
  * Inteligência de cálculos da ANÁLISE RIO — integrada à aba existente.
  * Usa apenas o histórico do Rio já armazenado (6 resultados/dia x 5 prêmios).
  */
-export function RioIntelligencePanel() {
+export function RioIntelligencePanel({ location = "rio" }: { location?: "rio" | "capital" }) {
+  const schedule = location === "capital" ? DRAW_SCHEDULE_CAPITAL : DRAW_SCHEDULE_RIO;
   const [tab, setTab] = useState<TabId>("resumo");
   const [position, setPosition] = useState(0);
   const [faixa, setFaixa] = useState<string>("all");
@@ -80,8 +81,8 @@ export function RioIntelligencePanel() {
   const [selected, setSelected] = useState<string | null>(null);
 
   const { data, isLoading, isFetching } = useQuery({
-    queryKey: ["rio-intel", position, faixa, windowSize, days, topN],
-    queryFn: () => getRioIntel({ data: { position, faixa, window: windowSize, days, topN } }),
+    queryKey: ["rio-intel", location, position, faixa, windowSize, days, topN],
+    queryFn: () => getRioIntel({ data: { location, position, faixa, window: windowSize, days, topN } }),
     staleTime: 5 * 60 * 1000,
   });
 
@@ -102,9 +103,9 @@ export function RioIntelligencePanel() {
             <Brain className="w-6 h-6" />
           </div>
           <div>
-            <h3 className="text-lg sm:text-xl font-black uppercase text-white">Inteligência RIO DE JANEIRO</h3>
+            <h3 className="text-lg sm:text-xl font-black uppercase text-white">Inteligência {locationName(location)}</h3>
             <p className="text-xs text-white/50">
-              Cálculos sobre o histórico auditado do Rio — 6 resultados por dia, 5 prêmios cada (30 números/dia).
+              Cálculos sobre o histórico auditado — {schedule.length} resultados por dia, 5 prêmios cada ({schedule.length * 5} números/dia).
               {isFetching && <span className="ml-2 text-primary">atualizando…</span>}
             </p>
           </div>
@@ -120,7 +121,7 @@ export function RioIntelligencePanel() {
               className="mt-1 w-full bg-[#0D121F] border border-white/10 rounded-xl px-3 py-2 text-sm text-white"
             >
               <option value="all">Todos os resultados combinados</option>
-              {DRAW_SCHEDULE_RIO.map((s, i) => (
+              {schedule.map((s, i) => (
                 <option key={s.timeType} value={s.timeType}>{`Resultado ${i + 1} — ${s.label}`}</option>
               ))}
             </select>
@@ -194,14 +195,14 @@ export function RioIntelligencePanel() {
                 : "bg-[#0D121F] text-white/60 border-white/10 hover:border-primary/40"
             }`}
           >
-            {t.id === "atrasadas" && data ? `Dezenas atrasadas — ${data.filters.sampleSize} resultados` : t.label}
+            {t.id === "atrasadas" && data ? `Ranking completo de dezenas — amostra de ${data.filters.sampleSize} resultados` : t.label}
           </button>
         ))}
       </div>
 
       {isLoading && (
         <div className="dashboard-card p-10 flex items-center justify-center text-white/50">
-          <Loader2 className="w-5 h-5 animate-spin mr-2" /> Calculando inteligência do Rio…
+          <Loader2 className="w-5 h-5 animate-spin mr-2" /> Calculando inteligência…
         </div>
       )}
 
@@ -215,7 +216,7 @@ export function RioIntelligencePanel() {
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {[
               { icon: CalendarDays, label: "Último resultado", value: data.summary.lastFaixa ?? "--", sub: data.summary.lastDate ?? "--" },
-              { icon: Trophy, label: "Publicados hoje", value: `${data.summary.publishedToday}/6`, sub: `${data.summary.numbersToday} números analisados` },
+              { icon: Trophy, label: "Publicados hoje", value: `${data.summary.publishedToday}/${schedule.length}`, sub: `${data.summary.numbersToday} números analisados` },
               { icon: Timer, label: "Próximo resultado", value: data.summary.nextDraw?.label ?? "--", sub: data.summary.nextDraw?.timeValue ?? "--" },
               { icon: Flame, label: "Histórico", value: `${data.totals.historyContests}`, sub: data.summary.status },
             ].map((c) => (
@@ -378,7 +379,7 @@ export function RioIntelligencePanel() {
                 <p>Relevância: <b className="text-white">{detail.scoreLabel}</b></p>
                 <p>Posições em que apareceu: <b className="text-white">{detail.positions.join(", ") || "--"}</b></p>
                 <p>Componentes — A {detail.components.A} · R {detail.components.R} · G {detail.components.G} · P {detail.P} · E {detail.components.E}</p>
-                <p>Atraso por faixa: {DRAW_SCHEDULE_RIO.map((s) => `${s.timeType} ${detail.delayInFaixa[s.timeType] ?? "--"}`).join(" · ")}</p>
+                <p>Atraso por faixa: {schedule.map((s) => `${s.timeType} ${detail.delayInFaixa[s.timeType] ?? "--"}`).join(" · ")}</p>
                 <p>Frequência recente: <b className="text-white">{detail.freqRecent}</b></p>
               </div>
             </div>

@@ -338,11 +338,12 @@ function EstatisticasPage() {
             </div>
           )}
 
-          {location === 'rio' && (
+          {(location === 'rio' || location === 'capital') && (
             <div className="mb-8">
-              <RioIntelligencePanel />
+              <RioIntelligencePanel location={location} />
             </div>
           )}
+
 
 
 

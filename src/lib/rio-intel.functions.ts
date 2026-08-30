@@ -6,6 +6,7 @@ export const getRioIntel = createServerFn({ method: "GET" })
   .inputValidator((data: unknown) =>
     z
       .object({
+        location: z.enum(["rio", "capital"]).optional().default("rio"),
         position: z.number().int().min(0).max(5).optional().default(0),
         faixa: z.string().optional().default("all"),
         window: z.number().int().min(0).max(5000).optional().default(0),
