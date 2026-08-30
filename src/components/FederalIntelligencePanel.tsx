@@ -516,13 +516,13 @@ function StatCard({
     violet: "text-violet-300 bg-violet-500/10 border-violet-500/30",
   };
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+    <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-3 sm:p-4 min-w-0">
       <div className={`mb-2 inline-flex rounded-lg border p-1.5 ${tones[tone] ?? tones["red"]}`}>
         <Icon className="h-4 w-4" />
       </div>
-      <p className="text-[9px] font-black uppercase tracking-widest text-white/40">{title}</p>
-      <p className="text-2xl font-black text-white">{main ?? "--"}</p>
-      <p className="truncate text-[11px] text-white/50">{sub}</p>
+      <p className="text-[9px] font-black uppercase tracking-widest text-white/40 break-words">{title}</p>
+      <p className="text-xl sm:text-2xl font-black text-white break-words">{main ?? "--"}</p>
+      <p className="text-[11px] text-white/50 break-words">{sub}</p>
     </div>
   );
 }
