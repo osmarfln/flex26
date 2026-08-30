@@ -18,7 +18,7 @@ import {
   TrendingUp, 
   Sparkles, 
   Hash, 
-  RefreshCw, 
+   
   Calendar, 
   MapPin, 
   ChevronDown,
