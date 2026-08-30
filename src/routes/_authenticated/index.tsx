@@ -346,7 +346,7 @@ function Index() {
                 <div className="flex-1">
                   <p className="text-[10px] text-black/60 font-bold uppercase tracking-wider">Localidade</p>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-black uppercase text-black">{locationName(location)}</span>
+                    <span className="text-xs font-black uppercase text-black">{locationName(location)}</span>
                     <ChevronDown className="w-4 h-4 text-black" />
                   </div>
                 </div>
