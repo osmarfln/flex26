@@ -10,7 +10,7 @@ import {
   normalizePrize,
   tensOfGroup,
 } from "./federal-intel.server";
-import { RIO_SCHEDULE, drawLabel, getNextDraw } from "./draw-order";
+import { DRAW_SCHEDULE_RIO, drawLabel, getNextDraw } from "./draw-order";
 
 /**
  * Inteligência estatística da aba ANÁLISE RIO.
@@ -31,7 +31,7 @@ export interface RioIntelInput {
   topN?: number;
 }
 
-export const RIO_FAIXAS = RIO_SCHEDULE.map((s) => ({
+export const RIO_FAIXAS = DRAW_SCHEDULE_RIO.map((s) => ({
   timeType: s.timeType,
   label: s.label,
   timeValue: s.timeValue,
@@ -72,7 +72,7 @@ export async function loadRioContests(dateStart?: string, dateEnd?: string): Pro
   const { data, error } = await q;
   if (error) throw error;
 
-  const order = new Map(RIO_SCHEDULE.map((s, i) => [s.timeType, i] as const));
+  const order = new Map(DRAW_SCHEDULE_RIO.map((s, i) => [s.timeType, i] as const));
   const seen = new Set<string>();
   const out: Contest[] = [];
   for (const r of data ?? []) {
@@ -100,7 +100,7 @@ export async function loadRioContests(dateStart?: string, dateEnd?: string): Pro
 /** Atraso por faixa: quantas edições daquela faixa ocorreram desde a última aparição. */
 function delaysByFaixa(all: Contest[], position: PositionFilter) {
   const result = new Map<string, { tens: Map<string, number>; groups: Map<string, number>; editions: number }>();
-  for (const s of RIO_SCHEDULE) {
+  for (const s of DRAW_SCHEDULE_RIO) {
     const list = all.filter((c) => c.time_type === s.timeType);
     const tens = new Map<string, number>();
     const groups = new Map<string, number>();
@@ -170,7 +170,7 @@ export async function buildRioIntel(input: RioIntelInput) {
     const trend: RioTenRow["trend"] =
       before === null ? "estável" : t.freqTotal > before ? "subindo" : t.freqTotal < before ? "caindo" : "estável";
     const delayInFaixa: Record<string, number> = {};
-    for (const s of RIO_SCHEDULE) {
+    for (const s of DRAW_SCHEDULE_RIO) {
       const f = faixaDelays.get(s.timeType);
       delayInFaixa[s.timeType] = f ? f.tens.get(t.ten) ?? f.editions : 0;
     }
@@ -188,7 +188,7 @@ export async function buildRioIntel(input: RioIntelInput) {
 
   const groups = core.groups.map((g) => {
     const delayInFaixa: Record<string, number> = {};
-    for (const s of RIO_SCHEDULE) {
+    for (const s of DRAW_SCHEDULE_RIO) {
       const f = faixaDelays.get(s.timeType);
       delayInFaixa[s.timeType] = f ? f.groups.get(g.group) ?? f.editions : 0;
     }
