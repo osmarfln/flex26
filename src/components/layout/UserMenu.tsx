@@ -52,13 +52,13 @@ export function UserMenu() {
       <SheetTrigger asChild>
         <button
           type="button"
-          className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-2 py-1.5 transition-colors hover:bg-white/10"
+          className="flex items-center gap-2.5 rounded-xl border border-white/10 bg-white/5 px-3 py-2 transition-colors hover:bg-white/10"
         >
-          <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-primary/20 text-[11px] font-black text-primary">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/20 text-sm font-black text-primary">
             {initial}
           </span>
-          <span className="hidden max-w-[120px] truncate text-xs font-bold sm:inline">{name || "Conta"}</span>
-          <ChevronDown className="h-3.5 w-3.5 text-white/40" />
+          <span className="hidden max-w-[140px] truncate text-sm font-bold sm:inline">{name || "Conta"}</span>
+          <ChevronDown className="h-4 w-4 text-white/40" />
         </button>
       </SheetTrigger>
 
