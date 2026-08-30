@@ -341,9 +341,15 @@ export function FederalIntelligencePanel() {
           </div>
         )}
       </div>
+      )}
 
       {/* Rankings de grupos */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      {tab === "groupsDelayed" && (
+      <div className="space-y-4">
+        <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4 text-[11px] text-white/50 leading-relaxed">
+          <strong className="text-white/80 uppercase tracking-widest">Grupos mais atrasados:</strong> o atraso do
+          grupo zera quando qualquer uma das quatro dezenas aparece. Índice = atraso atual ÷ intervalo médio histórico.
+        </div>
         <RankTable
           title="Grupos mais atrasados"
           rows={(data.rankings.groupsMostDelayed as any[]).map((g) => ({
