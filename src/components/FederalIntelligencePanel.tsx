@@ -53,6 +53,7 @@ export function FederalIntelligencePanel() {
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<string | null>(null);
   const [showBacktest, setShowBacktest] = useState(false);
+  const [tab, setTab] = useState<"overview" | "tens" | "groupsDelayed" | "groupsHot" | "combined">("overview");
 
   const { data, isLoading, isFetching } = useQuery({
     queryKey: ["federal-intel", position, weekday, windowSize, topN],
