@@ -4,6 +4,7 @@ import { getRioIntel } from "@/lib/rio-intel.functions";
 import { getAnimalByGroup } from "@/lib/animals";
 import { DRAW_SCHEDULE_CAPITAL, DRAW_SCHEDULE_RIO, locationName } from "@/lib/draw-order";
 import { Loader2, Brain, Flame, Timer, Trophy, Percent, FlaskConical, Search, CalendarDays } from "lucide-react";
+import { IntelTabBar } from "@/components/IntelTabBar";
 
 const WINDOWS = [
   { label: "10", value: 10 },
@@ -216,11 +217,11 @@ export function RioIntelligencePanel({ location = "rio" }: { location?: "rio" | 
               { icon: Timer, label: "Próximo resultado", value: data.summary.nextDraw?.label ?? "--", sub: data.summary.nextDraw?.timeValue ?? "--" },
               { icon: Flame, label: "Histórico", value: `${data.totals.historyContests}`, sub: data.summary.status },
             ].map((c) => (
-              <div key={c.label} className="dashboard-card p-4">
+              <div key={c.label} className="dashboard-card p-3 sm:p-4 min-w-0">
                 <c.icon className="w-5 h-5 text-primary mb-2" />
-                <p className="text-[11px] uppercase text-white/40 font-bold">{c.label}</p>
-                <p className="text-lg font-black text-white">{c.value}</p>
-                <p className="text-xs text-white/50">{c.sub}</p>
+                <p className="text-[10px] sm:text-[11px] uppercase text-white/40 font-bold truncate">{c.label}</p>
+                <p className="text-base sm:text-lg font-black text-white break-words">{c.value}</p>
+                <p className="text-[11px] sm:text-xs text-white/50 break-words">{c.sub}</p>
               </div>
             ))}
           </div>

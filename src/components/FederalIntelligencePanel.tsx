@@ -4,6 +4,7 @@ import { getFederalIntel } from "@/lib/federal-intel.functions";
 import { getAnimalByGroup } from "@/lib/animals";
 import { Loader2, Landmark, Flame, Timer, Trophy, Percent, FlaskConical, Search, ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
+import { IntelTabBar } from "@/components/IntelTabBar";
 
 const WINDOWS = [
   { label: "10", value: 10 },
