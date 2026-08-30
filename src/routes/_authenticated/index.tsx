@@ -399,8 +399,9 @@ function Index() {
                       )}
                       <CardHeader className="p-6 pb-2">
                         <div className="flex justify-between items-start mb-4">
-                          <CardTitle className="text-xl font-black italic tracking-tighter uppercase group-hover:text-primary transition-colors">
-                            {location === 'capital' ? `${schedule.label} h` : location === 'federal' ? `${schedule.label} h${schedule.dateLabel ? ` — ${schedule.dateLabel}` : ''}` : `${schedule.label} ${schedule.timeValue} h`}
+                          <CardTitle className="text-xl font-black italic tracking-tighter uppercase group-hover:text-primary transition-colors flex items-baseline gap-2">
+                            {location === 'capital' ? `${schedule.label} h` : location === 'federal' ? `${schedule.label} h${schedule.dateLabel ? ` — ${schedule.dateLabel}` : ''}` : `${schedule.label} h`}
+                            {location === 'rio' && <span className="text-[11px] font-bold not-italic normal-case text-white/40 tracking-normal">Rio</span>}
                           </CardTitle>
                           {isLatest && (
                             <div className="px-3 py-1 bg-primary text-primary-foreground text-[10px] font-black uppercase rounded-lg shadow-xl shadow-primary/20">
