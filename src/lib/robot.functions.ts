@@ -22,7 +22,10 @@ type ScheduleRow = {
 };
 
 async function fetchSource(date: string, location: string = 'rio') {
-  const externalTable = location === 'capital' ? 'capital_results' : 'draw_results';
+  const externalTable =
+    location === 'capital' ? 'capital_results'
+    : location === 'federal' ? 'federal_results'
+    : 'draw_results';
   const url = `${EXTERNAL_REST_URL}/${externalTable}?draw_date=eq.${date}&select=*`;
   
   const res = await fetch(url, {
@@ -71,6 +74,12 @@ export const getScheduleSyncMatrix = createServerFn({ method: "GET" })
     const rows: ScheduleRow[] = getScheduleForDate(location, date).map((s: any) => {
       const mine = (ours ?? []).find((r) => r.time_type === s.timeType);
       const src = source.find((r) => {
+        // Federal: a origem não tem horário; o dia da semana define a extração
+        if (location === 'federal') {
+          const weekday = new Date(`${date}T12:00:00`).getDay();
+          const expected = weekday === 0 ? 'FED-11' : 'FED-20';
+          return expected === s.timeType;
+        }
         // Capital: somente siglas oficiais LCAP_/CAP_ são aceitas na origem
         if (location === 'capital') {
           const key = String(r.draw_time ?? '').trim().toUpperCase();

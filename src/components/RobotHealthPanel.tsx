@@ -102,6 +102,7 @@ export function RobotHealthPanel() {
           >
             <option value="rio">Rio</option>
             <option value="capital">Capital</option>
+            <option value="federal">Federal</option>
           </select>
           <span
             className={`inline-flex items-center gap-2 rounded-xl border px-3 py-1.5 text-[10px] font-black uppercase ${

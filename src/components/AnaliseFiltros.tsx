@@ -323,6 +323,7 @@ export function AnaliseFiltros({ initialLocation = 'rio' }: { initialLocation?: 
           >
             <option value="rio">Rio</option>
             <option value="capital">Capital</option>
+            <option value="federal">Federal</option>
           </select>
         </label>
 

@@ -162,6 +162,7 @@ function CadastrarPage() {
                 >
                   <option value="rio">RIO DE JANEIRO</option>
                   <option value="capital">CAPITAL & LCAP</option>
+                  <option value="federal">LOTERIA FEDERAL</option>
                 </select>
               </div>
 

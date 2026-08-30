@@ -92,6 +92,7 @@ function PalpitePage() {
             >
               <option value="rio">RIO DE JANEIRO</option>
               <option value="capital">CAPITAL &amp; LCAP</option>
+              <option value="federal">LOTERIA FEDERAL</option>
             </select>
             <div className="flex gap-2">
               <input 

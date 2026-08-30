@@ -162,6 +162,7 @@ export function AnaliseInteligentePanel({ enabled }: { enabled: boolean }) {
         >
           <option value="rio">Rio</option>
           <option value="capital">Capital</option>
+          <option value="federal">Federal</option>
         </select>
       </div>
 
