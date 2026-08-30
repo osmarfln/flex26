@@ -124,9 +124,21 @@ function Historico() {
 
           <Card className="dashboard-card p-6 mb-8">
             <div className="flex flex-wrap gap-4 items-end">
+              <div className="flex-1 min-w-[180px]">
+                <label className="text-[10px] text-white/40 font-bold uppercase tracking-wider mb-2 block">Digite a Data (dia/mês/ano)</label>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  placeholder="Ex: 15/08/2026"
+                  value={manualDate}
+                  onChange={(e) => handleManualChange(e.target.value)}
+                  className="w-full h-[52px] px-4 font-bold bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/25 focus:outline-none focus:border-primary/50 tracking-widest"
+                />
+              </div>
+
               <div className="flex-1 min-w-[220px]">
-                <label className="text-[10px] text-white/40 font-bold uppercase tracking-wider mb-2 block">Data do Sorteio</label>
-                <Popover>
+                <label className="text-[10px] text-white/40 font-bold uppercase tracking-wider mb-2 block">Ou escolha no Calendário</label>
+                <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
@@ -143,7 +155,7 @@ function Historico() {
                     <Calendar
                       mode="single"
                       selected={date}
-                      onSelect={(d) => d && setDate(d)}
+                      onSelect={(d) => d && applyDate(d)}
                       locale={ptBR}
                       initialFocus
                       className="p-3 pointer-events-auto"
