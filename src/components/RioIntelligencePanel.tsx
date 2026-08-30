@@ -184,21 +184,17 @@ export function RioIntelligencePanel({ location = "rio" }: { location?: "rio" | 
       </div>
 
       {/* botões de seção */}
-      <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
-        {TABS.map((t) => (
-          <button
-            key={t.id}
-            onClick={() => setTab(t.id)}
-            className={`whitespace-nowrap px-4 py-2 rounded-xl text-xs sm:text-sm font-bold uppercase border transition-all ${
-              tab === t.id
-                ? "bg-primary text-primary-foreground border-primary"
-                : "bg-[#0D121F] text-white/60 border-white/10 hover:border-primary/40"
-            }`}
-          >
-            {t.id === "atrasadas" && data ? `Ranking completo de dezenas — amostra de ${data.filters.sampleSize} resultados` : t.label}
-          </button>
-        ))}
-      </div>
+      <IntelTabBar
+        tabs={TABS.map((t) => ({
+          id: t.id,
+          label:
+            t.id === "atrasadas" && data
+              ? `Ranking completo de dezenas — amostra de ${data.filters.sampleSize} resultados`
+              : t.label,
+        }))}
+        active={tab}
+        onChange={setTab}
+      />
 
       {isLoading && (
         <div className="dashboard-card p-10 flex items-center justify-center text-white/50">

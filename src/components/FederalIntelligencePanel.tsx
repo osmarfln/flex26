@@ -180,27 +180,17 @@ export function FederalIntelligencePanel() {
       </div>
 
       {/* Abas de navegação */}
-      <div className="flex gap-2 overflow-x-auto pb-1">
-        {[
+      <IntelTabBar
+        tabs={[
           { id: "overview" as const, label: "Visão geral" },
           { id: "tens" as const, label: `Ranking completo de dezenas — amostra de ${data.filters.sampleSize} extrações` },
           { id: "groupsDelayed" as const, label: "Grupos mais atrasados" },
           { id: "groupsHot" as const, label: "Grupos mais puxados" },
           { id: "combined" as const, label: "Atraso elevado + grupo atrasado" },
-        ].map((t) => (
-          <button
-            key={t.id}
-            onClick={() => setTab(t.id)}
-            className={`shrink-0 rounded-xl border px-4 py-2 text-[11px] font-black uppercase tracking-wider transition-colors ${
-              tab === t.id
-                ? "border-primary/60 bg-primary/20 text-primary"
-                : "border-white/10 bg-white/[0.02] text-white/50 hover:bg-white/5 hover:text-white"
-            }`}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
+        ]}
+        active={tab}
+        onChange={setTab}
+      />
 
       {tab === "overview" && (
       <>
