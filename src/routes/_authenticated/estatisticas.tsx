@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { drawLabel } from "@/lib/draw-order";
 import { ANIMAL_GROUPS, getAnimalByTen } from "@/lib/animals";
 import { ArrowLeft, BarChart3, Calculator, Sparkles, TrendingUp, Zap, Target, BrainCircuit, History, Flame, Clock, LayoutGrid, Hash, Users, Repeat, ArrowLeftRight, FileText, Upload, Calendar, AlertCircle, Database, CheckCircle2, XCircle, Activity, Timer, ChevronRight, Trophy, RefreshCw, Loader2, Network, Info, MapPin } from "lucide-react";
 import { CruzDoDia } from "@/components/CruzDoDia";
@@ -233,7 +234,7 @@ function EstatisticasPage() {
     recentResults.forEach(r => {
       freqByTime[r.time_type] = (freqByTime[r.time_type] || 0) + 1;
     });
-    const freqChartData = Object.entries(freqByTime).map(([name, value]) => ({ name, value }));
+    const freqChartData = Object.entries(freqByTime).map(([name, value]) => ({ name: drawLabel(location, name), value }));
 
     const last30 = recentResults.slice(0, 30);
     const prev30 = recentResults.slice(30, 60);
