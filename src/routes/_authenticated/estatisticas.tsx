@@ -5,6 +5,8 @@ import { ArrowLeft, BarChart3, Calculator, Sparkles, TrendingUp, Zap, Target, Br
 import { CruzDoDia } from "@/components/CruzDoDia";
 import { FederalSyncPanel } from "@/components/FederalSyncPanel";
 import { FederalIntelligencePanel } from "@/components/FederalIntelligencePanel";
+import { RioIntelligencePanel } from "@/components/RioIntelligencePanel";
+
 
 import { AvisoObrigatorio } from "@/components/AvisoObrigatorio";
 import { AnaliseFiltros } from "@/components/AnaliseFiltros";
