@@ -101,7 +101,7 @@ const CHART_TOOLTIP = {
 function RobotStatus() {
   const { isAdmin, loading: adminLoading } = useIsAdmin();
   useLotteryRealtime("robot-status-db-changes");
-  const [location, setLocation] = useState<'rio' | 'capital'>('rio');
+  const [location, setLocation] = useState<'rio' | 'capital' | 'federal'>('rio');
   const { data: logs, isLoading, refetch, isError } = useQuery({
     queryKey: ["sync-logs", location],
     queryFn: () => getSyncStatus({ data: { location } }),

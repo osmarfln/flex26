@@ -82,7 +82,7 @@ function AdminPage() {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<{ id: string; name: string } | null>(null);
   const [tab, setTab] = useState("geral");
-  const [location, setLocation] = useState<'rio' | 'capital'>('rio');
+  const [location, setLocation] = useState<'rio' | 'capital' | 'federal'>('rio');
 
 
   const fetchMatrix = useServerFn(getScheduleSyncMatrix);

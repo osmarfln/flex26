@@ -30,9 +30,9 @@ export const Route = createFileRoute("/_authenticated")({
 });
 
 function AuthenticatedLayout() {
-  const [location, setLocation] = useState<'rio' | 'capital'>(() => {
+  const [location, setLocation] = useState<'rio' | 'capital' | 'federal'>(() => {
     if (typeof window !== 'undefined') {
-      return (localStorage.getItem('preferred-location') as 'rio' | 'capital') || 'rio';
+      return (localStorage.getItem('preferred-location') as 'rio' | 'capital' | 'federal') || 'rio';
     }
     return 'rio';
   });
@@ -40,7 +40,7 @@ function AuthenticatedLayout() {
   // Escuta mudanças no localStorage para atualizar a localidade da notificação
   useEffect(() => {
     const handleStorage = () => {
-      const stored = localStorage.getItem('preferred-location') as 'rio' | 'capital';
+      const stored = localStorage.getItem('preferred-location') as 'rio' | 'capital' | 'federal';
       if (stored && stored !== location) setLocation(stored);
     };
     window.addEventListener('storage', handleStorage);

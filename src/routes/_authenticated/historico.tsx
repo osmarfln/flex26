@@ -40,7 +40,7 @@ export const Route = createFileRoute("/_authenticated/historico")({
   component: Historico,
 });
 
-type Location = 'rio' | 'capital';
+type Location = 'rio' | 'capital' | 'federal';
 
 function Historico() {
   const [date, setDate] = useState<Date>(parseISO(brasiliaDateISO()));

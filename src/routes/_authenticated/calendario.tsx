@@ -46,7 +46,7 @@ function pad(n: number) {
 
 function CalendarioPage() {
   const todayISO = brasiliaDateISO();
-  const [location, setLocation] = useState<'rio' | 'capital'>('rio');
+  const [location, setLocation] = useState<'rio' | 'capital' | 'federal'>('rio');
   const [year, setYear] = useState(Number(todayISO.slice(0, 4)));
   const [month, setMonth] = useState(Number(todayISO.slice(5, 7)) - 1);
   const { lastUpdate } = useLotteryRealtime("calendario-db-changes");

@@ -61,7 +61,7 @@ const MiniSparkline = ({ data, color = "#EF4444" }: { data: number[], color?: st
 
 function EstatisticasPage() {
   const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'logica-atraso' | 'ranking-completo' | 'logica-grupos' | 'repeticoes' | 'esquerda-direita' | 'puxadas' | 'analise-premium'>('quentes');
-  const [location, setLocation] = useState<'rio' | 'capital'>('rio');
+  const [location, setLocation] = useState<'rio' | 'capital' | 'federal'>('rio');
   const [date, setDate] = useState("");
   const [dateEnd, setDateEnd] = useState("");
   const [cruzData, setCruzData] = useState<string[]>([]);

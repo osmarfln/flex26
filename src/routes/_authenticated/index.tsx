@@ -93,9 +93,9 @@ function getGreeting() {
 
 function Index() {
   // Estado inicial estável para evitar divergência entre servidor e navegador
-  const [location, setLocation] = useState<'rio' | 'capital'>(() => {
+  const [location, setLocation] = useState<'rio' | 'capital' | 'federal'>(() => {
     if (typeof window !== 'undefined') {
-      return (localStorage.getItem('preferred-location') as 'rio' | 'capital') || 'rio';
+      return (localStorage.getItem('preferred-location') as 'rio' | 'capital' | 'federal') || 'rio';
     }
     return 'rio';
   });

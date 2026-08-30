@@ -37,7 +37,7 @@ export const Route = createFileRoute("/_authenticated/palpite")({
 });
 
 function PalpitePage() {
-  const [location, setLocation] = useState<'rio' | 'capital'>('rio');
+  const [location, setLocation] = useState<'rio' | 'capital' | 'federal'>('rio');
   const [date, setDate] = useState("");
   const [dateEnd, setDateEnd] = useState("");
   const { lastUpdate } = useLotteryRealtime("palpite-db-changes");

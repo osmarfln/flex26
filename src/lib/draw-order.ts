@@ -18,7 +18,7 @@ const PRIORITY_CAPITAL: Record<string, number> = {
   "L-09": 0, "L-10": 1, "L-11": 2, "L-13": 3, "L-14": 4, "L-15": 5, "L-16": 6, "L-18": 7, "L-19": 8, "L-20": 9, "L-22": 10
 };
 
-export function timePriority(timeType?: string | null, location: 'rio' | 'capital' = 'rio'): number {
+export function timePriority(timeType?: string | null, location: 'rio' | 'capital' | 'federal' = 'rio'): number {
   if (!timeType) return 99;
   const key = String(timeType).toUpperCase().trim();
   if (location === 'capital') return PRIORITY_CAPITAL[key] ?? 99;
@@ -93,7 +93,7 @@ export function weekdayOfISO(dateISO?: string | null): number {
  *   - Sábado: no lugar da CAPITAL 18:00 entra LCAP 18:00 e é adicionada a CAPITAL 19:00.
  */
 export function getScheduleForDate(
-  location: 'rio' | 'capital' = 'rio',
+  location: 'rio' | 'capital' | 'federal' = 'rio',
   dateISO?: string | null,
 ) {
   const weekday = weekdayOfISO(dateISO);
@@ -113,7 +113,7 @@ export function getScheduleForDate(
 
 /** Rótulo oficial de um horário (ex.: "CAPITAL 14:00", "LCAP 09:00", "PTM"). */
 export function drawLabel(
-  location: 'rio' | 'capital' | string | null | undefined,
+  location: 'rio' | 'capital' | 'federal' | string | null | undefined,
   timeType?: string | null,
   dateISO?: string | null,
 ): string {
@@ -127,7 +127,7 @@ export function drawLabel(
 
 /** Horário oficial (HH:mm) de um time_type. */
 export function drawTimeValue(
-  location: 'rio' | 'capital' | string | null | undefined,
+  location: 'rio' | 'capital' | 'federal' | string | null | undefined,
   timeType?: string | null,
 ): string {
   const key = String(timeType ?? '').toUpperCase().trim();
@@ -136,7 +136,7 @@ export function drawTimeValue(
 }
 
 /** Calcula o próximo sorteio baseado na localização e hora atual de Brasília */
-export function getNextDraw(location: 'rio' | 'capital' = 'rio') {
+export function getNextDraw(location: 'rio' | 'capital' | 'federal' = 'rio') {
   const now = new Date();
   
   // Format current Brasília time as HH:mm
@@ -180,6 +180,6 @@ export function getNextDraw(location: 'rio' | 'capital' = 'rio') {
 }
 
 /** Nome oficial da localidade em letras maiúsculas. */
-export function locationName(location: 'rio' | 'capital'): string {
+export function locationName(location: 'rio' | 'capital' | 'federal'): string {
   return location === 'rio' ? 'RIO DE JANEIRO' : 'CAPITAL & LCAP';
 }

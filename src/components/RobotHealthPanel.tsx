@@ -30,7 +30,7 @@ function fmt(iso?: string | null) {
 
 /** Painel de saúde do robô: conexão em tempo real, última execução e erros por ferramenta. */
 export function RobotHealthPanel() {
-  const [location, setLocation] = useState<'rio' | 'capital'>('rio');
+  const [location, setLocation] = useState<'rio' | 'capital' | 'federal'>('rio');
 
   const [channelState, setChannelState] = useState<"conectando" | "online" | "offline">("conectando");
 
