@@ -45,8 +45,35 @@ type Location = 'rio' | 'capital';
 function Historico() {
   const [date, setDate] = useState<Date>(parseISO(brasiliaDateISO()));
   const [isSyncing, setIsSyncing] = useState(false);
+  const [manualDate, setManualDate] = useState(() => format(parseISO(brasiliaDateISO()), "dd/MM/yyyy"));
+  const [calendarOpen, setCalendarOpen] = useState(false);
 
   const dateISO = format(date, "yyyy-MM-dd");
+
+  const applyDate = (d: Date) => {
+    setDate(d);
+    setManualDate(format(d, "dd/MM/yyyy"));
+    setCalendarOpen(false);
+  };
+
+  const handleManualChange = (raw: string) => {
+    // Máscara automática dd/mm/aaaa
+    const digits = raw.replace(/\D/g, "").slice(0, 8);
+    let masked = digits;
+    if (digits.length > 4) masked = `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
+    else if (digits.length > 2) masked = `${digits.slice(0, 2)}/${digits.slice(2)}`;
+    setManualDate(masked);
+
+    if (digits.length === 8) {
+      const day = Number(digits.slice(0, 2));
+      const month = Number(digits.slice(2, 4));
+      const year = Number(digits.slice(4));
+      const parsed = new Date(year, month - 1, day);
+      if (year >= 2020 && year <= 2100 && month >= 1 && month <= 12 && day >= 1 && day <= 31 && parsed.getDate() === day) {
+        setDate(parsed);
+      }
+    }
+  };
 
   const rioQuery = useQuery({
     queryKey: ["history-results", "rio", dateISO],
