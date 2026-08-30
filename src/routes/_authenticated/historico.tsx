@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ANIMAL_ICONS } from "@/lib/animals";
 import { getResults } from "@/lib/lottery.functions";
 import { useLotteryRealtime } from "@/hooks/useLotteryRealtime";
+import { drawLabel, drawTimeValue } from "@/lib/draw-order";
 
 import { useQuery } from "@tanstack/react-query";
 import { format, parseISO } from "date-fns";

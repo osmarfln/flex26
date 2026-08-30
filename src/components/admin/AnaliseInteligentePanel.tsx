@@ -14,6 +14,7 @@ import {
 import { AlertTriangle, BrainCircuit, CheckCircle2, Clock } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
+import { getScheduleForDate } from "@/lib/draw-order";
 
 const SCHEDULE_RIO = [
   { type: "PPT", value: "09:20" },
@@ -213,7 +214,7 @@ export function AnaliseInteligentePanel({ enabled }: { enabled: boolean }) {
               .filter((a) => a.status === "atrasado")
               .map((a) => (
                 <li key={a.type}>
-                  Resultado {a.type} ({a.value}) não chegou dentro da janela prevista.
+                  Resultado {a.label} ({a.value}) não chegou dentro da janela prevista.
                 </li>
               ))}
             {falhas.slice(0, 5).map((l) => (
@@ -308,7 +309,7 @@ export function AnaliseInteligentePanel({ enabled }: { enabled: boolean }) {
               ) : (
                 <Clock className="h-4 w-4 text-red-400" />
               )}
-              <span className="font-bold">{a.type}</span>
+              <span className="font-bold">{a.label}</span>
               <span className="text-xs text-white/40">{a.value}</span>
               <span
                 className={`ml-auto text-[10px] font-black uppercase ${
