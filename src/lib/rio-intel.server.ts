@@ -65,12 +65,16 @@ function normalize(values: number[]): (v: number) => number {
   return (v: number) => Math.max(0, Math.min(100, (v / max) * 100));
 }
 
-/** Lê o histórico do Rio já armazenado (mais recente primeiro), sem duplicidade. */
-export async function loadRioContests(dateStart?: string, dateEnd?: string): Promise<Contest[]> {
+/** Lê o histórico já armazenado da localidade (mais recente primeiro), sem duplicidade. */
+export async function loadRioContests(
+  location: IntelLocation = "rio",
+  dateStart?: string,
+  dateEnd?: string,
+): Promise<Contest[]> {
   let q = supabase
     .from("lottery_results")
     .select("date, time_type, time_value, results")
-    .eq("location", "rio")
+    .eq("location", location)
     .order("date", { ascending: false })
     .limit(6000);
   if (dateStart) q = q.gte("date", dateStart);
@@ -78,7 +82,7 @@ export async function loadRioContests(dateStart?: string, dateEnd?: string): Pro
   const { data, error } = await q;
   if (error) throw error;
 
-  const order = new Map(DRAW_SCHEDULE_RIO.map((s, i) => [s.timeType, i] as const));
+  const order = new Map(scheduleFor(location).map((s, i) => [s.timeType, i] as const));
   const seen = new Set<string>();
   const out: Contest[] = [];
   for (const r of data ?? []) {
@@ -104,9 +108,10 @@ export async function loadRioContests(dateStart?: string, dateEnd?: string): Pro
 }
 
 /** Atraso por faixa: quantas edições daquela faixa ocorreram desde a última aparição. */
-function delaysByFaixa(all: Contest[], position: PositionFilter) {
+function delaysByFaixa(all: Contest[], position: PositionFilter, location: IntelLocation) {
   const result = new Map<string, { tens: Map<string, number>; groups: Map<string, number>; editions: number }>();
-  for (const s of DRAW_SCHEDULE_RIO) {
+  for (const s of scheduleFor(location)) {
+
     const list = all.filter((c) => c.time_type === s.timeType);
     const tens = new Map<string, number>();
     const groups = new Map<string, number>();
