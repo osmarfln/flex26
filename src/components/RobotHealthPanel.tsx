@@ -29,8 +29,7 @@ function fmt(iso?: string | null) {
 }
 
 /** Painel de saúde do robô: conexão em tempo real, última execução e erros por ferramenta. */
-export function RobotHealthPanel() {
-  const [location, setLocation] = useState<'rio' | 'capital' | 'federal'>('rio');
+export function RobotHealthPanel({ location }: { location: 'rio' | 'capital' | 'federal' }) {
 
   const [channelState, setChannelState] = useState<"conectando" | "online" | "offline">("conectando");
 
@@ -95,15 +94,6 @@ export function RobotHealthPanel() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <select 
-            className="h-8 rounded-xl border border-white/10 bg-white/5 px-2 text-[10px] font-bold text-white outline-none focus:border-primary/50"
-            value={location}
-            onChange={(e) => setLocation(e.target.value as any)}
-          >
-            <option value="rio">Rio</option>
-            <option value="capital">Capital</option>
-            <option value="federal">Federal</option>
-          </select>
           <span
             className={`inline-flex items-center gap-2 rounded-xl border px-3 py-1.5 text-[10px] font-black uppercase ${
 
