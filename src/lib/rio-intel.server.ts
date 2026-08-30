@@ -10,18 +10,19 @@ import {
   normalizePrize,
   tensOfGroup,
 } from "./federal-intel.server";
-import { DRAW_SCHEDULE_RIO, drawLabel, getNextDraw } from "./draw-order";
+import { DRAW_SCHEDULE_CAPITAL, DRAW_SCHEDULE_RIO, drawLabel, getNextDraw } from "./draw-order";
 
 /**
- * Inteligência estatística da aba ANÁLISE RIO.
- * Usa SOMENTE o histórico já armazenado (lottery_results, location = 'rio').
- * O Rio publica até 6 resultados por dia (PPT, PTM, PT, PTV, PTN, COR),
- * 5 prêmios em cada um — 30 números analisados por dia.
+ * Inteligência estatística das abas ANÁLISE RIO e CAPITAL & LCAP.
+ * Usa SOMENTE o histórico já armazenado (lottery_results), medindo atraso em
+ * resultados confirmados e frequência esperada por prêmio analisado.
  */
 
-export type RioFaixa = "all" | string; // "all" ou time_type (PPT, PTM, PT, PTV, PTN, COR)
+export type IntelLocation = "rio" | "capital";
+export type RioFaixa = "all" | string; // "all" ou time_type
 
 export interface RioIntelInput {
+  location?: IntelLocation;
   position?: PositionFilter;
   faixa?: RioFaixa;
   window?: number; // últimos N resultados (0 = todo o histórico)
@@ -31,11 +32,16 @@ export interface RioIntelInput {
   topN?: number;
 }
 
+export function scheduleFor(location: IntelLocation) {
+  return location === "capital" ? DRAW_SCHEDULE_CAPITAL : DRAW_SCHEDULE_RIO;
+}
+
 export const RIO_FAIXAS = DRAW_SCHEDULE_RIO.map((s) => ({
   timeType: s.timeType,
   label: s.label,
   timeValue: s.timeValue,
 }));
+
 
 function classify(index: number | null): string {
   if (index === null) return "sem dados";
