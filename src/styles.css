@@ -114,6 +114,26 @@
     }
   }
 
+  /* Scrollbars globais: finas e cinzas (desktop e mobile) */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(156 163 175 / 0.4) transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    background-color: rgb(156 163 175 / 0.35);
+    border-radius: 9999px;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(156 163 175 / 0.6);
+  }
+
   /* Custom Utilities */
   .no-scrollbar::-webkit-scrollbar {
     display: none;
