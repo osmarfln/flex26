@@ -53,6 +53,7 @@ export function FederalIntelligencePanel() {
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<string | null>(null);
   const [showBacktest, setShowBacktest] = useState(false);
+  const [tab, setTab] = useState<"overview" | "tens" | "groupsDelayed" | "groupsHot" | "combined">("overview");
 
   const { data, isLoading, isFetching } = useQuery({
     queryKey: ["federal-intel", position, weekday, windowSize, topN],
@@ -178,7 +179,37 @@ export function FederalIntelligencePanel() {
           options={[5, 10, 15, 20].map((n) => ({ label: `${n} dezenas`, value: String(n) }))} />
       </div>
 
+      {/* Abas de navegação */}
+      <div className="flex gap-2 overflow-x-auto pb-1">
+        {[
+          { id: "overview" as const, label: "Visão geral" },
+          { id: "tens" as const, label: `Ranking completo de dezenas — amostra de ${data.filters.sampleSize} extrações` },
+          { id: "groupsDelayed" as const, label: "Grupos mais atrasados" },
+          { id: "groupsHot" as const, label: "Grupos mais puxados" },
+          { id: "combined" as const, label: "Atraso elevado + grupo atrasado" },
+        ].map((t) => (
+          <button
+            key={t.id}
+            onClick={() => setTab(t.id)}
+            className={`shrink-0 rounded-xl border px-4 py-2 text-[11px] font-black uppercase tracking-wider transition-colors ${
+              tab === t.id
+                ? "border-primary/60 bg-primary/20 text-primary"
+                : "border-white/10 bg-white/[0.02] text-white/50 hover:bg-white/5 hover:text-white"
+            }`}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {tab === "overview" && (
+      <>
       {/* Cards estatísticos */}
+      <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4 text-[11px] text-white/50 leading-relaxed">
+        <strong className="text-white/80 uppercase tracking-widest">Como ler:</strong> atraso é contado em
+        concursos realizados (nunca em dias corridos); "puxada" é a dezena/grupo com maior frequência no período;
+        o Score é o Índice de Relevância Histórica (0–100) = 0,40×Atraso + 0,30×Freq. recente + 0,20×Grupo + 0,10×Estabilidade.
+      </div>
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
         <StatCard icon={Timer} tone="red" title="Dezena mais atrasada"
           main={topDelayed?.ten} sub={`${topDelayed?.delay ?? 0} concursos • índice ${num(topDelayed?.delayIndex)}`} />
@@ -208,8 +239,11 @@ export function FederalIntelligencePanel() {
           independentes.
         </p>
       </div>
+      </>
+      )}
 
       {/* Tabela de dezenas */}
+      {tab === "tens" && (
       <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4 md:p-5">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
           <h4 className="text-[11px] font-black uppercase tracking-widest text-white/50">
@@ -307,9 +341,15 @@ export function FederalIntelligencePanel() {
           </div>
         )}
       </div>
+      )}
 
       {/* Rankings de grupos */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      {tab === "groupsDelayed" && (
+      <div className="space-y-4">
+        <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4 text-[11px] text-white/50 leading-relaxed">
+          <strong className="text-white/80 uppercase tracking-widest">Grupos mais atrasados:</strong> o atraso do
+          grupo zera quando qualquer uma das quatro dezenas aparece. Índice = atraso atual ÷ intervalo médio histórico.
+        </div>
         <RankTable
           title="Grupos mais atrasados"
           rows={(data.rankings.groupsMostDelayed as any[]).map((g) => ({
@@ -319,6 +359,14 @@ export function FederalIntelligencePanel() {
           }))}
           headers={["Grupo", "Atraso", "Média", "Índice", "Máx.", "Última"]}
         />
+      </div>
+      )}
+      {tab === "groupsHot" && (
+      <div className="space-y-4">
+        <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4 text-[11px] text-white/50 leading-relaxed">
+          <strong className="text-white/80 uppercase tracking-widest">Grupos mais puxados:</strong> frequência do
+          grupo = soma das ocorrências das quatro dezenas. Índice = frequência observada ÷ esperada (4% por posição).
+        </div>
         <RankTable
           title="Grupos mais puxados"
           rows={(data.rankings.groupsHottest as any[]).map((g) => ({
@@ -328,6 +376,14 @@ export function FederalIntelligencePanel() {
           }))}
           headers={["Grupo", "Freq.", "%", "Índice", "Top dezena", "Recente"]}
         />
+      </div>
+      )}
+      {tab === "combined" && (
+      <div className="space-y-4">
+        <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4 text-[11px] text-white/50 leading-relaxed">
+          <strong className="text-white/80 uppercase tracking-widest">Combinação dezena + grupo atrasados:</strong>{" "}
+          dezenas com atraso elevado cujo grupo também está atrasado — leitura estatística combinada, sem garantia de resultado.
+        </div>
         <RankTable
           title="Atraso elevado + grupo atrasado"
           rows={(data.rankings.combined as any[]).map((t) => ({
@@ -337,6 +393,9 @@ export function FederalIntelligencePanel() {
           }))}
           headers={["Dezena", "Atraso", "Índice", "Score", "Classificação"]}
         />
+      </div>
+      )}
+      {tab === "overview" && (
         <RankTable
           title="Frequência por posição do prêmio"
           rows={(data.rankings.byPosition as any[]).map((p) => ({
@@ -346,9 +405,10 @@ export function FederalIntelligencePanel() {
           }))}
           headers={["Posição", "Extrações", "Top dezenas"]}
         />
-      </div>
+      )}
 
       {/* Backtest */}
+      {tab === "overview" && (
       <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
         <button
           onClick={() => setShowBacktest((v) => !v)}
@@ -395,6 +455,7 @@ export function FederalIntelligencePanel() {
           </div>
         )}
       </div>
+      )}
 
       <p className="rounded-2xl border border-white/10 bg-black/30 p-4 text-[11px] md:text-xs text-white/50 leading-relaxed">
         “Esta análise utiliza frequências, atrasos e padrões encontrados em resultados históricos. Uma dezena ou
