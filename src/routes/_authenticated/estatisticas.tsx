@@ -7,6 +7,7 @@ import { FederalSyncPanel } from "@/components/FederalSyncPanel";
 import { AvisoObrigatorio } from "@/components/AvisoObrigatorio";
 import { AnaliseFiltros } from "@/components/AnaliseFiltros";
 import { SiteHeader } from "@/components/layout/SiteHeader";
+import { LotterySelector } from "@/components/LotterySelector";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
