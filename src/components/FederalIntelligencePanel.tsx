@@ -465,7 +465,7 @@ function StatCard({
   };
   return (
     <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
-      <div className={`mb-2 inline-flex rounded-lg border p-1.5 ${tones[tone] ?? tones.red}`}>
+      <div className={`mb-2 inline-flex rounded-lg border p-1.5 ${tones[tone] ?? tones["red"]}`}>
         <Icon className="h-4 w-4" />
       </div>
       <p className="text-[9px] font-black uppercase tracking-widest text-white/40">{title}</p>
