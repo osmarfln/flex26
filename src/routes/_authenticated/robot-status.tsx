@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { RobotHealthPanel } from "@/components/RobotHealthPanel";
+import { FederalSyncPanel } from "@/components/FederalSyncPanel";
 import { AcessoRestrito } from "@/components/AcessoRestrito";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { getSyncStatus } from "@/lib/realtime.functions";
@@ -206,6 +207,9 @@ function RobotStatus() {
       <SiteHeader subtitle="STATUS DO ROBÔ" />
       <div className="max-w-6xl mx-auto p-3 sm:p-4 md:p-12">
         <RobotHealthPanel />
+        <div className="mb-8">
+          <FederalSyncPanel />
+        </div>
         <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 mb-8">
           <div className="min-w-0">
             <h1 className="text-xl sm:text-2xl md:text-3xl font-black italic tracking-tighter uppercase truncate">
