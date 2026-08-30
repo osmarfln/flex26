@@ -158,14 +158,14 @@ export function AnaliseInteligentePanel({ enabled }: { enabled: boolean }) {
   }, [acts]);
 
   const results = todayQuery.data ?? [];
-  const atrasados = (location === 'rio' ? SCHEDULE_RIO : SCHEDULE_CAPITAL).map((s) => {
-    const [h, m] = s.value.split(":").map(Number);
+  const atrasados = getScheduleForDate(location as 'rio' | 'capital', today).map((s) => {
+    const [h, m] = s.timeValue.split(":").map(Number);
     const due = (h ?? 0) * 60 + (m ?? 0);
     const got = results.find(
-      (r) => (r.time_type ?? "").toUpperCase().replace("PTT", "PPT") === s.type,
+      (r) => (r.time_type ?? "").toUpperCase().replace("PTT", "PPT") === s.timeType,
     );
     const status = got ? "recebido" : nowMin > due + 20 ? "atrasado" : nowMin >= due ? "aguardando" : "programado";
-    return { ...s, status, capturedAt: got?.created_at ?? null };
+    return { type: s.timeType, value: s.timeValue, label: s.label, status, capturedAt: got?.created_at ?? null };
   });
 
   const logs = logsQuery.data ?? [];
