@@ -359,6 +359,14 @@ export function FederalIntelligencePanel() {
           }))}
           headers={["Grupo", "Atraso", "Média", "Índice", "Máx.", "Última"]}
         />
+      </div>
+      )}
+      {tab === "groupsHot" && (
+      <div className="space-y-4">
+        <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4 text-[11px] text-white/50 leading-relaxed">
+          <strong className="text-white/80 uppercase tracking-widest">Grupos mais puxados:</strong> frequência do
+          grupo = soma das ocorrências das quatro dezenas. Índice = frequência observada ÷ esperada (4% por posição).
+        </div>
         <RankTable
           title="Grupos mais puxados"
           rows={(data.rankings.groupsHottest as any[]).map((g) => ({
