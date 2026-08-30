@@ -376,6 +376,14 @@ export function FederalIntelligencePanel() {
           }))}
           headers={["Grupo", "Freq.", "%", "Índice", "Top dezena", "Recente"]}
         />
+      </div>
+      )}
+      {tab === "combined" && (
+      <div className="space-y-4">
+        <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4 text-[11px] text-white/50 leading-relaxed">
+          <strong className="text-white/80 uppercase tracking-widest">Combinação dezena + grupo atrasados:</strong>{" "}
+          dezenas com atraso elevado cujo grupo também está atrasado — leitura estatística combinada, sem garantia de resultado.
+        </div>
         <RankTable
           title="Atraso elevado + grupo atrasado"
           rows={(data.rankings.combined as any[]).map((t) => ({
