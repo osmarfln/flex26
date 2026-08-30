@@ -137,6 +137,8 @@ export interface RioTenRow extends TenRow {
 
 /** Monta o pacote completo de inteligência do Rio. */
 export async function buildRioIntel(input: RioIntelInput) {
+  const location: IntelLocation = input.location === "capital" ? "capital" : "rio";
+  const schedule = scheduleFor(location);
   const position = (input.position ?? 0) as PositionFilter;
   let dateStart = input.dateStart;
   if (input.days && input.days > 0) {
@@ -146,14 +148,14 @@ export async function buildRioIntel(input: RioIntelInput) {
     dateStart = dateStart && dateStart > iso ? dateStart : iso;
   }
 
-  const all = await loadRioContests(dateStart, input.dateEnd);
+  const all = await loadRioContests(location, dateStart, input.dateEnd);
   const faixa = input.faixa && input.faixa !== "all" ? input.faixa : "all";
   let list = faixa === "all" ? all : all.filter((c) => c.time_type === faixa);
   const windowSize = input.window ?? 0;
   if (windowSize > 0) list = list.slice(0, windowSize);
 
   const core = computeIntel(list, position);
-  const faixaDelays = delaysByFaixa(all, position);
+  const faixaDelays = delaysByFaixa(all, position, location);
 
   // período anterior para comparação de tendência
   const prevList = windowSize > 0 ? (faixa === "all" ? all : all.filter((c) => c.time_type === faixa)).slice(windowSize, windowSize * 2) : [];
@@ -181,7 +183,7 @@ export async function buildRioIntel(input: RioIntelInput) {
     const trend: RioTenRow["trend"] =
       before === null ? "estável" : t.freqTotal > before ? "subindo" : t.freqTotal < before ? "caindo" : "estável";
     const delayInFaixa: Record<string, number> = {};
-    for (const s of DRAW_SCHEDULE_RIO) {
+    for (const s of schedule) {
       const f = faixaDelays.get(s.timeType);
       delayInFaixa[s.timeType] = f ? f.tens.get(t.ten) ?? f.editions : 0;
     }
@@ -199,7 +201,7 @@ export async function buildRioIntel(input: RioIntelInput) {
 
   const groups = core.groups.map((g) => {
     const delayInFaixa: Record<string, number> = {};
-    for (const s of DRAW_SCHEDULE_RIO) {
+    for (const s of schedule) {
       const f = faixaDelays.get(s.timeType);
       delayInFaixa[s.timeType] = f ? f.groups.get(g.group) ?? f.editions : 0;
     }
@@ -209,7 +211,7 @@ export async function buildRioIntel(input: RioIntelInput) {
   const latest = list[0] ?? all[0] ?? null;
   const today = all[0]?.date ?? null;
   const todayContests = today ? all.filter((c) => c.date === today) : [];
-  const next = getNextDraw("rio");
+  const next = getNextDraw(location);
   const topN = Math.max(3, Math.min(25, input.topN ?? 10));
 
   return {
@@ -223,21 +225,23 @@ export async function buildRioIntel(input: RioIntelInput) {
       dateEnd: input.dateEnd ?? null,
       sampleSize: list.length,
     },
-    faixas: RIO_FAIXAS,
+    faixas: schedule.map((s) => ({ timeType: s.timeType, label: s.label, timeValue: s.timeValue })),
+    location,
     summary: {
       lastDate: latest?.date ?? null,
-      lastFaixa: latest ? drawLabel("rio", latest.time_type) : null,
+      lastFaixa: latest ? drawLabel(location, latest.time_type) : null,
       publishedToday: todayContests.length,
+      expectedPerDay: schedule.length,
       numbersToday: todayContests.length * 5,
       nextDraw: next ? { label: next.label ?? null, timeValue: next.timeValue ?? null } : null,
       source: "soresultados.info (robô automatizado)",
-      status: todayContests.length >= 6 ? "dia completo" : "aguardando resultados do dia",
+      status: todayContests.length >= schedule.length ? "dia completo" : "aguardando resultados do dia",
       historyContests: all.length,
     },
     todayResults: todayContests.map((c) => ({
       date: c.date,
       timeType: c.time_type,
-      label: drawLabel("rio", c.time_type),
+      label: drawLabel(location, c.time_type),
       prizes: c.prizes.map((p, i) => ({ position: i + 1, ...normalizePrize(p) })),
     })),
     totals: {
@@ -248,7 +252,7 @@ export async function buildRioIntel(input: RioIntelInput) {
     latest: latest
       ? {
           date: latest.date,
-          label: drawLabel("rio", latest.time_type),
+          label: drawLabel(location, latest.time_type),
           prizes: latest.prizes.map((p, i) => ({ position: i + 1, ...normalizePrize(p) })),
         }
       : null,
