@@ -4,6 +4,8 @@ import { ANIMAL_GROUPS, getAnimalByTen } from "@/lib/animals";
 import { ArrowLeft, BarChart3, Calculator, Sparkles, TrendingUp, Zap, Target, BrainCircuit, History, Flame, Clock, LayoutGrid, Hash, Users, Repeat, ArrowLeftRight, FileText, Upload, Calendar, AlertCircle, Database, CheckCircle2, XCircle, Activity, Timer, ChevronRight, Trophy, RefreshCw, Loader2, Network, Info, MapPin } from "lucide-react";
 import { CruzDoDia } from "@/components/CruzDoDia";
 import { FederalSyncPanel } from "@/components/FederalSyncPanel";
+import { FederalIntelligencePanel } from "@/components/FederalIntelligencePanel";
+
 import { AvisoObrigatorio } from "@/components/AvisoObrigatorio";
 import { AnaliseFiltros } from "@/components/AnaliseFiltros";
 import { SiteHeader } from "@/components/layout/SiteHeader";
@@ -327,6 +329,13 @@ function EstatisticasPage() {
               sincronizado pelo robô.
             </div>
           )}
+
+          {location === 'federal' && (
+            <div className="mb-8">
+              <FederalIntelligencePanel />
+            </div>
+          )}
+
 
           <div className="mb-8 flex flex-col sm:flex-row gap-4 min-w-0">
             <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl w-full sm:min-w-[150px] hover:border-red-500/30 transition-all cursor-pointer relative group/select">
