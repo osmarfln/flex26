@@ -216,7 +216,7 @@ export function RioIntelligencePanel({ location = "rio" }: { location?: "rio" | 
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {[
               { icon: CalendarDays, label: "Último resultado", value: data.summary.lastFaixa ?? "--", sub: data.summary.lastDate ?? "--" },
-              { icon: Trophy, label: "Publicados hoje", value: `${data.summary.publishedToday}/{schedule.length}`, sub: `${data.summary.numbersToday} números analisados` },
+              { icon: Trophy, label: "Publicados hoje", value: `${data.summary.publishedToday}/${schedule.length}`, sub: `${data.summary.numbersToday} números analisados` },
               { icon: Timer, label: "Próximo resultado", value: data.summary.nextDraw?.label ?? "--", sub: data.summary.nextDraw?.timeValue ?? "--" },
               { icon: Flame, label: "Histórico", value: `${data.totals.historyContests}`, sub: data.summary.status },
             ].map((c) => (
