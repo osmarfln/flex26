@@ -279,8 +279,8 @@ function LotteryColumn({
   const schedule = getScheduleForDate(location, dateISO);
   const extra = results.filter((r) => !schedule.some((s: any) => s.timeType === r.time_type));
   const entries = [
-    ...schedule.map((s: any) => ({ timeType: s.timeType, label: location === 'capital' ? s.label : `${s.timeType} RIO`, timeValue: s.timeValue, res: byTime.get(s.timeType) })),
-    ...extra.map((r) => ({ timeType: r.time_type, label: location === 'capital' ? drawLabel('capital', r.time_type, r.date) : `${r.time_type} RIO`, timeValue: r.time_value || drawTimeValue(location, r.time_type), res: r })),
+    ...schedule.map((s: any) => ({ timeType: s.timeType, label: s.label, timeValue: s.timeValue, res: byTime.get(s.timeType) })),
+    ...extra.map((r) => ({ timeType: r.time_type, label: drawLabel(location, r.time_type, r.date), timeValue: r.time_value || drawTimeValue(location, r.time_type), res: r })),
   ];
 
   return (
