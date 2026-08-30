@@ -239,8 +239,11 @@ export function FederalIntelligencePanel() {
           independentes.
         </p>
       </div>
+      </>
+      )}
 
       {/* Tabela de dezenas */}
+      {tab === "tens" && (
       <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4 md:p-5">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
           <h4 className="text-[11px] font-black uppercase tracking-widest text-white/50">
