@@ -45,20 +45,20 @@ export function SiteHeader({ subtitle = "VEM COM A GENTE" }: SiteHeaderProps) {
           </div>
         </div>
 
-        <nav className="-mx-3 flex items-center gap-3 overflow-x-auto no-scrollbar px-3 pb-1 md:mx-0 md:gap-8 md:px-0 md:pb-0">
+        <nav className="-mx-3 flex items-center gap-4 overflow-x-auto no-scrollbar px-3 pb-1 md:mx-0 md:gap-10 md:px-0 md:pb-0">
           {navItems.filter((item) => !item.adminOnly || isAdmin).map((item) => {
             const active = pathname === item.to;
             return (
               <Link
                 key={item.to}
                 to={item.to}
-                className={`shrink-0 flex items-center gap-1.5 md:gap-2 whitespace-nowrap text-xs md:text-sm font-bold transition-colors ${
+                className={`shrink-0 flex items-center gap-2 md:gap-2.5 whitespace-nowrap text-sm md:text-base font-bold transition-colors ${
                   active
-                    ? "text-foreground border-b-2 border-primary pb-1"
+                    ? "text-foreground border-b-2 border-primary pb-1.5"
                     : "text-white/40 hover:text-white"
                 }`}
               >
-                <item.icon className="w-4 h-4 shrink-0" /> {item.label}
+                <item.icon className="w-5 h-5 shrink-0" /> {item.label}
               </Link>
             );
           })}

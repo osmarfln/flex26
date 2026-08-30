@@ -18,7 +18,7 @@ import {
   TrendingUp, 
   Sparkles, 
   Hash, 
-  RefreshCw, 
+   
   Calendar, 
   MapPin, 
   ChevronDown,
@@ -183,31 +183,22 @@ function Index() {
             </Link>
 
             <div className="flex shrink-0 items-center gap-2 md:hidden">
-              <Button
-                variant="outline"
-                size="sm"
-                className="rounded-lg border-white/10 bg-white/5 text-[10px] font-bold gap-1.5 px-2 hover:bg-white/10"
-                onClick={() => refetch()}
-              >
-                <RefreshCw className="w-3 h-3" />
-                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              </Button>
               <UserMenu />
             </div>
           </div>
 
-          <nav className="-mx-3 flex items-center gap-3 overflow-x-auto no-scrollbar px-3 pb-1 md:mx-0 md:gap-8 md:px-0 md:pb-0 md:py-2">
-            <Link to="/" className="text-xs md:text-sm font-bold border-b-2 border-red-500 pb-1 flex items-center gap-1.5 md:gap-2 whitespace-nowrap shrink-0">
-              <Users className="w-4 h-4 shrink-0" /> Início
+          <nav className="-mx-3 flex items-center gap-4 overflow-x-auto no-scrollbar px-3 pb-1 md:mx-0 md:gap-10 md:px-0 md:pb-0 md:py-2">
+            <Link to="/" className="text-sm md:text-base font-bold border-b-2 border-red-500 pb-1.5 flex items-center gap-2 md:gap-2.5 whitespace-nowrap shrink-0">
+              <Users className="w-5 h-5 shrink-0" /> Início
             </Link>
-            <Link to="/historico" className="text-xs md:text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-1.5 md:gap-2 whitespace-nowrap shrink-0">
-              <History className="w-4 h-4 shrink-0" /> Histórico
+            <Link to="/historico" className="text-sm md:text-base font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2 md:gap-2.5 whitespace-nowrap shrink-0">
+              <History className="w-5 h-5 shrink-0" /> Histórico
             </Link>
-            <Link to="/robot-status" className="text-xs md:text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-1.5 md:gap-2 whitespace-nowrap shrink-0">
-              <Activity className="w-4 h-4 shrink-0" /> Robô
+            <Link to="/robot-status" className="text-sm md:text-base font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2 md:gap-2.5 whitespace-nowrap shrink-0">
+              <Activity className="w-5 h-5 shrink-0" /> Robô
             </Link>
-            <Link to="/estatisticas" className="text-xs md:text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-1.5 md:gap-2 whitespace-nowrap shrink-0">
-              <BarChart3 className="w-4 h-4 shrink-0" /> Estatísticas
+            <Link to="/estatisticas" className="text-sm md:text-base font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2 md:gap-2.5 whitespace-nowrap shrink-0">
+              <BarChart3 className="w-5 h-5 shrink-0" /> Estatísticas
             </Link>
           </nav>
 
@@ -217,16 +208,6 @@ function Index() {
                 Recalculado {format(lastUpdate, "HH:mm:ss")}
               </span>
             )}
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="rounded-lg border-white/10 bg-white/5 text-xs font-bold gap-2 hover:bg-white/10"
-              onClick={() => refetch()}
-            >
-              <RefreshCw className="w-3.5 h-3.5" /> 
-              <span>Atualizar</span>
-              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            </Button>
 
             <UserMenu />
           </div>
