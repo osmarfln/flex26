@@ -61,7 +61,7 @@ const MiniSparkline = ({ data, color = "#EF4444" }: { data: number[], color?: st
 
 function EstatisticasPage() {
   const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'logica-atraso' | 'ranking-completo' | 'logica-grupos' | 'repeticoes' | 'esquerda-direita' | 'puxadas' | 'analise-premium'>('quentes');
-  const [location, setLocation] = useState<'rio' | 'capital'>('rio');
+  const [location, setLocation] = useState<'rio' | 'capital' | 'federal'>('rio');
   const [date, setDate] = useState("");
   const [dateEnd, setDateEnd] = useState("");
   const [cruzData, setCruzData] = useState<string[]>([]);
@@ -330,7 +330,27 @@ function EstatisticasPage() {
               <MapPin className={`w-4 h-4 ${location === 'capital' ? 'animate-pulse' : ''}`} />
               Análise CAPITAL & LCAP
             </button>
+            <button
+              onClick={() => setLocation('federal')}
+              className={`px-8 py-3 rounded-xl text-sm font-black uppercase tracking-wider transition-all flex items-center gap-2 ${
+                location === 'federal'
+                  ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20 scale-105'
+                  : 'text-white/40 hover:text-white/70'
+              }`}
+            >
+              <Trophy className={`w-4 h-4 ${location === 'federal' ? 'animate-pulse' : ''}`} />
+              Análise LOTERIA FEDERAL
+            </button>
           </div>
+
+          {location === 'federal' && (
+            <div className="mb-8 p-4 rounded-2xl border border-primary/30 bg-primary/5 text-sm text-white/70">
+              <strong className="text-primary font-black uppercase">Base reduzida:</strong> a Loteria Federal
+              possui apenas 2 extrações por semana (quarta-feira 20:30 e domingo 11:00). Por isso as janelas de
+              atraso, puxadas e frequência são calculadas em concursos, não em dias — com base em todo o histórico
+              sincronizado pelo robô.
+            </div>
+          )}
 
           <div className="mb-8 flex flex-col sm:flex-row gap-4 min-w-0">
             <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl w-full sm:min-w-[150px] hover:border-red-500/30 transition-all cursor-pointer relative group/select">

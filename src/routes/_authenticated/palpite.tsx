@@ -37,7 +37,7 @@ export const Route = createFileRoute("/_authenticated/palpite")({
 });
 
 function PalpitePage() {
-  const [location, setLocation] = useState<'rio' | 'capital'>('rio');
+  const [location, setLocation] = useState<'rio' | 'capital' | 'federal'>('rio');
   const [date, setDate] = useState("");
   const [dateEnd, setDateEnd] = useState("");
   const { lastUpdate } = useLotteryRealtime("palpite-db-changes");
@@ -92,6 +92,7 @@ function PalpitePage() {
             >
               <option value="rio">RIO DE JANEIRO</option>
               <option value="capital">CAPITAL &amp; LCAP</option>
+              <option value="federal">LOTERIA FEDERAL</option>
             </select>
             <div className="flex gap-2">
               <input 

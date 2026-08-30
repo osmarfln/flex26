@@ -1,5 +1,6 @@
 // Ordem oficial dos horários de sorteio (do primeiro ao último do dia)
 export const TIME_ORDER_RIO = ["PPT", "PTM", "PT", "PTV", "PTN", "COR"] as const;
+export const TIME_ORDER_FEDERAL = ["FED-11", "FED-20"] as const;
 export const TIME_ORDER_CAPITAL = ["L-09", "L-10", "L-11", "L-13", "L-14", "L-15", "L-16", "L-18", "L-19", "L-20", "L-22"] as const;
 
 /** Legado para manter compatibilidade com componentes que ainda não foram migrados para suporte a Capital */
@@ -18,10 +19,13 @@ const PRIORITY_CAPITAL: Record<string, number> = {
   "L-09": 0, "L-10": 1, "L-11": 2, "L-13": 3, "L-14": 4, "L-15": 5, "L-16": 6, "L-18": 7, "L-19": 8, "L-20": 9, "L-22": 10
 };
 
-export function timePriority(timeType?: string | null, location: 'rio' | 'capital' = 'rio'): number {
+const PRIORITY_FEDERAL: Record<string, number> = { "FED-11": 0, "FED-20": 1 };
+
+export function timePriority(timeType?: string | null, location: 'rio' | 'capital' | 'federal' = 'rio'): number {
   if (!timeType) return 99;
   const key = String(timeType).toUpperCase().trim();
   if (location === 'capital') return PRIORITY_CAPITAL[key] ?? 99;
+  if (location === 'federal') return PRIORITY_FEDERAL[key] ?? 99;
   return PRIORITY_RIO[key] ?? 99;
 }
 
@@ -68,6 +72,15 @@ export const DRAW_SCHEDULE_CAPITAL: { timeType: string; timeValue: string; label
   { timeType: "L-22", timeValue: "22:30", label: "LCAP 22:30" },
 ];
 
+/**
+ * Horários oficiais da LOTERIA FEDERAL.
+ * Quartas-feiras às 20:30 e domingos às 11:00 (2 extrações por semana).
+ */
+export const DRAW_SCHEDULE_FEDERAL: { timeType: string; timeValue: string; label: string }[] = [
+  { timeType: "FED-11", timeValue: "11:00", label: "FEDERAL 11:00" },
+  { timeType: "FED-20", timeValue: "20:30", label: "FEDERAL 20:30" },
+];
+
 /** Data de hoje no fuso de Brasília (UTC-3) no formato YYYY-MM-DD. */
 export function brasiliaDateISO(d: Date = new Date()): string {
   return new Date(d.getTime() - 3 * 60 * 60 * 1000).toISOString().split("T")[0]!;
@@ -93,10 +106,16 @@ export function weekdayOfISO(dateISO?: string | null): number {
  *   - Sábado: no lugar da CAPITAL 18:00 entra LCAP 18:00 e é adicionada a CAPITAL 19:00.
  */
 export function getScheduleForDate(
-  location: 'rio' | 'capital' = 'rio',
+  location: 'rio' | 'capital' | 'federal' = 'rio',
   dateISO?: string | null,
 ) {
   const weekday = weekdayOfISO(dateISO);
+  if (location === 'federal') {
+    // Quarta-feira (3) -> 20:30 | Domingo (0) -> 11:00 | demais dias sem extração
+    if (weekday === 3) return DRAW_SCHEDULE_FEDERAL.filter((s) => s.timeType === 'FED-20');
+    if (weekday === 0) return DRAW_SCHEDULE_FEDERAL.filter((s) => s.timeType === 'FED-11');
+    return [];
+  }
   if (location === 'capital') {
     const isSaturday = weekday === 6;
     return DRAW_SCHEDULE_CAPITAL
@@ -113,30 +132,31 @@ export function getScheduleForDate(
 
 /** Rótulo oficial de um horário (ex.: "CAPITAL 14:00", "LCAP 09:00", "PTM"). */
 export function drawLabel(
-  location: 'rio' | 'capital' | string | null | undefined,
+  location: 'rio' | 'capital' | 'federal' | string | null | undefined,
   timeType?: string | null,
   dateISO?: string | null,
 ): string {
   const key = String(timeType ?? '').toUpperCase().trim();
   if (!key) return '--';
-  const loc = location === 'capital' ? 'capital' : 'rio';
+  const loc = location === 'capital' ? 'capital' : location === 'federal' ? 'federal' : 'rio';
+  const all = loc === 'capital' ? DRAW_SCHEDULE_CAPITAL : loc === 'federal' ? DRAW_SCHEDULE_FEDERAL : DRAW_SCHEDULE_RIO;
   const found = getScheduleForDate(loc, dateISO).find((s) => s.timeType === key)
-    ?? (loc === 'capital' ? DRAW_SCHEDULE_CAPITAL : DRAW_SCHEDULE_RIO).find((s) => s.timeType === key);
+    ?? all.find((s) => s.timeType === key);
   return found?.label ?? key;
 }
 
 /** Horário oficial (HH:mm) de um time_type. */
 export function drawTimeValue(
-  location: 'rio' | 'capital' | string | null | undefined,
+  location: 'rio' | 'capital' | 'federal' | string | null | undefined,
   timeType?: string | null,
 ): string {
   const key = String(timeType ?? '').toUpperCase().trim();
-  const list = location === 'capital' ? DRAW_SCHEDULE_CAPITAL : DRAW_SCHEDULE_RIO;
+  const list = location === 'capital' ? DRAW_SCHEDULE_CAPITAL : location === 'federal' ? DRAW_SCHEDULE_FEDERAL : DRAW_SCHEDULE_RIO;
   return list.find((s) => s.timeType === key)?.timeValue ?? '--:--';
 }
 
 /** Calcula o próximo sorteio baseado na localização e hora atual de Brasília */
-export function getNextDraw(location: 'rio' | 'capital' = 'rio') {
+export function getNextDraw(location: 'rio' | 'capital' | 'federal' = 'rio') {
   const now = new Date();
   
   // Format current Brasília time as HH:mm
@@ -165,21 +185,25 @@ export function getNextDraw(location: 'rio' | 'capital' = 'rio') {
     };
   }
   
-  // If all draws for today have passed, get the first draw of tomorrow
-  const tomorrow = new Date(new Intl.DateTimeFormat('en-US', {
+  // If all draws for today have passed, walk forward until the next day with draws
+  const base = new Date(new Intl.DateTimeFormat('en-US', {
     timeZone: 'America/Sao_Paulo'
   }).format(now));
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const tomorrowISO = `${tomorrow.getFullYear()}-${String(tomorrow.getMonth() + 1).padStart(2, '0')}-${String(tomorrow.getDate()).padStart(2, '0')}`;
-  const tomorrowSchedule = getScheduleForDate(location, tomorrowISO);
+  for (let i = 1; i <= 8; i++) {
+    const day = new Date(base);
+    day.setDate(day.getDate() + i);
+    const dayISO = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, '0')}-${String(day.getDate()).padStart(2, '0')}`;
+    const daySchedule = getScheduleForDate(location, dayISO);
+    if (daySchedule.length > 0) {
+      return { ...daySchedule[0]!, date: day };
+    }
+  }
 
-  return {
-    ...(tomorrowSchedule[0] ?? schedule[0]),
-    date: tomorrow
-  };
+  return { ...(schedule[0] ?? DRAW_SCHEDULE_RIO[0]!), date: base };
 }
 
 /** Nome oficial da localidade em letras maiúsculas. */
-export function locationName(location: 'rio' | 'capital'): string {
+export function locationName(location: 'rio' | 'capital' | 'federal'): string {
+  if (location === 'federal') return 'LOTERIA FEDERAL';
   return location === 'rio' ? 'RIO DE JANEIRO' : 'CAPITAL & LCAP';
 }

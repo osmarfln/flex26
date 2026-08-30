@@ -27,7 +27,7 @@ export const getResults = createServerFn({ method: "GET" })
   .inputValidator((data: unknown) => z.object({
     date: z.string().optional(),
     dateEnd: z.string().optional(),
-    location: z.enum(['rio', 'capital']).optional().default('rio'),
+    location: z.enum(['rio', 'capital', 'federal']).optional().default('rio'),
     limit: z.number().optional().default(20),
     offset: z.number().optional().default(0)
   }).parse(data))
@@ -60,7 +60,7 @@ export const getResultsRange = createServerFn({ method: "GET" })
       .object({
         start: z.string(),
         end: z.string(),
-        location: z.enum(['rio', 'capital']).optional().default('rio'),
+        location: z.enum(['rio', 'capital', 'federal']).optional().default('rio'),
         timeTypes: z.array(z.string()).optional(),
         limit: z.number().optional().default(2000),
       })
@@ -91,7 +91,7 @@ export const getResultsRange = createServerFn({ method: "GET" })
 
 export const getStats = createServerFn({ method: "GET" })
   .inputValidator((data: unknown) => z.object({
-    location: z.enum(['rio', 'capital']).optional().default('rio'),
+    location: z.enum(['rio', 'capital', 'federal']).optional().default('rio'),
     date: z.string().optional(),
     dateEnd: z.string().optional()
   }).parse(data))
@@ -208,7 +208,7 @@ export const getStats = createServerFn({ method: "GET" })
 
 export const getTenDelayStats = createServerFn({ method: "GET" })
   .inputValidator((data: unknown) => z.object({
-    location: z.enum(['rio', 'capital']).optional().default('rio')
+    location: z.enum(['rio', 'capital', 'federal']).optional().default('rio')
   }).parse(data))
   .handler(async ({ data }) => {
     const { data: rawRows, error } = await supabase
@@ -336,7 +336,7 @@ export const getTenDelayStats = createServerFn({ method: "GET" })
 
 export const getGroupDelayStats = createServerFn({ method: "GET" })
   .inputValidator((data: unknown) => z.object({
-    location: z.enum(['rio', 'capital']).optional().default('rio'),
+    location: z.enum(['rio', 'capital', 'federal']).optional().default('rio'),
     date: z.string().optional(),
     dateEnd: z.string().optional()
   }).parse(data))
@@ -556,7 +556,7 @@ export const getGroupDelayStats = createServerFn({ method: "GET" })
 
 export const getRepetitionStats = createServerFn({ method: "GET" })
   .inputValidator((data: unknown) => z.object({
-    location: z.enum(['rio', 'capital']).optional().default('rio'),
+    location: z.enum(['rio', 'capital', 'federal']).optional().default('rio'),
     date: z.string().optional(),
     dateEnd: z.string().optional()
   }).parse(data))
@@ -713,7 +713,7 @@ export const getRepetitionStats = createServerFn({ method: "GET" })
  */
 export const getDigitDelayStats = createServerFn({ method: "GET" })
   .inputValidator((data: unknown) => z.object({
-    location: z.enum(['rio', 'capital']).optional().default('rio'),
+    location: z.enum(['rio', 'capital', 'federal']).optional().default('rio'),
     date: z.string().optional(),
     dateEnd: z.string().optional()
   }).parse(data))
@@ -922,7 +922,7 @@ export const getDigitDelayStats = createServerFn({ method: "GET" })
  */
 export const getPuxadasStats = createServerFn({ method: "GET" })
   .inputValidator((data: unknown) => z.object({
-    location: z.enum(['rio', 'capital']).optional().default('rio'),
+    location: z.enum(['rio', 'capital', 'federal']).optional().default('rio'),
     date: z.string().optional(),
     dateEnd: z.string().optional()
   }).parse(data))
@@ -1062,7 +1062,7 @@ export const getPuxadasStats = createServerFn({ method: "GET" })
  */
 export const getTenDelayByScheduleStats = createServerFn({ method: "GET" })
   .inputValidator((data: unknown) => z.object({
-    location: z.enum(['rio', 'capital']).optional().default('rio')
+    location: z.enum(['rio', 'capital', 'federal']).optional().default('rio')
   }).parse(data))
   .handler(async ({ data }) => {
     const { data: rawRows, error } = await supabase

@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 export const getSyncStatus = createServerFn({ method: "GET" })
   .inputValidator((data: unknown) => z.object({
-    location: z.enum(['rio', 'capital']).optional().default('rio')
+    location: z.enum(['rio', 'capital', 'federal']).optional().default('rio')
   }).parse(data))
   .handler(async ({ data: { location } }) => {
 

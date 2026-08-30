@@ -48,6 +48,19 @@ const RIO_MAP: Record<string, string> = {
   COR: '21:30',
 };
 
+/**
+ * LOTERIA FEDERAL: 2 extrações por semana.
+ * Quarta-feira 20:30 e domingo 11:00 (sábados históricos entram como 20:30).
+ * A origem (federal_results) não possui campo de horário: o horário é
+ * derivado do dia da semana da data do sorteio.
+ */
+function federalDraw(dateISO: string): { time_type: string; time_value: string } | null {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(dateISO ?? ''))) return null;
+  const weekday = new Date(`${dateISO}T12:00:00`).getDay();
+  if (weekday === 0) return { time_type: 'FED-11', time_value: '11:00' };
+  return { time_type: 'FED-20', time_value: '20:30' };
+}
+
 type Normalized = { time_type: string; time_value: string } | null;
 
 /** Valida a sigla e devolve o horário normalizado, ou null quando deve ser bloqueada. */
@@ -127,10 +140,14 @@ export const Route = createFileRoute('/api/public/sync-results')({
             let hasMore = true;
             
             // Define a tabela correta na origem baseada na localização solicitada
-            const externalTable = location === 'capital' ? 'capital_results' : 'draw_results';
+            const externalTable =
+              location === 'capital' ? 'capital_results'
+              : location === 'federal' ? 'federal_results'
+              : 'draw_results';
 
             while (hasMore) {
-              const apiUrl = `${EXTERNAL_REST_URL}/${externalTable}?select=*&order=draw_date.desc,draw_time.desc&limit=${batchSize}&offset=${offset}`;
+              const orderBy = location === 'federal' ? 'draw_date.desc' : 'draw_date.desc,draw_time.desc';
+              const apiUrl = `${EXTERNAL_REST_URL}/${externalTable}?select=*&order=${orderBy}&limit=${batchSize}&offset=${offset}`;
               
               const response = await fetch(apiUrl, {
                 headers: {
@@ -151,10 +168,10 @@ export const Route = createFileRoute('/api/public/sync-results')({
               }
 
               for (const res of externalResults) {
-                const loc = location === 'capital' ? 'capital' : 'rio';
+                const loc = location === 'capital' ? 'capital' : location === 'federal' ? 'federal' : 'rio';
 
                 // 1) Blindagem de sigla/horário
-                const norm = normalizeDraw(loc, res.draw_time);
+                const norm = loc === 'federal' ? federalDraw(res.draw_date) : normalizeDraw(loc, res.draw_time);
                 if (!norm) {
                   console.warn(`[SYNC] Sigla bloqueada (${loc}): ${res.draw_time}`);
                   continue;
@@ -195,8 +212,10 @@ export const Route = createFileRoute('/api/public/sync-results')({
               if (offset > 100000) break;
             }
           } else {
-            const requested = location ? [location] : ['rio', 'capital'];
-            const locationsToSync = requested.filter((l) => l === 'rio' || l === 'capital');
+            const requested = location ? [location] : ['rio', 'capital', 'federal'];
+            const locationsToSync = requested.filter(
+              (l) => l === 'rio' || l === 'capital' || l === 'federal',
+            );
 
             for (const loc of locationsToSync) {
               for (let i = 0; i < daysToSync; i++) {
@@ -204,7 +223,10 @@ export const Route = createFileRoute('/api/public/sync-results')({
                 currentSyncDate.setDate(currentSyncDate.getDate() - i);
                 const dateStr = currentSyncDate.toISOString().split('T')[0]!;
                 
-                const externalTable = loc === 'capital' ? 'capital_results' : 'draw_results';
+                const externalTable =
+                  loc === 'capital' ? 'capital_results'
+                  : loc === 'federal' ? 'federal_results'
+                  : 'draw_results';
                 const apiUrl = `${EXTERNAL_REST_URL}/${externalTable}?draw_date=eq.${dateStr}&select=*`;
                 
                 const response = await fetch(apiUrl, {
@@ -218,8 +240,8 @@ export const Route = createFileRoute('/api/public/sync-results')({
                   const externalResults = await response.json();
                   if (Array.isArray(externalResults) && externalResults.length > 0) {
                     for (const res of externalResults) {
-                      // Blindagem de sigla/horário: só LCAP_/CAP_ (Capital) e siglas do Rio
-                      const norm = normalizeDraw(loc, res.draw_time);
+                      // Blindagem de sigla/horário: só LCAP_/CAP_ (Capital), siglas do Rio e Federal
+                      const norm = loc === 'federal' ? federalDraw(res.draw_date) : normalizeDraw(loc, res.draw_time);
                       if (!norm) {
                         console.warn(`[SYNC] Sigla bloqueada (${loc}): ${res.draw_time}`);
                         continue;

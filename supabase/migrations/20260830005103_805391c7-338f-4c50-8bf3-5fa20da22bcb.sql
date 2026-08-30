@@ -1,0 +1,1 @@
+ALTER TYPE public.lottery_location ADD VALUE IF NOT EXISTS 'federal';

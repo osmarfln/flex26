@@ -42,7 +42,7 @@ function CadastrarPage() {
   const queryClient = useQueryClient();
   const { lastUpdate } = useLotteryRealtime("cadastrar-db-changes");
 
-  const [location, setLocation] = useState<'rio' | 'capital'>('rio');
+  const [location, setLocation] = useState<'rio' | 'capital' | 'federal'>('rio');
   const [date, setDate] = useState(brasiliaDateISO());
   
   const schedules = getScheduleForDate(location);
@@ -153,7 +153,7 @@ function CadastrarPage() {
                   className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
                   value={location}
                   onChange={(e) => {
-                    const newLoc = e.target.value as 'rio' | 'capital';
+                    const newLoc = e.target.value as 'rio' | 'capital' | 'federal';
                     const newSchedules = getScheduleForDate(newLoc);
                     setLocation(newLoc);
                     setTimeType(newSchedules[0]!.timeType);
@@ -162,6 +162,7 @@ function CadastrarPage() {
                 >
                   <option value="rio">RIO DE JANEIRO</option>
                   <option value="capital">CAPITAL & LCAP</option>
+                  <option value="federal">LOTERIA FEDERAL</option>
                 </select>
               </div>
 

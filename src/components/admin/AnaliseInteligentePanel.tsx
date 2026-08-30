@@ -35,7 +35,7 @@ function brasiliaNow() {
 
 /** Análise da plataforma: analytics da plataforma, atrasos e falhas internas em tempo real. */
 export function AnaliseInteligentePanel({ enabled }: { enabled: boolean }) {
-  const [location, setLocation] = useState<'rio' | 'capital'>('rio');
+  const [location, setLocation] = useState<'rio' | 'capital' | 'federal'>('rio');
 
   const { date: today, minutes: nowMin } = brasiliaNow();
 
@@ -135,7 +135,7 @@ export function AnaliseInteligentePanel({ enabled }: { enabled: boolean }) {
   }, [acts]);
 
   const results = todayQuery.data ?? [];
-  const atrasados = getScheduleForDate(location as 'rio' | 'capital', today).map((s) => {
+  const atrasados = getScheduleForDate(location as 'rio' | 'capital' | 'federal', today).map((s) => {
     const [h, m] = s.timeValue.split(":").map(Number);
     const due = (h ?? 0) * 60 + (m ?? 0);
     const got = results.find(
@@ -162,6 +162,7 @@ export function AnaliseInteligentePanel({ enabled }: { enabled: boolean }) {
         >
           <option value="rio">Rio</option>
           <option value="capital">Capital</option>
+          <option value="federal">Federal</option>
         </select>
       </div>
 

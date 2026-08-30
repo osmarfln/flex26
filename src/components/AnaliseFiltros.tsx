@@ -142,11 +142,11 @@ function Delta({ current, previous }: { current: number; previous: number }) {
 }
 
 /** Filtros e busca das Análises: período, horário e tipo, com comparação de períodos. */
-export function AnaliseFiltros({ initialLocation = 'rio' }: { initialLocation?: 'rio' | 'capital' }) {
+export function AnaliseFiltros({ initialLocation = 'rio' }: { initialLocation?: 'rio' | 'capital' | 'federal' }) {
   const todayISO = iso(new Date());
   const [start, setStart] = useState(todayISO);
   const [end, setEnd] = useState(todayISO);
-  const [location, setLocation] = useState<'rio' | 'capital'>(initialLocation);
+  const [location, setLocation] = useState<'rio' | 'capital' | 'federal'>(initialLocation);
 
   const [times, setTimes] = useState<string[]>([]);
   const [term, setTerm] = useState("");
@@ -323,6 +323,7 @@ export function AnaliseFiltros({ initialLocation = 'rio' }: { initialLocation?: 
           >
             <option value="rio">Rio</option>
             <option value="capital">Capital</option>
+            <option value="federal">Federal</option>
           </select>
         </label>
 

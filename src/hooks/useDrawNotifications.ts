@@ -4,7 +4,7 @@ import { getNextDraw } from "@/lib/draw-order";
 import { BellRing } from "lucide-react";
 import React from "react";
 
-export function useDrawNotifications(location: 'rio' | 'capital') {
+export function useDrawNotifications(location: 'rio' | 'capital' | 'federal') {
   const lastNotifiedRef = useRef<string | null>(null);
 
   useEffect(() => {

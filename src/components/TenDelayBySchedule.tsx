@@ -32,7 +32,7 @@ interface ScheduleStats {
 interface TenDelayByScheduleProps {
   data: ScheduleStats[] | undefined;
   loading: boolean;
-  location: 'rio' | 'capital';
+  location: 'rio' | 'capital' | 'federal';
 }
 
 export const TenDelayBySchedule = ({ data, loading, location }: TenDelayByScheduleProps) => {
