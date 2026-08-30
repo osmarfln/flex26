@@ -206,29 +206,45 @@ function RobotStatus() {
     <div className="min-h-screen bg-[#0B0F19] text-white">
       <SiteHeader subtitle="STATUS DO ROBÔ" />
       <div className="max-w-6xl mx-auto p-3 sm:p-4 md:p-12">
-        <RobotHealthPanel />
-        <div className="mb-8">
-          <FederalSyncPanel />
+        {/* Abas principais: uma loteria por vez */}
+        <div className="mb-8 grid grid-cols-3 gap-2 rounded-2xl border border-white/10 bg-white/[0.03] p-1.5">
+          {([
+            { key: "rio", label: "RIO DE JANEIRO" },
+            { key: "capital", label: "CAPITAL & LCAP" },
+            { key: "federal", label: "LOTERIA FEDERAL" },
+          ] as const).map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setLocation(tab.key)}
+              className={`rounded-xl px-2 py-3 text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all ${
+                location === tab.key
+                  ? "bg-red-500 text-white shadow-lg shadow-red-500/20"
+                  : "text-white/50 hover:bg-white/5 hover:text-white"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
+
+        <RobotHealthPanel location={location} />
+        {location === "federal" && (
+          <div className="mb-8">
+            <FederalSyncPanel />
+          </div>
+        )}
         <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 mb-8">
           <div className="min-w-0">
             <h1 className="text-xl sm:text-2xl md:text-3xl font-black italic tracking-tighter uppercase truncate">
               Status do Robô
             </h1>
             <p className="text-white/40 text-[10px] md:text-sm mt-1 uppercase tracking-widest">
-              Resultados diários automatizados Rio e Capital via robô automatizado sem intervenção humana
+              {location === "rio" && "Resultados diários automatizados Rio de Janeiro via robô automatizado sem intervenção humana"}
+              {location === "capital" && "Resultados diários automatizados Capital & LCAP via robô automatizado sem intervenção humana"}
+              {location === "federal" && "Resultados da Loteria Federal via robô automatizado sem intervenção humana"}
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <select 
-              className="h-10 rounded-xl border border-white/10 bg-white/5 px-3 text-xs font-bold text-white outline-none focus:border-primary/50"
-              value={location}
-              onChange={(e) => setLocation(e.target.value as any)}
-            >
-              <option value="rio">RIO DE JANEIRO</option>
-              <option value="capital">CAPITAL & LCAP</option>
-              <option value="federal">LOTERIA FEDERAL</option>
-            </select>
             <button
               onClick={() => refetch()}
               className="p-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all shrink-0"
@@ -350,7 +366,7 @@ function RobotStatus() {
               <div>
                 <p className="text-xs font-black text-red-500 uppercase tracking-widest mb-1">Restrição de Origem</p>
                 <p className="text-[11px] text-red-200/60 leading-relaxed">
-                  O robô está configurado para coletar <strong>exclusivamente</strong> resultados RIO e CAPITAL. 
+                  O robô está configurado para coletar <strong>exclusivamente</strong> resultados RIO, CAPITAL & LCAP e LOTERIA FEDERAL.
                   Qualquer tentativa de sincronização de outras loterias será descartada para garantir a integridade dos cálculos logísticos.
                 </p>
               </div>
