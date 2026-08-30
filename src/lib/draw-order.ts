@@ -46,11 +46,11 @@ export function sortDrawsDesc<T extends { date: string; time_type?: string | nul
 
 /** Horários oficiais do Rio (RJ) publicados diariamente. */
 export const DRAW_SCHEDULE_RIO: { timeType: string; timeValue: string; label: string }[] = [
-  { timeType: "PPT", timeValue: "09:20", label: "PPT" },
-  { timeType: "PTM", timeValue: "11:20", label: "PTM" },
-  { timeType: "PT", timeValue: "14:20", label: "PT" },
-  { timeType: "PTV", timeValue: "16:20", label: "PTV" },
-  { timeType: "PTN", timeValue: "18:20", label: "PTN" },
+  { timeType: "PPT", timeValue: "09:20", label: "PPT 09:20" },
+  { timeType: "PTM", timeValue: "11:20", label: "PTM 11:20" },
+  { timeType: "PT", timeValue: "14:20", label: "PT 14:20" },
+  { timeType: "PTV", timeValue: "16:20", label: "PTV 16:20" },
+  { timeType: "PTN", timeValue: "18:20", label: "PTN 18:20" },
   { timeType: "COR", timeValue: "21:30", label: "CORUJA 21:30" },
 ];
 

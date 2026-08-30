@@ -279,8 +279,8 @@ function LotteryColumn({
   const schedule = getScheduleForDate(location, dateISO);
   const extra = results.filter((r) => !schedule.some((s: any) => s.timeType === r.time_type));
   const entries = [
-    ...schedule.map((s: any) => ({ timeType: s.timeType, label: location === 'capital' ? s.label : `${s.timeType} RIO`, timeValue: s.timeValue, res: byTime.get(s.timeType) })),
-    ...extra.map((r) => ({ timeType: r.time_type, label: location === 'capital' ? drawLabel('capital', r.time_type, r.date) : `${r.time_type} RIO`, timeValue: r.time_value || drawTimeValue(location, r.time_type), res: r })),
+    ...schedule.map((s: any) => ({ timeType: s.timeType, label: s.label, timeValue: s.timeValue, res: byTime.get(s.timeType) })),
+    ...extra.map((r) => ({ timeType: r.time_type, label: drawLabel(location, r.time_type, r.date), timeValue: r.time_value || drawTimeValue(location, r.time_type), res: r })),
   ];
 
   return (
@@ -307,8 +307,9 @@ function LotteryColumn({
               <Card className="dashboard-card overflow-hidden bg-card">
                 <CardHeader className="p-4 pb-2 bg-white/[0.01] border-b border-white/5">
                   <div className="flex justify-between items-center">
-                    <CardTitle className="text-base font-black italic tracking-tighter uppercase">
+                    <CardTitle className="text-base font-black italic tracking-tighter uppercase flex items-baseline gap-2">
                       {entry.label}
+                      {location === 'rio' && <span className="text-[10px] font-bold not-italic normal-case text-white/40 tracking-normal">Rio</span>}
                     </CardTitle>
                     <div className="flex items-center gap-1.5 px-2 py-1 bg-white/5 rounded-md border border-white/5">
                       <Clock className="w-3 h-3 text-primary" />
