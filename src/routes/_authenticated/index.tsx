@@ -4,7 +4,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { UserMenu } from "@/components/layout/UserMenu";
 import { ANIMAL_GROUPS } from "@/lib/animals";
 import { getResults, getTenDelayStats, getGroupDelayStats, getDigitDelayStats, getStats } from "@/lib/lottery.functions";
-import { getScheduleForDate, getNextDraw } from "@/lib/draw-order";
+import { getScheduleForDate, getNextDraw, locationName } from "@/lib/draw-order";
 import { useMemo } from "react";
 
 import { AlertaDezenasAtrasadas } from "@/components/AlertaDezenasAtrasadas";
@@ -270,7 +270,7 @@ function Index() {
               </div>
             </motion.div>
 
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-4 italic">Resultados {location === 'rio' ? 'Rio' : 'Capital'}</h1>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-4 italic text-red-500">Resultados {locationName(location)}</h1>
             <p className="text-white/40 text-lg mb-4 font-medium italic">Resultados diários automatizados Rio e Capital via robô automatizado sem intervenção humana. A plataforma só recebe resultados RIO E CAPITAL.</p>
             <p className="text-white/20 text-[10px] font-bold uppercase tracking-widest mb-8">Leia o arquivo instrucoes.md em anexo e siga as instruções contidas nele.</p>
 
@@ -284,21 +284,21 @@ function Index() {
                     <Clock className="w-8 h-8 text-primary" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-black italic uppercase tracking-tighter">Próximo Resultado</h3>
+                    <h3 className="text-xl font-black italic uppercase tracking-tighter text-red-500">Próximo Resultado</h3>
                     <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest mt-1">Sempre atualizado com o horário oficial</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-6">
                   <div className="text-center">
-                    <p className="text-[10px] text-white/40 font-black uppercase tracking-widest mb-1">Horário</p>
-                    <p className="text-2xl font-black text-white font-mono">
+                    <p className="text-[10px] text-red-500 font-black uppercase tracking-widest mb-1">Horário</p>
+                    <p className="text-2xl font-black text-red-500 font-mono">
                       {nextDraw.timeValue} {nextDraw.timeType}
                     </p>
                   </div>
                   <div className="h-10 w-px bg-white/10" />
                   <div className="text-center">
-                    <p className="text-[10px] text-white/40 font-black uppercase tracking-widest mb-1">Data</p>
-                    <p className="text-2xl font-black text-white font-mono">{format(nextDraw.date, "dd/MM")}</p>
+                    <p className="text-[10px] text-red-500 font-black uppercase tracking-widest mb-1">Data</p>
+                    <p className="text-2xl font-black text-red-500 font-mono">{format(nextDraw.date, "dd/MM")}</p>
                   </div>
                 </div>
               </div>
@@ -319,13 +319,13 @@ function Index() {
                 </div>
               </div>
               
-              <div className="flex flex-col sm:flex-row sm:items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl w-full sm:min-w-[200px] hover:border-red-500/30 transition-all cursor-pointer relative group/select">
-                <MapPin className="w-5 h-5 text-white/40" />
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 px-4 py-3 bg-white border border-white rounded-xl w-full sm:min-w-[200px] hover:border-red-500/30 transition-all cursor-pointer relative group/select">
+                <MapPin className="w-5 h-5 text-black" />
                 <div className="flex-1">
-                  <p className="text-[10px] text-white/40 font-bold uppercase tracking-wider">Localidade</p>
+                  <p className="text-[10px] text-black/60 font-bold uppercase tracking-wider">Localidade</p>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-bold">{location === 'rio' ? 'Rio de Janeiro' : 'Capital (Florianópolis)'}</span>
-                    <ChevronDown className="w-4 h-4 text-white/40" />
+                    <span className="text-sm font-black uppercase text-black">{locationName(location)}</span>
+                    <ChevronDown className="w-4 h-4 text-black" />
                   </div>
                 </div>
                 <select 
@@ -333,8 +333,8 @@ function Index() {
                   value={location}
                   onChange={(e) => setLocation(e.target.value as any)}
                 >
-                  <option value="rio">Rio de Janeiro</option>
-                  <option value="capital">Capital (Florianópolis)</option>
+                  <option value="rio">RIO DE JANEIRO</option>
+                  <option value="capital">CAPITAL & LCAP</option>
                 </select>
               </div>
 

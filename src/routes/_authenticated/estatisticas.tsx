@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { drawLabel } from "@/lib/draw-order";
+import { drawLabel, locationName } from "@/lib/draw-order";
 import { ANIMAL_GROUPS, getAnimalByTen } from "@/lib/animals";
 import { ArrowLeft, BarChart3, Calculator, Sparkles, TrendingUp, Zap, Target, BrainCircuit, History, Flame, Clock, LayoutGrid, Hash, Users, Repeat, ArrowLeftRight, FileText, Upload, Calendar, AlertCircle, Database, CheckCircle2, XCircle, Activity, Timer, ChevronRight, Trophy, RefreshCw, Loader2, Network, Info, MapPin } from "lucide-react";
 import { CruzDoDia } from "@/components/CruzDoDia";
@@ -298,9 +298,9 @@ function EstatisticasPage() {
         <section className="mb-12 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start overflow-hidden">
           <div className="lg:col-span-8">
             <h1 className="text-4xl md:text-5xl lg:text-7xl font-black italic tracking-tighter uppercase mb-4">
-              Monitoramento Inteligente {location === 'rio' ? 'Rio' : 'Capital'}
+              Monitoramento Inteligente {locationName(location)}
             </h1>
-            <p className="text-white/40 text-lg mb-8 font-medium italic">Monitoramento logístico {location === 'rio' ? 'Rio' : 'Capital'} baseado em dezenas quentes, grupos e arquivos históricos.</p>
+            <p className="text-white/40 text-lg mb-8 font-medium italic">Monitoramento logístico {locationName(location)} baseado em dezenas quentes, grupos e arquivos históricos.</p>
           </div>
         </section>
 
@@ -317,7 +317,7 @@ function EstatisticasPage() {
               }`}
             >
               <Trophy className={`w-4 h-4 ${location === 'rio' ? 'animate-pulse' : ''}`} />
-              Análise Rio
+              Análise RIO DE JANEIRO
             </button>
             <button
               onClick={() => setLocation('capital')}
@@ -328,7 +328,7 @@ function EstatisticasPage() {
               }`}
             >
               <MapPin className={`w-4 h-4 ${location === 'capital' ? 'animate-pulse' : ''}`} />
-              Análise Capital
+              Análise CAPITAL & LCAP
             </button>
           </div>
 
@@ -370,7 +370,7 @@ function EstatisticasPage() {
                   <BarChart3 className="w-8 h-8 text-primary" />
                 </div>
                 <div>
-                  <h1 className="text-4xl font-black italic tracking-tighter uppercase">Inteligência {location === 'rio' ? 'Rio' : 'Capital'}</h1>
+                  <h1 className="text-4xl font-black italic tracking-tighter uppercase">Inteligência {locationName(location)}</h1>
                   <p className="text-white/40 font-bold text-xs uppercase tracking-widest mt-1">Estatísticas sincronizadas e auditadas letra por letra via robô automatizado sem intervenção humana</p>
                 </div>
               </div>
@@ -1468,7 +1468,7 @@ function EstatisticasPage() {
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
                       <Sparkles className="w-6 h-6 text-red-500" />
-                      <h2 className="text-2xl font-black italic uppercase">Monitoramento Inteligente {location === 'rio' ? 'Rio' : 'Capital'}</h2>
+                      <h2 className="text-2xl font-black italic uppercase">Monitoramento Inteligente {locationName(location)}</h2>
                     </div>
                     <Badge variant="outline" className="border-red-500/20 text-red-500 bg-red-500/5 px-4 py-2 font-black uppercase text-[10px] tracking-widest">
                       Inteligência aplicada aos resultados históricos
@@ -1576,7 +1576,7 @@ function EstatisticasPage() {
                          <div className="space-y-6">
                             <div className="flex items-center gap-2 mb-2">
                                <div className="w-1.5 h-6 bg-blue-500 rounded-full" />
-                               <h3 className="text-xl font-black italic uppercase">Milhar Destaque {location === 'rio' ? 'Rio' : 'Capital'}</h3>
+                               <h3 className="text-xl font-black italic uppercase">Milhar Destaque {locationName(location)}</h3>
                             </div>
                             <Card className="dashboard-card p-8 bg-gradient-to-br from-primary/10 to-transparent border-primary/20 flex flex-col items-center justify-center text-center">
                                <Sparkles className="w-12 h-12 text-primary mb-6 animate-pulse" />

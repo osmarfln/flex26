@@ -160,8 +160,8 @@ function CadastrarPage() {
                     setTimeValue(newSchedules[0]!.timeValue);
                   }}
                 >
-                  <option value="rio">Rio de Janeiro</option>
-                  <option value="capital">Capital (Floripa)</option>
+                  <option value="rio">RIO DE JANEIRO</option>
+                  <option value="capital">CAPITAL & LCAP</option>
                 </select>
               </div>
 
