@@ -14,7 +14,7 @@ import {
 } from "recharts";
 
 import { getResultsRange, type LotteryResult } from "@/lib/lottery.functions";
-import { getScheduleForDate } from "@/lib/draw-order";
+import { drawLabel, getScheduleForDate } from "@/lib/draw-order";
 import { ANIMAL_GROUPS, ANIMAL_GROUPS_MAP, getAnimalByTen, getGroupFromTen } from "@/lib/animals";
 
 const CHART_TOOLTIP = {
@@ -284,11 +284,11 @@ export function AnaliseFiltros({ initialLocation = 'rio' }: { initialLocation?: 
     });
 
     currentRows.forEach((r) => {
-      const e = counts[r.time_type] ?? (counts[r.time_type] = { name: r.time_type, atual: 0, anterior: 0 });
+      const e = counts[r.time_type] ?? (counts[r.time_type] = { name: drawLabel(location, r.time_type), atual: 0, anterior: 0 });
       e.atual += 1;
     });
     previousRows.forEach((r) => {
-      const e = counts[r.time_type] ?? (counts[r.time_type] = { name: r.time_type, atual: 0, anterior: 0 });
+      const e = counts[r.time_type] ?? (counts[r.time_type] = { name: drawLabel(location, r.time_type), atual: 0, anterior: 0 });
       e.anterior += 1;
     });
     return Object.values(counts);
@@ -616,7 +616,7 @@ export function AnaliseFiltros({ initialLocation = 'rio' }: { initialLocation?: 
                             <td className="py-1.5 font-bold">
                               {new Date(h.row.date + "T12:00:00").toLocaleDateString("pt-BR")}
                             </td>
-                            <td className="font-black text-primary">{h.row.time_type}</td>
+                            <td className="font-black text-primary">{drawLabel(location, h.row.time_type, h.row.date)}</td>
                             <td className={`font-black ${first ? "text-red-400" : "text-white/50"}`}>
                               {h.pos}º
                             </td>
