@@ -286,7 +286,7 @@ export function RioIntelligencePanel() {
                         <td className="text-center">{p.quatro}</td>
                         <td className="text-center">{p.centena}</td>
                         <td className="text-center font-bold text-primary">{p.dezena}</td>
-                        <td className="text-center">{p.grupo} {getAnimalByGroup(p.grupo)?.emoji ?? ""}</td>
+                        <td className="text-center">{p.grupo} {getAnimalByGroup(p.grupo)?.name ?? ""}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -418,7 +418,7 @@ export function RioIntelligencePanel() {
                 ).map((g) => (
                   <tr key={g.group} className="border-t border-white/5 text-white/80 text-center">
                     <td className="text-left py-1 font-black text-white">
-                      {g.group} {getAnimalByGroup(g.group)?.emoji ?? ""}
+                      {g.group} {getAnimalByGroup(g.group)?.name ?? ""}
                     </td>
                     <td className="text-left text-white/50">{g.tens.join(" ")}</td>
                     <td>{g.delay}</td>
@@ -462,7 +462,7 @@ export function RioIntelligencePanel() {
                   <tr key={t.ten} className="border-t border-white/5 text-white/80 text-center">
                     <td className="text-left py-1 text-white/40">{i + 1}</td>
                     <td className="text-left font-black text-white">{t.ten}</td>
-                    <td>{t.group} {getAnimalByGroup(t.group)?.emoji ?? ""}</td>
+                    <td>{t.group} {getAnimalByGroup(t.group)?.name ?? ""}</td>
                     <td className="font-bold text-primary">{num(t.score, 1)}</td>
                     <td className="text-white/60">{t.scoreLabel}</td>
                     <td>{t.components.A}</td><td>{t.components.R}</td><td>{t.components.G}</td><td>{t.P}</td><td>{t.components.E}</td>
