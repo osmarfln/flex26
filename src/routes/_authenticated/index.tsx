@@ -4,7 +4,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { UserMenu } from "@/components/layout/UserMenu";
 import { ANIMAL_GROUPS } from "@/lib/animals";
 import { getResults, getTenDelayStats, getGroupDelayStats, getDigitDelayStats, getStats } from "@/lib/lottery.functions";
-import { getScheduleForDate, getNextDraw, locationName } from "@/lib/draw-order";
+import { getScheduleForDate, getNextDraw, locationName, drawLabel, drawTimeValue } from "@/lib/draw-order";
 import { useMemo } from "react";
 
 import { AlertaDezenasAtrasadas } from "@/components/AlertaDezenasAtrasadas";
@@ -129,6 +129,14 @@ function Index() {
     queryFn: () => getResults({ data: { limit: 12, date: today, location } }),
   });
 
+  // FEDERAL: são apenas 2 concursos por semana — o painel mantém sempre
+  // os últimos concursos publicados até que o próximo sorteio seja atualizado.
+  const { data: federalLatest } = useQuery({
+    queryKey: ["homepage-federal-latest"],
+    queryFn: () => getResults({ data: { limit: 4, location: 'federal' } }),
+    enabled: location === 'federal',
+  });
+
   const { data: groupStats, isLoading: isLoadingStats } = useQuery({
     queryKey: ["homepage-group-stats", location],
     queryFn: () => getGroupDelayStats({ data: { location } }),
@@ -156,6 +164,39 @@ function Index() {
 
   // Cada novo resultado dispara um novo cálculo (atrasos, grupos, dezenas, repetições)
   const { lastUpdate } = useLotteryRealtime("home-db-changes");
+
+  /**
+   * Painéis de resultados exibidos na página inicial.
+   * Rio/Capital seguem a grade do dia; a Federal mantém sempre os últimos
+   * concursos publicados quando não há sorteio na data de hoje.
+   */
+  const panels = useMemo(() => {
+    const todaySchedule = getScheduleForDate(location, today);
+    const todayPanels = todaySchedule.map((schedule: any) => ({
+      key: schedule.timeType,
+      schedule: { ...schedule, dateLabel: null as string | null },
+      game: (games || []).find(
+        (g: any) => String(g.time_type).toUpperCase().trim().replace("PTT", "PPT") === schedule.timeType.toUpperCase(),
+      ),
+    }));
+
+    if (location !== 'federal') return todayPanels;
+    if (todayPanels.some((p) => p.game)) return todayPanels;
+
+    return (federalLatest || []).map((row: any) => {
+      const [y, m, d] = String(row.date).split('-');
+      return {
+        key: `${row.date}-${row.time_type}`,
+        schedule: {
+          timeType: row.time_type,
+          timeValue: drawTimeValue('federal', row.time_type),
+          label: drawLabel('federal', row.time_type, row.date),
+          dateLabel: `${d}/${m}/${y}`,
+        },
+        game: row,
+      };
+    });
+  }, [location, today, games, federalLatest]);
 
 
 
@@ -340,30 +381,26 @@ function Index() {
           <div className="lg:col-span-12">
             {isLoadingGames ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {Array.from({ length: getScheduleForDate(location, today).length }).map((_, i) => (
+                {Array.from({ length: Math.max(getScheduleForDate(location, today).length, 2) }).map((_, i) => (
                   <div key={i} className="h-64 rounded-2xl bg-white/5 animate-pulse border border-white/10" />
                 ))}
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {getScheduleForDate(location, today).map((schedule) => {
-                  const game = (games || []).find(
-                    (g: any) => String(g.time_type).toUpperCase().trim().replace("PTT", "PPT") === schedule.timeType.toUpperCase(),
-                  );
-
+                {panels.map(({ key, schedule, game }) => {
                   // Encontra o mais recente entre os que já saíram hoje
                   const sortedGames = [...(games || [])].sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
-                  const isLatest = game && sortedGames[0]?.id === game.id;
-                  
+                  const isLatest = game && (location === 'federal' ? panels[0]?.game?.id === game.id : sortedGames[0]?.id === game.id);
+
                   return (
-                    <Card key={schedule.timeType} className={`dashboard-card rounded-3xl overflow-hidden group hover:border-primary/40 transition-all duration-500 relative min-h-[300px] ${!game ? 'opacity-70 bg-white/[0.02]' : 'bg-card'}`}>
+                    <Card key={key} className={`dashboard-card rounded-3xl overflow-hidden group hover:border-primary/40 transition-all duration-500 relative min-h-[300px] ${!game ? 'opacity-70 bg-white/[0.02]' : 'bg-card'}`}>
                       {isLatest && (
                         <div className="absolute inset-0 border-2 border-primary/20 rounded-3xl pointer-events-none z-10" />
                       )}
                       <CardHeader className="p-6 pb-2">
                         <div className="flex justify-between items-start mb-4">
                           <CardTitle className="text-xl font-black italic tracking-tighter uppercase group-hover:text-primary transition-colors">
-                            {location === 'capital' ? `${schedule.label} h` : `${schedule.label} ${schedule.timeValue} h`}
+                            {location === 'capital' ? `${schedule.label} h` : location === 'federal' ? `${schedule.label} h${schedule.dateLabel ? ` — ${schedule.dateLabel}` : ''}` : `${schedule.label} ${schedule.timeValue} h`}
                           </CardTitle>
                           {isLatest && (
                             <div className="px-3 py-1 bg-primary text-primary-foreground text-[10px] font-black uppercase rounded-lg shadow-xl shadow-primary/20">
