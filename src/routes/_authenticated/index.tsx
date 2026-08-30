@@ -292,8 +292,8 @@ function Index() {
               </div>
             </motion.div>
 
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-4 italic text-red-500">Resultados {locationName(location)}</h1>
-            <p className="text-white/40 text-lg mb-4 font-medium italic">Resultados diários automatizados Rio e Capital via robô automatizado sem intervenção humana. A plataforma só recebe resultados RIO E CAPITAL.</p>
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-black tracking-tight mb-3 italic text-red-500">Resultados {locationName(location)}</h1>
+            <p className="text-white/40 text-sm md:text-base mb-4 font-medium italic">Resultados diários automatizados Rio e Capital via robô automatizado sem intervenção humana. A plataforma só recebe resultados RIO E CAPITAL.</p>
             <p className="text-white/20 text-[10px] font-bold uppercase tracking-widest mb-8">Leia o arquivo instrucoes.md em anexo e siga as instruções contidas nele.</p>
 
 
@@ -346,7 +346,7 @@ function Index() {
                 <div className="flex-1">
                   <p className="text-[10px] text-black/60 font-bold uppercase tracking-wider">Localidade</p>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-black uppercase text-black">{locationName(location)}</span>
+                    <span className="text-xs font-black uppercase text-black">{locationName(location)}</span>
                     <ChevronDown className="w-4 h-4 text-black" />
                   </div>
                 </div>
