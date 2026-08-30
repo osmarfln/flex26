@@ -84,10 +84,15 @@ function Historico() {
     queryFn: () => getResults({ data: { date: dateISO, location: 'capital', limit: 50 } }),
   });
 
+  const federalQuery = useQuery({
+    queryKey: ["history-results", "federal", dateISO],
+    queryFn: () => getResults({ data: { date: dateISO, location: 'federal', limit: 50 } }),
+  });
+
   // Novos resultados entram automaticamente no histórico
   useLotteryRealtime("history-db-changes");
 
-  const isLoading = rioQuery.isLoading || capitalQuery.isLoading;
+  const isLoading = rioQuery.isLoading || capitalQuery.isLoading || federalQuery.isLoading;
 
   const sortBySchedule = (results: any[] | undefined, location: Location) => {
     const schedule = getScheduleForDate(location, dateISO);
@@ -99,10 +104,13 @@ function Historico() {
 
   const rioResults = sortBySchedule(rioQuery.data, 'rio');
   const capitalResults = sortBySchedule(capitalQuery.data, 'capital');
+  const federalResults = sortBySchedule(federalQuery.data, 'federal');
+  const federalSchedule = getScheduleForDate('federal', dateISO);
 
   const refetchAll = () => {
     rioQuery.refetch();
     capitalQuery.refetch();
+    federalQuery.refetch();
   };
 
   return (
@@ -232,6 +240,17 @@ function Historico() {
               location="capital"
               dateISO={dateISO}
               results={capitalResults}
+            />
+          </div>
+        )}
+
+        {!isLoading && federalSchedule.length > 0 && (
+          <div className="grid grid-cols-1 mb-12">
+            <LotteryColumn
+              title="LOTERIA FEDERAL"
+              location="federal"
+              dateISO={dateISO}
+              results={federalResults}
             />
           </div>
         )}
