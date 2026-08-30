@@ -314,7 +314,7 @@ function Index() {
                   <div className="text-center">
                     <p className="text-[10px] text-red-500 font-black uppercase tracking-widest mb-1">Horário</p>
                     <p className="text-2xl font-black text-red-500 font-mono">
-                      {nextDraw.timeValue} {nextDraw.timeType}
+                      {drawLabel(location, nextDraw.timeType, nextDraw.date ? nextDraw.date.toISOString().slice(0, 10) : undefined) || nextDraw.timeValue}
                     </p>
                   </div>
                   <div className="h-10 w-px bg-white/10" />
