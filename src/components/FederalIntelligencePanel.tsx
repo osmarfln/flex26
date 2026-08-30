@@ -455,6 +455,7 @@ export function FederalIntelligencePanel() {
           </div>
         )}
       </div>
+      )}
 
       <p className="rounded-2xl border border-white/10 bg-black/30 p-4 text-[11px] md:text-xs text-white/50 leading-relaxed">
         “Esta análise utiliza frequências, atrasos e padrões encontrados em resultados históricos. Uma dezena ou
