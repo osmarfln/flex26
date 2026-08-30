@@ -53,19 +53,19 @@ export const DRAW_SCHEDULE_RIO: { timeType: string; timeValue: string; label: st
 /** Legado para manter compatibilidade */
 export const DRAW_SCHEDULE = DRAW_SCHEDULE_RIO;
 
-/** Horários oficiais da Capital (Florianópolis). */
+/** Horários oficiais da Capital (Florianópolis). Rótulos: CAPITAL nos 14:00/18:00 e LCAP nos demais. */
 export const DRAW_SCHEDULE_CAPITAL: { timeType: string; timeValue: string; label: string }[] = [
-  { timeType: "L-09", timeValue: "09:00", label: "LCap 09:00" },
-  { timeType: "L-10", timeValue: "10:00", label: "LCap 10:00" },
-  { timeType: "L-11", timeValue: "11:00", label: "LCap 11:00" },
-  { timeType: "L-13", timeValue: "13:00", label: "LCap 13:00" },
-  { timeType: "L-14", timeValue: "14:00", label: "LCap 14:00" },
-  { timeType: "L-15", timeValue: "15:00", label: "LCap 15:00" },
-  { timeType: "L-16", timeValue: "16:00", label: "LCap 16:00" },
-  { timeType: "L-18", timeValue: "18:00", label: "LCap 18:00" },
-  { timeType: "L-19", timeValue: "19:00", label: "Cap 19:00" },
-  { timeType: "L-20", timeValue: "20:30", label: "LCap 20:30" },
-  { timeType: "L-22", timeValue: "22:30", label: "LCap 22:30" },
+  { timeType: "L-09", timeValue: "09:00", label: "LCAP 09:00" },
+  { timeType: "L-10", timeValue: "10:00", label: "LCAP 10:00" },
+  { timeType: "L-11", timeValue: "11:00", label: "LCAP 11:00" },
+  { timeType: "L-13", timeValue: "13:00", label: "LCAP 13:00" },
+  { timeType: "L-14", timeValue: "14:00", label: "CAPITAL 14:00" },
+  { timeType: "L-15", timeValue: "15:00", label: "LCAP 15:00" },
+  { timeType: "L-16", timeValue: "16:00", label: "LCAP 16:00" },
+  { timeType: "L-18", timeValue: "18:00", label: "CAPITAL 18:00" },
+  { timeType: "L-19", timeValue: "19:00", label: "CAPITAL 19:00" },
+  { timeType: "L-20", timeValue: "20:30", label: "LCAP 20:30" },
+  { timeType: "L-22", timeValue: "22:30", label: "LCAP 22:30" },
 ];
 
 /** Data de hoje no fuso de Brasília (UTC-3) no formato YYYY-MM-DD. */
@@ -88,7 +88,9 @@ export function weekdayOfISO(dateISO?: string | null): number {
 /**
  * Grade oficial válida para a data informada:
  * - Rio: aos domingos há apenas PT (14:20) e PTV (16:20).
- * - Capital: o horário das 19:00 (L-19) só existe aos sábados.
+ * - Capital:
+ *   - Seg a sex e domingo: 09, 10, 11, 13, CAPITAL 14, 15, 16, CAPITAL 18, 20:30, 22:30.
+ *   - Sábado: no lugar da CAPITAL 18:00 entra LCAP 18:00 e é adicionada a CAPITAL 19:00.
  */
 export function getScheduleForDate(
   location: 'rio' | 'capital' = 'rio',
@@ -96,12 +98,41 @@ export function getScheduleForDate(
 ) {
   const weekday = weekdayOfISO(dateISO);
   if (location === 'capital') {
-    return DRAW_SCHEDULE_CAPITAL.filter((s) => (s.timeType === 'L-19' ? weekday === 6 : true));
+    const isSaturday = weekday === 6;
+    return DRAW_SCHEDULE_CAPITAL
+      .filter((s) => (s.timeType === 'L-19' ? isSaturday : true))
+      .map((s) =>
+        s.timeType === 'L-18' && isSaturday ? { ...s, label: 'LCAP 18:00' } : s,
+      );
   }
   if (weekday === 0) {
     return DRAW_SCHEDULE_RIO.filter((s) => s.timeType === 'PT' || s.timeType === 'PTV');
   }
   return DRAW_SCHEDULE_RIO;
+}
+
+/** Rótulo oficial de um horário (ex.: "CAPITAL 14:00", "LCAP 09:00", "PTM"). */
+export function drawLabel(
+  location: 'rio' | 'capital' | string | null | undefined,
+  timeType?: string | null,
+  dateISO?: string | null,
+): string {
+  const key = String(timeType ?? '').toUpperCase().trim();
+  if (!key) return '--';
+  const loc = location === 'capital' ? 'capital' : 'rio';
+  const found = getScheduleForDate(loc, dateISO).find((s) => s.timeType === key)
+    ?? (loc === 'capital' ? DRAW_SCHEDULE_CAPITAL : DRAW_SCHEDULE_RIO).find((s) => s.timeType === key);
+  return found?.label ?? key;
+}
+
+/** Horário oficial (HH:mm) de um time_type. */
+export function drawTimeValue(
+  location: 'rio' | 'capital' | string | null | undefined,
+  timeType?: string | null,
+): string {
+  const key = String(timeType ?? '').toUpperCase().trim();
+  const list = location === 'capital' ? DRAW_SCHEDULE_CAPITAL : DRAW_SCHEDULE_RIO;
+  return list.find((s) => s.timeType === key)?.timeValue ?? '--:--';
 }
 
 /** Calcula o próximo sorteio baseado na localização e hora atual de Brasília */
