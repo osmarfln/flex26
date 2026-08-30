@@ -178,3 +178,8 @@ export function getNextDraw(location: 'rio' | 'capital' = 'rio') {
     date: tomorrow
   };
 }
+
+/** Nome oficial da localidade em letras maiúsculas. */
+export function locationName(location: 'rio' | 'capital'): string {
+  return location === 'rio' ? 'RIO DE JANEIRO' : 'CAPITAL & LCAP';
+}
