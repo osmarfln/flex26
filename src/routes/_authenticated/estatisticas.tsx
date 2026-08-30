@@ -7,6 +7,7 @@ import { FederalSyncPanel } from "@/components/FederalSyncPanel";
 import { AvisoObrigatorio } from "@/components/AvisoObrigatorio";
 import { AnaliseFiltros } from "@/components/AnaliseFiltros";
 import { SiteHeader } from "@/components/layout/SiteHeader";
+import { LotterySelector } from "@/components/LotterySelector";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -296,52 +297,20 @@ function EstatisticasPage() {
 
 
         {/* Header Section */}
-        <section className="mb-12 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start overflow-hidden">
+        <section className="mb-6 md:mb-12 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-8 items-start overflow-hidden">
           <div className="lg:col-span-8">
-            <h1 className="text-4xl md:text-5xl lg:text-7xl font-black italic tracking-tighter uppercase mb-4">
+            <h1 className="text-3xl md:text-5xl lg:text-7xl font-black italic tracking-tighter uppercase mb-2 md:mb-4">
               Monitoramento Inteligente {locationName(location)}
             </h1>
-            <p className="text-white/40 text-lg mb-8 font-medium italic">Monitoramento logístico {locationName(location)} baseado em dezenas quentes, grupos e arquivos históricos.</p>
+            <p className="text-white/40 text-sm md:text-lg mb-4 md:mb-8 font-medium italic">Monitoramento logístico {locationName(location)} baseado em dezenas quentes, grupos e arquivos históricos.</p>
           </div>
         </section>
 
-        <section className="mb-12 min-w-0">
+        <section className="mb-6 md:mb-12 min-w-0">
           <AvisoObrigatorio />
 
-          <div className="mb-8 flex flex-col md:flex-row items-center gap-6 p-1 bg-white/5 border border-white/10 rounded-2xl max-w-fit">
-            <button
-              onClick={() => setLocation('rio')}
-              className={`px-8 py-3 rounded-xl text-sm font-black uppercase tracking-wider transition-all flex items-center gap-2 ${
-                location === 'rio' 
-                  ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20 scale-105' 
-                  : 'text-white/40 hover:text-white/70'
-              }`}
-            >
-              <Trophy className={`w-4 h-4 ${location === 'rio' ? 'animate-pulse' : ''}`} />
-              Análise RIO DE JANEIRO
-            </button>
-            <button
-              onClick={() => setLocation('capital')}
-              className={`px-8 py-3 rounded-xl text-sm font-black uppercase tracking-wider transition-all flex items-center gap-2 ${
-                location === 'capital' 
-                  ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20 scale-105' 
-                  : 'text-white/40 hover:text-white/70'
-              }`}
-            >
-              <MapPin className={`w-4 h-4 ${location === 'capital' ? 'animate-pulse' : ''}`} />
-              Análise CAPITAL & LCAP
-            </button>
-            <button
-              onClick={() => setLocation('federal')}
-              className={`px-8 py-3 rounded-xl text-sm font-black uppercase tracking-wider transition-all flex items-center gap-2 ${
-                location === 'federal'
-                  ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20 scale-105'
-                  : 'text-white/40 hover:text-white/70'
-              }`}
-            >
-              <Trophy className={`w-4 h-4 ${location === 'federal' ? 'animate-pulse' : ''}`} />
-              Análise LOTERIA FEDERAL
-            </button>
+          <div className="mb-6 md:mb-8">
+            <LotterySelector value={location} onChange={setLocation} />
           </div>
 
           {location === 'federal' && (

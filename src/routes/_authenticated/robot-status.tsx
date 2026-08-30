@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
+import { LotterySelector } from "@/components/LotterySelector";
 import { RobotHealthPanel } from "@/components/RobotHealthPanel";
 import { FederalSyncPanel } from "@/components/FederalSyncPanel";
 import { AcessoRestrito } from "@/components/AcessoRestrito";
@@ -206,25 +207,9 @@ function RobotStatus() {
     <div className="min-h-screen bg-[#0B0F19] text-white">
       <SiteHeader subtitle="STATUS DO ROBÔ" />
       <div className="max-w-6xl mx-auto p-3 sm:p-4 md:p-12">
-        {/* Abas principais: uma loteria por vez */}
-        <div className="mb-8 grid grid-cols-3 gap-2 rounded-2xl border border-white/10 bg-white/[0.03] p-1.5">
-          {([
-            { key: "rio", label: "RIO DE JANEIRO" },
-            { key: "capital", label: "CAPITAL & LCAP" },
-            { key: "federal", label: "LOTERIA FEDERAL" },
-          ] as const).map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => setLocation(tab.key)}
-              className={`rounded-xl px-2 py-3 text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all ${
-                location === tab.key
-                  ? "bg-red-500 text-white shadow-lg shadow-red-500/20"
-                  : "text-white/50 hover:bg-white/5 hover:text-white"
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+        {/* Seletor retrátil: uma loteria por vez */}
+        <div className="mb-6 md:mb-8">
+          <LotterySelector value={location} onChange={setLocation} />
         </div>
 
         <RobotHealthPanel location={location} />
