@@ -121,8 +121,8 @@ function CalendarioPage() {
                 value={location}
                 onChange={(e) => setLocation(e.target.value as any)}
               >
-                <option value="rio">Rio</option>
-                <option value="capital">Capital</option>
+                <option value="rio">RIO DE JANEIRO</option>
+                <option value="capital">CAPITAL &amp; LCAP</option>
               </select>
               <Button variant="outline" size="icon" onClick={() => shift(-1)} aria-label="Mês anterior">
                 <ChevronLeft className="h-4 w-4" />
