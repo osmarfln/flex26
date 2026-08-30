@@ -366,7 +366,7 @@ function RobotStatus() {
               <div>
                 <p className="text-xs font-black text-red-500 uppercase tracking-widest mb-1">Restrição de Origem</p>
                 <p className="text-[11px] text-red-200/60 leading-relaxed">
-                  O robô está configurado para coletar <strong>exclusivamente</strong> resultados RIO e CAPITAL. 
+                  O robô está configurado para coletar <strong>exclusivamente</strong> resultados RIO, CAPITAL & LCAP e LOTERIA FEDERAL.
                   Qualquer tentativa de sincronização de outras loterias será descartada para garantir a integridade dos cálculos logísticos.
                 </p>
               </div>
