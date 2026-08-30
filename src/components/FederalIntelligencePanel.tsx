@@ -4,6 +4,7 @@ import { getFederalIntel } from "@/lib/federal-intel.functions";
 import { getAnimalByGroup } from "@/lib/animals";
 import { Loader2, Landmark, Flame, Timer, Trophy, Percent, FlaskConical, Search, ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
+import { IntelTabBar } from "@/components/IntelTabBar";
 
 const WINDOWS = [
   { label: "10", value: 10 },
@@ -180,27 +181,17 @@ export function FederalIntelligencePanel() {
       </div>
 
       {/* Abas de navegação */}
-      <div className="flex gap-2 overflow-x-auto pb-1">
-        {[
+      <IntelTabBar
+        tabs={[
           { id: "overview" as const, label: "Visão geral" },
           { id: "tens" as const, label: `Ranking completo de dezenas — amostra de ${data.filters.sampleSize} extrações` },
           { id: "groupsDelayed" as const, label: "Grupos mais atrasados" },
           { id: "groupsHot" as const, label: "Grupos mais puxados" },
           { id: "combined" as const, label: "Atraso elevado + grupo atrasado" },
-        ].map((t) => (
-          <button
-            key={t.id}
-            onClick={() => setTab(t.id)}
-            className={`shrink-0 rounded-xl border px-4 py-2 text-[11px] font-black uppercase tracking-wider transition-colors ${
-              tab === t.id
-                ? "border-primary/60 bg-primary/20 text-primary"
-                : "border-white/10 bg-white/[0.02] text-white/50 hover:bg-white/5 hover:text-white"
-            }`}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
+        ]}
+        active={tab}
+        onChange={setTab}
+      />
 
       {tab === "overview" && (
       <>
@@ -525,13 +516,13 @@ function StatCard({
     violet: "text-violet-300 bg-violet-500/10 border-violet-500/30",
   };
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+    <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-3 sm:p-4 min-w-0">
       <div className={`mb-2 inline-flex rounded-lg border p-1.5 ${tones[tone] ?? tones["red"]}`}>
         <Icon className="h-4 w-4" />
       </div>
-      <p className="text-[9px] font-black uppercase tracking-widest text-white/40">{title}</p>
-      <p className="text-2xl font-black text-white">{main ?? "--"}</p>
-      <p className="truncate text-[11px] text-white/50">{sub}</p>
+      <p className="text-[9px] font-black uppercase tracking-widest text-white/40 break-words">{title}</p>
+      <p className="text-xl sm:text-2xl font-black text-white break-words">{main ?? "--"}</p>
+      <p className="text-[11px] text-white/50 break-words">{sub}</p>
     </div>
   );
 }
