@@ -393,6 +393,9 @@ export function FederalIntelligencePanel() {
           }))}
           headers={["Dezena", "Atraso", "Índice", "Score", "Classificação"]}
         />
+      </div>
+      )}
+      {tab === "overview" && (
         <RankTable
           title="Frequência por posição do prêmio"
           rows={(data.rankings.byPosition as any[]).map((p) => ({
@@ -402,7 +405,7 @@ export function FederalIntelligencePanel() {
           }))}
           headers={["Posição", "Extrações", "Top dezenas"]}
         />
-      </div>
+      )}
 
       {/* Backtest */}
       <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
