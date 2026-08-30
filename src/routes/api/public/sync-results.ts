@@ -45,7 +45,7 @@ const RIO_MAP: Record<string, string> = {
   PT: '14:20',
   PTV: '16:20',
   PTN: '18:20',
-  COR: '21:00',
+  COR: '21:30',
 };
 
 /**
