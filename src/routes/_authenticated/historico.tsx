@@ -307,8 +307,9 @@ function LotteryColumn({
               <Card className="dashboard-card overflow-hidden bg-card">
                 <CardHeader className="p-4 pb-2 bg-white/[0.01] border-b border-white/5">
                   <div className="flex justify-between items-center">
-                    <CardTitle className="text-base font-black italic tracking-tighter uppercase">
+                    <CardTitle className="text-base font-black italic tracking-tighter uppercase flex items-baseline gap-2">
                       {entry.label}
+                      {location === 'rio' && <span className="text-[10px] font-bold not-italic normal-case text-white/40 tracking-normal">Rio</span>}
                     </CardTitle>
                     <div className="flex items-center gap-1.5 px-2 py-1 bg-white/5 rounded-md border border-white/5">
                       <Clock className="w-3 h-3 text-primary" />
