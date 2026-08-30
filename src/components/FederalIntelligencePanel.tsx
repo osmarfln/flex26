@@ -408,6 +408,7 @@ export function FederalIntelligencePanel() {
       )}
 
       {/* Backtest */}
+      {tab === "overview" && (
       <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
         <button
           onClick={() => setShowBacktest((v) => !v)}
