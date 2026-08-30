@@ -14,30 +14,7 @@ import {
 import { AlertTriangle, BrainCircuit, CheckCircle2, Clock } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
-
-const SCHEDULE_RIO = [
-  { type: "PPT", value: "09:20" },
-  { type: "PTM", value: "11:20" },
-  { type: "PT", value: "14:20" },
-  { type: "PTV", value: "16:20" },
-  { type: "PTN", value: "18:20" },
-  { type: "COR", value: "21:30" },
-];
-
-const SCHEDULE_CAPITAL = [
-  { type: "L-09", value: "09:00" },
-  { type: "L-10", value: "10:00" },
-  { type: "L-11", value: "11:00" },
-  { type: "L-13", value: "13:00" },
-  { type: "L-14", value: "14:00" },
-  { type: "L-15", value: "15:00" },
-  { type: "L-16", value: "16:00" },
-  { type: "L-18", value: "18:00" },
-  { type: "L-19", value: "19:00" },
-  { type: "L-20", value: "20:30" },
-  { type: "L-22", value: "22:30" },
-];
-
+import { getScheduleForDate } from "@/lib/draw-order";
 
 function brasiliaNow() {
   const parts = new Intl.DateTimeFormat("en-CA", {
@@ -158,14 +135,14 @@ export function AnaliseInteligentePanel({ enabled }: { enabled: boolean }) {
   }, [acts]);
 
   const results = todayQuery.data ?? [];
-  const atrasados = (location === 'rio' ? SCHEDULE_RIO : SCHEDULE_CAPITAL).map((s) => {
-    const [h, m] = s.value.split(":").map(Number);
+  const atrasados = getScheduleForDate(location as 'rio' | 'capital', today).map((s) => {
+    const [h, m] = s.timeValue.split(":").map(Number);
     const due = (h ?? 0) * 60 + (m ?? 0);
     const got = results.find(
-      (r) => (r.time_type ?? "").toUpperCase().replace("PTT", "PPT") === s.type,
+      (r) => (r.time_type ?? "").toUpperCase().replace("PTT", "PPT") === s.timeType,
     );
     const status = got ? "recebido" : nowMin > due + 20 ? "atrasado" : nowMin >= due ? "aguardando" : "programado";
-    return { ...s, status, capturedAt: got?.created_at ?? null };
+    return { type: s.timeType, value: s.timeValue, label: s.label, status, capturedAt: got?.created_at ?? null };
   });
 
   const logs = logsQuery.data ?? [];
@@ -213,7 +190,7 @@ export function AnaliseInteligentePanel({ enabled }: { enabled: boolean }) {
               .filter((a) => a.status === "atrasado")
               .map((a) => (
                 <li key={a.type}>
-                  Resultado {a.type} ({a.value}) não chegou dentro da janela prevista.
+                  Resultado {a.label} ({a.value}) não chegou dentro da janela prevista.
                 </li>
               ))}
             {falhas.slice(0, 5).map((l) => (
@@ -308,7 +285,7 @@ export function AnaliseInteligentePanel({ enabled }: { enabled: boolean }) {
               ) : (
                 <Clock className="h-4 w-4 text-red-400" />
               )}
-              <span className="font-bold">{a.type}</span>
+              <span className="font-bold">{a.label}</span>
               <span className="text-xs text-white/40">{a.value}</span>
               <span
                 className={`ml-auto text-[10px] font-black uppercase ${

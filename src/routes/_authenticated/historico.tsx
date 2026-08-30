@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ANIMAL_ICONS } from "@/lib/animals";
 import { getResults } from "@/lib/lottery.functions";
 import { useLotteryRealtime } from "@/hooks/useLotteryRealtime";
+import { drawLabel, drawTimeValue } from "@/lib/draw-order";
 
 import { useQuery } from "@tanstack/react-query";
 import { format, parseISO } from "date-fns";
@@ -185,7 +186,9 @@ function Historico() {
                     <div className="flex justify-between items-start">
                       <div>
                         <CardTitle className="text-lg font-black italic tracking-tighter uppercase mb-1">
-                          {res.time_type} {res.location === 'capital' ? 'CAPITAL' : 'RIO'}
+                          {res.location === 'capital'
+                            ? drawLabel('capital', res.time_type, res.date)
+                            : `${res.time_type} RIO`}
                         </CardTitle>
 
                         <div className="flex items-center gap-2 text-[10px] text-white/40 font-bold uppercase">
@@ -197,15 +200,9 @@ function Historico() {
                         <div className="flex items-center gap-1.5 px-2 py-1 bg-white/5 rounded-md border border-white/5">
                           <Clock className="w-3 h-3 text-primary" />
                           <span className="text-[10px] font-mono font-black text-white">
-                            {res.time_value || (
-                              res.time_type === 'PPT' ? '09:20' :
-                              res.time_type === 'PTM' ? '11:20' :
-                              res.time_type === 'PT' ? '14:20' :
-                              res.time_type === 'PTV' ? '16:20' :
-                              res.time_type === 'PTN' ? '18:20' :
-                              res.time_type === 'COR' ? '21:20' : '--:--'
-                            )}
+                            {res.time_value || drawTimeValue(res.location, res.time_type)}
                           </span>
+
 
                         </div>
                       </div>
