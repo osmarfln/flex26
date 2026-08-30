@@ -328,6 +328,13 @@ function EstatisticasPage() {
             </div>
           )}
 
+          {location === 'federal' && (
+            <div className="mb-8">
+              <FederalIntelligencePanel />
+            </div>
+          )}
+
+
           <div className="mb-8 flex flex-col sm:flex-row gap-4 min-w-0">
             <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl w-full sm:min-w-[150px] hover:border-red-500/30 transition-all cursor-pointer relative group/select">
               <Calendar className="w-5 h-5 text-white/40" />
