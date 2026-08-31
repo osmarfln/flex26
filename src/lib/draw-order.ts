@@ -118,10 +118,12 @@ export function getScheduleForDate(
   }
   if (location === 'capital') {
     const isSaturday = weekday === 6;
+    const isSunday = weekday === 0;
     return DRAW_SCHEDULE_CAPITAL
       .filter((s) => (s.timeType === 'L-19' ? isSaturday : true))
+      .filter((s) => (isSunday && s.timeType === 'L-11' ? false : true))
       .map((s) =>
-        s.timeType === 'L-18' && isSaturday ? { ...s, label: 'LCAP 18:00' } : s,
+        s.timeType === 'L-18' && (isSaturday || isSunday) ? { ...s, label: 'LCAP 18:00' } : s,
       );
   }
   if (weekday === 0) {
