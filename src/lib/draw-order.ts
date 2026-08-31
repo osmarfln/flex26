@@ -102,8 +102,9 @@ export function weekdayOfISO(dateISO?: string | null): number {
  * Grade oficial válida para a data informada:
  * - Rio: aos domingos há apenas PT (14:20) e PTV (16:20).
  * - Capital:
- *   - Seg a sex e domingo: 09, 10, 11, 13, CAPITAL 14, 15, 16, CAPITAL 18, 20:30, 22:30.
+ *   - Seg a sex: 09, 10, 11, 13, CAPITAL 14, 15, 16, CAPITAL 18, 20:30, 22:30.
  *   - Sábado: no lugar da CAPITAL 18:00 entra LCAP 18:00 e é adicionada a CAPITAL 19:00.
+ *   - Domingo: sem LCAP 11:00 e CAPITAL 18:00 vira LCAP 18:00.
  */
 export function getScheduleForDate(
   location: 'rio' | 'capital' | 'federal' = 'rio',
