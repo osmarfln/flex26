@@ -123,9 +123,17 @@ export function getScheduleForDate(
     return DRAW_SCHEDULE_CAPITAL
       .filter((s) => (s.timeType === 'L-19' ? isSaturday : true))
       .filter((s) => (isSunday && s.timeType === 'L-11' ? false : true))
-      .map((s) =>
-        s.timeType === 'L-18' && (isSaturday || isSunday) ? { ...s, label: 'LCAP 18:00' } : s,
-      );
+      .map((s) => {
+        // Domingos: CAPITAL 18:00 vira LCAP 18:00
+        if (s.timeType === 'L-18' && (isSaturday || isSunday)) {
+          return { ...s, label: 'LCAP 18:00' };
+        }
+        // Domingos: CAPITAL 14:00 vira LCAP 14:00
+        if (s.timeType === 'L-14' && isSunday) {
+          return { ...s, label: 'LCAP 14:00' };
+        }
+        return s;
+      });
   }
   if (weekday === 0) {
     return DRAW_SCHEDULE_RIO.filter((s) => s.timeType === 'PT' || s.timeType === 'PTV');
