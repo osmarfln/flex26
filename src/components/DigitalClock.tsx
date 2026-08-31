@@ -3,10 +3,8 @@ import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { useUserFirstName } from "@/hooks/useUserFirstName";
 
 export function DigitalClock() {
-  const firstName = useUserFirstName();
   const [now, setNow] = useState<Date | null>(null);
 
   useEffect(() => {
@@ -52,7 +50,7 @@ export function DigitalClock() {
           </div>
           <div>
             <p className="text-[10px] uppercase tracking-[0.25em] text-primary/70 font-black">
-              {firstName ? `Bem-vindo, ${firstName}` : "Bem-vindo"}
+              Bem-vindo
             </p>
 
             <p className="text-xs text-white/40 font-bold uppercase tracking-wider">
@@ -63,20 +61,12 @@ export function DigitalClock() {
 
         {/* Time */}
         <div className="relative flex flex-col items-center justify-center flex-1 py-4">
-          <div className="flex items-center justify-center font-mono tabular-nums text-4xl md:text-3xl xl:text-4xl font-black tracking-tight text-foreground">
+          <div className="flex items-center justify-center font-mono tabular-nums text-4xl md:text-3xl xl:text-4xl font-black tracking-tight text-white">
             <span>{hh}</span>
-            <span className="text-primary mx-1">:</span>
+            <span className="text-red-500 mx-1">:</span>
             <span>{mm}</span>
-            <span className="text-primary mx-1">:</span>
-            <span className="text-primary/80">{ss}</span>
-          </div>
-          <div className="mt-4 flex items-center gap-2">
-            <span className="relative flex h-2 w-2">
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-            </span>
-            <span className="text-[10px] uppercase tracking-[0.2em] text-emerald-400/80 font-bold">
-              Horário Oficial
-            </span>
+            <span className="text-red-500 mx-1">:</span>
+            <span>{ss}</span>
           </div>
         </div>
 
