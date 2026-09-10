@@ -257,8 +257,14 @@ export async function buildBotSnapshot(opts: {
       topN: 12,
     } as any);
     const totalPremios = intel.totals?.prizes ?? 0;
+    const contests = await loadFederalContests();
+    const monitor = monitoramentoInteligente(contests, hojeBrasilia());
     return {
       loteria: "LOTERIA FEDERAL",
+      rankingGeralDeAtrasos: rankingGeralAtrasos(intel.tens ?? [], intel.groups ?? []),
+      tabelaPuxadasTradicional: puxadasComProbabilidade(contests),
+      monitoramentoInteligente: monitor,
+      alertasAutomaticosDeAtraso: alertasAutomaticos(intel.tens ?? [], intel.groups ?? [], monitor),
       fonte: "soresultados.info (robô automatizado)",
       amostraConcursos: intel.filters?.sampleSize ?? null,
       historicoConcursos: intel.totals?.historyContests ?? null,
