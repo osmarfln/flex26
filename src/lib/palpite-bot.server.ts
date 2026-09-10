@@ -296,9 +296,16 @@ export async function buildBotSnapshot(opts: {
   const r = intel.rankings ?? {};
   const totalPremios = intel.totals?.prizes ?? 0;
 
+  const contests = await loadRioContests(location as any);
+  const monitor = monitoramentoInteligente(contests, hojeBrasilia());
+
   return {
     loteria: location === "capital" ? "CAPITAL & LCAP" : "RIO DE JANEIRO",
     fonte: "soresultados.info (robô automatizado)",
+    rankingGeralDeAtrasos: rankingGeralAtrasos(tens, groups),
+    tabelaPuxadasTradicional: puxadasComProbabilidade(contests),
+    monitoramentoInteligente: monitor,
+    alertasAutomaticosDeAtraso: alertasAutomaticos(tens, groups, monitor),
     filtros: intel.filters,
     horariosOficiais: intel.faixas,
     resumo: intel.summary,
