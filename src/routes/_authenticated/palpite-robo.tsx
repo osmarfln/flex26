@@ -60,7 +60,7 @@ function isoOf(d: Date) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
-function Bubble({ m, onSave, saved }: { m: Msg; onSave?: () => void; saved?: boolean }) {
+function Bubble({ m, onSave, saved }: { m: Msg; onSave?: (() => void) | undefined; saved?: boolean | undefined }) {
   const mine = m.role === "user";
   const canSave = !mine && !!onSave && extractTens(m.content).length > 0;
   return (
