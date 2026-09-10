@@ -27,6 +27,7 @@ import { Route as AuthenticatedJogosRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedPalpiteRouteImport } from './routes/_authenticated/palpite'
 import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated/perfil'
 import { Route as AuthenticatedRobotStatusRouteImport } from './routes/_authenticated/robot-status'
+import { Route as ApiChatPalpiteRouteImport } from './routes/api/chat-palpite'
 import { Route as ApiPublicSyncResultsRouteImport } from './routes/api/public/sync-results'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -121,6 +122,11 @@ const AuthenticatedRobotStatusRoute =
     path: '/robot-status',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiChatPalpiteRoute = ApiChatPalpiteRouteImport.update({
+  id: '/api/chat-palpite',
+  path: '/api/chat-palpite',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicSyncResultsRoute = ApiPublicSyncResultsRouteImport.update({
   id: '/api/public/sync-results',
   path: '/api/public/sync-results',
@@ -145,6 +151,7 @@ export interface FileRoutesByFullPath {
   '/palpite': typeof AuthenticatedPalpiteRoute
   '/perfil': typeof AuthenticatedPerfilRoute
   '/robot-status': typeof AuthenticatedRobotStatusRoute
+  '/api/chat-palpite': typeof ApiChatPalpiteRoute
   '/api/public/sync-results': typeof ApiPublicSyncResultsRoute
 }
 export interface FileRoutesByTo {
@@ -164,6 +171,7 @@ export interface FileRoutesByTo {
   '/palpite': typeof AuthenticatedPalpiteRoute
   '/perfil': typeof AuthenticatedPerfilRoute
   '/robot-status': typeof AuthenticatedRobotStatusRoute
+  '/api/chat-palpite': typeof ApiChatPalpiteRoute
   '/': typeof AuthenticatedIndexRoute
   '/api/public/sync-results': typeof ApiPublicSyncResultsRoute
 }
@@ -186,6 +194,7 @@ export interface FileRoutesById {
   '/_authenticated/palpite': typeof AuthenticatedPalpiteRoute
   '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
   '/_authenticated/robot-status': typeof AuthenticatedRobotStatusRoute
+  '/api/chat-palpite': typeof ApiChatPalpiteRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/api/public/sync-results': typeof ApiPublicSyncResultsRoute
 }
@@ -209,6 +218,7 @@ export interface FileRouteTypes {
     | '/palpite'
     | '/perfil'
     | '/robot-status'
+    | '/api/chat-palpite'
     | '/api/public/sync-results'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -228,6 +238,7 @@ export interface FileRouteTypes {
     | '/palpite'
     | '/perfil'
     | '/robot-status'
+    | '/api/chat-palpite'
     | '/'
     | '/api/public/sync-results'
   id:
@@ -249,6 +260,7 @@ export interface FileRouteTypes {
     | '/_authenticated/palpite'
     | '/_authenticated/perfil'
     | '/_authenticated/robot-status'
+    | '/api/chat-palpite'
     | '/_authenticated/'
     | '/api/public/sync-results'
   fileRoutesById: FileRoutesById
@@ -258,6 +270,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   PendenteRoute: typeof PendenteRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  ApiChatPalpiteRoute: typeof ApiChatPalpiteRoute
   ApiPublicSyncResultsRoute: typeof ApiPublicSyncResultsRoute
 }
 
@@ -389,6 +402,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRobotStatusRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/chat-palpite': {
+      id: '/api/chat-palpite'
+      path: '/api/chat-palpite'
+      fullPath: '/api/chat-palpite'
+      preLoaderRoute: typeof ApiChatPalpiteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/sync-results': {
       id: '/api/public/sync-results'
       path: '/api/public/sync-results'
@@ -441,6 +461,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   PendenteRoute: PendenteRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  ApiChatPalpiteRoute: ApiChatPalpiteRoute,
   ApiPublicSyncResultsRoute: ApiPublicSyncResultsRoute,
 }
 export const routeTree = rootRouteImport
