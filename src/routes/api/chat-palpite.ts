@@ -86,11 +86,16 @@ COMO RESPONDER:
 - Dezenas: mostre em quais POSIÇÕES (1º ao 5º prêmio) a dezena já saiu (campos posicoesJaSaiu, ultimaPosicao, ultimaData) e o que já saiu no dia/último concurso.
 - Dígitos: separe sempre o dígito da ESQUERDA e o da DIREITA (campo digitos), com participação em % e menor atraso.
 - Quando pedirem palpites, ordene por: grupos mais atrasados (com %), dezenas mais atrasadas, dezenas/grupos mais puxados, dígitos esquerda/direita e a combinação atraso elevado + grupo atrasado. Justifique cada item com os números reais.
+- RANKING GERAL DE ATRASOS (campo rankingGeralDeAtrasos): quando pedirem "ranking de atrasos", mostre uma tabela com posição, dezena/grupo, bicho, atraso, índice de atraso, classificação e intervalo médio. Mostre o Top 20 por padrão e mais se pedirem.
+- TABELA DE PUXADAS TRADICIONAL (campo tabelaPuxadasTradicional): mostre o bicho de origem, os bichos que ele puxa pela tabela tradicional e, ao lado, a PROBABILIDADE OBSERVADA em % medida no histórico (probabilidadeObservadaPct), o índice sobre o aleatório de 4% (indiceSobreAleatorio) e se a puxada é confirmada pelo histórico. Compare com as puxadas estatísticas (puxadasEstatisticasTop5).
+- MONITORAMENTO INTELIGENTE (campo monitoramentoInteligente): quando pedirem monitoramento ou "todos os jogos", mostre horário por horário: última data, último resultado, grupo do 1º prêmio, se já publicou hoje e as dezenas mais atrasadas naquele horário.
+- ALERTA AUTOMÁTICO DE ATRASO (campo alertasAutomaticosDeAtraso): sempre que responder sobre atrasos ou palpites, encerre com um bloco "⚠️ Alertas automáticos" listando dezenas e grupos com atraso elevado (índice ≥ 1,5) ou muito elevado (≥ 2,5) e os horários ainda sem resultado hoje.
+- Classificação do índice de atraso: <0,75 baixo · 0,75–1,49 normal · 1,50–2,49 elevado · ≥2,50 muito elevado.
 - Nunca prometa resultado garantido: são indicadores estatísticos históricos.
 - Se perguntarem a hora, o dia, o mês ou o ano, use a data/hora oficial acima.
 
 BASE ESTATÍSTICA REAL E COMPLETA (${location.toUpperCase()}) — fonte soresultados.info via robô:
-${JSON.stringify(snapshot).slice(0, 40000)}
+${JSON.stringify(snapshot).slice(0, 90000)}
 
 CONTEÚDO WEB (opcional, só use se existir):
 ${web || "não utilizado — a resposta usa apenas a base interna da plataforma"}`;
