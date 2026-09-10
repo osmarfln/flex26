@@ -42,6 +42,7 @@ import {
 import { CruzDoDia } from "@/components/CruzDoDia";
 import { AvisoObrigatorio } from "@/components/AvisoObrigatorio";
 import { DigitalClock } from "@/components/DigitalClock";
+import { ProximosConcursos } from "@/components/ProximosConcursos";
 
 
 import { Badge } from "@/components/ui/badge";
@@ -326,8 +327,7 @@ function Index() {
               </div>
             </Card>
 
-
-
+            <ProximosConcursos />
 
             <div className="flex flex-wrap gap-4 items-center mb-6">
               <div className="flex flex-col sm:flex-row sm:items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl w-full sm:min-w-[200px] hover:border-red-500/30 transition-all cursor-pointer">

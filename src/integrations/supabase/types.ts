@@ -44,6 +44,45 @@ export type Database = {
         }
         Relationships: []
       }
+      bot_palpites: {
+        Row: {
+          created_at: string
+          groups: string[]
+          id: string
+          location: string
+          note: string | null
+          target_date: string
+          target_label: string | null
+          target_time_type: string
+          tens: string[]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          groups?: string[]
+          id?: string
+          location: string
+          note?: string | null
+          target_date: string
+          target_label?: string | null
+          target_time_type: string
+          tens?: string[]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          groups?: string[]
+          id?: string
+          location?: string
+          note?: string | null
+          target_date?: string
+          target_label?: string | null
+          target_time_type?: string
+          tens?: string[]
+          user_id?: string
+        }
+        Relationships: []
+      }
       lottery_results: {
         Row: {
           animal: string | null
