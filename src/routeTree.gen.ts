@@ -25,6 +25,7 @@ import { Route as AuthenticatedEstatisticasRouteImport } from './routes/_authent
 import { Route as AuthenticatedHistoricoRouteImport } from './routes/_authenticated/historico'
 import { Route as AuthenticatedJogosRouteImport } from './routes/_authenticated/jogos'
 import { Route as AuthenticatedPalpiteRouteImport } from './routes/_authenticated/palpite'
+import { Route as AuthenticatedPalpiteRoboRouteImport } from './routes/_authenticated/palpite-robo'
 import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated/perfil'
 import { Route as AuthenticatedRobotStatusRouteImport } from './routes/_authenticated/robot-status'
 import { Route as ApiChatPalpiteRouteImport } from './routes/api/chat-palpite'
@@ -111,6 +112,12 @@ const AuthenticatedPalpiteRoute = AuthenticatedPalpiteRouteImport.update({
   path: '/palpite',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedPalpiteRoboRoute =
+  AuthenticatedPalpiteRoboRouteImport.update({
+    id: '/palpite-robo',
+    path: '/palpite-robo',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedPerfilRoute = AuthenticatedPerfilRouteImport.update({
   id: '/perfil',
   path: '/perfil',
@@ -149,6 +156,7 @@ export interface FileRoutesByFullPath {
   '/historico': typeof AuthenticatedHistoricoRoute
   '/jogos': typeof AuthenticatedJogosRoute
   '/palpite': typeof AuthenticatedPalpiteRoute
+  '/palpite-robo': typeof AuthenticatedPalpiteRoboRoute
   '/perfil': typeof AuthenticatedPerfilRoute
   '/robot-status': typeof AuthenticatedRobotStatusRoute
   '/api/chat-palpite': typeof ApiChatPalpiteRoute
@@ -169,6 +177,7 @@ export interface FileRoutesByTo {
   '/historico': typeof AuthenticatedHistoricoRoute
   '/jogos': typeof AuthenticatedJogosRoute
   '/palpite': typeof AuthenticatedPalpiteRoute
+  '/palpite-robo': typeof AuthenticatedPalpiteRoboRoute
   '/perfil': typeof AuthenticatedPerfilRoute
   '/robot-status': typeof AuthenticatedRobotStatusRoute
   '/api/chat-palpite': typeof ApiChatPalpiteRoute
@@ -192,6 +201,7 @@ export interface FileRoutesById {
   '/_authenticated/historico': typeof AuthenticatedHistoricoRoute
   '/_authenticated/jogos': typeof AuthenticatedJogosRoute
   '/_authenticated/palpite': typeof AuthenticatedPalpiteRoute
+  '/_authenticated/palpite-robo': typeof AuthenticatedPalpiteRoboRoute
   '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
   '/_authenticated/robot-status': typeof AuthenticatedRobotStatusRoute
   '/api/chat-palpite': typeof ApiChatPalpiteRoute
@@ -216,6 +226,7 @@ export interface FileRouteTypes {
     | '/historico'
     | '/jogos'
     | '/palpite'
+    | '/palpite-robo'
     | '/perfil'
     | '/robot-status'
     | '/api/chat-palpite'
@@ -236,6 +247,7 @@ export interface FileRouteTypes {
     | '/historico'
     | '/jogos'
     | '/palpite'
+    | '/palpite-robo'
     | '/perfil'
     | '/robot-status'
     | '/api/chat-palpite'
@@ -258,6 +270,7 @@ export interface FileRouteTypes {
     | '/_authenticated/historico'
     | '/_authenticated/jogos'
     | '/_authenticated/palpite'
+    | '/_authenticated/palpite-robo'
     | '/_authenticated/perfil'
     | '/_authenticated/robot-status'
     | '/api/chat-palpite'
@@ -388,6 +401,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPalpiteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/palpite-robo': {
+      id: '/_authenticated/palpite-robo'
+      path: '/palpite-robo'
+      fullPath: '/palpite-robo'
+      preLoaderRoute: typeof AuthenticatedPalpiteRoboRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/perfil': {
       id: '/_authenticated/perfil'
       path: '/perfil'
@@ -431,6 +451,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedHistoricoRoute: typeof AuthenticatedHistoricoRoute
   AuthenticatedJogosRoute: typeof AuthenticatedJogosRoute
   AuthenticatedPalpiteRoute: typeof AuthenticatedPalpiteRoute
+  AuthenticatedPalpiteRoboRoute: typeof AuthenticatedPalpiteRoboRoute
   AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRoute
   AuthenticatedRobotStatusRoute: typeof AuthenticatedRobotStatusRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
@@ -448,6 +469,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedHistoricoRoute: AuthenticatedHistoricoRoute,
   AuthenticatedJogosRoute: AuthenticatedJogosRoute,
   AuthenticatedPalpiteRoute: AuthenticatedPalpiteRoute,
+  AuthenticatedPalpiteRoboRoute: AuthenticatedPalpiteRoboRoute,
   AuthenticatedPerfilRoute: AuthenticatedPerfilRoute,
   AuthenticatedRobotStatusRoute: AuthenticatedRobotStatusRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,

@@ -313,8 +313,15 @@ function EstatisticasPage() {
         <section className="mb-6 md:mb-12 min-w-0">
           <AvisoObrigatorio />
 
-          <div className="mb-6 md:mb-8">
+          <div className="mb-6 md:mb-8 flex flex-col gap-3 sm:flex-row sm:items-center">
             <LotterySelector value={location} onChange={setLocation} />
+            <Link
+              to="/palpite-robo"
+              className="inline-flex items-center gap-2 rounded-2xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-xs font-black uppercase tracking-wider text-red-400 transition-colors hover:bg-red-500/20"
+            >
+              <BrainCircuit className="h-4 w-4" />
+              Palpite Robô
+            </Link>
           </div>
 
           {location === 'federal' && (
