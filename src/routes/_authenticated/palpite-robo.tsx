@@ -48,6 +48,10 @@ const SUGESTOES = [
   "Mostre as dezenas mais atrasadas e em quais posições elas já saíram",
   "Analise o dígito da esquerda e o da direita",
   "O que já saiu hoje e o que ainda está atrasado?",
+  "Mostre o Ranking Geral de Atrasos",
+  "Mostre a Tabela de Puxadas Tradicional com as probabilidades",
+  "Faça o Monitoramento Inteligente de todos os horários",
+  "Quais são os alertas automáticos de atraso agora?",
 ];
 
 /** Extrai as dezenas (00-99) citadas em uma resposta do robô. */
