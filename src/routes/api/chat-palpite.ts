@@ -62,8 +62,9 @@ export const Route = createFileRoute("/api/chat-palpite")({
           snapshot = { erro: e?.message ?? "falha ao ler a base" };
         }
 
+        // Por padrão o robô responde apenas com a base interna (mais precisa e instantânea).
         let web = "";
-        if (body.web !== false) {
+        if (body.web === true) {
           web = await fetchWebSource("https://bichocerto.com/");
         }
 
