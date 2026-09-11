@@ -335,16 +335,17 @@ function PalpiteRobo() {
               ))}
 
               {loading && (
-                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/40">
-                  <Loader2 className="h-4 w-4 animate-spin text-red-500" /> analisando a base...
+                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-foreground/40">
+                  <Loader2 className="h-4 w-4 animate-spin text-primary" /> analisando a base...
                 </div>
               )}
               {error && (
-                <p className="rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs font-bold text-red-400">
+                <p className="rounded-xl border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs font-bold text-destructive">
                   {error}
                 </p>
               )}
               <div ref={endRef} />
+              </div>
             </div>
 
             <form
