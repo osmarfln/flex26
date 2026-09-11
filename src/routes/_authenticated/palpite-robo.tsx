@@ -278,7 +278,7 @@ function PalpiteRobo() {
 
             <AvisoObrigatorio />
 
-            <div className="relative mt-4 flex min-h-[52vh] flex-col overflow-hidden rounded-3xl border border-border bg-foreground/[0.06] shadow-2xl shadow-black/30 backdrop-blur-md">
+            <div className="relative mt-4 flex min-h-[62vh] flex-col overflow-hidden rounded-3xl border border-foreground/15 bg-foreground/[0.12] shadow-2xl shadow-black/30 backdrop-blur-md">
               {/* Marca d'água Fênix Systems */}
               <div className="pointer-events-none absolute inset-0 z-0 flex select-none flex-col items-center justify-center">
                 <img
@@ -288,9 +288,9 @@ function PalpiteRobo() {
                   loading="lazy"
                   width={1024}
                   height={1024}
-                  className="w-[62%] max-w-[340px] opacity-[0.07]"
+                  className="w-[62%] max-w-[380px] opacity-[0.16]"
                 />
-                <span className="mt-2 text-[clamp(1.1rem,4vw,2rem)] font-black uppercase tracking-[0.35em] text-foreground/[0.06]">
+                <span className="mt-2 text-[clamp(1.1rem,4.5vw,2.2rem)] font-black uppercase tracking-[0.35em] text-foreground/15">
                   Fênix Systems
                 </span>
               </div>
