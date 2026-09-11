@@ -4,6 +4,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Bot, Check, History, Loader2, MessageSquare, Save, Send, Sparkles, User } from "lucide-react";
 
 import { SiteHeader } from "@/components/layout/SiteHeader";
+import { ChatMarkdown } from "@/components/ChatMarkdown";
+import fenix from "@/assets/fenix-watermark.png";
 import { LotterySelector, type LotteryLocation } from "@/components/LotterySelector";
 import { AvisoObrigatorio } from "@/components/AvisoObrigatorio";
 import { PalpitesAnteriores } from "@/components/PalpitesAnteriores";
@@ -67,37 +69,43 @@ function isoOf(d: Date) {
 function Bubble({ m, onSave, saved }: { m: Msg; onSave?: (() => void) | undefined; saved?: boolean | undefined }) {
   const mine = m.role === "user";
   const canSave = !mine && !!onSave && extractTens(m.content).length > 0;
-  return (
-    <div className={`flex gap-3 ${mine ? "justify-end" : "justify-start"}`}>
-      {!mine && (
-        <span className="mt-1 hidden h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-red-500/30 bg-red-500/10 sm:flex">
-          <Bot className="h-4 w-4 text-red-500" />
+
+  if (mine) {
+    return (
+      <div className="flex justify-end gap-3">
+        <div className="max-w-[85%] rounded-2xl rounded-br-md border border-primary/40 bg-primary px-4 py-2.5 text-sm font-semibold leading-relaxed text-primary-foreground shadow-lg shadow-primary/20">
+          {m.content}
+        </div>
+        <span className="mt-1 hidden h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-border bg-foreground/5 sm:flex">
+          <User className="h-4 w-4 text-foreground/60" />
         </span>
-      )}
-      <div
-        className={`max-w-[85%] whitespace-pre-wrap break-words rounded-2xl border px-4 py-3 text-sm leading-relaxed ${
-          mine
-            ? "border-red-500/30 bg-red-500/10 text-white"
-            : "border-white/10 bg-white/[0.04] text-white/90"
-        }`}
-      >
-        {m.content || "…"}
-        {canSave && (
-          <button
-            type="button"
-            onClick={onSave}
-            className="mt-3 inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-white/70 hover:border-red-500/40 hover:text-white"
-          >
-            {saved ? <Check className="h-3 w-3 text-emerald-400" /> : <Save className="h-3 w-3" />}
-            {saved ? "palpite salvo" : "salvar palpite"}
-          </button>
-        )}
       </div>
-      {mine && (
-        <span className="mt-1 hidden h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 sm:flex">
-          <User className="h-4 w-4 text-white/60" />
-        </span>
-      )}
+    );
+  }
+
+  return (
+    <div className="flex gap-3">
+      <span className="mt-1 hidden h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-primary/30 bg-primary/10 sm:flex">
+        <Bot className="h-4 w-4 text-primary" />
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className="mb-1 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/35">
+          Palpite Robô · Fênix Systems
+        </p>
+        <div className="min-w-0 rounded-2xl rounded-tl-md border border-border bg-background/60 px-4 py-3 backdrop-blur-sm">
+          {m.content ? <ChatMarkdown content={m.content} /> : <span className="text-sm text-foreground/40">…</span>}
+          {canSave && (
+            <button
+              type="button"
+              onClick={onSave}
+              className="mt-3 inline-flex items-center gap-1.5 rounded-xl border border-border bg-foreground/5 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-foreground/70 hover:border-primary/40 hover:text-foreground"
+            >
+              {saved ? <Check className="h-3 w-3 text-emerald-400" /> : <Save className="h-3 w-3" />}
+              {saved ? "palpite salvo" : "salvar palpite"}
+            </button>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
@@ -270,11 +278,28 @@ function PalpiteRobo() {
 
             <AvisoObrigatorio />
 
-            <div className="mt-4 flex min-h-[52vh] flex-col gap-4 rounded-3xl border border-white/10 bg-white/[0.02] p-3 md:p-5">
+            <div className="relative mt-4 flex min-h-[52vh] flex-col overflow-hidden rounded-3xl border border-border bg-foreground/[0.06] shadow-2xl shadow-black/30 backdrop-blur-md">
+              {/* Marca d'água Fênix Systems */}
+              <div className="pointer-events-none absolute inset-0 z-0 flex select-none flex-col items-center justify-center">
+                <img
+                  src={fenix}
+                  alt=""
+                  aria-hidden="true"
+                  loading="lazy"
+                  width={1024}
+                  height={1024}
+                  className="w-[62%] max-w-[340px] opacity-[0.07]"
+                />
+                <span className="mt-2 text-[clamp(1.1rem,4vw,2rem)] font-black uppercase tracking-[0.35em] text-foreground/[0.06]">
+                  Fênix Systems
+                </span>
+              </div>
+
+              <div className="relative z-10 flex flex-1 flex-col gap-4 p-3 md:p-5">
               {messages.length === 0 && (
                 <div className="m-auto max-w-md text-center">
-                  <Bot className="mx-auto mb-3 h-10 w-10 text-red-500" />
-                  <p className="text-sm font-bold text-white/70">
+                  <Bot className="mx-auto mb-3 h-10 w-10 text-primary" />
+                  <p className="text-sm font-bold text-foreground/70">
                     {firstName ? `Olá, ${firstName}!` : "Olá!"} Escolha a loteria e o período e pergunte o
                     que quiser sobre dezenas, grupos, atrasos, posições e puxadas.
                   </p>
@@ -284,7 +309,7 @@ function PalpiteRobo() {
                         key={s}
                         type="button"
                         onClick={() => send(s)}
-                        className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-bold text-white/70 hover:border-red-500/40 hover:text-white"
+                        className="rounded-xl border border-border bg-background/50 px-3 py-2 text-xs font-bold text-foreground/70 backdrop-blur-sm hover:border-primary/40 hover:text-foreground"
                       >
                         {s}
                       </button>
@@ -312,16 +337,17 @@ function PalpiteRobo() {
               ))}
 
               {loading && (
-                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/40">
-                  <Loader2 className="h-4 w-4 animate-spin text-red-500" /> analisando a base...
+                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-foreground/40">
+                  <Loader2 className="h-4 w-4 animate-spin text-primary" /> analisando a base...
                 </div>
               )}
               {error && (
-                <p className="rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs font-bold text-red-400">
+                <p className="rounded-xl border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs font-bold text-destructive">
                   {error}
                 </p>
               )}
               <div ref={endRef} />
+              </div>
             </div>
 
             <form
