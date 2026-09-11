@@ -276,11 +276,28 @@ function PalpiteRobo() {
 
             <AvisoObrigatorio />
 
-            <div className="mt-4 flex min-h-[52vh] flex-col gap-4 rounded-3xl border border-white/10 bg-white/[0.02] p-3 md:p-5">
+            <div className="relative mt-4 flex min-h-[52vh] flex-col overflow-hidden rounded-3xl border border-border bg-foreground/[0.06] shadow-2xl shadow-black/30 backdrop-blur-md">
+              {/* Marca d'água Fênix Systems */}
+              <div className="pointer-events-none absolute inset-0 z-0 flex select-none flex-col items-center justify-center">
+                <img
+                  src={fenix}
+                  alt=""
+                  aria-hidden="true"
+                  loading="lazy"
+                  width={1024}
+                  height={1024}
+                  className="w-[62%] max-w-[340px] opacity-[0.07]"
+                />
+                <span className="mt-2 text-[clamp(1.1rem,4vw,2rem)] font-black uppercase tracking-[0.35em] text-foreground/[0.06]">
+                  Fênix Systems
+                </span>
+              </div>
+
+              <div className="relative z-10 flex flex-1 flex-col gap-4 p-3 md:p-5">
               {messages.length === 0 && (
                 <div className="m-auto max-w-md text-center">
-                  <Bot className="mx-auto mb-3 h-10 w-10 text-red-500" />
-                  <p className="text-sm font-bold text-white/70">
+                  <Bot className="mx-auto mb-3 h-10 w-10 text-primary" />
+                  <p className="text-sm font-bold text-foreground/70">
                     {firstName ? `Olá, ${firstName}!` : "Olá!"} Escolha a loteria e o período e pergunte o
                     que quiser sobre dezenas, grupos, atrasos, posições e puxadas.
                   </p>
@@ -290,7 +307,7 @@ function PalpiteRobo() {
                         key={s}
                         type="button"
                         onClick={() => send(s)}
-                        className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-bold text-white/70 hover:border-red-500/40 hover:text-white"
+                        className="rounded-xl border border-border bg-background/50 px-3 py-2 text-xs font-bold text-foreground/70 backdrop-blur-sm hover:border-primary/40 hover:text-foreground"
                       >
                         {s}
                       </button>
