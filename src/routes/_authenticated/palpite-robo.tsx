@@ -4,6 +4,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Bot, Check, History, Loader2, MessageSquare, Save, Send, Sparkles, User } from "lucide-react";
 
 import { SiteHeader } from "@/components/layout/SiteHeader";
+import { ChatMarkdown } from "@/components/ChatMarkdown";
+import fenix from "@/assets/fenix-watermark.png";
 import { LotterySelector, type LotteryLocation } from "@/components/LotterySelector";
 import { AvisoObrigatorio } from "@/components/AvisoObrigatorio";
 import { PalpitesAnteriores } from "@/components/PalpitesAnteriores";
