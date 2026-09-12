@@ -406,7 +406,7 @@ function EstatisticasPage() {
             <div className="flex flex-wrap md:flex-nowrap gap-3">
                <div className="px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-center min-w-[140px]">
                   <p className="text-[10px] text-white/40 font-black uppercase tracking-widest mb-1">Precisão</p>
-                  <p className="text-2xl font-black text-primary uppercase">Sincronizado</p>
+                  <p className="text-2xl font-black text-zinc-400 uppercase">Sincronizado</p>
                </div>
                <div className="px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-center min-w-[140px]">
                   <p className="text-[10px] text-white/40 font-black uppercase tracking-widest mb-1">Processamento</p>
@@ -422,7 +422,7 @@ function EstatisticasPage() {
                   <button
                     onClick={handleSyncNow}
                     disabled={syncMutation.isPending}
-                    className="px-5 py-3 rounded-2xl bg-red-500/15 border border-red-500/30 text-red-400 text-xs font-black uppercase hover:bg-red-500/25 transition-all disabled:opacity-60 flex items-center gap-2"
+                    className="px-5 py-3 rounded-2xl bg-blue-500/10 border border-blue-500/30 text-blue-400/70 text-xs font-black uppercase hover:bg-blue-500/20 transition-all disabled:opacity-60 flex items-center gap-2"
                   >
                     <RefreshCw className={`w-4 h-4 ${syncMutation.isPending ? "animate-spin" : ""}`} />
                     Sincronizar agora
@@ -588,8 +588,8 @@ function EstatisticasPage() {
                   className="space-y-6"
                 >
                   <div className="flex items-center gap-3 mb-4">
-                    <Flame className="w-6 h-6 text-red-500" />
-                    <h2 className="text-2xl font-black italic uppercase">Dezenas Mais Frequentes</h2>
+                    <Flame className="w-6 h-6 text-zinc-400" />
+                    <h2 className="text-2xl font-black italic uppercase text-zinc-400">Dezenas Mais Frequentes</h2>
                   </div>
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
                     {isLoading ? (
@@ -609,7 +609,7 @@ function EstatisticasPage() {
                               <Badge variant="outline" className="text-[9px] border-white/10 text-white/40">{item.percentile}% rank</Badge>
                               {item.dailyDelay > 0 && <Badge variant="outline" className="text-[9px] border-orange-500/30 text-orange-400">Atraso Diário</Badge>}
                             </div>
-                            <span className={`text-4xl font-black mb-2 block drop-shadow-[0_0_10px_rgba(var(--primary),0.3)] ${isHitNow ? 'text-red-500' : 'text-primary'}`}>{item.ten}</span>
+                            <span className="text-4xl font-black mb-2 block text-zinc-400">{item.ten}</span>
                             <div className="space-y-1">
                               <p className="text-xs font-bold uppercase text-white/40">{item.freqs[300]}x em 300</p>
                               <div className="h-4 w-full px-2">

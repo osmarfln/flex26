@@ -36,14 +36,14 @@ export function ProximosConcursos() {
   return (
     <div key={tick} className="mb-8 rounded-3xl border border-white/10 bg-white/[0.02] p-4 md:p-5">
       <div className="mb-3 flex items-center gap-2">
-        <CalendarClock className="h-4 w-4 text-red-500" />
-        <h3 className="text-xs font-black uppercase tracking-[0.2em] text-red-500">Próximos concursos confirmados</h3>
+        <CalendarClock className="h-4 w-4 text-zinc-400" />
+        <h3 className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400">Próximos concursos confirmados</h3>
       </div>
       <div className="grid gap-3 sm:grid-cols-3">
         {items.map((it) => (
           <div key={it.loc} className="rounded-2xl border border-white/10 bg-white/[0.03] p-3">
             <p className="text-[10px] font-black uppercase tracking-widest text-white/50">{it.nome}</p>
-            <p className="mt-1 text-lg font-black text-red-500">{it.label}</p>
+            <p className="mt-1 text-lg font-black text-zinc-400">{it.label}</p>
             <p className="font-mono text-sm font-bold text-white/80">
               {it.dia} · {it.hora}
             </p>
