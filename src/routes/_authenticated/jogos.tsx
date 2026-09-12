@@ -113,7 +113,7 @@ function JogosManagementPage() {
                         </div>
                       ) : (
                         <div className="h-[200px] flex items-center justify-center border-2 border-dashed rounded-lg">
-                          <p className="text-destructive text-sm italic animate-pulse">Aguardando resultado...</p>
+                          <p className="text-emerald-300 text-sm italic animate-pulse">Aguardando resultado...</p>
                         </div>
                       )}
 
