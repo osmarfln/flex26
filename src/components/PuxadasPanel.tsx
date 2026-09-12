@@ -51,7 +51,7 @@ export function PuxadasPanel({ data, loading }: { data?: PuxadasData | null; loa
   if (!data || !data.table?.length) {
     return (
       <Card className="bg-[#0D121F] border-white/10 rounded-2xl p-8 text-center text-white/50">
-        <AlertCircle className="w-6 h-6 mx-auto mb-3 text-red-400" />
+        <AlertCircle className="w-6 h-6 mx-auto mb-3 text-emerald-400" />
         Aguardando resultados sincronizados para calcular as puxadas.
       </Card>
     );

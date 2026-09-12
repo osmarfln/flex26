@@ -74,7 +74,7 @@ const STATUS_STYLE: Record<string, string> = {
   sincronizado: "bg-emerald-500/15 text-emerald-400",
   divergente: "bg-red-500/15 text-red-400",
   pendente: "bg-red-500/15 text-red-400",
-  aguardando: "bg-white/10 text-white/50",
+  aguardando: "bg-blue-500/10 text-blue-400/60",
 };
 
 /** Formata um instante ISO no horário oficial de Brasília. */
@@ -232,7 +232,7 @@ function RobotStatus() {
           <div className="flex items-center gap-3">
             <button
               onClick={() => refetch()}
-              className="p-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all shrink-0"
+              className="p-3 bg-blue-500/10 border border-blue-500/30 rounded-xl hover:bg-blue-500/20 transition-all shrink-0 text-blue-400/70"
               aria-label="Atualizar"
             >
               <RefreshCw className={`w-5 h-5 ${isLoading ? "animate-spin" : ""}`} />
@@ -292,7 +292,7 @@ function RobotStatus() {
               <button
                 onClick={handleSyncNow}
                 disabled={syncMutation.isPending}
-                className="px-4 py-2 rounded-xl bg-red-500/15 border border-red-500/30 text-red-400 text-xs font-black uppercase hover:bg-red-500/25 transition-all disabled:opacity-50 flex items-center gap-2"
+                className="px-4 py-2 rounded-xl bg-blue-500/10 border border-blue-500/30 text-blue-400/70 text-xs font-black uppercase hover:bg-blue-500/20 transition-all disabled:opacity-50 flex items-center gap-2"
               >
                 <RefreshCw className={`w-4 h-4 ${syncMutation.isPending ? "animate-spin" : ""}`} />
                 Sincronizar agora
@@ -346,11 +346,11 @@ function RobotStatus() {
               significa que o sorteio ainda não foi publicado; "Pendente" indica que já existe na
               origem e entrará na próxima execução do robô (a cada 10 minutos).
             </p>
-            <div className="mt-4 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+            <div className="mt-4 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
               <div>
-                <p className="text-xs font-black text-red-500 uppercase tracking-widest mb-1">Restrição de Origem</p>
-                <p className="text-[11px] text-red-200/60 leading-relaxed">
+                <p className="text-xs font-black text-emerald-400 uppercase tracking-widest mb-1">Restrição de Origem</p>
+                <p className="text-[11px] text-emerald-300/70 leading-relaxed">
                   O robô está configurado para coletar <strong>exclusivamente</strong> resultados RIO, CAPITAL & LCAP e LOTERIA FEDERAL.
                   Qualquer tentativa de sincronização de outras loterias será descartada para garantir a integridade dos cálculos logísticos.
                 </p>

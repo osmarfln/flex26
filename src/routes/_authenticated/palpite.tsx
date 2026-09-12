@@ -114,7 +114,7 @@ function PalpitePage() {
 
           <CardContent className="grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
             {topTens.length === 0 && (
-              <p className="text-sm text-muted-foreground">Aguardando resultados...</p>
+              <p className="text-sm text-emerald-300">Aguardando resultados...</p>
             )}
             {topTens.map((t: any) => {
               const animal = getAnimalByTen(t.ten);
@@ -145,7 +145,7 @@ function PalpitePage() {
             </CardHeader>
             <CardContent className="space-y-2">
               {topGroups.length === 0 && (
-                <p className="text-sm text-muted-foreground">Aguardando resultados...</p>
+                <p className="text-sm text-emerald-300">Aguardando resultados...</p>
               )}
               {topGroups.map((g: any) => {
                 const animal = getAnimalByGroup(g.group);
@@ -172,7 +172,7 @@ function PalpitePage() {
             </CardHeader>
             <CardContent className="flex flex-wrap gap-2">
               {hotTens.length === 0 && (
-                <p className="text-sm text-muted-foreground">Aguardando resultados...</p>
+                <p className="text-sm text-emerald-300">Aguardando resultados...</p>
               )}
               {hotTens.map((t) => (
                 <Badge key={t.ten} className="px-3 py-1 text-sm">
@@ -207,7 +207,7 @@ function PalpitePage() {
                       </span>
                     </p>
                   ) : (
-                    <p className="mt-2 text-sm text-muted-foreground">Aguardando resultados...</p>
+                    <p className="mt-2 text-sm text-emerald-300">Aguardando resultados...</p>
                   )}
                 </div>
               );

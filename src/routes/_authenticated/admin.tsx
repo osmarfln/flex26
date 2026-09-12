@@ -691,10 +691,10 @@ function StatusBadge({ status }: { status: string }) {
 
 function SyncBadge({ status }: { status: string }) {
   const map: Record<string, { label: string; cls: string }> = {
-    sincronizado: { label: "Sincronizado", cls: "text-emerald-400" },
+    sincronizado: { label: "Sincronizado", cls: "text-zinc-400" },
     divergente: { label: "Divergente", cls: "text-destructive" },
     pendente: { label: "Pendente", cls: "text-red-400" },
-    aguardando: { label: "Aguardando", cls: "text-white/40" },
+    aguardando: { label: "Aguardando", cls: "text-blue-400/60" },
   };
   const it = map[status] ?? map["aguardando"]!;
   return <span className={`text-xs font-bold ${it.cls}`}>{it.label}</span>;

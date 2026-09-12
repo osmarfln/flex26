@@ -181,6 +181,7 @@ export function FederalSyncPanel() {
             variant="outline"
             onClick={() => statusQuery.refetch()}
             disabled={statusQuery.isFetching}
+            className="border-blue-500/30 bg-blue-500/10 text-blue-400/70 hover:bg-blue-500/20"
           >
             <RefreshCw className={`w-4 h-4 mr-1 ${statusQuery.isFetching ? "animate-spin" : ""}`} />
             Atualizar

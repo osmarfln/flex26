@@ -293,7 +293,7 @@ function Index() {
               </div>
             </motion.div>
 
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-black tracking-tight mb-3 italic text-red-500">Resultados {locationName(location)}</h1>
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-black tracking-tight mb-3 italic text-zinc-400">Resultados {locationName(location)}</h1>
             <p className="text-white/40 text-sm md:text-base mb-4 font-medium italic">Resultados diários automatizados Rio e Capital via robô automatizado sem intervenção humana. A plataforma só recebe resultados RIO E CAPITAL.</p>
             <p className="text-white/20 text-[10px] font-bold uppercase tracking-widest mb-8">Leia o arquivo instrucoes.md em anexo e siga as instruções contidas nele.</p>
 
@@ -307,21 +307,21 @@ function Index() {
                     <Clock className="w-8 h-8 text-primary" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-black italic uppercase tracking-tighter text-red-500">Próximo Resultado</h3>
+                    <h3 className="text-xl font-black italic uppercase tracking-tighter text-zinc-400">Próximo Resultado</h3>
                     <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest mt-1">Sempre atualizado com o horário oficial</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-6">
                   <div className="text-center">
-                    <p className="text-[10px] text-red-500 font-black uppercase tracking-widest mb-1">Horário</p>
-                    <p className="text-2xl font-black text-red-500 font-mono">
+                    <p className="text-[10px] text-zinc-400 font-black uppercase tracking-widest mb-1">Horário</p>
+                    <p className="text-2xl font-black text-zinc-400 font-mono">
                       {drawLabel(location, nextDraw.timeType, nextDraw.date ? nextDraw.date.toISOString().slice(0, 10) : undefined) || nextDraw.timeValue}
                     </p>
                   </div>
                   <div className="h-10 w-px bg-white/10" />
                   <div className="text-center">
-                    <p className="text-[10px] text-red-500 font-black uppercase tracking-widest mb-1">Data</p>
-                    <p className="text-2xl font-black text-red-500 font-mono">{format(nextDraw.date, "dd/MM")}</p>
+                    <p className="text-[10px] text-zinc-400 font-black uppercase tracking-widest mb-1">Data</p>
+                    <p className="text-2xl font-black text-zinc-400 font-mono">{format(nextDraw.date, "dd/MM")}</p>
                   </div>
                 </div>
               </div>
@@ -363,7 +363,7 @@ function Index() {
 
 
               <Link to="/historico">
-                <Button className="w-full sm:w-auto h-[54px] px-10 bg-primary hover:bg-primary/90 text-primary-foreground font-black uppercase tracking-tighter rounded-xl gap-2 shadow-lg shadow-primary/10 active:scale-95 transition-all">
+                <Button className="w-full sm:w-auto h-[54px] px-10 bg-white/10 hover:bg-white/20 text-white/60 border border-white/10 font-black uppercase tracking-tighter rounded-xl gap-2 active:scale-95 transition-all">
                   <Search className="w-5 h-5" /> Buscar resultados
                 </Button>
               </Link>
@@ -425,7 +425,7 @@ function Index() {
                               [1, 2, 3, 4, 5].map((idx) => (
                                 <div key={idx} className="flex gap-4 text-sm font-bold items-baseline">
                                   <span className="text-white/20 w-4">{idx}º</span>
-                                  <span className="font-mono tracking-widest text-lg text-red-500/80 italic text-[11px] whitespace-nowrap">Aguardando... <span className="animate-pulse">...</span></span>
+                                  <span className="font-mono tracking-widest text-lg text-blue-400/50 italic text-[11px] whitespace-nowrap">Aguardando... <span className="animate-pulse">...</span></span>
                                 </div>
 
 
@@ -438,7 +438,7 @@ function Index() {
                             </div>
                             <p className="text-[10px] text-white/40 font-bold uppercase tracking-wider mb-1">Grupo</p>
                             <p className={`text-3xl font-black tracking-tighter leading-none ${game ? 'text-primary' : 'text-white/10'}`}>{game?.animal_group || '--'}</p>
-                            <p className={`text-[11px] font-bold mt-2 uppercase tracking-tight ${game ? 'text-white/80' : 'text-white/20 italic'}`}>{game?.animal || 'Aguardando'}</p>
+                            <p className={`text-[11px] font-bold mt-2 uppercase tracking-tight ${game ? 'text-white/80' : 'text-blue-400/50 italic'}`}>{game?.animal || 'Aguardando'}</p>
                           </div>
                         </div>
                       </CardContent>

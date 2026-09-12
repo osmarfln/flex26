@@ -186,7 +186,7 @@ export function DezenasEsquerdaDireita({ data, loading }: { data?: DigitDelayDat
   if (!data || data.totalDraws === 0) {
     return (
       <Card className="bg-[#0D121F] border-white/10 rounded-2xl p-8 text-center text-white/50">
-        <AlertCircle className="w-6 h-6 mx-auto mb-3 text-red-400" />
+        <AlertCircle className="w-6 h-6 mx-auto mb-3 text-emerald-400" />
         Aguardando resultados sincronizados para calcular os atrasos.
       </Card>
     );

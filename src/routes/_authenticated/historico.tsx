@@ -174,7 +174,7 @@ function Historico() {
 
               <Button
                 onClick={refetchAll}
-                className="h-[52px] px-8 bg-primary hover:bg-primary/90 text-primary-foreground font-black uppercase tracking-tighter rounded-xl gap-2 active:scale-95 transition-all shadow-lg shadow-primary/10"
+                className="h-[52px] px-8 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 text-blue-400/70 font-black uppercase tracking-tighter rounded-xl gap-2 active:scale-95 transition-all"
               >
                 <RefreshCw className="w-5 h-5" /> Atualizar
               </Button>
@@ -338,7 +338,7 @@ function LotteryColumn({
                       </div>
                     </div>
                   ) : (
-                    <p className="py-6 text-center text-red-500 font-black uppercase tracking-widest text-xs animate-pulse">
+                    <p className="py-6 text-center text-emerald-300 font-black uppercase tracking-widest text-xs animate-pulse">
                       Aguardando resultado...
                     </p>
                   )}
