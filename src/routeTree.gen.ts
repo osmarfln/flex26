@@ -25,10 +25,8 @@ import { Route as AuthenticatedEstatisticasRouteImport } from './routes/_authent
 import { Route as AuthenticatedHistoricoRouteImport } from './routes/_authenticated/historico'
 import { Route as AuthenticatedJogosRouteImport } from './routes/_authenticated/jogos'
 import { Route as AuthenticatedPalpiteRouteImport } from './routes/_authenticated/palpite'
-import { Route as AuthenticatedPalpiteRoboRouteImport } from './routes/_authenticated/palpite-robo'
 import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated/perfil'
 import { Route as AuthenticatedRobotStatusRouteImport } from './routes/_authenticated/robot-status'
-import { Route as ApiChatPalpiteRouteImport } from './routes/api/chat-palpite'
 import { Route as ApiPublicSyncResultsRouteImport } from './routes/api/public/sync-results'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -112,12 +110,6 @@ const AuthenticatedPalpiteRoute = AuthenticatedPalpiteRouteImport.update({
   path: '/palpite',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedPalpiteRoboRoute =
-  AuthenticatedPalpiteRoboRouteImport.update({
-    id: '/palpite-robo',
-    path: '/palpite-robo',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 const AuthenticatedPerfilRoute = AuthenticatedPerfilRouteImport.update({
   id: '/perfil',
   path: '/perfil',
@@ -129,11 +121,6 @@ const AuthenticatedRobotStatusRoute =
     path: '/robot-status',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const ApiChatPalpiteRoute = ApiChatPalpiteRouteImport.update({
-  id: '/api/chat-palpite',
-  path: '/api/chat-palpite',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiPublicSyncResultsRoute = ApiPublicSyncResultsRouteImport.update({
   id: '/api/public/sync-results',
   path: '/api/public/sync-results',
@@ -156,10 +143,8 @@ export interface FileRoutesByFullPath {
   '/historico': typeof AuthenticatedHistoricoRoute
   '/jogos': typeof AuthenticatedJogosRoute
   '/palpite': typeof AuthenticatedPalpiteRoute
-  '/palpite-robo': typeof AuthenticatedPalpiteRoboRoute
   '/perfil': typeof AuthenticatedPerfilRoute
   '/robot-status': typeof AuthenticatedRobotStatusRoute
-  '/api/chat-palpite': typeof ApiChatPalpiteRoute
   '/api/public/sync-results': typeof ApiPublicSyncResultsRoute
 }
 export interface FileRoutesByTo {
@@ -177,10 +162,8 @@ export interface FileRoutesByTo {
   '/historico': typeof AuthenticatedHistoricoRoute
   '/jogos': typeof AuthenticatedJogosRoute
   '/palpite': typeof AuthenticatedPalpiteRoute
-  '/palpite-robo': typeof AuthenticatedPalpiteRoboRoute
   '/perfil': typeof AuthenticatedPerfilRoute
   '/robot-status': typeof AuthenticatedRobotStatusRoute
-  '/api/chat-palpite': typeof ApiChatPalpiteRoute
   '/': typeof AuthenticatedIndexRoute
   '/api/public/sync-results': typeof ApiPublicSyncResultsRoute
 }
@@ -201,10 +184,8 @@ export interface FileRoutesById {
   '/_authenticated/historico': typeof AuthenticatedHistoricoRoute
   '/_authenticated/jogos': typeof AuthenticatedJogosRoute
   '/_authenticated/palpite': typeof AuthenticatedPalpiteRoute
-  '/_authenticated/palpite-robo': typeof AuthenticatedPalpiteRoboRoute
   '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
   '/_authenticated/robot-status': typeof AuthenticatedRobotStatusRoute
-  '/api/chat-palpite': typeof ApiChatPalpiteRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/api/public/sync-results': typeof ApiPublicSyncResultsRoute
 }
@@ -226,10 +207,8 @@ export interface FileRouteTypes {
     | '/historico'
     | '/jogos'
     | '/palpite'
-    | '/palpite-robo'
     | '/perfil'
     | '/robot-status'
-    | '/api/chat-palpite'
     | '/api/public/sync-results'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -247,10 +226,8 @@ export interface FileRouteTypes {
     | '/historico'
     | '/jogos'
     | '/palpite'
-    | '/palpite-robo'
     | '/perfil'
     | '/robot-status'
-    | '/api/chat-palpite'
     | '/'
     | '/api/public/sync-results'
   id:
@@ -270,10 +247,8 @@ export interface FileRouteTypes {
     | '/_authenticated/historico'
     | '/_authenticated/jogos'
     | '/_authenticated/palpite'
-    | '/_authenticated/palpite-robo'
     | '/_authenticated/perfil'
     | '/_authenticated/robot-status'
-    | '/api/chat-palpite'
     | '/_authenticated/'
     | '/api/public/sync-results'
   fileRoutesById: FileRoutesById
@@ -283,7 +258,6 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   PendenteRoute: typeof PendenteRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
-  ApiChatPalpiteRoute: typeof ApiChatPalpiteRoute
   ApiPublicSyncResultsRoute: typeof ApiPublicSyncResultsRoute
 }
 
@@ -401,13 +375,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPalpiteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/palpite-robo': {
-      id: '/_authenticated/palpite-robo'
-      path: '/palpite-robo'
-      fullPath: '/palpite-robo'
-      preLoaderRoute: typeof AuthenticatedPalpiteRoboRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/perfil': {
       id: '/_authenticated/perfil'
       path: '/perfil'
@@ -421,13 +388,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/robot-status'
       preLoaderRoute: typeof AuthenticatedRobotStatusRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/api/chat-palpite': {
-      id: '/api/chat-palpite'
-      path: '/api/chat-palpite'
-      fullPath: '/api/chat-palpite'
-      preLoaderRoute: typeof ApiChatPalpiteRouteImport
-      parentRoute: typeof rootRouteImport
     }
     '/api/public/sync-results': {
       id: '/api/public/sync-results'
@@ -451,7 +411,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedHistoricoRoute: typeof AuthenticatedHistoricoRoute
   AuthenticatedJogosRoute: typeof AuthenticatedJogosRoute
   AuthenticatedPalpiteRoute: typeof AuthenticatedPalpiteRoute
-  AuthenticatedPalpiteRoboRoute: typeof AuthenticatedPalpiteRoboRoute
   AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRoute
   AuthenticatedRobotStatusRoute: typeof AuthenticatedRobotStatusRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
@@ -469,7 +428,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedHistoricoRoute: AuthenticatedHistoricoRoute,
   AuthenticatedJogosRoute: AuthenticatedJogosRoute,
   AuthenticatedPalpiteRoute: AuthenticatedPalpiteRoute,
-  AuthenticatedPalpiteRoboRoute: AuthenticatedPalpiteRoboRoute,
   AuthenticatedPerfilRoute: AuthenticatedPerfilRoute,
   AuthenticatedRobotStatusRoute: AuthenticatedRobotStatusRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
@@ -483,7 +441,6 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   PendenteRoute: PendenteRoute,
   ResetPasswordRoute: ResetPasswordRoute,
-  ApiChatPalpiteRoute: ApiChatPalpiteRoute,
   ApiPublicSyncResultsRoute: ApiPublicSyncResultsRoute,
 }
 export const routeTree = rootRouteImport
