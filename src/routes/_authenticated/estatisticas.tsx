@@ -6,6 +6,8 @@ import { CruzDoDia } from "@/components/CruzDoDia";
 import { FederalSyncPanel } from "@/components/FederalSyncPanel";
 import { FederalIntelligencePanel } from "@/components/FederalIntelligencePanel";
 import { RioIntelligencePanel } from "@/components/RioIntelligencePanel";
+import { PainelAtrasoGeral } from "@/components/PainelAtrasoGeral";
+
 
 
 import { AvisoObrigatorio } from "@/components/AvisoObrigatorio";
