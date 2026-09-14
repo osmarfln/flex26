@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
-import { getAnimalByTen, ANIMAL_GROUPS_MAP } from "@/lib/animals";
+import { getAnimalByTen, getAnimalByGroup, getGroupFromTen } from "@/lib/animals";
 import { sortDrawsDesc, drawLabel, brasiliaDateISO } from "@/lib/draw-order";
 
 export interface DelayItem {
@@ -79,7 +79,7 @@ export const getGeneralDelayPanel = createServerFn({ method: "GET" })
       for (const p of prizes) {
         const ten = p.slice(-2);
         const hundred = p.slice(-3);
-        const group = String(ANIMAL_GROUPS_MAP ? getAnimalByTen(ten)?.group ?? "" : "").padStart(2, "0");
+        const group = getGroupFromTen(ten);
         const keys = [`T:${ten}`, `H:${hundred}`];
         if (group && group !== "00") keys.push(`G:${group}`);
         for (const k of keys) {
@@ -110,7 +110,7 @@ export const getGeneralDelayPanel = createServerFn({ method: "GET" })
 
     const groups: DelayItem[] = Array.from({ length: 25 }, (_, i) => {
       const g = String(i + 1).padStart(2, "0");
-      const animal = ANIMAL_GROUPS_MAP?.[g]?.name ?? ANIMAL_GROUPS_MAP?.[String(i + 1)]?.name ?? "";
+      const animal = getAnimalByGroup(g)?.name ?? "";
       return build(`G:${g}`, g, animal ? `${g} · ${animal}` : g);
     }).sort((a, b) => b.drawsDelay - a.drawsDelay);
 
