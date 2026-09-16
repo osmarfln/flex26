@@ -94,10 +94,8 @@ function Historico() {
   // Novos resultados entram automaticamente no histórico
   useLotteryRealtime("history-db-changes");
 
-  const isLoading = rioQuery.isLoading || capitalQuery.isLoading || federalQuery.isLoading;
-
-  const sortBySchedule = (results: any[] | undefined, location: Location) => {
-    const schedule = getScheduleForDate(location, dateISO);
+  const sortBySchedule = (results: any[] | undefined, loc: Location) => {
+    const schedule = getScheduleForDate(loc, dateISO);
     const order = new Map(schedule.map((s: any, i: number) => [s.timeType, i]));
     return (results ?? [])
       .slice()
