@@ -275,12 +275,16 @@ function EstatisticasPage() {
     if (!groupDelayStats || !tenStats || !digitStats) return null;
 
     // Lógica para Capital Florida / Rio
-    const listGroups = [...groupDelayStats].sort((a, b) => b.days - a.days);
+    const listGroups = [...groupDelayStats].sort(
+      (a: any, b: any) => (b.currentDelay ?? 0) - (a.currentDelay ?? 0),
+    );
     const mostDelayedGroup = listGroups[0];
-    
+
     // Dezenas do grupo mais atrasado
-    const groupDezenas = mostDelayedGroup?.dezenaStats || [];
-    const mostDelayedTenOfGroup = [...groupDezenas].sort((a, b) => b.delay - a.delay)[0];
+    const groupDezenas = (mostDelayedGroup?.dezenaStats || []) as any[];
+    const mostDelayedTenOfGroup = [...groupDezenas].sort(
+      (a, b) => (b.delay ?? 0) - (a.delay ?? 0),
+    )[0];
 
     // Bicho em Alta (Maior frequência recente no 1º prêmio)
     const bichoEmAlta = [...groupDelayStats].sort((a, b) => (b.freqs?.[30] || 0) - (a.freqs?.[30] || 0))[0];
