@@ -21,7 +21,7 @@ export const Route = createFileRoute("/_authenticated/palpite")({
       {
         name: "description",
         content:
-          "Palpites do dia calculados automaticamente a partir dos resultados reais do Rio e Capital: dezenas atrasadas, grupos em atraso e sugestões por horário.",
+          "Palpites do dia calculados automaticamente a partir dos resultados reais do Rio, Capital & LCAP e Loteria Federal: dezenas atrasadas, grupos em atraso e sugestões por horário.",
       },
       { name: "robots", content: "noindex" },
       { property: "og:title", content: "Palpite do Dia | Flex Gerenciador" },

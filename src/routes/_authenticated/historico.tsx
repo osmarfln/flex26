@@ -34,7 +34,7 @@ export const Route = createFileRoute("/_authenticated/historico")({
   head: () => ({
     title: "Histórico de Resultados — Flex Gerenciador",
     meta: [
-      { name: "description", content: "Pesquise o histórico completo de resultados Rio e Capital por dia, mês e ano." },
+      { name: "description", content: "Pesquise o histórico completo de resultados Rio, Capital & LCAP e Loteria Federal por dia, mês e ano." },
     ],
   }),
   component: Historico,
@@ -126,7 +126,7 @@ function Historico() {
             </div>
             <div>
               <h1 className="text-3xl font-black italic tracking-tighter uppercase">Histórico de Resultados</h1>
-              <p className="text-white/40 font-bold text-xs uppercase tracking-widest mt-1">Escolha uma data e veja Rio e Capital lado a lado</p>
+              <p className="text-white/40 font-bold text-xs uppercase tracking-widest mt-1">Escolha uma data e veja Rio, Capital & LCAP e Federal lado a lado</p>
             </div>
           </div>
 
@@ -181,7 +181,7 @@ function Historico() {
 
               <Button
                 onClick={async () => {
-                  if (!confirm('Deseja sincronizar os resultados de Rio e Capital agora? Isso pode levar alguns segundos.')) return;
+                  if (!confirm('Deseja sincronizar os resultados de Rio, Capital e Federal agora? Isso pode levar alguns segundos.')) return;
                   setIsSyncing(true);
                   try {
                     for (const location of ['rio', 'capital'] as const) {

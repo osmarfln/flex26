@@ -248,7 +248,7 @@ function RobotStatus() {
             <Info className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
             <div className="text-sm text-white/60 leading-relaxed">
               <span className="text-white font-bold">Para que serve esta página: </span>
-              o robô é o serviço automático que coleta e grava os resultados da plataforma Rio e Capital sem
+              o robô é o serviço automático que coleta e grava os resultados da plataforma Rio, Capital & LCAP e Loteria Federal sem
               intervenção humana. Aqui você acompanha se ele está funcionando, quando rodou pela
               última vez, quantos registros foram atualizados em cada execução, em quais horários
               ele trabalha e se houve falhas. Use este painel para confirmar que os painéis do dia
