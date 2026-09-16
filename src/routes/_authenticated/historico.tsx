@@ -7,6 +7,7 @@ import {
   drawTimeValue,
   getScheduleForDate,
   brasiliaDateISO,
+  locationName,
 } from "@/lib/draw-order";
 
 import { useQuery } from "@tanstack/react-query";
