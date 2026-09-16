@@ -402,7 +402,7 @@ function EstatisticasPage() {
                 </div>
               </div>
               <p className="max-w-2xl text-white/60 text-lg leading-relaxed">
-                Explore nossas ferramentas matemáticas e estatísticas avançadas para as loterias <strong>Rio</strong> e <strong>Capital</strong>. 
+                Explore nossas ferramentas matemáticas e estatísticas avançadas para as loterias <strong>Rio</strong>, <strong>Capital & LCAP</strong> e <strong>Loteria Federal</strong>. 
                 Nossos algoritmos analisam tendências diárias e históricas em tempo real, sem intervenção humana.
               </p>
             </div>
