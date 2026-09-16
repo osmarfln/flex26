@@ -284,7 +284,7 @@ function Index() {
                 <p className="text-white/40 font-bold text-xs uppercase tracking-widest mt-1">
                   {firstName ? `É um prazer ter você aqui, ${firstName}. Fique à vontade.` : "Seja bem-vindo ao nosso espaço, fique à vontade."}
                 </p>
-                <p className="text-[10px] text-primary/40 font-black uppercase tracking-[0.3em] mt-2 border-t border-white/5 pt-2">Resultados diários automatizados Rio e Capital via robô automatizado sem intervenção humana</p>
+                <p className="text-[10px] text-primary/40 font-black uppercase tracking-[0.3em] mt-2 border-t border-white/5 pt-2">Resultados diários automatizados Rio, Capital & LCAP e Loteria Federal via robô automatizado sem intervenção humana</p>
 
 
 
@@ -294,7 +294,7 @@ function Index() {
             </motion.div>
 
             <h1 className="text-2xl md:text-3xl lg:text-4xl font-black tracking-tight mb-3 italic text-zinc-400">Resultados {locationName(location)}</h1>
-            <p className="text-white/40 text-sm md:text-base mb-4 font-medium italic">Resultados diários automatizados Rio e Capital via robô automatizado sem intervenção humana. A plataforma só recebe resultados RIO E CAPITAL.</p>
+            <p className="text-white/40 text-sm md:text-base mb-4 font-medium italic">Resultados diários automatizados Rio, Capital & LCAP e Loteria Federal via robô automatizado sem intervenção humana. A plataforma só recebe resultados RIO, CAPITAL & LCAP e FEDERAL.</p>
             <p className="text-white/20 text-[10px] font-bold uppercase tracking-widest mb-8">Leia o arquivo instrucoes.md em anexo e siga as instruções contidas nele.</p>
 
 
@@ -492,7 +492,7 @@ function Index() {
           </div>
 
           <div className="mb-12">
-            <AlertaDezenasAtrasadas data={digitStats as any} loading={digitLoading} />
+            <AlertaDezenasAtrasadas data={digitStats as any} loading={digitLoading} location={location} />
           </div>
 
 
@@ -782,7 +782,7 @@ function Index() {
            <div className="flex items-center gap-6">
               <span className="text-[8px] text-white/5 font-black uppercase tracking-widest">Plataforma Independente</span>
                <div className="h-4 w-px bg-white/5" />
-               <span className="text-[8px] text-white/5 font-black uppercase tracking-widest">Resultados diários automatizados via robô automatizado sem intervenção humana</span>
+               <span className="text-[8px] text-white/5 font-black uppercase tracking-widest">Resultados diários automatizados Rio, Capital & LCAP e Loteria Federal via robô automatizado sem intervenção humana</span>
             </div>
 
         </div>

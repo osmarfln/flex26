@@ -2,9 +2,17 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { ANIMAL_GROUPS_MAP, getGroupFromTen as tenToGroup, getAnimalByTen } from "@/lib/animals";
-import { sortDrawsDesc, timePriority } from "@/lib/draw-order";
+import { TIME_ORDER_RIO, TIME_ORDER_CAPITAL, TIME_ORDER_FEDERAL, sortDrawsDesc, timePriority } from "@/lib/draw-order";
 import { PUXADAS as PUXADAS_TABLE } from "@/lib/puxadas";
 import { calculateStatisticalPuxadas } from "./puxadas.server";
+
+/** Grade oficial de horários por loteria (Rio, Capital & LCAP, Federal). */
+function schedulesFor(location?: string | null): string[] {
+  if (location === 'capital') return [...TIME_ORDER_CAPITAL];
+  if (location === 'federal') return [...TIME_ORDER_FEDERAL];
+  return [...TIME_ORDER_RIO];
+}
+
 
 
 // Tipos para os resultados
@@ -136,9 +144,7 @@ export const getStats = createServerFn({ method: "GET" })
       }
 
       const key = res.time_type;
-      const schedules = data.location === 'capital' 
-        ? ["L-09", "L-10", "L-11", "L-13", "L-14", "L-15", "L-16", "L-18", "L-19", "L-20", "L-22"]
-        : ["PPT", "PTM", "PT", "PTV", "PTN", "COR"];
+      const schedules = schedulesFor(data.location);
       
       const firstGroup = firstPrize && firstPrize.length >= 2 ? tenToGroup(firstPrize.slice(-2)) : null;
       if (key && firstGroup && schedules.includes(key) && !scheduleDelay[key]) {
@@ -378,9 +384,7 @@ export const getGroupDelayStats = createServerFn({ method: "GET" })
       const positionFreq: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
       let totalFreq = 0;
       
-      const schedules = data.location === 'capital' 
-        ? ["L-09", "L-10", "L-11", "L-13", "L-14", "L-15", "L-16", "L-18", "L-19", "L-20", "L-22"]
-        : ["PPT", "PTM", "PT", "PTV", "PTN", "COR"];
+      const schedules = schedulesFor(data.location);
 
       const countGroup = (list: any[]) => list.filter(r => 
         r.results?.slice(0, 5).some((prize: string) => {
@@ -741,9 +745,7 @@ export const getDigitDelayStats = createServerFn({ method: "GET" })
     }
 
     const results = sortDrawsDesc(rawRows as any[]);
-    const schedules = data.location === 'capital' 
-      ? ["L-09", "L-10", "L-11", "L-13", "L-14", "L-15", "L-16", "L-18", "L-19", "L-20", "L-22"]
-      : ["PPT", "PTM", "PT", "PTV", "PTN", "COR"];
+    const schedules = schedulesFor(data.location);
 
     /** milhares do 1º ao 5º prêmio, sempre com 4 casas (zero nunca é cortado) */
     const milhares = (row: any): string[] => {
@@ -946,9 +948,7 @@ export const getPuxadasStats = createServerFn({ method: "GET" })
     if (!rawRows || rawRows.length === 0) return { table: [], totalDraws: 0, period: null, schedules: [] };
 
     const results = sortDrawsDesc(rawRows as any[]);
-    const schedules = data.location === 'capital' 
-      ? ["L-09", "L-10", "L-11", "L-13", "L-14", "L-15", "L-16", "L-18", "L-19", "L-20", "L-22"]
-      : ["PPT", "PTM", "PT", "PTV", "PTN", "COR"];
+    const schedules = schedulesFor(data.location);
 
     if (rawRows.length < 2) {
       return {
@@ -1076,9 +1076,7 @@ export const getTenDelayByScheduleStats = createServerFn({ method: "GET" })
     if (!rawRows || rawRows.length === 0) return [];
 
     const results = sortDrawsDesc(rawRows as any[]);
-    const schedules = data.location === 'capital' 
-      ? ["L-09", "L-10", "L-11", "L-13", "L-14", "L-15", "L-16", "L-18", "L-19", "L-20", "L-22"]
-      : ["PPT", "PTM", "PT", "PTV", "PTN", "COR"];
+    const schedules = schedulesFor(data.location);
 
     const scheduleResults: Record<string, any[]> = {};
     schedules.forEach(s => scheduleResults[s] = results.filter(r => r.time_type === s));

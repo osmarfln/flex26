@@ -402,7 +402,7 @@ function EstatisticasPage() {
                 </div>
               </div>
               <p className="max-w-2xl text-white/60 text-lg leading-relaxed">
-                Explore nossas ferramentas matemáticas e estatísticas avançadas para as loterias <strong>Rio</strong> e <strong>Capital</strong>. 
+                Explore nossas ferramentas matemáticas e estatísticas avançadas para as loterias <strong>Rio</strong>, <strong>Capital & LCAP</strong> e <strong>Loteria Federal</strong>. 
                 Nossos algoritmos analisam tendências diárias e históricas em tempo real, sem intervenção humana.
               </p>
             </div>
@@ -433,11 +433,11 @@ function EstatisticasPage() {
                   </button>
                   <div className="flex flex-wrap gap-1.5">
                     <button
-                      onClick={() => recalcPart("Dezenas Rio/Capital", ["ten-delay-stats", "digit-delay-stats"])}
+                      onClick={() => recalcPart("Dezenas e atrasos", ["ten-delay-stats", "digit-delay-stats"])}
                       disabled={recalculating}
                       className="px-2.5 py-1.5 rounded-lg bg-white/5 border border-white/10 text-[10px] font-black uppercase text-white/60 hover:border-primary/40 hover:text-primary transition-all disabled:opacity-50"
                     >
-                      Atrasos Rio/Capital
+                      Atrasos e dezenas
                     </button>
                     <button
                       onClick={() => recalcPart("Grupos", ["group-delay-stats", "puxadas-stats"])}
@@ -575,7 +575,7 @@ function EstatisticasPage() {
                    <Sparkles className="w-6 h-6" />
                 </div>
                 <h3 className="text-xl font-black italic uppercase mb-2">Análise Premium</h3>
-                 <p className="text-sm text-white/40 font-medium leading-snug">Inteligência aplicada aos resultados históricos: Capital e Rio.</p>
+                 <p className="text-sm text-white/40 font-medium leading-snug">Inteligência aplicada aos resultados históricos: Rio, Capital & LCAP e Loteria Federal.</p>
              </Card>
 
           </div>
@@ -1270,7 +1270,7 @@ function EstatisticasPage() {
                   exit={{ opacity: 0, y: -20 }}
                 >
                   <div className="space-y-8">
-                    <AlertaDezenasAtrasadas data={digitStats as any} loading={digitLoading} />
+                    <AlertaDezenasAtrasadas data={digitStats as any} loading={digitLoading} location={location} />
                     <DezenasEsquerdaDireita data={digitStats as any} loading={digitLoading} />
                   </div>
                 </motion.div>
@@ -1576,7 +1576,7 @@ function EstatisticasPage() {
                                <h3 className="text-xl font-black italic uppercase">Alertas Estratégicos</h3>
                             </div>
                             
-                            <AlertaDezenasAtrasadas data={digitStats as any} loading={digitLoading} />
+                            <AlertaDezenasAtrasadas data={digitStats as any} loading={digitLoading} location={location} />
 
                             <Card className="dashboard-card p-6 bg-white/[0.03]">
                                <div className="flex items-center gap-3 mb-6">
@@ -1655,7 +1655,7 @@ function EstatisticasPage() {
       </main>
 
       <footer className="border-t border-white/5 py-12 bg-background/80 text-center text-[10px] text-white/20 font-bold uppercase tracking-[0.2em]">
-        Flex Gerenciador © 2026 • Resultados diários automatizados via robô ai automatizado sem intervenção humana
+        Flex Gerenciador © 2026 • Resultados diários automatizados Rio, Capital & LCAP e Loteria Federal via robô automatizado sem intervenção humana
       </footer>
 
     </div>

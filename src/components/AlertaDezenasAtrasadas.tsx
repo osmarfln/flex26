@@ -7,6 +7,13 @@ import type { DigitDelayData } from "@/components/DezenasEsquerdaDireita";
 
 const STORAGE_KEY = "flex:alerta-dezenas-lider";
 
+type Loc = "rio" | "capital" | "federal";
+const LOC_LABEL: Record<Loc, string> = {
+  rio: "RIO DE JANEIRO",
+  capital: "CAPITAL & LCAP",
+  federal: "LOTERIA FEDERAL",
+};
+
 const fmt = (iso?: string | null) => {
   if (!iso) return "—";
   const [y, m, d] = iso.split("-");
@@ -15,7 +22,8 @@ const fmt = (iso?: string | null) => {
 
 type SideKey = "left" | "right";
 
-function useLeaderAlerts(leftDigit?: string, rightDigit?: string) {
+function useLeaderAlerts(location: Loc, leftDigit?: string, rightDigit?: string) {
+  const storageKey = `${STORAGE_KEY}:${location}`;
   const fired = useRef(false);
   useEffect(() => {
     if (!leftDigit || !rightDigit || fired.current) return;
@@ -23,32 +31,32 @@ function useLeaderAlerts(leftDigit?: string, rightDigit?: string) {
     if (typeof window === "undefined") return;
     let prev: { left?: string; right?: string } = {};
     try {
-      prev = JSON.parse(window.localStorage.getItem(STORAGE_KEY) || "{}");
+      prev = JSON.parse(window.localStorage.getItem(storageKey) || "{}");
     } catch {
       prev = {};
     }
     if (prev.left && prev.left !== leftDigit) {
-      toast.warning(`Nova dezena ESQUERDA mais atrasada: ${leftDigit}`, {
+      toast.warning(`${LOC_LABEL[location]} — nova dezena ESQUERDA mais atrasada: ${leftDigit}`, {
         description: `Assumiu a liderança no lugar da dezena ${prev.left}. Pode aparecer a qualquer horário.`,
       });
     }
     if (prev.right && prev.right !== rightDigit) {
-      toast.warning(`Nova dezena DIREITA mais atrasada: ${rightDigit}`, {
+      toast.warning(`${LOC_LABEL[location]} — nova dezena DIREITA mais atrasada: ${rightDigit}`, {
         description: `Assumiu a liderança no lugar da dezena ${prev.right}. Pode aparecer a qualquer horário.`,
       });
     }
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ left: leftDigit, right: rightDigit }));
-  }, [leftDigit, rightDigit]);
+    window.localStorage.setItem(storageKey, JSON.stringify({ left: leftDigit, right: rightDigit }));
+  }, [location, storageKey, leftDigit, rightDigit]);
 }
 
-export function AlertaDezenasAtrasadas({ data, loading }: { data?: DigitDelayData | null; loading?: boolean }) {
+export function AlertaDezenasAtrasadas({ data, loading, location = "rio" }: { data?: DigitDelayData | null; loading?: boolean; location?: Loc }) {
   const leaders = useMemo(() => {
     const left = data?.left?.[0];
     const right = data?.right?.[0];
     return { left, right };
   }, [data]);
 
-  useLeaderAlerts(leaders.left?.digit, leaders.right?.digit);
+  useLeaderAlerts(location, leaders.left?.digit, leaders.right?.digit);
 
   if (loading) {
     return <div className="h-40 rounded-2xl border border-white/10 bg-white/5 animate-pulse" />;
@@ -71,7 +79,7 @@ export function AlertaDezenasAtrasadas({ data, loading }: { data?: DigitDelayDat
         <div className="flex-1 min-w-[200px]">
           <h3 className="text-lg font-black italic uppercase">Alerta automático de atraso</h3>
           <p className="text-xs text-white/40 font-medium">
-            Dezena = 2 casas (ex.: 05, 25). Recalculado a cada resultado do dia — avisa quando muda a dezena esquerda/direita mais atrasada. Monitoramento Rio e Capital com base em atrasos diários e arquivos históricos.
+            {"Dezena = 2 casas (ex.: 05, 25). Recalculado a cada resultado — avisa quando muda a dezena esquerda/direita mais atrasada. Monitoramento Rio, Capital & LCAP e Loteria Federal com base em atrasos diários e arquivos históricos."}
           </p>
         </div>
         <Badge variant="outline" className="text-[10px] font-bold border-white/10 bg-white/5 text-white/50">
@@ -98,7 +106,7 @@ export function AlertaDezenasAtrasadas({ data, loading }: { data?: DigitDelayDat
                   </div>
                   <div className="text-xs text-white/60 space-y-1">
                     <p className="text-sm font-bold text-white">
-                      {stat.currentDelay} sorteios · <span className={stat.dailyDelay > 2 ? 'text-red-500' : 'text-white/40'}>{stat.dailyDelay}h hoje</span>
+                      {stat.currentDelay} sorteios · <span className={stat.dailyDelay > 2 ? 'text-red-500' : 'text-white/40'}>{stat.dailyDelay}{location === 'federal' ? ' concursos recentes' : 'h hoje'}</span>
                     </p>
                     <p>
                       Última vez:{" "}
@@ -108,7 +116,7 @@ export function AlertaDezenasAtrasadas({ data, loading }: { data?: DigitDelayDat
                     </p>
                     {(stat.dailyDelay >= 3 || stat.worstSchedule?.delay >= 15) && (
                       <p className="text-red-400 font-bold animate-pulse">
-                        ALERTA CRÍTICO: {stat.dailyDelay >= 3 ? `${stat.dailyDelay} horários sem sair hoje` : `Atraso de ${stat.worstSchedule.delay} sorteios no horário ${stat.worstSchedule.schedule}`}
+                        ALERTA CRÍTICO: {stat.dailyDelay >= 3 ? (location === 'federal' ? `${stat.dailyDelay} concursos federais sem sair` : `${stat.dailyDelay} horários sem sair hoje`) : `Atraso de ${stat.worstSchedule.delay} sorteios no horário ${stat.worstSchedule.schedule}`}
                       </p>
                     )}
                   </div>
