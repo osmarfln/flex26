@@ -29,6 +29,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { AvisoObrigatorio } from "@/components/AvisoObrigatorio";
 import { SiteHeader } from "@/components/layout/SiteHeader";
+import { LotterySelector, type LotteryLocation } from "@/components/LotterySelector";
 
 export const Route = createFileRoute("/_authenticated/historico")({
   head: () => ({
@@ -47,6 +48,7 @@ function Historico() {
   const [isSyncing, setIsSyncing] = useState(false);
   const [manualDate, setManualDate] = useState(() => format(parseISO(brasiliaDateISO()), "dd/MM/yyyy"));
   const [calendarOpen, setCalendarOpen] = useState(false);
+  const [location, setLocation] = useState<LotteryLocation>("rio");
 
   const dateISO = format(date, "yyyy-MM-dd");
 
