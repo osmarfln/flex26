@@ -1560,7 +1560,7 @@ function EstatisticasPage() {
                                </div>
                             </div>
                             <div className="flex items-center justify-between">
-                               <span className="text-5xl font-black text-white font-mono">{premiumStats.mostDelayedTenOfGroup?.ten || '--'}</span>
+                               <span className="text-5xl font-black text-white font-mono">{premiumStats.mostDelayedTenOfGroup?.dezena ?? '--'}</span>
                                <div className="text-right">
                                   <p className="text-2xl font-black text-white">{premiumStats.mostDelayedTenOfGroup?.delay || 0}x</p>
                                   <p className="text-[10px] font-bold text-white/20 uppercase">Atraso na posição</p>
