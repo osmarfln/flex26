@@ -7,6 +7,7 @@ import {
   drawTimeValue,
   getScheduleForDate,
   brasiliaDateISO,
+  locationName,
 } from "@/lib/draw-order";
 
 import { useQuery } from "@tanstack/react-query";
@@ -29,6 +30,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { AvisoObrigatorio } from "@/components/AvisoObrigatorio";
 import { SiteHeader } from "@/components/layout/SiteHeader";
+import { LotterySelector, type LotteryLocation } from "@/components/LotterySelector";
 
 export const Route = createFileRoute("/_authenticated/historico")({
   head: () => ({
@@ -47,6 +49,7 @@ function Historico() {
   const [isSyncing, setIsSyncing] = useState(false);
   const [manualDate, setManualDate] = useState(() => format(parseISO(brasiliaDateISO()), "dd/MM/yyyy"));
   const [calendarOpen, setCalendarOpen] = useState(false);
+  const [location, setLocation] = useState<LotteryLocation>("rio");
 
   const dateISO = format(date, "yyyy-MM-dd");
 
@@ -92,10 +95,8 @@ function Historico() {
   // Novos resultados entram automaticamente no histórico
   useLotteryRealtime("history-db-changes");
 
-  const isLoading = rioQuery.isLoading || capitalQuery.isLoading || federalQuery.isLoading;
-
-  const sortBySchedule = (results: any[] | undefined, location: Location) => {
-    const schedule = getScheduleForDate(location, dateISO);
+  const sortBySchedule = (results: any[] | undefined, loc: Location) => {
+    const schedule = getScheduleForDate(loc, dateISO);
     const order = new Map(schedule.map((s: any, i: number) => [s.timeType, i]));
     return (results ?? [])
       .slice()
@@ -105,7 +106,11 @@ function Historico() {
   const rioResults = sortBySchedule(rioQuery.data, 'rio');
   const capitalResults = sortBySchedule(capitalQuery.data, 'capital');
   const federalResults = sortBySchedule(federalQuery.data, 'federal');
-  const federalSchedule = getScheduleForDate('federal', dateISO);
+
+  const activeQuery = location === 'capital' ? capitalQuery : location === 'federal' ? federalQuery : rioQuery;
+  const activeLoading = activeQuery.isLoading;
+  const activeResults =
+    location === 'capital' ? capitalResults : location === 'federal' ? federalResults : rioResults;
 
   const refetchAll = () => {
     rioQuery.refetch();
@@ -210,47 +215,31 @@ function Historico() {
             </div>
           </Card>
 
-          <p className="text-center text-[11px] font-bold uppercase tracking-[0.25em] text-white/30">
+          <div className="mt-6 flex flex-col gap-3">
+            <span className="text-[10px] text-white/40 font-bold uppercase tracking-wider">Escolha a loteria</span>
+            <LotterySelector value={location} onChange={setLocation} />
+          </div>
+
+          <p className="mt-6 text-center text-[11px] font-bold uppercase tracking-[0.25em] text-white/30">
             Exibindo resultados de <span className="text-primary">{format(date, "dd/MM/yyyy")}</span>
           </p>
         </section>
 
         <AvisoObrigatorio />
 
-        {isLoading ? (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-            {[0, 1].map((col) => (
-              <div key={col} className="space-y-6">
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <div key={i} className="h-56 rounded-2xl bg-white/5 animate-pulse border border-white/10" />
-                ))}
-              </div>
+        {activeLoading ? (
+          <div className="space-y-6 mb-12">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="h-56 rounded-2xl bg-white/5 animate-pulse border border-white/10" />
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-            <LotteryColumn
-              title="RIO DE JANEIRO"
-              location="rio"
-              dateISO={dateISO}
-              results={rioResults}
-            />
-            <LotteryColumn
-              title="CAPITAL & LCAP"
-              location="capital"
-              dateISO={dateISO}
-              results={capitalResults}
-            />
-          </div>
-        )}
-
-        {!isLoading && federalSchedule.length > 0 && (
           <div className="grid grid-cols-1 mb-12">
             <LotteryColumn
-              title="LOTERIA FEDERAL"
-              location="federal"
+              title={locationName(location)}
+              location={location}
               dateISO={dateISO}
-              results={federalResults}
+              results={activeResults}
             />
           </div>
         )}
