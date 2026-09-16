@@ -433,11 +433,11 @@ function EstatisticasPage() {
                   </button>
                   <div className="flex flex-wrap gap-1.5">
                     <button
-                      onClick={() => recalcPart("Dezenas Rio/Capital", ["ten-delay-stats", "digit-delay-stats"])}
+                      onClick={() => recalcPart("Dezenas e atrasos", ["ten-delay-stats", "digit-delay-stats"])}
                       disabled={recalculating}
                       className="px-2.5 py-1.5 rounded-lg bg-white/5 border border-white/10 text-[10px] font-black uppercase text-white/60 hover:border-primary/40 hover:text-primary transition-all disabled:opacity-50"
                     >
-                      Atrasos Rio/Capital
+                      Atrasos e dezenas
                     </button>
                     <button
                       onClick={() => recalcPart("Grupos", ["group-delay-stats", "puxadas-stats"])}
@@ -575,7 +575,7 @@ function EstatisticasPage() {
                    <Sparkles className="w-6 h-6" />
                 </div>
                 <h3 className="text-xl font-black italic uppercase mb-2">Análise Premium</h3>
-                 <p className="text-sm text-white/40 font-medium leading-snug">Inteligência aplicada aos resultados históricos: Capital e Rio.</p>
+                 <p className="text-sm text-white/40 font-medium leading-snug">Inteligência aplicada aos resultados históricos: Rio, Capital & LCAP e Loteria Federal.</p>
              </Card>
 
           </div>

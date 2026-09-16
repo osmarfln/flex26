@@ -201,7 +201,7 @@ export function DezenasEsquerdaDireita({ data, loading }: { data?: DigitDelayDat
             <h2 className="text-2xl font-black italic uppercase">Dezena Esquerda x Direita</h2>
             <p className="text-xs text-white/40 font-medium">
               Inteligência aplicada: monitora do 1º ao 5º prêmio. Cada prêmio é dividido em dezenas esquerda (05) e direita (70). 
-              A análise cruza o atraso diário Rio/Capital com correlações históricas reais.
+              A análise cruza o atraso diário de Rio, Capital & LCAP e Loteria Federal com correlações históricas reais.
             </p>
 
           </div>
