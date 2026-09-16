@@ -105,7 +105,11 @@ function Historico() {
   const rioResults = sortBySchedule(rioQuery.data, 'rio');
   const capitalResults = sortBySchedule(capitalQuery.data, 'capital');
   const federalResults = sortBySchedule(federalQuery.data, 'federal');
-  const federalSchedule = getScheduleForDate('federal', dateISO);
+
+  const activeQuery = location === 'capital' ? capitalQuery : location === 'federal' ? federalQuery : rioQuery;
+  const activeLoading = activeQuery.isLoading;
+  const activeResults =
+    location === 'capital' ? capitalResults : location === 'federal' ? federalResults : rioResults;
 
   const refetchAll = () => {
     rioQuery.refetch();
