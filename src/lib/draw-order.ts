@@ -138,6 +138,10 @@ export function getScheduleForDate(
   if (weekday === 0) {
     return DRAW_SCHEDULE_RIO.filter((s) => s.timeType === 'PT' || s.timeType === 'PTV');
   }
+  // Quartas-feiras: não há PTN 18:20 no Rio (horário da Loteria Federal)
+  if (weekday === 3) {
+    return DRAW_SCHEDULE_RIO.filter((s) => s.timeType !== 'PTN');
+  }
   return DRAW_SCHEDULE_RIO;
 }
 
