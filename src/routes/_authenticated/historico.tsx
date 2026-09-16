@@ -184,7 +184,7 @@ function Historico() {
                   if (!confirm('Deseja sincronizar os resultados de Rio, Capital e Federal agora? Isso pode levar alguns segundos.')) return;
                   setIsSyncing(true);
                   try {
-                    for (const location of ['rio', 'capital'] as const) {
+                    for (const location of ['rio', 'capital', 'federal'] as const) {
                       await fetch('/api/public/sync-results', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
