@@ -6,6 +6,14 @@ import { TIME_ORDER_RIO, TIME_ORDER_CAPITAL, TIME_ORDER_FEDERAL, sortDrawsDesc, 
 import { PUXADAS as PUXADAS_TABLE } from "@/lib/puxadas";
 import { calculateStatisticalPuxadas } from "./puxadas.server";
 
+/** Grade oficial de horários por loteria (Rio, Capital & LCAP, Federal). */
+function schedulesFor(location?: string | null): string[] {
+  if (location === 'capital') return [...TIME_ORDER_CAPITAL];
+  if (location === 'federal') return [...TIME_ORDER_FEDERAL];
+  return [...TIME_ORDER_RIO];
+}
+
+
 
 // Tipos para os resultados
 export interface LotteryResult {
