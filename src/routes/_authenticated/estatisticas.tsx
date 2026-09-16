@@ -1270,7 +1270,7 @@ function EstatisticasPage() {
                   exit={{ opacity: 0, y: -20 }}
                 >
                   <div className="space-y-8">
-                    <AlertaDezenasAtrasadas data={digitStats as any} loading={digitLoading} />
+                    <AlertaDezenasAtrasadas data={digitStats as any} loading={digitLoading} location={location} />
                     <DezenasEsquerdaDireita data={digitStats as any} loading={digitLoading} />
                   </div>
                 </motion.div>
@@ -1576,7 +1576,7 @@ function EstatisticasPage() {
                                <h3 className="text-xl font-black italic uppercase">Alertas Estratégicos</h3>
                             </div>
                             
-                            <AlertaDezenasAtrasadas data={digitStats as any} loading={digitLoading} />
+                            <AlertaDezenasAtrasadas data={digitStats as any} loading={digitLoading} location={location} />
 
                             <Card className="dashboard-card p-6 bg-white/[0.03]">
                                <div className="flex items-center gap-3 mb-6">
@@ -1655,7 +1655,7 @@ function EstatisticasPage() {
       </main>
 
       <footer className="border-t border-white/5 py-12 bg-background/80 text-center text-[10px] text-white/20 font-bold uppercase tracking-[0.2em]">
-        Flex Gerenciador © 2026 • Resultados diários automatizados via robô ai automatizado sem intervenção humana
+        Flex Gerenciador © 2026 • Resultados diários automatizados Rio, Capital & LCAP e Loteria Federal via robô automatizado sem intervenção humana
       </footer>
 
     </div>
