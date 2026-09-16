@@ -212,47 +212,31 @@ function Historico() {
             </div>
           </Card>
 
-          <p className="text-center text-[11px] font-bold uppercase tracking-[0.25em] text-white/30">
+          <div className="mt-6 flex flex-col gap-3">
+            <span className="text-[10px] text-white/40 font-bold uppercase tracking-wider">Escolha a loteria</span>
+            <LotterySelector value={location} onChange={setLocation} />
+          </div>
+
+          <p className="mt-6 text-center text-[11px] font-bold uppercase tracking-[0.25em] text-white/30">
             Exibindo resultados de <span className="text-primary">{format(date, "dd/MM/yyyy")}</span>
           </p>
         </section>
 
         <AvisoObrigatorio />
 
-        {isLoading ? (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-            {[0, 1].map((col) => (
-              <div key={col} className="space-y-6">
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <div key={i} className="h-56 rounded-2xl bg-white/5 animate-pulse border border-white/10" />
-                ))}
-              </div>
+        {activeLoading ? (
+          <div className="space-y-6 mb-12">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="h-56 rounded-2xl bg-white/5 animate-pulse border border-white/10" />
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-            <LotteryColumn
-              title="RIO DE JANEIRO"
-              location="rio"
-              dateISO={dateISO}
-              results={rioResults}
-            />
-            <LotteryColumn
-              title="CAPITAL & LCAP"
-              location="capital"
-              dateISO={dateISO}
-              results={capitalResults}
-            />
-          </div>
-        )}
-
-        {!isLoading && federalSchedule.length > 0 && (
           <div className="grid grid-cols-1 mb-12">
             <LotteryColumn
-              title="LOTERIA FEDERAL"
-              location="federal"
+              title={locationName(location)}
+              location={location}
               dateISO={dateISO}
-              results={federalResults}
+              results={activeResults}
             />
           </div>
         )}
