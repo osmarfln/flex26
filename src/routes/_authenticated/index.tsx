@@ -205,12 +205,10 @@ function Index() {
   const GreetingIcon = greeting.icon;
 
   return (
-    <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/30 overflow-x-hidden">
+    <div className="home-dashboard min-h-screen bg-background text-foreground font-sans selection:bg-primary/30 overflow-x-hidden">
       {/* Background Decorative Element */}
-      <div className="fixed top-0 right-0 w-[600px] h-[600px] bg-primary/5 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-
       {/* Top Header */}
-      <header className="border-b border-white/5 bg-background/60 backdrop-blur-2xl sticky top-0 z-50 transition-all">
+      <header className="border-b border-white/10 bg-background/80 backdrop-blur-2xl sticky top-0 z-50 transition-all shadow-lg shadow-black/10">
         <div className="container mx-auto px-3 sm:px-4 md:px-6 py-2 md:h-20 flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
           <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 md:flex md:items-center md:gap-8">
             <Link to="/" className="flex min-w-0 flex-col group">
@@ -229,17 +227,17 @@ function Index() {
             </div>
           </div>
 
-          <nav className="-mx-3 flex items-center gap-4 overflow-x-auto no-scrollbar px-3 pb-1 md:mx-0 md:gap-10 md:px-0 md:pb-0 md:py-2">
-            <Link to="/" className="text-sm md:text-base font-bold border-b-2 border-red-500 pb-1.5 flex items-center gap-2 md:gap-2.5 whitespace-nowrap shrink-0">
+          <nav className="-mx-3 flex items-center gap-2 overflow-x-auto no-scrollbar px-3 pb-1 md:mx-0 md:gap-2 md:px-0 md:pb-0 md:py-2 rounded-xl md:border md:border-white/10 md:bg-white/5 md:p-1.5">
+            <Link to="/" className="text-sm font-bold bg-primary text-primary-foreground px-4 py-2.5 rounded-lg shadow-lg shadow-primary/20 flex items-center gap-2 whitespace-nowrap shrink-0">
               <Users className="w-5 h-5 shrink-0" /> Início
             </Link>
-            <Link to="/historico" className="text-sm md:text-base font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2 md:gap-2.5 whitespace-nowrap shrink-0">
+            <Link to="/historico" className="text-sm font-bold text-white/55 hover:text-white hover:bg-white/5 px-4 py-2.5 rounded-lg transition-colors flex items-center gap-2 whitespace-nowrap shrink-0">
               <History className="w-5 h-5 shrink-0" /> Histórico
             </Link>
-            <Link to="/robot-status" className="text-sm md:text-base font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2 md:gap-2.5 whitespace-nowrap shrink-0">
+            <Link to="/robot-status" className="text-sm font-bold text-white/55 hover:text-white hover:bg-white/5 px-4 py-2.5 rounded-lg transition-colors flex items-center gap-2 whitespace-nowrap shrink-0">
               <Activity className="w-5 h-5 shrink-0" /> Robô
             </Link>
-            <Link to="/estatisticas" className="text-sm md:text-base font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2 md:gap-2.5 whitespace-nowrap shrink-0">
+            <Link to="/estatisticas" className="text-sm font-bold text-white/55 hover:text-white hover:bg-white/5 px-4 py-2.5 rounded-lg transition-colors flex items-center gap-2 whitespace-nowrap shrink-0">
               <BarChart3 className="w-5 h-5 shrink-0" /> Estatísticas
             </Link>
           </nav>
