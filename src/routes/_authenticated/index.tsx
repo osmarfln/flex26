@@ -415,9 +415,11 @@ function Index() {
                             ))}
                           </div>
                           <div className="flex flex-col items-center justify-center bg-white/[0.06] rounded-xl p-4 border border-white/10 relative group-hover:bg-white/[0.09] shadow-inner transition-all">
-                            <div className="w-16 h-16 mb-2 text-primary flex items-center justify-center text-4xl group-hover:scale-110 transition-transform duration-500">
-                               {game ? (ANIMAL_GROUPS.find(a => a.id === game.animal_group)?.icon || <Sparkles className="w-8 h-8 opacity-20" />) : <Clock className="w-8 h-8 opacity-20 text-white/20" />}
-                            </div>
+                            {isLatest && (
+                              <div className="w-16 h-16 mb-2 text-primary flex items-center justify-center text-4xl group-hover:scale-110 transition-transform duration-500">
+                                 {game ? (ANIMAL_GROUPS.find(a => a.id === game.animal_group)?.icon || <Sparkles className="w-8 h-8 opacity-20" />) : <Clock className="w-8 h-8 opacity-20 text-white/20" />}
+                              </div>
+                            )}
                             <p className="text-[10px] text-white/40 font-bold uppercase tracking-wider mb-1">Grupo</p>
                             <p className={`text-3xl font-black tracking-tighter leading-none ${game ? 'text-primary' : 'text-white/10'}`}>{game?.animal_group || '--'}</p>
                             <p className={`text-[11px] font-bold mt-2 uppercase tracking-tight ${game ? 'text-white/80' : 'text-blue-400/50 italic'}`}>{game?.animal || 'Aguardando'}</p>

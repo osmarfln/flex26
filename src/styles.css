@@ -279,8 +279,12 @@
     @apply text-sm;
   }
 
+  .prize-animal-badge--name-only {
+    @apply border-0 bg-transparent px-0 py-0 shadow-none;
+  }
+
   .prize-animal-badge--name-only .prize-animal-name {
-    @apply text-white/70;
+    @apply text-[8px] text-white/50;
   }
 }
 

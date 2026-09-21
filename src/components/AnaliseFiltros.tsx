@@ -626,7 +626,7 @@ export function AnaliseFiltros({ initialLocation = 'rio' }: { initialLocation?: 
                               {h.prize || "—"}
                             </td>
                             <td className={first ? "font-bold text-red-400" : "text-white/60"}>
-                              <AnimalBadge ten={h.ten} compact showIcon={h.pos === 1} />
+                              <AnimalBadge ten={h.ten} compact showIcon={false} />
                             </td>
                           </tr>
                         );

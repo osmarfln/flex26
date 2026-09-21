@@ -41,7 +41,7 @@ export function PrizeAnimalRow({ position, result, compact = false }: PrizeAnima
       ) : (
         <>
           <span className="prize-animal-number">{normalized.padStart(4, "0")}</span>
-          <AnimalBadge result={normalized} compact={compact} showIcon={position === 1} />
+          <AnimalBadge result={normalized} compact showIcon={false} />
         </>
       )}
     </div>
