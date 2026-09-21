@@ -252,7 +252,7 @@
   }
 
   .prize-animal-name {
-    @apply truncate text-[9px] font-extrabold uppercase text-white/55;
+    @apply whitespace-nowrap text-[9px] font-extrabold uppercase text-white/55;
   }
 
   .prize-animal-waiting {
@@ -260,7 +260,7 @@
   }
 
   .prize-animal-row--compact {
-    @apply grid-cols-[1.25rem_4rem_minmax(0,1fr)] gap-1.5;
+    @apply grid-cols-[1.25rem_3.5rem_minmax(0,1fr)] gap-1;
   }
 
   .prize-animal-row--compact .prize-animal-number {
@@ -284,7 +284,11 @@
   }
 
   .prize-animal-badge--name-only .prize-animal-name {
-    @apply text-[8px] text-white/50;
+    @apply text-[8px] text-white/55;
+  }
+
+  .result-prizes-layout {
+    @apply grid grid-cols-[minmax(0,1.4fr)_minmax(6.5rem,1fr)] gap-3;
   }
 }
 

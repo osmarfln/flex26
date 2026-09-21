@@ -112,7 +112,7 @@ function JogosManagementPage() {
                     </div>
                   </CardHeader>
                   <CardContent className="pt-6">
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="result-prizes-layout">
                       <div className="space-y-1">
                         {(game.result.length > 0 ? game.result.slice(0, 5) : [null, null, null, null, null]).map((res: string | null, idx: number) => (
                           <PrizeAnimalRow key={idx} position={idx + 1} result={res} compact />
