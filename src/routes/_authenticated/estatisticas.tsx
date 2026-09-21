@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { drawLabel, locationName } from "@/lib/draw-order";
 import { ANIMAL_GROUPS, getAnimalByTen } from "@/lib/animals";
-import { ArrowLeft, BarChart3, Calculator, Sparkles, TrendingUp, Zap, Target, BrainCircuit, History, Flame, Clock, LayoutGrid, Hash, Users, Repeat, ArrowLeftRight, FileText, Upload, Calendar, AlertCircle, Database, CheckCircle2, XCircle, Activity, Timer, ChevronRight, Trophy, RefreshCw, Loader2, Network, Info, MapPin } from "lucide-react";
+import { ArrowLeft, BarChart3, Calculator, Sparkles, TrendingUp, Zap, Target, BrainCircuit, History, Flame, Clock, LayoutGrid, Hash, Users, Repeat, ArrowLeftRight, FileText, Upload, Calendar, AlertCircle, Database, CheckCircle2, XCircle, Activity, Timer, ChevronRight, Trophy, RefreshCw, Loader2, Network, Info, MapPin, BookOpen } from "lucide-react";
 import { CruzDoDia } from "@/components/CruzDoDia";
 import { FederalSyncPanel } from "@/components/FederalSyncPanel";
 import { FederalIntelligencePanel } from "@/components/FederalIntelligencePanel";
@@ -14,6 +14,7 @@ import { AvisoObrigatorio } from "@/components/AvisoObrigatorio";
 import { AnaliseFiltros } from "@/components/AnaliseFiltros";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { LotterySelector } from "@/components/LotterySelector";
+import { GuiaLogisticaPanel } from "@/components/GuiaLogisticaPanel";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -68,7 +69,7 @@ const MiniSparkline = ({ data, color = "#EF4444" }: { data: number[], color?: st
 };
 
 function EstatisticasPage() {
-  const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'logica-atraso' | 'ranking-completo' | 'logica-grupos' | 'repeticoes' | 'esquerda-direita' | 'puxadas' | 'analise-premium'>('quentes');
+  const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'logica-atraso' | 'ranking-completo' | 'logica-grupos' | 'repeticoes' | 'esquerda-direita' | 'puxadas' | 'analise-premium' | 'informacoes'>('quentes');
   const [location, setLocation] = useState<'rio' | 'capital' | 'federal'>('rio');
   const [date, setDate] = useState("");
   const [dateEnd, setDateEnd] = useState("");
@@ -576,6 +577,17 @@ function EstatisticasPage() {
                 </div>
                 <h3 className="text-xl font-black italic uppercase mb-2">Análise Premium</h3>
                  <p className="text-sm text-white/40 font-medium leading-snug">Inteligência aplicada aos resultados históricos: Rio, Capital & LCAP e Loteria Federal.</p>
+             </Card>
+
+             <Card
+               onClick={() => setActiveTab('informacoes')}
+               className={`dashboard-card p-6 transition-all cursor-pointer group ${activeTab === 'informacoes' ? 'border-primary/50 ring-1 ring-primary/20 shadow-lg shadow-primary/5' : 'hover:border-primary/30'}`}
+             >
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'informacoes' ? 'bg-primary text-primary-foreground' : 'bg-primary/10 text-primary'}`}>
+                   <BookOpen className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-black italic uppercase mb-2">Informações</h3>
+                <p className="text-sm text-white/40 font-medium leading-snug">Guia dos documentos, tabela dos 25 grupos e explicação dos métodos tradicionais.</p>
              </Card>
 
           </div>
@@ -1284,6 +1296,17 @@ function EstatisticasPage() {
                   exit={{ opacity: 0, y: -20 }}
                 >
                   <PuxadasPanel data={puxadasStats as any} loading={puxadasLoading} />
+                </motion.div>
+              )}
+
+              {activeTab === 'informacoes' && (
+                <motion.div
+                  key="informacoes"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                >
+                  <GuiaLogisticaPanel />
                 </motion.div>
               )}
 
