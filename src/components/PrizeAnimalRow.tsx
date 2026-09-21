@@ -6,6 +6,28 @@ interface PrizeAnimalRowProps {
   compact?: boolean;
 }
 
+interface AnimalBadgeProps {
+  result?: string | null;
+  ten?: string | null;
+  compact?: boolean;
+}
+
+export function AnimalBadge({ result, ten, compact = false }: AnimalBadgeProps) {
+  const digits = (ten ?? result ?? "").replace(/\D/g, "");
+  const animal = digits.length >= 2 ? getAnimalByTen(digits.slice(-2)) : undefined;
+
+  return (
+    <span
+      className={`prize-animal-badge ${compact ? "prize-animal-badge--compact" : ""}`}
+      title={`${animal?.name ?? "Bicho não identificado"} — grupo ${animal?.id ?? "--"}`}
+      aria-label={`${animal?.name ?? "Bicho não identificado"}, grupo ${animal?.id ?? "não identificado"}`}
+    >
+      <span aria-hidden="true" className="prize-animal-icon">{animal?.icon ?? "✦"}</span>
+      <span className="prize-animal-name">{animal?.name ?? "Grupo"}</span>
+    </span>
+  );
+}
+
 export function PrizeAnimalRow({ position, result, compact = false }: PrizeAnimalRowProps) {
   const normalized = result?.replace(/\D/g, "") ?? "";
   const isWaiting = normalized.length < 2;
@@ -19,14 +41,7 @@ export function PrizeAnimalRow({ position, result, compact = false }: PrizeAnima
       ) : (
         <>
           <span className="prize-animal-number">{normalized.padStart(4, "0")}</span>
-          <span
-            className="prize-animal-badge"
-            title={`${animal?.name ?? "Bicho não identificado"} — grupo ${animal?.id ?? "--"}`}
-            aria-label={`${animal?.name ?? "Bicho não identificado"}, grupo ${animal?.id ?? "não identificado"}`}
-          >
-            <span aria-hidden="true" className="prize-animal-icon">{animal?.icon ?? "✦"}</span>
-            <span className="prize-animal-name">{animal?.name ?? "Grupo"}</span>
-          </span>
+          <AnimalBadge result={normalized} compact={compact} />
         </>
       )}
     </div>

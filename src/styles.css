@@ -270,6 +270,14 @@
   .prize-animal-row--compact .prize-animal-badge {
     @apply px-1.5;
   }
+
+  .prize-animal-badge--compact {
+    @apply inline-flex px-1.5 py-0.5;
+  }
+
+  .prize-animal-badge--compact .prize-animal-icon {
+    @apply text-sm;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
