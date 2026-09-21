@@ -161,7 +161,7 @@ export function FederalIntelligencePanel() {
                     <td>
                       <span className="inline-flex items-center gap-2">
                         <span>{p.grupo}</span>
-                        <AnimalBadge ten={p.dezena} compact />
+                        <AnimalBadge ten={p.dezena} compact showIcon={p.position === 1} />
                       </span>
                     </td>
                   </tr>

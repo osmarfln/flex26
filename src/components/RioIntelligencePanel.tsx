@@ -288,7 +288,7 @@ export function RioIntelligencePanel({ location = "rio" }: { location?: "rio" | 
                         <td className="text-center">
                           <span className="inline-flex items-center gap-2">
                             <span>{p.grupo}</span>
-                            <AnimalBadge ten={p.dezena} compact />
+                            <AnimalBadge ten={p.dezena} compact showIcon={p.position === 1} />
                           </span>
                         </td>
                       </tr>
