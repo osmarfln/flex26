@@ -256,7 +256,7 @@ function Index() {
 
 
 
-      <main className="container mx-auto px-4 py-6 md:py-12 relative overflow-hidden">
+      <main className="container mx-auto max-w-7xl px-4 py-6 md:py-8 relative overflow-hidden">
         {/* Floating Butterfly Graphic */}
         <div className="absolute top-0 right-0 hidden xl:block opacity-10 translate-x-1/4 -translate-y-12">
            <svg width="400" height="400" viewBox="0 0 24 24" fill="none" className="text-primary">
@@ -265,24 +265,24 @@ function Index() {
         </div>
 
         {/* Welcome Section */}
-        <section className="mb-12 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          <div className="lg:col-span-8">
+        <section className="mb-8 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+          <div className="lg:col-span-9">
             <motion.div 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex items-center gap-4 mb-6"
+              className="flex items-center gap-3 mb-4"
             >
-              <div className="p-4 bg-primary/5 border border-primary/10 rounded-2xl backdrop-blur-md">
-                <GreetingIcon className="w-8 h-8 text-primary shadow-[0_0_15px_rgba(var(--primary),0.2)]" />
+              <div className="home-glass p-3 rounded-xl">
+                <GreetingIcon className="w-6 h-6 text-primary" />
               </div>
               <div>
-                <h2 className="text-2xl font-black italic tracking-tighter uppercase leading-none">
+                <h2 className="text-xl font-bold leading-none">
                   {greeting.text}{firstName ? `, ${firstName}` : ""}!
                 </h2>
-                <p className="text-white/40 font-bold text-xs uppercase tracking-widest mt-1">
+                <p className="text-white/55 font-semibold text-xs mt-1">
                   {firstName ? `É um prazer ter você aqui, ${firstName}. Fique à vontade.` : "Seja bem-vindo ao nosso espaço, fique à vontade."}
                 </p>
-                <p className="text-[10px] text-primary/40 font-black uppercase tracking-[0.3em] mt-2 border-t border-white/5 pt-2">Resultados diários automatizados Rio, Capital & LCAP e Loteria Federal via robô automatizado sem intervenção humana</p>
+                <p className="text-[10px] text-primary/80 font-bold uppercase mt-2 border-t border-white/10 pt-2">Resultados diários automatizados via robô automatizado sem intervenção humana</p>
 
 
 
@@ -291,35 +291,51 @@ function Index() {
               </div>
             </motion.div>
 
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-black tracking-tight mb-3 italic text-zinc-400">Resultados {locationName(location)}</h1>
-            <p className="text-white/40 text-sm md:text-base mb-4 font-medium italic">Resultados diários automatizados Rio, Capital & LCAP e Loteria Federal via robô automatizado sem intervenção humana. A plataforma só recebe resultados RIO, CAPITAL & LCAP e FEDERAL.</p>
-            <p className="text-white/20 text-[10px] font-bold uppercase tracking-widest mb-8">Leia o arquivo instrucoes.md em anexo e siga as instruções contidas nele.</p>
+            <div className="flex flex-col gap-4 border-b border-white/10 pb-5 md:flex-row md:items-end md:justify-between">
+              <div>
+                <h1 className="text-3xl md:text-4xl font-extrabold text-foreground">Resultados {locationName(location)}</h1>
+                <p className="text-white/55 text-sm mt-2 font-medium">Resultados oficiais organizados por horário e atualizados em tempo real.</p>
+              </div>
+              <div className="home-glass flex max-w-full gap-1 overflow-x-auto rounded-xl p-1.5 no-scrollbar" aria-label="Selecionar loteria">
+                {(['rio', 'capital', 'federal'] as const).map((item) => (
+                  <Button
+                    key={item}
+                    type="button"
+                    variant={location === item ? 'default' : 'ghost'}
+                    onClick={() => setLocation(item)}
+                    className={`h-10 shrink-0 rounded-lg px-4 text-xs font-bold ${location === item ? 'shadow-lg shadow-primary/20' : 'text-white/60 hover:bg-white/5 hover:text-white'}`}
+                  >
+                    {item === 'rio' ? 'Rio de Janeiro' : item === 'capital' ? 'Capital & LCAP' : 'Loteria Federal'}
+                  </Button>
+                ))}
+              </div>
+            </div>
 
 
 
             
-            <Card className="dashboard-card p-6 mb-8 border-primary/20 bg-primary/5">
+            <Card className="home-glass p-5 mt-5 mb-5 rounded-2xl border-primary/25 bg-primary/5">
               <div className="flex flex-wrap items-center justify-between gap-6">
                 <div className="flex items-center gap-4">
-                  <div className="p-3 bg-primary/10 rounded-2xl border border-primary/20">
-                    <Clock className="w-8 h-8 text-primary" />
+                  <div className="p-3 bg-primary/15 rounded-xl border border-primary/20 shadow-inner">
+                    <Clock className="w-6 h-6 text-primary" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-black italic uppercase tracking-tighter text-zinc-400">Próximo Resultado</h3>
-                    <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest mt-1">Sempre atualizado com o horário oficial</p>
+                    <h3 className="text-lg font-bold text-foreground">Próximo resultado</h3>
+                    <p className="text-[10px] text-white/45 font-bold uppercase mt-1">Horário oficial</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-6">
                   <div className="text-center">
                     <p className="text-[10px] text-zinc-400 font-black uppercase tracking-widest mb-1">Horário</p>
-                    <p className="text-2xl font-black text-zinc-400 font-mono">
+                    <p className="text-2xl font-extrabold text-foreground tabular-nums">
                       {drawLabel(location, nextDraw.timeType, nextDraw.date ? nextDraw.date.toISOString().slice(0, 10) : undefined) || nextDraw.timeValue}
                     </p>
                   </div>
                   <div className="h-10 w-px bg-white/10" />
                   <div className="text-center">
                     <p className="text-[10px] text-zinc-400 font-black uppercase tracking-widest mb-1">Data</p>
-                    <p className="text-2xl font-black text-zinc-400 font-mono">{format(nextDraw.date, "dd/MM")}</p>
+                    <p className="text-2xl font-extrabold text-foreground tabular-nums">{format(nextDraw.date, "dd/MM")}</p>
                   </div>
                 </div>
               </div>
@@ -327,8 +343,8 @@ function Index() {
 
             <ProximosConcursos />
 
-            <div className="flex flex-wrap gap-4 items-center mb-6">
-              <div className="flex flex-col sm:flex-row sm:items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl w-full sm:min-w-[200px] hover:border-red-500/30 transition-all cursor-pointer">
+            <div className="home-glass flex flex-wrap gap-3 items-center rounded-2xl p-3 mb-0">
+              <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl w-full sm:flex-1">
                 <Calendar className="w-5 h-5 text-white/40" />
                 <div className="flex-1">
                   <p className="text-[10px] text-white/40 font-bold uppercase tracking-wider">Data</p>
@@ -339,65 +355,44 @@ function Index() {
                 </div>
               </div>
               
-              <div className="flex flex-col sm:flex-row sm:items-center gap-3 px-4 py-3 bg-white border border-white rounded-xl w-full sm:min-w-[200px] hover:border-red-500/30 transition-all cursor-pointer relative group/select">
-                <MapPin className="w-5 h-5 text-black" />
-                <div className="flex-1">
-                  <p className="text-[10px] text-black/60 font-bold uppercase tracking-wider">Localidade</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-black uppercase text-black">{locationName(location)}</span>
-                    <ChevronDown className="w-4 h-4 text-black" />
-                  </div>
-                </div>
-                <select 
-                  className="absolute inset-0 opacity-0 cursor-pointer"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value as any)}
-                >
-                  <option value="rio">RIO DE JANEIRO</option>
-                  <option value="capital">CAPITAL & LCAP</option>
-                  <option value="federal">LOTERIA FEDERAL</option>
-                </select>
-              </div>
-
-
               <Link to="/historico">
-                <Button className="w-full sm:w-auto h-[54px] px-10 bg-white/10 hover:bg-white/20 text-white/60 border border-white/10 font-black uppercase tracking-tighter rounded-xl gap-2 active:scale-95 transition-all">
+                <Button className="w-full sm:w-auto h-[50px] px-7 font-bold rounded-xl gap-2 shadow-lg shadow-primary/20 active:scale-95 transition-all">
                   <Search className="w-5 h-5" /> Buscar resultados
                 </Button>
               </Link>
             </div>
           </div>
 
-          <div className="lg:col-span-4">
+          <div className="lg:col-span-3">
             <DigitalClock />
           </div>
         </section>
 
 
         {/* Results Grid & Most Delayed Groups */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16" id="resultados">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-12" id="resultados">
           <div className="lg:col-span-12">
             {isLoadingGames ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
                 {Array.from({ length: Math.max(getScheduleForDate(location, today).length, 2) }).map((_, i) => (
                   <div key={i} className="h-64 rounded-2xl bg-white/5 animate-pulse border border-white/10" />
                 ))}
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
                 {panels.map(({ key, schedule, game }) => {
                   // Encontra o mais recente entre os que já saíram hoje
                   const sortedGames = [...(games || [])].sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
                   const isLatest = game && (location === 'federal' ? panels[0]?.game?.id === game.id : sortedGames[0]?.id === game.id);
 
                   return (
-                    <Card key={key} className={`dashboard-card rounded-3xl overflow-hidden group hover:border-primary/40 transition-all duration-500 relative min-h-[300px] ${!game ? 'opacity-70 bg-white/[0.02]' : 'bg-card'}`}>
+                    <Card key={key} className={`home-result-card rounded-2xl overflow-hidden group relative min-h-[250px] ${!game ? 'opacity-75 bg-white/[0.035]' : 'bg-card'}`}>
                       {isLatest && (
-                        <div className="absolute inset-0 border-2 border-primary/20 rounded-3xl pointer-events-none z-10" />
+                        <div className="absolute inset-0 border-2 border-primary/35 rounded-2xl pointer-events-none z-10" />
                       )}
-                      <CardHeader className="p-6 pb-2">
+                      <CardHeader className="p-5 pb-2">
                         <div className="flex justify-between items-start mb-4">
-                          <CardTitle className="text-xl font-black italic tracking-tighter uppercase group-hover:text-primary transition-colors flex items-baseline gap-2">
+                          <CardTitle className="text-lg font-bold group-hover:text-primary transition-colors flex items-baseline gap-2">
                             {location === 'capital' ? `${schedule.label} h` : location === 'federal' ? `${schedule.label} h${schedule.dateLabel ? ` — ${schedule.dateLabel}` : ''}` : `${schedule.label} h`}
                             {location === 'rio' && <span className="text-[11px] font-bold not-italic normal-case text-white/40 tracking-normal">Rio</span>}
                           </CardTitle>
@@ -408,14 +403,14 @@ function Index() {
                           )}
                         </div>
                       </CardHeader>
-                      <CardContent className="p-5 pt-0">
+                      <CardContent className="p-5 pt-1">
                         <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-1">
                             {game ? (
                               ((game.results || []).length > 0 ? game.results.slice(0, 5) : ['----', '----', '----', '----', '----']).map((res: string, idx: number) => (
-                                <div key={idx} className="flex gap-4 text-sm font-bold items-baseline">
-                                  <span className="text-white/20 w-4">{idx + 1}º</span>
-                                  <span className="font-mono tracking-widest text-lg">{res.padStart(4, '0')}</span>
+                                <div key={idx} className="flex gap-3 text-sm font-bold items-baseline">
+                                  <span className="text-white/35 w-4">{idx + 1}º</span>
+                                  <span className="font-display tabular-nums text-xl font-extrabold">{res.padStart(4, '0')}</span>
                                 </div>
                               ))
 
@@ -430,7 +425,7 @@ function Index() {
                               ))
                             )}
                           </div>
-                          <div className="flex flex-col items-center justify-center bg-white/[0.03] rounded-2xl p-4 border border-white/5 relative group-hover:bg-white/[0.05] transition-all">
+                          <div className="flex flex-col items-center justify-center bg-white/[0.06] rounded-xl p-4 border border-white/10 relative group-hover:bg-white/[0.09] shadow-inner transition-all">
                             <div className="w-16 h-16 mb-2 text-primary flex items-center justify-center text-4xl group-hover:scale-110 transition-transform duration-500">
                                {game ? (ANIMAL_GROUPS.find(a => a.id === game.animal_group)?.icon || <Sparkles className="w-8 h-8 opacity-20" />) : <Clock className="w-8 h-8 opacity-20 text-white/20" />}
                             </div>
