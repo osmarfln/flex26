@@ -86,7 +86,7 @@ function PalpitePage() {
               </CardDescription>
             </div>
             <select 
-              className="h-9 rounded-md border border-input bg-background px-3 text-xs font-bold"
+              className="h-9 rounded-md border border-input bg-transparent px-3 text-xs font-bold"
               value={location}
               onChange={(e) => setLocation(e.target.value as any)}
             >
@@ -99,14 +99,14 @@ function PalpitePage() {
                 type="date" 
                 value={date} 
                 onChange={e => setDate(e.target.value)}
-                className="h-9 rounded-md border border-input bg-background px-3 text-[10px] font-bold outline-none color-scheme-dark"
+                className="h-9 rounded-md border border-input bg-transparent px-3 text-[10px] font-bold outline-none color-scheme-dark"
                 placeholder="Início"
               />
               <input 
                 type="date" 
                 value={dateEnd} 
                 onChange={e => setDateEnd(e.target.value)}
-                className="h-9 rounded-md border border-input bg-background px-3 text-[10px] font-bold outline-none color-scheme-dark"
+                className="h-9 rounded-md border border-input bg-transparent px-3 text-[10px] font-bold outline-none color-scheme-dark"
                 placeholder="Fim"
               />
             </div>

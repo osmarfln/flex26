@@ -5,6 +5,7 @@ import { getAnimalByGroup } from "@/lib/animals";
 import { DRAW_SCHEDULE_CAPITAL, DRAW_SCHEDULE_RIO, locationName } from "@/lib/draw-order";
 import { Loader2, Brain, Flame, Timer, Trophy, Percent, FlaskConical, Search, CalendarDays } from "lucide-react";
 import { IntelTabBar } from "@/components/IntelTabBar";
+import { AnimalBadge } from "@/components/PrizeAnimalRow";
 
 const WINDOWS = [
   { label: "10", value: 10 },
@@ -284,7 +285,12 @@ export function RioIntelligencePanel({ location = "rio" }: { location?: "rio" | 
                         <td className="text-center">{p.quatro}</td>
                         <td className="text-center">{p.centena}</td>
                         <td className="text-center font-bold text-primary">{p.dezena}</td>
-                        <td className="text-center">{p.grupo} {getAnimalByGroup(p.grupo)?.name ?? ""}</td>
+                        <td className="text-center">
+                          <span className="inline-flex items-center gap-2">
+                            <span>{p.grupo}</span>
+                            <AnimalBadge ten={p.dezena} compact />
+                          </span>
+                        </td>
                       </tr>
                     ))}
                   </tbody>

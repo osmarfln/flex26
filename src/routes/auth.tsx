@@ -114,16 +114,16 @@ function AuthPage() {
 
   if (checking) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-background">
+      <main className="flex min-h-screen items-center justify-center bg-transparent">
         <Loader2 className="h-6 w-6 animate-spin text-primary" />
       </main>
     );
   }
 
   return (
-    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background px-4 py-10">
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-transparent px-4 py-10">
       <div className="pointer-events-none absolute -top-32 left-1/2 h-96 w-96 -translate-x-1/2 rounded-full bg-primary/20 blur-3xl" />
-      <div className="relative w-full max-w-md rounded-2xl border border-border/60 bg-card/80 p-8 shadow-2xl backdrop-blur">
+      <div className="home-glass relative w-full max-w-md rounded-2xl p-8">
         <div className="mb-8 text-center">
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl border border-primary/40 bg-primary/10">
             <Lock className="h-5 w-5 text-primary" />

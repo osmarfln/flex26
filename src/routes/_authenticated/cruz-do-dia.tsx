@@ -6,9 +6,13 @@ import { UserMenu } from "@/components/layout/UserMenu";
 
 export const Route = createFileRoute("/_authenticated/cruz-do-dia")({
   head: () => ({
-    title: "Cruz do Dia — Técnica Tradicional",
     meta: [
+      { title: "Cruz do Dia — Técnica Tradicional" },
       { name: "description", content: "Ferramenta de cálculos matemáticos baseados no dia atual para geração de palpites do Jogo do Bicho." },
+      { property: "og:title", content: "Cruz do Dia — Técnica Tradicional" },
+      { property: "og:description", content: "Ferramenta tradicional de cálculos da Cruz do Dia para o Jogo do Bicho." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: CruzDoDiaPage,
@@ -16,9 +20,9 @@ export const Route = createFileRoute("/_authenticated/cruz-do-dia")({
 
 function CruzDoDiaPage() {
   return (
-    <div className="min-h-screen bg-[#0B0F19] text-white font-sans selection:bg-emerald-500/30 overflow-x-hidden">
+    <div className="min-h-screen bg-transparent text-foreground font-sans selection:bg-primary/30 overflow-x-hidden">
       {/* Top Header */}
-      <header className="border-b border-white/5 bg-[#0B0F19]/80 backdrop-blur-xl sticky top-0 z-50">
+      <header className="app-dashboard-header border-b border-white/10 bg-transparent/80 backdrop-blur-xl sticky top-0 z-50">
         <div className="container mx-auto px-4 md:px-6 h-20 flex items-center justify-between">
           <BackNav className="mr-4" />
           <div className="flex flex-col flex-1">
@@ -44,7 +48,7 @@ function CruzDoDiaPage() {
             </div>
           </div>
 
-          <div className="bg-[#0D121F] border border-white/5 rounded-3xl p-8 md:p-12 relative overflow-hidden">
+           <div className="home-glass rounded-2xl p-8 md:p-12 relative overflow-hidden">
              {/* Background Decoration */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 blur-[120px] rounded-full -mr-32 -mt-32" />
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/5 blur-[120px] rounded-full -ml-32 -mb-32" />
@@ -54,7 +58,7 @@ function CruzDoDiaPage() {
         </section>
       </main>
 
-      <footer className="border-t border-white/5 py-12 bg-[#080B14] text-center text-[10px] text-white/20 font-bold uppercase tracking-[0.2em]">
+      <footer className="border-t border-white/10 py-12 bg-transparent/70 text-center text-[10px] text-white/30 font-bold uppercase tracking-[0.2em]">
         Flex Gerenciador © 2026 • Resultados diários automatizados via robô ai automatizado sem interveção humana
       </footer>
 

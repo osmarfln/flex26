@@ -12,8 +12,19 @@ import { getResults } from '@/lib/lottery.functions';
 import { getScheduleForDate, brasiliaDateISO } from '@/lib/draw-order';
 import { getAnimalByGroup, getAnimalByTen } from '@/lib/animals';
 import { useLotteryRealtime } from '@/hooks/useLotteryRealtime';
+import { PrizeAnimalRow } from '@/components/PrizeAnimalRow';
 
 export const Route = createFileRoute("/_authenticated/jogos")({
+  head: () => ({
+    meta: [
+      { title: "Gerenciar Resultados do Rio — Flex Gerenciador" },
+      { name: "description", content: "Acompanhe os resultados automatizados do Rio, do primeiro ao quinto prêmio." },
+      { property: "og:title", content: "Gerenciar Resultados do Rio — Flex Gerenciador" },
+      { property: "og:description", content: "Resultados automatizados do Rio com identificação dos grupos e bichos." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: JogosManagementPage,
 });
 
@@ -105,10 +116,7 @@ function JogosManagementPage() {
                       {game.result.length > 0 ? (
                         <div className="grid grid-cols-1 gap-2">
                           {game.result.slice(0, 5).map((res: string, idx: number) => (
-                            <div key={idx} className="flex items-center justify-between bg-accent/50 p-2 rounded">
-                              <span className="text-xs font-bold text-muted-foreground uppercase">{idx + 1}º Prêmio</span>
-                              <span className="text-lg font-mono font-bold tracking-widest text-foreground">{res}</span>
-                            </div>
+                            <PrizeAnimalRow key={idx} position={idx + 1} result={res} />
                           ))}
                         </div>
                       ) : (

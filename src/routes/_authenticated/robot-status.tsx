@@ -194,7 +194,7 @@ function RobotStatus() {
 
   if (!adminLoading && !isAdmin) {
     return (
-      <div className="min-h-screen bg-[#0B0F19] text-white">
+      <div className="min-h-screen bg-transparent text-foreground">
         <SiteHeader subtitle="STATUS DO ROBÔ" />
         <div className="max-w-6xl mx-auto p-6 md:p-12">
           <AcessoRestrito area="Robô" />
@@ -204,7 +204,7 @@ function RobotStatus() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0B0F19] text-white">
+    <div className="min-h-screen bg-transparent text-foreground">
       <SiteHeader subtitle="STATUS DO ROBÔ" />
       <div className="max-w-6xl mx-auto p-3 sm:p-4 md:p-12">
         {/* Seletor retrátil: uma loteria por vez */}

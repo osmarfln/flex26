@@ -16,6 +16,7 @@ import {
 import { getResultsRange, type LotteryResult } from "@/lib/lottery.functions";
 import { drawLabel, getScheduleForDate } from "@/lib/draw-order";
 import { ANIMAL_GROUPS, ANIMAL_GROUPS_MAP, getAnimalByTen, getGroupFromTen } from "@/lib/animals";
+import { AnimalBadge } from "@/components/PrizeAnimalRow";
 
 const CHART_TOOLTIP = {
   contentStyle: {
@@ -625,7 +626,7 @@ export function AnaliseFiltros({ initialLocation = 'rio' }: { initialLocation?: 
                               {h.prize || "—"}
                             </td>
                             <td className={first ? "font-bold text-red-400" : "text-white/60"}>
-                              {getAnimalByTen(h.ten)?.name ?? "—"}
+                              <AnimalBadge ten={h.ten} compact />
                             </td>
                           </tr>
                         );

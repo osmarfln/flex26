@@ -62,7 +62,7 @@ export function UserMenu() {
         </button>
       </SheetTrigger>
 
-      <SheetContent side="right" className="w-72 border-white/10 bg-background p-0">
+      <SheetContent side="right" className="w-72 border-white/10 bg-transparent p-0">
         <div className="border-b border-white/10 p-5">
           <div className="flex items-center gap-3">
             <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/20 text-base font-black text-primary">

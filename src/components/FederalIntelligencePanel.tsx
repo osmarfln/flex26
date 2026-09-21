@@ -5,6 +5,7 @@ import { getAnimalByGroup } from "@/lib/animals";
 import { Loader2, Landmark, Flame, Timer, Trophy, Percent, FlaskConical, Search, ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
 import { IntelTabBar } from "@/components/IntelTabBar";
+import { AnimalBadge } from "@/components/PrizeAnimalRow";
 
 const WINDOWS = [
   { label: "10", value: 10 },
@@ -158,7 +159,10 @@ export function FederalIntelligencePanel() {
                     <td className="font-mono font-black">{p.dezena}</td>
                     <td className="font-mono">{p.unidade}</td>
                     <td>
-                      {p.grupo} {getAnimalByGroup(p.grupo)?.icon} {getAnimalByGroup(p.grupo)?.name}
+                      <span className="inline-flex items-center gap-2">
+                        <span>{p.grupo}</span>
+                        <AnimalBadge ten={p.dezena} compact />
+                      </span>
                     </td>
                   </tr>
                 ))}

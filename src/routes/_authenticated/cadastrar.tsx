@@ -150,7 +150,7 @@ function CadastrarPage() {
                 <Label htmlFor="local">Local</Label>
                 <select
                   id="local"
-                  className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                  className="h-10 w-full rounded-md border border-input bg-transparent px-3 text-sm"
                   value={location}
                   onChange={(e) => {
                     const newLoc = e.target.value as 'rio' | 'capital' | 'federal';
@@ -174,7 +174,7 @@ function CadastrarPage() {
                 <Label htmlFor="horario">Horário</Label>
                 <select
                   id="horario"
-                  className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                  className="h-10 w-full rounded-md border border-input bg-transparent px-3 text-sm"
                   value={timeType}
                   onChange={(e) => {
                     const slot = getScheduleForDate(location).find((s) => s.timeType === e.target.value);
