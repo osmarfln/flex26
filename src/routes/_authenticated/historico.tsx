@@ -322,6 +322,9 @@ function LotteryColumn({
                         ))}
                       </div>
                       <div className="flex flex-col items-center justify-center bg-white/[0.02] rounded-xl p-4 border border-white/5">
+                        <div className="w-14 h-14 mb-2 flex items-center justify-center text-3xl">
+                          {ANIMAL_ICONS[entry.res.animal_group] || ''}
+                        </div>
                         <p className="text-[9px] text-white/40 font-bold uppercase tracking-wider mb-1">Grupo</p>
                         <p className="text-2xl font-black text-primary tracking-tighter leading-none">{entry.res.animal_group || '--'}</p>
                         <p className="text-[10px] font-bold mt-2 text-white/80 uppercase tracking-tight">{entry.res.animal || '...'}</p>

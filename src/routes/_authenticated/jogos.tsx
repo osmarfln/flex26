@@ -112,31 +112,20 @@ function JogosManagementPage() {
                     </div>
                   </CardHeader>
                   <CardContent className="pt-6">
-                    <div className="space-y-4">
-                      {game.result.length > 0 ? (
-                        <div className="grid grid-cols-1 gap-2">
-                          {game.result.slice(0, 5).map((res: string, idx: number) => (
-                            <PrizeAnimalRow key={idx} position={idx + 1} result={res} />
-                          ))}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-1">
+                        {(game.result.length > 0 ? game.result.slice(0, 5) : [null, null, null, null, null]).map((res: string | null, idx: number) => (
+                          <PrizeAnimalRow key={idx} position={idx + 1} result={res} compact />
+                        ))}
+                      </div>
+                      <div className="flex flex-col items-center justify-center bg-white/[0.06] rounded-xl p-4 border border-white/10">
+                        <div className="w-16 h-16 mb-2 flex items-center justify-center text-4xl">
+                          {getAnimalByGroup(game.group)?.icon || <Clock className="w-8 h-8 opacity-20 text-white/20" />}
                         </div>
-                      ) : (
-                        <div className="h-[200px] flex items-center justify-center border-2 border-dashed rounded-lg">
-                          <p className="text-emerald-300 text-sm italic animate-pulse">Aguardando resultado...</p>
-                        </div>
-                      )}
-
-                      {game.animal && (
-                        <div className="flex items-center justify-between pt-2 border-t mt-4">
-                          <div className="flex flex-col">
-                            <span className="text-[10px] uppercase text-muted-foreground font-bold">Grupo</span>
-                            <span className="text-xl font-bold text-primary">{game.group}</span>
-                          </div>
-                          <div className="text-right">
-                            <span className="text-[10px] uppercase text-muted-foreground font-bold">Bicho</span>
-                            <div className="text-lg font-bold">{game.animal}</div>
-                          </div>
-                        </div>
-                      )}
+                        <p className="text-[10px] text-white/40 font-bold uppercase tracking-wider mb-1">Grupo</p>
+                        <p className={`text-3xl font-black tracking-tighter leading-none ${game.group ? 'text-primary' : 'text-white/10'}`}>{game.group || '--'}</p>
+                        <p className={`text-[11px] font-bold mt-2 uppercase tracking-tight ${game.animal ? 'text-white/80' : 'text-blue-400/50 italic'}`}>{game.animal || 'Aguardando'}</p>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
