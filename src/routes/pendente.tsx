@@ -73,9 +73,9 @@ function PendentePage() {
   if (!hydrated) return null;
 
   return (
-    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background px-4 py-10">
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-transparent px-4 py-10">
       <div className="pointer-events-none absolute -top-32 left-1/2 h-96 w-96 -translate-x-1/2 rounded-full bg-primary/20 blur-3xl" />
-      <div className="relative w-full max-w-md rounded-2xl border border-white/10 bg-card/80 p-8 text-center shadow-2xl backdrop-blur">
+      <div className="home-glass relative w-full max-w-md rounded-2xl p-8 text-center">
         <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-destructive/40 bg-destructive/10">
           <ShieldAlert className="h-6 w-6 text-destructive" />
         </div>
@@ -108,7 +108,7 @@ function PendentePage() {
           </div>
         </div>
 
-        <Button variant="outline" className="mt-6 w-full" onClick={handleSignOut}>
+        <Button variant="outline" className="mt-6 w-full rounded-xl shadow-inner border-white/10" onClick={handleSignOut}>
           <LogOut className="mr-2 h-4 w-4" /> Sair
         </Button>
       </div>

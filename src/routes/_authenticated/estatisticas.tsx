@@ -300,7 +300,7 @@ function EstatisticasPage() {
 
 
   return (
-    <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/30 overflow-x-hidden">
+    <div className="min-h-screen bg-transparent text-foreground font-sans selection:bg-primary/30 overflow-x-hidden">
       <SiteHeader subtitle={`CENTRAL DE ESTATÍSTICAS ${location.toUpperCase()}`} />
 
       <main className="container mx-auto px-4 py-6 md:py-12 overflow-hidden">
@@ -1654,7 +1654,7 @@ function EstatisticasPage() {
         </section>
       </main>
 
-      <footer className="border-t border-white/5 py-12 bg-background/80 text-center text-[10px] text-white/20 font-bold uppercase tracking-[0.2em]">
+      <footer className="border-t border-white/5 py-12 bg-transparent/80 text-center text-[10px] text-white/20 font-bold uppercase tracking-[0.2em]">
         Flex Gerenciador © 2026 • Resultados diários automatizados Rio, Capital & LCAP e Loteria Federal via robô automatizado sem intervenção humana
       </footer>
 

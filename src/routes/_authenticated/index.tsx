@@ -43,6 +43,7 @@ import { CruzDoDia } from "@/components/CruzDoDia";
 import { AvisoObrigatorio } from "@/components/AvisoObrigatorio";
 import { DigitalClock } from "@/components/DigitalClock";
 import { ProximosConcursos } from "@/components/ProximosConcursos";
+import { PrizeAnimalRow } from "@/components/PrizeAnimalRow";
 
 
 import { Badge } from "@/components/ui/badge";
@@ -205,10 +206,10 @@ function Index() {
   const GreetingIcon = greeting.icon;
 
   return (
-    <div className="home-dashboard min-h-screen bg-background text-foreground font-sans selection:bg-primary/30 overflow-x-hidden">
+    <div className="min-h-screen text-foreground font-sans selection:bg-primary/30 overflow-x-hidden">
       {/* Background Decorative Element */}
       {/* Top Header */}
-      <header className="border-b border-white/10 bg-background/80 backdrop-blur-2xl sticky top-0 z-50 transition-all shadow-lg shadow-black/10">
+      <header className="border-b border-white/10 bg-transparent/80 backdrop-blur-2xl sticky top-0 z-50 transition-all shadow-lg shadow-black/10">
         <div className="container mx-auto px-3 sm:px-4 md:px-6 py-2 md:h-20 flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
           <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 md:flex md:items-center md:gap-8">
             <Link to="/" className="flex min-w-0 flex-col group">
@@ -406,24 +407,12 @@ function Index() {
                       <CardContent className="p-5 pt-1">
                         <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-1">
-                            {game ? (
-                              ((game.results || []).length > 0 ? game.results.slice(0, 5) : ['----', '----', '----', '----', '----']).map((res: string, idx: number) => (
-                                <div key={idx} className="flex gap-3 text-sm font-bold items-baseline">
-                                  <span className="text-white/35 w-4">{idx + 1}º</span>
-                                  <span className="font-display tabular-nums text-xl font-extrabold">{res.padStart(4, '0')}</span>
-                                </div>
-                              ))
-
-                            ) : (
-                              [1, 2, 3, 4, 5].map((idx) => (
-                                <div key={idx} className="flex gap-4 text-sm font-bold items-baseline">
-                                  <span className="text-white/20 w-4">{idx}º</span>
-                                  <span className="font-mono tracking-widest text-lg text-blue-400/50 italic text-[11px] whitespace-nowrap">Aguardando... <span className="animate-pulse">...</span></span>
-                                </div>
-
-
-                              ))
-                            )}
+                            {(game && (game.results || []).length > 0
+                              ? game.results.slice(0, 5)
+                              : [null, null, null, null, null]
+                            ).map((res: string | null, idx: number) => (
+                              <PrizeAnimalRow key={idx} position={idx + 1} result={res} compact />
+                            ))}
                           </div>
                           <div className="flex flex-col items-center justify-center bg-white/[0.06] rounded-xl p-4 border border-white/10 relative group-hover:bg-white/[0.09] shadow-inner transition-all">
                             <div className="w-16 h-16 mb-2 text-primary flex items-center justify-center text-4xl group-hover:scale-110 transition-transform duration-500">

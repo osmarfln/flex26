@@ -222,7 +222,7 @@ function AdminPage() {
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-transparent">
         <SiteHeader subtitle="ÁREA ADMIN" />
         <main className="container mx-auto px-4 py-20 text-center">
           <ShieldCheck className="mx-auto mb-4 h-10 w-10 text-destructive" />
@@ -245,7 +245,7 @@ function AdminPage() {
   const errors = (logsQuery.data ?? []).filter((l) => l.status === "error");
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-transparent">
       <SiteHeader subtitle="ÁREA ADMIN" />
 
       <main className="container mx-auto px-3 py-6 sm:px-4 md:px-6 md:py-10">
@@ -260,7 +260,7 @@ function AdminPage() {
           </div>
           <div className="flex gap-2">
             <select 
-              className="h-10 rounded-md border border-input bg-background px-3 text-sm font-bold"
+              className="h-10 rounded-md border border-input bg-transparent px-3 text-sm font-bold"
               value={location}
               onChange={(e) => setLocation(e.target.value as any)}
             >

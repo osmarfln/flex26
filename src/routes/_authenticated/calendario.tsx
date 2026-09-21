@@ -117,7 +117,7 @@ function CalendarioPage() {
             </div>
             <div className="flex gap-2 items-center">
               <select 
-                className="h-9 rounded-md border border-input bg-background px-3 text-xs font-bold mr-4"
+                className="h-9 rounded-md border border-input bg-transparent px-3 text-xs font-bold mr-4"
                 value={location}
                 onChange={(e) => setLocation(e.target.value as any)}
               >

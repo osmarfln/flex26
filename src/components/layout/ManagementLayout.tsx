@@ -206,8 +206,8 @@ export default function ManagementLayout({ children, currentPageName }: LayoutPr
   const nivelInfo = user ? getNivelInfo(user.nivel) : getNivelInfo('prata');
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <div className="min-h-screen bg-transparent flex flex-col text-foreground">
+      <header className="app-dashboard-header sticky top-0 z-50 w-full backdrop-blur-xl">
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-4">
             <Sheet>
@@ -286,7 +286,7 @@ export default function ManagementLayout({ children, currentPageName }: LayoutPr
         </div>
       </header>
 
-      <main className="flex-1 container py-6">
+      <main className="flex-1 container py-6 md:py-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

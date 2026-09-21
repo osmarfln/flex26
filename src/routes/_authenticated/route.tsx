@@ -54,5 +54,9 @@ function AuthenticatedLayout() {
 
   useDrawNotifications(location);
 
-  return <Outlet />;
+  return (
+    <div className="min-h-screen">
+      <Outlet />
+    </div>
+  );
 }

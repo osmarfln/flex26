@@ -155,7 +155,8 @@
     @apply rounded-xl border border-white/10 bg-card backdrop-blur-sm transition-all hover:border-primary/30;
   }
 
-  .home-dashboard {
+  .home-dashboard,
+  .app-dashboard {
     --background: oklch(0.21 0.012 255);
     --foreground: oklch(0.96 0.004 255);
     --card: oklch(0.27 0.014 255 / 78%);
@@ -172,7 +173,11 @@
   .home-dashboard h1,
   .home-dashboard h2,
   .home-dashboard h3,
-  .home-dashboard .font-display {
+  .home-dashboard .font-display,
+  .app-dashboard h1,
+  .app-dashboard h2,
+  .app-dashboard h3,
+  .app-dashboard .font-display {
     font-family: var(--font-display);
     letter-spacing: 0;
   }
@@ -200,6 +205,70 @@
       0 20px 44px oklch(0.08 0.01 255 / 34%),
       0 0 24px color-mix(in oklab, var(--primary) 10%, transparent),
       inset 0 1px 0 oklch(1 0 0 / 14%);
+  }
+
+  .app-dashboard-header {
+    @apply border-white/15 bg-background/80;
+    box-shadow:
+      0 12px 30px oklch(0.08 0.01 255 / 24%),
+      inset 0 -1px 0 oklch(1 0 0 / 7%);
+  }
+
+  .app-dashboard .dashboard-card,
+  .app-dashboard [data-slot="card"] {
+    border-color: oklch(1 0 0 / 14%);
+    box-shadow:
+      0 14px 30px oklch(0.08 0.01 255 / 24%),
+      inset 0 1px 0 oklch(1 0 0 / 9%),
+      inset 0 -1px 0 oklch(0 0 0 / 16%);
+  }
+
+  .app-dashboard :is(input, textarea, select) {
+    border-radius: var(--radius-xl);
+  }
+
+  .app-dashboard > .min-h-screen {
+    background-color: transparent;
+  }
+
+  .prize-animal-row {
+    @apply grid min-h-8 grid-cols-[1.5rem_minmax(4.5rem,auto)_minmax(0,1fr)] items-center gap-2 text-sm font-bold;
+  }
+
+  .prize-animal-position {
+    @apply text-xs text-white/40;
+  }
+
+  .prize-animal-number {
+    @apply font-display text-lg font-extrabold tabular-nums text-foreground;
+  }
+
+  .prize-animal-badge {
+    @apply flex min-w-0 items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-2 py-1 shadow-inner;
+  }
+
+  .prize-animal-icon {
+    @apply shrink-0 text-base leading-none;
+  }
+
+  .prize-animal-name {
+    @apply truncate text-[9px] font-extrabold uppercase text-white/55;
+  }
+
+  .prize-animal-waiting {
+    @apply col-span-2 text-[11px] font-bold italic text-blue-300/70;
+  }
+
+  .prize-animal-row--compact {
+    @apply grid-cols-[1.25rem_4rem_minmax(0,1fr)] gap-1.5;
+  }
+
+  .prize-animal-row--compact .prize-animal-number {
+    @apply text-sm;
+  }
+
+  .prize-animal-row--compact .prize-animal-badge {
+    @apply px-1.5;
   }
 }
 

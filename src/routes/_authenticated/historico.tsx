@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ANIMAL_ICONS } from "@/lib/animals";
+import { PrizeAnimalRow } from "@/components/PrizeAnimalRow";
 import { getResults } from "@/lib/lottery.functions";
 import { useLotteryRealtime } from "@/hooks/useLotteryRealtime";
 import {
@@ -34,9 +35,13 @@ import { LotterySelector, type LotteryLocation } from "@/components/LotterySelec
 
 export const Route = createFileRoute("/_authenticated/historico")({
   head: () => ({
-    title: "Histórico de Resultados — Flex Gerenciador",
     meta: [
+      { title: "Histórico de Resultados — Flex Gerenciador" },
       { name: "description", content: "Pesquise o histórico completo de resultados Rio, Capital & LCAP e Loteria Federal por dia, mês e ano." },
+      { property: "og:title", content: "Histórico de Resultados — Flex Gerenciador" },
+      { property: "og:description", content: "Histórico completo de resultados do Rio, Capital & LCAP e Loteria Federal." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: Historico,
@@ -119,7 +124,7 @@ function Historico() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/30 overflow-x-hidden">
+    <div className="min-h-screen bg-transparent text-foreground font-sans selection:bg-primary/30 overflow-x-hidden">
       <SiteHeader subtitle="HISTÓRICO" />
 
       <main className="container mx-auto px-4 py-6 md:py-12 overflow-hidden">
@@ -312,11 +317,8 @@ function LotteryColumn({
                   {entry.res ? (
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-1">
-                        {entry.res.results.map((num: string, idx: number) => (
-                          <div key={idx} className="flex gap-3 text-xs font-bold items-baseline">
-                            <span className="text-white/20 w-4">{idx + 1}º</span>
-                            <span className="font-mono tracking-widest text-sm">{num.padStart(4, '0')}</span>
-                          </div>
+                        {entry.res.results.slice(0, 5).map((num: string, idx: number) => (
+                          <PrizeAnimalRow key={idx} position={idx + 1} result={num} compact />
                         ))}
                       </div>
                       <div className="flex flex-col items-center justify-center bg-white/[0.02] rounded-xl p-4 border border-white/5">
