@@ -405,7 +405,7 @@ function Index() {
                         </div>
                       </CardHeader>
                       <CardContent className="p-5 pt-1">
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="result-prizes-layout">
                           <div className="space-y-1">
                             {(game && (game.results || []).length > 0
                               ? game.results.slice(0, 5)

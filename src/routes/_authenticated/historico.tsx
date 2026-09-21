@@ -315,7 +315,7 @@ function LotteryColumn({
                 </CardHeader>
                 <CardContent className="p-4">
                   {entry.res ? (
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="result-prizes-layout">
                       <div className="space-y-1">
                         {entry.res.results.slice(0, 5).map((num: string, idx: number) => (
                           <PrizeAnimalRow key={idx} position={idx + 1} result={num} compact />
