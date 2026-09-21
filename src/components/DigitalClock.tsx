@@ -38,14 +38,11 @@ export function DigitalClock() {
       transition={{ duration: 0.5, ease: "easeOut" }}
       className="relative h-full"
     >
-      <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-card backdrop-blur-2xl p-6 h-full flex flex-col justify-between shadow-xl shadow-black/30">
-        {/* Futuristic gold glow ring */}
-        <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/20 blur-[80px] rounded-full pointer-events-none" />
-        <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-primary/10 blur-[70px] rounded-full pointer-events-none" />
+      <div className="home-glass relative overflow-hidden rounded-2xl p-5 h-full min-h-[220px] flex flex-col justify-between">
 
         {/* Header */}
         <div className="relative flex items-center gap-3 mb-6">
-          <div className="p-2.5 bg-primary/10 border border-primary/20 rounded-xl">
+          <div className="p-2.5 bg-primary/15 border border-primary/20 rounded-xl shadow-inner">
             <Sparkles className="w-5 h-5 text-primary" />
           </div>
           <div>
@@ -53,7 +50,7 @@ export function DigitalClock() {
               Bem-vindo
             </p>
 
-            <p className="text-xs text-white/40 font-bold uppercase tracking-wider">
+            <p className="text-xs text-white/50 font-bold uppercase">
               Painel ao vivo
             </p>
           </div>
@@ -61,11 +58,11 @@ export function DigitalClock() {
 
         {/* Time */}
         <div className="relative flex flex-col items-center justify-center flex-1 py-4">
-          <div className="flex items-center justify-center font-mono tabular-nums text-4xl md:text-3xl xl:text-4xl font-black tracking-tight text-white">
+          <div className="font-display flex items-center justify-center tabular-nums text-3xl font-extrabold text-white">
             <span>{hh}</span>
-            <span className="text-red-500 mx-1">:</span>
+            <span className="text-primary mx-1">:</span>
             <span>{mm}</span>
-            <span className="text-red-500 mx-1">:</span>
+            <span className="text-primary mx-1">:</span>
             <span>{ss}</span>
           </div>
         </div>
