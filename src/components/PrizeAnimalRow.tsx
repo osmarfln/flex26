@@ -12,17 +12,17 @@ interface AnimalBadgeProps {
   compact?: boolean;
 }
 
-export function AnimalBadge({ result, ten, compact = false }: AnimalBadgeProps) {
+export function AnimalBadge({ result, ten, compact = false, showIcon = true }: AnimalBadgeProps & { showIcon?: boolean }) {
   const digits = (ten ?? result ?? "").replace(/\D/g, "");
   const animal = digits.length >= 2 ? getAnimalByTen(digits.slice(-2)) : undefined;
 
   return (
     <span
-      className={`prize-animal-badge ${compact ? "prize-animal-badge--compact" : ""}`}
+      className={`prize-animal-badge ${compact ? "prize-animal-badge--compact" : ""} ${!showIcon ? "prize-animal-badge--name-only" : ""}`}
       title={`${animal?.name ?? "Bicho não identificado"} — grupo ${animal?.id ?? "--"}`}
       aria-label={`${animal?.name ?? "Bicho não identificado"}, grupo ${animal?.id ?? "não identificado"}`}
     >
-      <span aria-hidden="true" className="prize-animal-icon">{animal?.icon ?? "✦"}</span>
+      {showIcon && <span aria-hidden="true" className="prize-animal-icon">{animal?.icon ?? "✦"}</span>}
       <span className="prize-animal-name">{animal?.name ?? "Grupo"}</span>
     </span>
   );
@@ -41,7 +41,7 @@ export function PrizeAnimalRow({ position, result, compact = false }: PrizeAnima
       ) : (
         <>
           <span className="prize-animal-number">{normalized.padStart(4, "0")}</span>
-          <AnimalBadge result={normalized} compact={compact} />
+          <AnimalBadge result={normalized} compact={compact} showIcon={position === 1} />
         </>
       )}
     </div>
