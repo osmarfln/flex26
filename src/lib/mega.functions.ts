@@ -221,3 +221,76 @@ export const getMegaHistory = createServerFn({ method: "GET" })
       pageSize: data.pageSize,
     };
   });
+
+/**
+ * Robô de auditoria da Mega-Sena.
+ * Compara o último concurso gravado no banco com o concurso publicado agora
+ * na API oficial da CAIXA. Sem dados simulados: tudo vem das duas fontes reais.
+ */
+export const getMegaRobotStatus = createServerFn({ method: "GET" }).handler(async () => {
+  const fonte = "https://servicebus2.caixa.gov.br/portaldeloterias/api/megasena";
+  const site = "https://loterias.caixa.gov.br/Paginas/Mega-Sena.aspx";
+  const checadoEm = new Date().toISOString();
+
+  const { data: rows, error } = await supabase
+    .from("mega_sena_results" as any)
+    .select("concurso, data_apuracao, updated_at, proximo_concurso, data_proximo_concurso")
+    .order("concurso", { ascending: false })
+    .limit(1);
+  if (error) throw error;
+  const local = (rows ?? [])[0] as any | undefined;
+
+  const { count } = await supabase
+    .from("mega_sena_results" as any)
+    .select("concurso", { count: "exact", head: true });
+
+  let oficial: {
+    concurso: number;
+    data: string | null;
+    proximoConcurso: number | null;
+    dataProximo: string | null;
+  } | null = null;
+  let erroFonte: string | null = null;
+
+  try {
+    const res = await fetch(fonte, { headers: { accept: "application/json" } });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const d: any = await res.json();
+    const iso = (br: string | null | undefined) => {
+      if (!br || !/^\d{2}\/\d{2}\/\d{4}$/.test(br)) return null;
+      const [dd, mm, yyyy] = br.split("/");
+      return `${yyyy}-${mm}-${dd}`;
+    };
+    oficial = {
+      concurso: Number(d.numero),
+      data: iso(d.dataApuracao),
+      proximoConcurso: d.numeroConcursoProximo ? Number(d.numeroConcursoProximo) : null,
+      dataProximo: iso(d.dataProximoConcurso),
+    };
+  } catch (e: any) {
+    erroFonte = String(e?.message ?? e);
+  }
+
+  const atrasoConcursos =
+    oficial && local ? Math.max(0, oficial.concurso - Number(local.concurso)) : null;
+
+  return {
+    fonte,
+    site,
+    checadoEm,
+    erroFonte,
+    total: count ?? 0,
+    banco: local
+      ? {
+          concurso: Number(local.concurso),
+          data: local.data_apuracao as string,
+          atualizadoEm: local.updated_at as string,
+          proximoConcurso: local.proximo_concurso as number | null,
+          dataProximo: local.data_proximo_concurso as string | null,
+        }
+      : null,
+    oficial,
+    atrasoConcursos,
+    emDia: erroFonte === null && atrasoConcursos === 0,
+  };
+});

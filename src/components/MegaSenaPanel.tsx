@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Bar,
@@ -10,9 +10,9 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { RefreshCw, Trophy, CalendarDays, Sparkles, Info } from "lucide-react";
+import { RefreshCw, Trophy, CalendarDays, Sparkles, Info, Bot, ShieldCheck, AlertTriangle } from "lucide-react";
 import { IntelTabBar } from "@/components/IntelTabBar";
-import { getMegaLatest, getMegaStats, getMegaHistory } from "@/lib/mega.functions";
+import { getMegaLatest, getMegaStats, getMegaHistory, getMegaRobotStatus } from "@/lib/mega.functions";
 import {
   combinations,
   defaultFilters,
@@ -126,6 +126,13 @@ export function MegaSenaPanel() {
         </p>
       </div>
 
+      <RoboMega
+        onSynced={() => {
+          latestQuery.refetch();
+          statsQuery.refetch();
+        }}
+      />
+
       <IntelTabBar tabs={tabs} active={tab} onChange={setTab} />
 
       {tab === "resultado" && <ResultadoTab latest={latest} recent={latestQuery.data?.recent ?? []} />}
@@ -134,6 +141,120 @@ export function MegaSenaPanel() {
       {tab === "padroes" && <PadroesTab stats={stats} />}
       {tab === "gerador" && <GeradorTab stats={stats} ultimo={latest?.dezenas ?? []} />}
       {tab === "historico" && <HistoricoTab />}
+    </div>
+  );
+}
+
+const dataHoraBR = (iso: string | null | undefined) => {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "—";
+  return d.toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo", dateStyle: "short", timeStyle: "medium" });
+};
+
+/** Robô de auditoria: confere, em tempo real, o banco contra a fonte oficial da CAIXA. */
+function RoboMega({ onSynced }: { onSynced: () => void }) {
+  const [autoMsg, setAutoMsg] = useState<string | null>(null);
+  const corrigindo = useRef(false);
+
+  const statusQuery = useQuery({
+    queryKey: ["mega-robot"],
+    queryFn: () => getMegaRobotStatus(),
+    refetchInterval: 60_000,
+    refetchOnWindowFocus: true,
+  });
+  const st = statusQuery.data;
+
+  useEffect(() => {
+    if (!st || corrigindo.current) return;
+    if (st.erroFonte || st.atrasoConcursos === null || st.atrasoConcursos <= 0) return;
+    corrigindo.current = true;
+    setAutoMsg("Concurso novo encontrado na CAIXA — o robô está importando automaticamente...");
+    fetch("/api/public/sync-megasena", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ backfill: true, batch: 50 }),
+    })
+      .then((r) => r.json())
+      .then((j: any) => {
+        setAutoMsg(
+          j?.success
+            ? `Robô importou ${j.synced} concurso(s) da fonte oficial.`
+            : `O robô não conseguiu importar agora: ${j?.error ?? "fonte indisponível"}.`,
+        );
+        statusQuery.refetch();
+        onSynced();
+      })
+      .catch((e) => setAutoMsg(`O robô não conseguiu importar agora: ${String(e?.message ?? e)}`))
+      .finally(() => {
+        corrigindo.current = false;
+      });
+  }, [st?.atrasoConcursos, st?.erroFonte]);
+
+  const ok = !!st?.emDia;
+  const tone = st?.erroFonte ? "text-amber-400" : ok ? "text-emerald-400" : "text-sky-400";
+
+  return (
+    <div className="dashboard-card p-5">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h3 className="flex items-center gap-2 text-sm font-black uppercase tracking-wide text-white/80">
+          <Bot className={`h-5 w-5 ${tone}`} /> Robô de verificação — Mega-Sena
+        </h3>
+        <button
+          onClick={() => statusQuery.refetch()}
+          className="inline-flex items-center gap-2 rounded-xl bg-white/[0.06] px-3 py-1.5 text-[11px] font-black uppercase tracking-wide text-white/70 hover:bg-white/10"
+        >
+          <RefreshCw className={`h-3.5 w-3.5 ${statusQuery.isFetching ? "animate-spin" : ""}`} /> Verificar agora
+        </button>
+      </div>
+
+      {!st ? (
+        <p className="mt-4 text-sm text-white/50">Consultando a fonte oficial...</p>
+      ) : (
+        <>
+          <div className="mt-4 flex items-start gap-2 rounded-xl bg-white/[0.04] p-3">
+            {st.erroFonte ? (
+              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
+            ) : (
+              <ShieldCheck className={`mt-0.5 h-4 w-4 shrink-0 ${tone}`} />
+            )}
+            <p className={`text-sm font-bold ${tone}`}>
+              {st.erroFonte
+                ? `Fonte oficial indisponível no momento (${st.erroFonte}). Os números exibidos são os últimos confirmados.`
+                : ok
+                  ? "Resultados conferidos e iguais aos da fonte oficial da CAIXA."
+                  : `A fonte oficial já publicou ${st.atrasoConcursos} concurso(s) à frente — importando automaticamente.`}
+            </p>
+          </div>
+
+          <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <Info2 label="Origem dos resultados" value="CAIXA Econômica Federal — Portal Loterias (API oficial)" />
+            <Info2
+              label="Último concurso na fonte oficial"
+              value={st.oficial ? `${st.oficial.concurso} · ${dataBR(st.oficial.data)}` : "indisponível"}
+            />
+            <Info2
+              label="Último concurso nesta plataforma"
+              value={st.banco ? `${st.banco.concurso} · ${dataBR(st.banco.data)}` : "nenhum"}
+            />
+            <Info2
+              label="Próximo sorteio"
+              value={
+                st.oficial?.proximoConcurso
+                  ? `${st.oficial.proximoConcurso} · ${dataBR(st.oficial.dataProximo)}`
+                  : "a confirmar"
+              }
+            />
+            <Info2 label="Última atualização dos dados" value={dataHoraBR(st.banco?.atualizadoEm)} />
+            <Info2 label="Última verificação do robô" value={dataHoraBR(st.checadoEm)} />
+            <Info2 label="Concursos guardados" value={`${st.total.toLocaleString("pt-BR")} sorteios oficiais`} />
+            <Info2 label="Frequência da verificação" value="Automática a cada 1 minuto" />
+          </div>
+
+          <p className="mt-3 break-all text-[11px] text-white/40">Endereço da fonte: {st.fonte}</p>
+          {autoMsg && <p className="mt-2 text-[11px] text-white/60">{autoMsg}</p>}
+        </>
+      )}
     </div>
   );
 }
@@ -264,6 +385,9 @@ function FrequenciaTab({ stats }: { stats: any }) {
           </BarChart>
         </ResponsiveContainer>
       </ChartCard>
+      <ChartCard title="Frequência por grupo de dezenas (01-10, 11-20, ...)">
+        <SimpleBars rows={grupoRows(stats, "count")} color="#f59e0b" />
+      </ChartCard>
       <div className="grid gap-4 lg:grid-cols-2">
         <NumberList title="Mais sorteadas" rows={stats.hot} metric={(r: any) => `${r.count}x · ${r.percent.toFixed(1)}%`} />
         <NumberList title="Menos sorteadas" rows={stats.cold} metric={(r: any) => `${r.count}x · ${r.percent.toFixed(1)}%`} />
@@ -288,6 +412,20 @@ function AtrasosTab({ stats }: { stats: any }) {
             <YAxis tick={{ fontSize: 10, fill: "rgba(255,255,255,0.5)" }} />
             <Tooltip contentStyle={{ background: "#0D121F", border: "1px solid rgba(255,255,255,0.1)" }} />
             <Bar dataKey="value" fill="#60a5fa" radius={[4, 4, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </ChartCard>
+      <ChartCard title="Atraso médio por grupo de dezenas (em concursos)">
+        <SimpleBars rows={grupoRows(stats, "delay")} color="#a78bfa" />
+      </ChartCard>
+      <ChartCard title="Atraso atual de todas as 60 dezenas">
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={stats.numbers.map((n: any) => ({ name: String(n.numero).padStart(2, "0"), value: n.delay }))}>
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+            <XAxis dataKey="name" tick={{ fontSize: 9, fill: "rgba(255,255,255,0.5)" }} interval={0} angle={-90} height={40} />
+            <YAxis tick={{ fontSize: 10, fill: "rgba(255,255,255,0.5)" }} />
+            <Tooltip contentStyle={{ background: "#0D121F", border: "1px solid rgba(255,255,255,0.1)" }} />
+            <Bar dataKey="value" fill="#22d3ee" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </ChartCard>
@@ -351,6 +489,20 @@ function PadroesTab({ stats }: { stats: any }) {
       </div>
     </div>
   );
+}
+
+/** Soma (count) ou média (delay) por grupo de dez dezenas, direto do histórico real. */
+function grupoRows(stats: any, key: "count" | "delay") {
+  return Array.from({ length: 6 }, (_, g) => {
+    const ini = g * 10 + 1;
+    const fim = ini + 9;
+    const nums = stats.numbers.filter((n: any) => n.numero >= ini && n.numero <= fim);
+    const soma = nums.reduce((acc: number, n: any) => acc + n[key], 0);
+    return {
+      name: `${String(ini).padStart(2, "0")}-${fim}`,
+      value: key === "delay" ? Math.round((soma / (nums.length || 1)) * 10) / 10 : soma,
+    };
+  });
 }
 
 function SimpleBars({ rows, color }: { rows: { name: string; value: number }[]; color: string }) {
