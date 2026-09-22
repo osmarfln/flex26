@@ -27,6 +27,7 @@ import { Route as AuthenticatedJogosRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedPalpiteRouteImport } from './routes/_authenticated/palpite'
 import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated/perfil'
 import { Route as AuthenticatedRobotStatusRouteImport } from './routes/_authenticated/robot-status'
+import { Route as ApiPublicSyncMegasenaRouteImport } from './routes/api/public/sync-megasena'
 import { Route as ApiPublicSyncResultsRouteImport } from './routes/api/public/sync-results'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -121,6 +122,11 @@ const AuthenticatedRobotStatusRoute =
     path: '/robot-status',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiPublicSyncMegasenaRoute = ApiPublicSyncMegasenaRouteImport.update({
+  id: '/api/public/sync-megasena',
+  path: '/api/public/sync-megasena',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicSyncResultsRoute = ApiPublicSyncResultsRouteImport.update({
   id: '/api/public/sync-results',
   path: '/api/public/sync-results',
@@ -145,6 +151,7 @@ export interface FileRoutesByFullPath {
   '/palpite': typeof AuthenticatedPalpiteRoute
   '/perfil': typeof AuthenticatedPerfilRoute
   '/robot-status': typeof AuthenticatedRobotStatusRoute
+  '/api/public/sync-megasena': typeof ApiPublicSyncMegasenaRoute
   '/api/public/sync-results': typeof ApiPublicSyncResultsRoute
 }
 export interface FileRoutesByTo {
@@ -165,6 +172,7 @@ export interface FileRoutesByTo {
   '/perfil': typeof AuthenticatedPerfilRoute
   '/robot-status': typeof AuthenticatedRobotStatusRoute
   '/': typeof AuthenticatedIndexRoute
+  '/api/public/sync-megasena': typeof ApiPublicSyncMegasenaRoute
   '/api/public/sync-results': typeof ApiPublicSyncResultsRoute
 }
 export interface FileRoutesById {
@@ -187,6 +195,7 @@ export interface FileRoutesById {
   '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
   '/_authenticated/robot-status': typeof AuthenticatedRobotStatusRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/api/public/sync-megasena': typeof ApiPublicSyncMegasenaRoute
   '/api/public/sync-results': typeof ApiPublicSyncResultsRoute
 }
 export interface FileRouteTypes {
@@ -209,6 +218,7 @@ export interface FileRouteTypes {
     | '/palpite'
     | '/perfil'
     | '/robot-status'
+    | '/api/public/sync-megasena'
     | '/api/public/sync-results'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -229,6 +239,7 @@ export interface FileRouteTypes {
     | '/perfil'
     | '/robot-status'
     | '/'
+    | '/api/public/sync-megasena'
     | '/api/public/sync-results'
   id:
     | '__root__'
@@ -250,6 +261,7 @@ export interface FileRouteTypes {
     | '/_authenticated/perfil'
     | '/_authenticated/robot-status'
     | '/_authenticated/'
+    | '/api/public/sync-megasena'
     | '/api/public/sync-results'
   fileRoutesById: FileRoutesById
 }
@@ -258,6 +270,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   PendenteRoute: typeof PendenteRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  ApiPublicSyncMegasenaRoute: typeof ApiPublicSyncMegasenaRoute
   ApiPublicSyncResultsRoute: typeof ApiPublicSyncResultsRoute
 }
 
@@ -389,6 +402,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRobotStatusRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/sync-megasena': {
+      id: '/api/public/sync-megasena'
+      path: '/api/public/sync-megasena'
+      fullPath: '/api/public/sync-megasena'
+      preLoaderRoute: typeof ApiPublicSyncMegasenaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/sync-results': {
       id: '/api/public/sync-results'
       path: '/api/public/sync-results'
@@ -441,6 +461,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   PendenteRoute: PendenteRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  ApiPublicSyncMegasenaRoute: ApiPublicSyncMegasenaRoute,
   ApiPublicSyncResultsRoute: ApiPublicSyncResultsRoute,
 }
 export const routeTree = rootRouteImport

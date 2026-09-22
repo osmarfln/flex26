@@ -15,6 +15,7 @@ import { AnaliseFiltros } from "@/components/AnaliseFiltros";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { LotterySelector } from "@/components/LotterySelector";
 import { AcoesEstrategicasPanel } from "@/components/AcoesEstrategicasPanel";
+import { MegaSenaPanel } from "@/components/MegaSenaPanel";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -69,7 +70,7 @@ const MiniSparkline = ({ data, color = "#EF4444" }: { data: number[], color?: st
 };
 
 function EstatisticasPage() {
-  const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'logica-atraso' | 'ranking-completo' | 'logica-grupos' | 'repeticoes' | 'esquerda-direita' | 'puxadas' | 'acoes-estrategicas' | 'analise-premium'>('quentes');
+  const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'logica-atraso' | 'ranking-completo' | 'logica-grupos' | 'repeticoes' | 'esquerda-direita' | 'puxadas' | 'acoes-estrategicas' | 'mega-sena' | 'analise-premium'>('quentes');
   const [location, setLocation] = useState<'rio' | 'capital' | 'federal'>('rio');
   const [date, setDate] = useState("");
   const [dateEnd, setDateEnd] = useState("");
@@ -577,6 +578,17 @@ function EstatisticasPage() {
                 </div>
                 <h3 className="text-xl font-black italic uppercase mb-2">Ações Estratégicas</h3>
                 <p className="text-sm text-white/40 font-medium leading-snug">Grupo, dezena e bicho mais atrasados com sugestões de jogos atualizadas.</p>
+             </Card>
+
+             <Card
+               onClick={() => setActiveTab('mega-sena')}
+               className={`bg-[#0D121F] border-white/10 rounded-2xl p-6 transition-all cursor-pointer group ${activeTab === 'mega-sena' ? 'border-emerald-400/50 ring-1 ring-emerald-400/20' : 'hover:border-emerald-400/30'}`}
+             >
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'mega-sena' ? 'bg-emerald-500 text-black' : 'bg-emerald-500/10 text-emerald-400'}`}>
+                   <Trophy className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-black italic uppercase mb-2">Mega-Sena</h3>
+                <p className="text-sm text-white/40 font-medium leading-snug">Resultados oficiais da CAIXA, estatísticas completas e gerador transparente de jogos.</p>
              </Card>
 
              <Card 
@@ -1504,6 +1516,17 @@ function EstatisticasPage() {
                   exit={{ opacity: 0, y: -20 }}
                 >
                   <AcoesEstrategicasPanel location={location} />
+                </motion.div>
+              )}
+
+              {activeTab === 'mega-sena' && (
+                <motion.div
+                  key="mega-sena"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                >
+                  <MegaSenaPanel />
                 </motion.div>
               )}
 
