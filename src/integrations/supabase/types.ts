@@ -119,6 +119,66 @@ export type Database = {
         }
         Relationships: []
       }
+      mega_sena_results: {
+        Row: {
+          acumulou: boolean
+          concurso: number
+          created_at: string
+          data_apuracao: string
+          data_proximo_concurso: string | null
+          dezenas: number[]
+          dezenas_ordem_sorteio: number[] | null
+          ganhadores_sena: number | null
+          local_sorteio: string | null
+          municipio_uf: string | null
+          premio_sena: number | null
+          proximo_concurso: number | null
+          rateio: Json | null
+          updated_at: string
+          valor_acumulado: number | null
+          valor_arrecadado: number | null
+          valor_estimado_proximo: number | null
+        }
+        Insert: {
+          acumulou?: boolean
+          concurso: number
+          created_at?: string
+          data_apuracao: string
+          data_proximo_concurso?: string | null
+          dezenas: number[]
+          dezenas_ordem_sorteio?: number[] | null
+          ganhadores_sena?: number | null
+          local_sorteio?: string | null
+          municipio_uf?: string | null
+          premio_sena?: number | null
+          proximo_concurso?: number | null
+          rateio?: Json | null
+          updated_at?: string
+          valor_acumulado?: number | null
+          valor_arrecadado?: number | null
+          valor_estimado_proximo?: number | null
+        }
+        Update: {
+          acumulou?: boolean
+          concurso?: number
+          created_at?: string
+          data_apuracao?: string
+          data_proximo_concurso?: string | null
+          dezenas?: number[]
+          dezenas_ordem_sorteio?: number[] | null
+          ganhadores_sena?: number | null
+          local_sorteio?: string | null
+          municipio_uf?: string | null
+          premio_sena?: number | null
+          proximo_concurso?: number | null
+          rateio?: Json | null
+          updated_at?: string
+          valor_acumulado?: number | null
+          valor_arrecadado?: number | null
+          valor_estimado_proximo?: number | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           approved_at: string | null
