@@ -339,6 +339,13 @@ export function FederalIntelligencePanel() {
       </div>
       )}
 
+      {tab === "firstPrize" && (data as any).firstPrize && (
+        <FirstPrizeDelayPanel
+          data={(data as any).firstPrize}
+          title="Grupos em Atraso — Loteria Federal (1º prêmio)"
+        />
+      )}
+
       {/* Rankings de grupos */}
       {tab === "groupsDelayed" && (
       <div className="space-y-4">
