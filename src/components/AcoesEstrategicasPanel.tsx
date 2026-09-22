@@ -75,7 +75,7 @@ export function AcoesEstrategicasPanel({ location }: { location: "rio" | "capita
         </div>
 
         <div className="dashboard-card p-5 space-y-2">
-          <h3 className="text-sm uppercase font-bold text-white/60">Bichos em alta (40 concursos)</h3>
+          <h3 className="text-sm uppercase font-bold text-white/60">Bichos em alta (últimos 20 concursos)</h3>
           {data.hotGroups.map((g) => (
             <div key={g.group} className="flex items-center justify-between rounded-lg bg-white/5 px-3 py-2 text-sm">
               <span>
