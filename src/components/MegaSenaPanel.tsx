@@ -126,6 +126,13 @@ export function MegaSenaPanel() {
         </p>
       </div>
 
+      <RoboMega
+        onSynced={() => {
+          latestQuery.refetch();
+          statsQuery.refetch();
+        }}
+      />
+
       <IntelTabBar tabs={tabs} active={tab} onChange={setTab} />
 
       {tab === "resultado" && <ResultadoTab latest={latest} recent={latestQuery.data?.recent ?? []} />}
