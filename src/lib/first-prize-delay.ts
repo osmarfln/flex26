@@ -229,4 +229,4 @@ export function buildFirstPrizeDelay(
   };
 }
 
-export { tensOfGroup };
+
