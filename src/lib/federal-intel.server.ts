@@ -1,4 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
+import { DRAW_SCHEDULE_FEDERAL } from "./draw-order";
+import { buildFirstPrizeDelay } from "./first-prize-delay";
 
 /**
  * Inteligência estatística da LOTERIA FEDERAL.
@@ -439,8 +441,12 @@ export async function buildFederalIntel(input: FederalIntelInput) {
   const latest = list[0] ?? null;
   const topN = Math.max(3, Math.min(25, input.topN ?? 10));
 
+  // Atraso por 1º prêmio sobre todo o histórico Federal (não depende dos filtros)
+  const firstPrize = buildFirstPrizeDelay(all as any, DRAW_SCHEDULE_FEDERAL);
+
   return {
     generatedAt: new Date().toISOString(),
+    firstPrize,
     filters: {
       position,
       weekday: input.weekday ?? "all",

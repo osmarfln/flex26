@@ -11,6 +11,7 @@ import {
   tensOfGroup,
 } from "./federal-intel.server";
 import { DRAW_SCHEDULE_CAPITAL, DRAW_SCHEDULE_RIO, drawLabel, getNextDraw } from "./draw-order";
+import { buildFirstPrizeDelay } from "./first-prize-delay";
 
 /**
  * Inteligência estatística das abas ANÁLISE RIO e CAPITAL & LCAP.
@@ -214,8 +215,14 @@ export async function buildRioIntel(input: RioIntelInput) {
   const next = getNextDraw(location);
   const topN = Math.max(3, Math.min(25, input.topN ?? 10));
 
+  // Atraso por 1º prêmio: usa TODO o histórico carregado da loteria,
+  // independente dos filtros de posição/janela, para que o ranking só mude
+  // quando o grupo/dezena realmente sair no 1º prêmio.
+  const firstPrize = buildFirstPrizeDelay(all, schedule);
+
   return {
     generatedAt: new Date().toISOString(),
+    firstPrize,
     filters: {
       position,
       faixa,

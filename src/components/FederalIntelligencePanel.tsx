@@ -5,6 +5,7 @@ import { getAnimalByGroup } from "@/lib/animals";
 import { Loader2, Landmark, Flame, Timer, Trophy, Percent, FlaskConical, Search, ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
 import { IntelTabBar } from "@/components/IntelTabBar";
+import { FirstPrizeDelayPanel } from "@/components/FirstPrizeDelayPanel";
 import { AnimalBadge } from "@/components/PrizeAnimalRow";
 
 const WINDOWS = [
@@ -55,7 +56,7 @@ export function FederalIntelligencePanel() {
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<string | null>(null);
   const [showBacktest, setShowBacktest] = useState(false);
-  const [tab, setTab] = useState<"overview" | "tens" | "groupsDelayed" | "groupsHot" | "combined">("overview");
+  const [tab, setTab] = useState<"overview" | "tens" | "firstPrize" | "groupsDelayed" | "groupsHot" | "combined">("overview");
 
   const { data, isLoading, isFetching } = useQuery({
     queryKey: ["federal-intel", position, weekday, windowSize, topN],
@@ -189,6 +190,7 @@ export function FederalIntelligencePanel() {
         tabs={[
           { id: "overview" as const, label: "Visão geral" },
           { id: "tens" as const, label: `Ranking completo de dezenas — amostra de ${data.filters.sampleSize} extrações` },
+          { id: "firstPrize" as const, label: "Grupos em Atraso (1º prêmio)" },
           { id: "groupsDelayed" as const, label: "Grupos mais atrasados" },
           { id: "groupsHot" as const, label: "Grupos mais puxados" },
           { id: "combined" as const, label: "Atraso elevado + grupo atrasado" },
@@ -336,6 +338,13 @@ export function FederalIntelligencePanel() {
           </div>
         )}
       </div>
+      )}
+
+      {tab === "firstPrize" && (data as any).firstPrize && (
+        <FirstPrizeDelayPanel
+          data={(data as any).firstPrize}
+          title="Grupos em Atraso — Loteria Federal (1º prêmio)"
+        />
       )}
 
       {/* Rankings de grupos */}
