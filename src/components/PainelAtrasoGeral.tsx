@@ -34,8 +34,8 @@ function Row({ item }: { item: DelayItem }) {
           {item.value}
         </span>
         <div className="min-w-0">
-          <p className="truncate text-xs font-bold uppercase tracking-wide">{item.label}</p>
-          <p className="truncate text-[10px] font-semibold uppercase tracking-widest text-white/40">
+          <p className="text-xs font-bold uppercase tracking-wide break-words">{item.label}</p>
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-white/40 break-words">
             Último: {fmt(item.lastDate)} · {item.lastTimeLabel ?? "sem registro"}
           </p>
         </div>

@@ -222,7 +222,7 @@ export function RioIntelligencePanel({ location = "rio" }: { location?: "rio" | 
             ].map((c) => (
               <div key={c.label} className="dashboard-card p-3 sm:p-4 min-w-0">
                 <c.icon className="w-5 h-5 text-primary mb-2" />
-                <p className="text-[10px] sm:text-[11px] uppercase text-white/40 font-bold truncate">{c.label}</p>
+                <p className="text-[10px] sm:text-[11px] uppercase text-white/40 font-bold break-words">{c.label}</p>
                 <p className="text-base sm:text-lg font-black text-white break-words">{c.value}</p>
                 <p className="text-[11px] sm:text-xs text-white/50 break-words">{c.sub}</p>
               </div>

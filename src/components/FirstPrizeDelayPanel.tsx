@@ -182,7 +182,7 @@ export function FirstPrizeDelayPanel({
                   <p className="flex items-center gap-2 text-xs font-black uppercase text-white/60">
                     <Clock className="w-3.5 h-3.5" /> {f.label} · {f.editions} extrações
                   </p>
-                  <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
+                  <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                     <div>
                       <p className="text-[10px] uppercase font-bold text-white/40">Grupo mais atrasado</p>
                       <p className="font-black text-white">

@@ -474,7 +474,7 @@ function Info({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-xl border border-white/10 bg-black/20 px-3 py-2">
       <p className="text-[9px] font-black uppercase tracking-widest text-white/40">{label}</p>
-      <p className="truncate text-xs font-bold text-white">{value}</p>
+      <p className="text-xs font-bold text-white break-words">{value}</p>
     </div>
   );
 }
