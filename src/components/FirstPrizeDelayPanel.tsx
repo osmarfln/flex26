@@ -67,8 +67,62 @@ export function FirstPrizeDelayPanel({
         ]}
       />
 
+      {/* CELULAR: lista em cartões, nomes completos e rótulos por extenso */}
       {view !== "horarios" && (
-        <div className="dashboard-card p-4 overflow-x-auto">
+        <div className="space-y-3 lg:hidden">
+          {rows.map((r, i) => {
+            const animal =
+              view === "dezenas" ? getAnimalByTen(r.value) : getAnimalByGroup(r.value);
+            return (
+              <div key={r.value} className="dashboard-card p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-[11px] font-bold uppercase tracking-widest text-white/40">
+                      {i + 1}º no ranking · {view === "dezenas" ? "Dezena" : "Grupo"} {r.value}
+                    </p>
+                    <p className="text-lg font-black leading-tight text-white break-words">
+                      {animal?.icon ?? ""} {animal?.name ?? ""}
+                    </p>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <p className={`text-2xl font-black leading-none ${tone(r)}`}>{r.delay}</p>
+                    <p className="text-[11px] font-bold uppercase text-white/40">concursos</p>
+                  </div>
+                </div>
+                <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-[13px] text-white/70">
+                  <p>
+                    Atraso em dias: <b className="text-white">{r.daysDelay === null ? "--" : `${r.daysDelay} dias`}</b>
+                  </p>
+                  <p>
+                    Ciclo médio: <b className="text-white">{num(r.avgInterval, 1)}</b>
+                  </p>
+                  <p>
+                    Índice de atraso: <b className={tone(r)}>{num(r.delayIndex)}</b>
+                  </p>
+                  <p>
+                    Maior ciclo: <b className="text-white">{r.maxDelay}</b>
+                  </p>
+                  <p>
+                    Percentil: <b className="text-white">{r.percentile}%</b>
+                  </p>
+                  <p>
+                    Vezes no 1º prêmio: <b className="text-white">{r.occurrences}</b>
+                  </p>
+                  <p className="col-span-2">
+                    Último 1º prêmio:{" "}
+                    <b className="text-white">
+                      {fmt(r.lastDate)} {r.lastTimeType ?? ""}
+                    </b>
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {view !== "horarios" && (
+        <div className="dashboard-card p-4 overflow-x-auto hidden lg:block">
           <table className="w-full text-sm min-w-[760px]">
             <thead className="text-[11px] uppercase text-white/40">
               <tr>
@@ -128,7 +182,7 @@ export function FirstPrizeDelayPanel({
                   <p className="flex items-center gap-2 text-xs font-black uppercase text-white/60">
                     <Clock className="w-3.5 h-3.5" /> {f.label} · {f.editions} extrações
                   </p>
-                  <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
+                  <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                     <div>
                       <p className="text-[10px] uppercase font-bold text-white/40">Grupo mais atrasado</p>
                       <p className="font-black text-white">
