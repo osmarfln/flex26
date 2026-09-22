@@ -10,9 +10,9 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { RefreshCw, Trophy, CalendarDays, Sparkles, Info } from "lucide-react";
+import { RefreshCw, Trophy, CalendarDays, Sparkles, Info, Bot, ShieldCheck, AlertTriangle } from "lucide-react";
 import { IntelTabBar } from "@/components/IntelTabBar";
-import { getMegaLatest, getMegaStats, getMegaHistory } from "@/lib/mega.functions";
+import { getMegaLatest, getMegaStats, getMegaHistory, getMegaRobotStatus } from "@/lib/mega.functions";
 import {
   combinations,
   defaultFilters,
