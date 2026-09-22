@@ -14,7 +14,6 @@ import { AvisoObrigatorio } from "@/components/AvisoObrigatorio";
 import { AnaliseFiltros } from "@/components/AnaliseFiltros";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { LotterySelector } from "@/components/LotterySelector";
-import { JogosStatsPanel } from "@/components/JogosStatsPanel";
 import { AcoesEstrategicasPanel } from "@/components/AcoesEstrategicasPanel";
 
 import { Badge } from "@/components/ui/badge";
@@ -70,7 +69,7 @@ const MiniSparkline = ({ data, color = "#EF4444" }: { data: number[], color?: st
 };
 
 function EstatisticasPage() {
-  const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'logica-atraso' | 'ranking-completo' | 'logica-grupos' | 'repeticoes' | 'esquerda-direita' | 'puxadas' | 'jogos' | 'acoes-estrategicas' | 'analise-premium'>('quentes');
+  const [activeTab, setActiveTab] = useState<'quentes' | 'atrasados' | 'logica-atraso' | 'ranking-completo' | 'logica-grupos' | 'repeticoes' | 'esquerda-direita' | 'puxadas' | 'acoes-estrategicas' | 'analise-premium'>('quentes');
   const [location, setLocation] = useState<'rio' | 'capital' | 'federal'>('rio');
   const [date, setDate] = useState("");
   const [dateEnd, setDateEnd] = useState("");
@@ -568,17 +567,6 @@ function EstatisticasPage() {
                   <p className="text-sm text-white/40 font-medium leading-snug">Probabilidade baseada na Tabela Tradicional e em resultados históricos.</p>
              </Card>
 
-
-             <Card
-               onClick={() => setActiveTab('jogos')}
-               className={`bg-[#0D121F] border-white/10 rounded-2xl p-6 transition-all cursor-pointer group ${activeTab === 'jogos' ? 'border-amber-400/50 ring-1 ring-amber-400/20' : 'hover:border-amber-400/30'}`}
-             >
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${activeTab === 'jogos' ? 'bg-amber-500 text-black' : 'bg-amber-500/10 text-amber-400'}`}>
-                   <Hash className="w-6 h-6" />
-                </div>
-                <h3 className="text-xl font-black italic uppercase mb-2">Jogos</h3>
-                <p className="text-sm text-white/40 font-medium leading-snug">Dezenas mais sorteadas, pares e ímpares, somas, combinações e esquerda x direita.</p>
-             </Card>
 
              <Card
                onClick={() => setActiveTab('acoes-estrategicas')}
@@ -1505,17 +1493,6 @@ function EstatisticasPage() {
 
                     </>
                   ) : null}
-                </motion.div>
-              )}
-
-              {activeTab === 'jogos' && (
-                <motion.div
-                  key="jogos"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                >
-                  <JogosStatsPanel location={location} />
                 </motion.div>
               )}
 
