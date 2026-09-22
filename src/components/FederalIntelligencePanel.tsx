@@ -189,6 +189,7 @@ export function FederalIntelligencePanel() {
         tabs={[
           { id: "overview" as const, label: "Visão geral" },
           { id: "tens" as const, label: `Ranking completo de dezenas — amostra de ${data.filters.sampleSize} extrações` },
+          { id: "firstPrize" as const, label: "Grupos em Atraso (1º prêmio)" },
           { id: "groupsDelayed" as const, label: "Grupos mais atrasados" },
           { id: "groupsHot" as const, label: "Grupos mais puxados" },
           { id: "combined" as const, label: "Atraso elevado + grupo atrasado" },
