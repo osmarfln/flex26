@@ -200,13 +200,13 @@ export const getMegaHistory = createServerFn({ method: "GET" })
       .parse(d ?? {}),
   )
   .handler(async ({ data }) => {
-    let query = supabase
-      .from("mega_sena_results" as any)
+    let query: any = (supabase as any)
+      .from("mega_sena_results")
       .select("concurso, data_apuracao, dezenas, acumulou, ganhadores_sena, premio_sena", { count: "exact" })
       .order("concurso", { ascending: false });
 
-    if (data.concurso) query = query.eq("concurso" as any, data.concurso);
-    if (data.date) query = query.eq("data_apuracao" as any, data.date);
+    if (data.concurso) query = query.eq("concurso", data.concurso);
+    if (data.date) query = query.eq("data_apuracao", data.date);
 
     const from = data.page * data.pageSize;
     const { data: rows, error, count } = await query.range(from, from + data.pageSize - 1);
