@@ -5,6 +5,7 @@ import { getAnimalByGroup } from "@/lib/animals";
 import { Loader2, Landmark, Flame, Timer, Trophy, Percent, FlaskConical, Search, ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
 import { IntelTabBar } from "@/components/IntelTabBar";
+import { FirstPrizeDelayPanel } from "@/components/FirstPrizeDelayPanel";
 import { AnimalBadge } from "@/components/PrizeAnimalRow";
 
 const WINDOWS = [
@@ -55,7 +56,7 @@ export function FederalIntelligencePanel() {
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<string | null>(null);
   const [showBacktest, setShowBacktest] = useState(false);
-  const [tab, setTab] = useState<"overview" | "tens" | "groupsDelayed" | "groupsHot" | "combined">("overview");
+  const [tab, setTab] = useState<"overview" | "tens" | "firstPrize" | "groupsDelayed" | "groupsHot" | "combined">("overview");
 
   const { data, isLoading, isFetching } = useQuery({
     queryKey: ["federal-intel", position, weekday, windowSize, topN],

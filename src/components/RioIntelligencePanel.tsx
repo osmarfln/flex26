@@ -5,6 +5,7 @@ import { getAnimalByGroup } from "@/lib/animals";
 import { DRAW_SCHEDULE_CAPITAL, DRAW_SCHEDULE_RIO, locationName } from "@/lib/draw-order";
 import { Loader2, Brain, Flame, Timer, Trophy, Percent, FlaskConical, Search, CalendarDays } from "lucide-react";
 import { IntelTabBar } from "@/components/IntelTabBar";
+import { FirstPrizeDelayPanel } from "@/components/FirstPrizeDelayPanel";
 import { AnimalBadge } from "@/components/PrizeAnimalRow";
 
 const WINDOWS = [
@@ -39,6 +40,7 @@ const TABS = [
   { id: "dia", label: "Resultados do dia" },
   { id: "atrasadas", label: "Ranking completo de dezenas" },
   { id: "puxadas", label: "Dezenas mais puxadas" },
+  { id: "primeiro-premio", label: "Grupos em Atraso (1º prêmio)" },
   { id: "grupos-atraso", label: "Grupos mais atrasados" },
   { id: "grupos-puxados", label: "Grupos mais puxados" },
   { id: "possibilidades", label: "Atraso elevado + grupo atrasado" },
@@ -388,6 +390,13 @@ export function RioIntelligencePanel({ location = "rio" }: { location?: "rio" | 
             </div>
           )}
         </div>
+      )}
+
+      {data && tab === "primeiro-premio" && (data as any).firstPrize && (
+        <FirstPrizeDelayPanel
+          data={(data as any).firstPrize}
+          title={`Grupos em Atraso — ${locationName(location)} (1º prêmio)`}
+        />
       )}
 
       {data && (tab === "grupos-atraso" || tab === "grupos-puxados") && (
