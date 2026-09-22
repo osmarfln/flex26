@@ -108,12 +108,17 @@ export const Route = createFileRoute('/api/public/sync-megasena')({
             const have = count ?? 0
             if (have < latest.numero) {
               // procura o menor intervalo ainda faltante, do mais recente para trás
-              const { data: present } = await supabase
-                .from('mega_sena_results')
-                .select('concurso')
-                .order('concurso', { ascending: false })
-                .limit(latest.numero)
-              const has = new Set<number>((present ?? []).map((r: any) => r.concurso))
+              const has = new Set<number>()
+              for (let page = 0; page < 20; page++) {
+                const { data: present } = await supabase
+                  .from('mega_sena_results')
+                  .select('concurso')
+                  .order('concurso', { ascending: false })
+                  .range(page * 1000, page * 1000 + 999)
+                const list = (present ?? []) as any[]
+                list.forEach((r) => has.add(r.concurso))
+                if (list.length < 1000) break
+              }
               const missing: number[] = []
               for (let n = latest.numero; n >= 1 && missing.length < batch; n--) {
                 if (!has.has(n)) missing.push(n)
