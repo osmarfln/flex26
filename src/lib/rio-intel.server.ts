@@ -11,6 +11,7 @@ import {
   tensOfGroup,
 } from "./federal-intel.server";
 import { DRAW_SCHEDULE_CAPITAL, DRAW_SCHEDULE_RIO, drawLabel, getNextDraw } from "./draw-order";
+import { buildFirstPrizeDelay } from "./first-prize-delay";
 
 /**
  * Inteligência estatística das abas ANÁLISE RIO e CAPITAL & LCAP.
