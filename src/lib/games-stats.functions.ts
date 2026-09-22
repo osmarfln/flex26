@@ -145,7 +145,7 @@ export const getStrategicActions = createServerFn({ method: "GET" })
           groupFirstIdx[g] = index;
           groupFirstDate[g] = draw.date;
         }
-        if (index < 40 && g) hotGroup[g] = (hotGroup[g] ?? 0) + 1;
+        if (index < 20 && g) hotGroup[g] = (hotGroup[g] ?? 0) + 1;
       }
       prizes.map(tenOf).forEach((ten) => {
         if (ten.length !== 2) return;
@@ -153,7 +153,7 @@ export const getStrategicActions = createServerFn({ method: "GET" })
           tenAnyIdx[ten] = index;
           tenAnyDate[ten] = draw.date;
         }
-        if (index < 40) hotTen[ten] = (hotTen[ten] ?? 0) + 1;
+        if (index < 20) hotTen[ten] = (hotTen[ten] ?? 0) + 1;
       });
     });
 
@@ -226,7 +226,7 @@ export const getStrategicActions = createServerFn({ method: "GET" })
           .join(" · "),
       },
       {
-        title: "Bicho em alta (últimos 40 concursos)",
+        title: "Bicho em alta (últimos 20 concursos)",
         detail: hotGroups[0]
           ? `${hotGroups[0].icon} ${hotGroups[0].animal} lidera o 1º prêmio com ${hotGroups[0].count} aparições.`
           : "Sem dados suficientes.",
