@@ -1,4 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
+import { DRAW_SCHEDULE_FEDERAL } from "./draw-order";
+import { buildFirstPrizeDelay } from "./first-prize-delay";
 
 /**
  * Inteligência estatística da LOTERIA FEDERAL.
