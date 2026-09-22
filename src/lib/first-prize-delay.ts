@@ -1,4 +1,33 @@
-import { type Contest, groupOfTen, normalizePrize, tensOfGroup } from "./federal-intel.server";
+/** Concurso já sincronizado (5 prêmios). */
+export interface Contest {
+  date: string;
+  time_type: string;
+  time_value: string | null;
+  weekday: number;
+  prizes: string[];
+}
+
+/** Grupo (01..25) de uma dezena "00".."99" — dezena 00 pertence ao grupo 25. */
+export function groupOfTen(dezena: string): string {
+  const n = Number(dezena);
+  if (!Number.isFinite(n)) return "";
+  return String(n === 0 ? 25 : Math.ceil(n / 4)).padStart(2, "0");
+}
+
+export function tensOfGroup(group: string): string[] {
+  const g = Number(group);
+  if (g === 25) return ["97", "98", "99", "00"];
+  const base = (g - 1) * 4 + 1;
+  return [base, base + 1, base + 2, base + 3].map((d) => String(d).padStart(2, "0"));
+}
+
+function normalizePrize(raw: string | number) {
+  const digits = String(raw ?? "").replace(/\D/g, "");
+  const n = Number(digits || "0");
+  const quatro = String(n % 10000).padStart(4, "0");
+  const dezena = String(n % 100).padStart(2, "0");
+  return { quatro, dezena, grupo: groupOfTen(dezena) };
+}
 
 /**
  * Atraso calculado EXCLUSIVAMENTE pelo 1º prêmio.
