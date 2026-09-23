@@ -252,15 +252,24 @@ export const getMegaRobotStatus = createServerFn({ method: "GET" }).handler(asyn
   } | null = null;
   let erroFonte: string | null = null;
 
+  const iso = (br: string | null | undefined) => {
+    if (!br || !/^\d{2}\/\d{2}\/\d{4}$/.test(br)) return null;
+    const [dd, mm, yyyy] = br.split("/");
+    return `${yyyy}-${mm}-${dd}`;
+  };
+
   try {
     const res = await fetch(fonte, { headers: { accept: "application/json" } });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const d: any = await res.json();
-    const iso = (br: string | null | undefined) => {
-      if (!br || !/^\d{2}\/\d{2}\/\d{4}$/.test(br)) return null;
-      const [dd, mm, yyyy] = br.split("/");
-      return `${yyyy}-${mm}-${dd}`;
-    };
+    let d: any = await res.json();
+    // o endpoint "último" da CAIXA fica em cache: sondamos os próximos números
+    for (let n = Number(d.numero) + 1; n <= Number(d.numero) + 8; n++) {
+      const r = await fetch(`${fonte}/${n}`, { headers: { accept: "application/json" } });
+      if (!r.ok) break;
+      const nd: any = await r.json().catch(() => null);
+      if (!nd || Number(nd.numero) !== n || !Array.isArray(nd.listaDezenas)) break;
+      d = nd;
+    }
     oficial = {
       concurso: Number(d.numero),
       data: iso(d.dataApuracao),
@@ -270,6 +279,7 @@ export const getMegaRobotStatus = createServerFn({ method: "GET" }).handler(asyn
   } catch (e: any) {
     erroFonte = String(e?.message ?? e);
   }
+
 
   const atrasoConcursos =
     oficial && local ? Math.max(0, oficial.concurso - Number(local.concurso)) : null;

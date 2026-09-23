@@ -80,7 +80,7 @@ export const Route = createFileRoute('/api/public/sync-megasena')({
 
         try {
           const body = (await request.json().catch(() => ({}))) as any
-          const latest = await fetchDraw()
+          let latest = await fetchDraw()
           if (!latest) {
             return Response.json({ success: false, error: 'Fonte oficial indisponível' }, { status: 502 })
           }
@@ -88,6 +88,17 @@ export const Route = createFileRoute('/api/public/sync-megasena')({
           const rows: any[] = []
           const latestRow = toRow(latest)
           if (latestRow) rows.push(latestRow)
+
+          // O endpoint "último concurso" da CAIXA fica em cache e às vezes atrasa.
+          // Sondamos os próximos números para pegar sorteios já publicados.
+          for (let n = latest.numero + 1; n <= latest.numero + 8; n++) {
+            const next = await fetchDraw(n)
+            if (!next || next.numero !== n) break
+            const nextRow = toRow(next)
+            if (nextRow) rows.push(nextRow)
+            latest = next
+          }
+
 
           let from: number | null = null
           let to: number | null = null
