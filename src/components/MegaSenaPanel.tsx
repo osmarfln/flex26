@@ -138,7 +138,9 @@ export function MegaSenaPanel() {
       <IntelTabBar tabs={tabs} active={tab} onChange={setTab} />
 
       {tab === "resultado" && <ResultadoTab latest={latest} recent={latestQuery.data?.recent ?? []} />}
+      {tab === "proximos" && <ProximosTab />}
       {tab === "frequencia" && <FrequenciaTab stats={stats} />}
+
       {tab === "atrasos" && <AtrasosTab stats={stats} />}
       {tab === "padroes" && <PadroesTab stats={stats} />}
       {tab === "gerador" && <GeradorTab stats={stats} ultimo={latest?.dezenas ?? []} />}
