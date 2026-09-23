@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 
 const CAIXA_API = 'https://servicebus2.caixa.gov.br/portaldeloterias/api/megasena'
 const FALLBACK_API = 'https://api.guidi.dev.br/loteria/megasena'
+const FALLBACK_API_2 = 'https://loteriascaixa-api.herokuapp.com/api/megasena'
 
 type CaixaDraw = {
   numero: number
@@ -31,6 +32,7 @@ async function fetchDraw(concurso?: number): Promise<CaixaDraw | null> {
   const urls = [
     concurso ? `${CAIXA_API}/${concurso}` : CAIXA_API,
     concurso ? `${FALLBACK_API}/${concurso}` : `${FALLBACK_API}/ultimo`,
+    concurso ? `${FALLBACK_API_2}/${concurso}` : `${FALLBACK_API_2}/latest`,
   ]
   for (const url of urls) {
     try {
@@ -38,7 +40,23 @@ async function fetchDraw(concurso?: number): Promise<CaixaDraw | null> {
         headers: { 'User-Agent': 'Mozilla/5.0', Accept: 'application/json' },
       })
       if (!res.ok) continue
-      const json = (await res.json()) as CaixaDraw
+      const raw: any = await res.json()
+      const json = raw?.loteria === 'megasena' ? {
+        numero: raw.concurso,
+        dataApuracao: raw.data,
+        listaDezenas: raw.dezenas,
+        dezenasSorteadasOrdemSorteio: raw.dezenasOrdemSorteio,
+        acumulado: raw.acumulou,
+        localSorteio: raw.local,
+        nomeMunicipioUFSorteio: raw.local,
+        valorArrecadado: raw.valorArrecadado,
+        valorAcumuladoConcurso_0_5: raw.valorAcumuladoConcurso_0_5,
+        valorAcumuladoProximoConcurso: raw.valorAcumuladoProximoConcurso,
+        valorEstimadoProximoConcurso: raw.valorEstimadoProximoConcurso,
+        dataProximoConcurso: raw.dataProximoConcurso,
+        numeroConcursoProximo: raw.proximoConcurso,
+        listaRateioPremio: (raw.premiacoes ?? []).map((p: any) => ({ faixa: p.faixa, descricaoFaixa: p.descricao, numeroDeGanhadores: p.ganhadores, valorPremio: p.valorPremio })),
+      } as CaixaDraw : raw as CaixaDraw
       if (json && typeof json.numero === 'number' && Array.isArray(json.listaDezenas)) return json
     } catch {
       // tenta a próxima fonte
