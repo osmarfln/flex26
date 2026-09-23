@@ -27,17 +27,31 @@ const PRIMES = new Set([2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 
 const MEGA_SOURCES = [
   "https://servicebus2.caixa.gov.br/portaldeloterias/api/megasena",
   "https://api.guidi.dev.br/loteria/megasena",
+  "https://loteriascaixa-api.herokuapp.com/api/megasena",
 ];
 
 async function fetchMegaDraw(concurso?: number): Promise<any> {
   const urls = MEGA_SOURCES.map((base) => concurso
     ? `${base}/${concurso}`
-    : base.includes("guidi.dev.br") ? `${base}/ultimo` : base);
+    : base.includes("guidi.dev.br") ? `${base}/ultimo`
+    : base.includes("herokuapp.com") ? `${base}/latest`
+    : base);
   for (const url of urls) {
     try {
       const response = await fetch(url, { headers: { accept: "application/json" } });
       if (!response.ok) continue;
-      const data = await response.json();
+      const raw: any = await response.json();
+      const data = raw?.loteria === "megasena" ? {
+        numero: raw.concurso,
+        dataApuracao: raw.data,
+        listaDezenas: raw.dezenas,
+        acumulado: raw.acumulou,
+        numeroConcursoProximo: raw.proximoConcurso,
+        dataProximoConcurso: raw.dataProximoConcurso,
+        valorEstimadoProximoConcurso: raw.valorEstimadoProximoConcurso,
+        valorAcumuladoProximoConcurso: raw.valorAcumuladoProximoConcurso,
+        valorAcumuladoConcurso_0_5: raw.valorAcumuladoConcurso_0_5,
+      } : raw;
       if (data && Number.isFinite(Number(data.numero)) && Array.isArray(data.listaDezenas)) return data;
     } catch {
       // tenta a próxima fonte
