@@ -92,12 +92,14 @@ export function MegaSenaPanel() {
 
   const tabs: { id: TabId; label: string }[] = [
     { id: "resultado", label: "Resultado oficial" },
+    { id: "proximos", label: "Próximos sorteios" },
     { id: "frequencia", label: "Frequência" },
     { id: "atrasos", label: "Atrasos" },
     { id: "padroes", label: "Padrões" },
     { id: "gerador", label: "Gerador de jogos" },
     { id: "historico", label: "Histórico" },
   ];
+
 
   return (
     <div className="space-y-6">
