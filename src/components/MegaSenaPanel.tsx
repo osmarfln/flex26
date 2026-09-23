@@ -12,7 +12,7 @@ import {
 } from "recharts";
 import { RefreshCw, Trophy, CalendarDays, Sparkles, Info, Bot, ShieldCheck, AlertTriangle } from "lucide-react";
 import { IntelTabBar } from "@/components/IntelTabBar";
-import { getMegaLatest, getMegaStats, getMegaHistory, getMegaRobotStatus } from "@/lib/mega.functions";
+import { getMegaLatest, getMegaStats, getMegaHistory, getMegaRobotStatus, getMegaNextDraws } from "@/lib/mega.functions";
 import {
   combinations,
   defaultFilters,
@@ -45,7 +45,7 @@ function Ball({ n, muted }: { n: number; muted?: boolean }) {
   );
 }
 
-type TabId = "resultado" | "frequencia" | "atrasos" | "padroes" | "gerador" | "historico";
+type TabId = "resultado" | "proximos" | "frequencia" | "atrasos" | "padroes" | "gerador" | "historico";
 
 export function MegaSenaPanel() {
   const [tab, setTab] = useState<TabId>("resultado");
@@ -820,4 +820,88 @@ function HistoricoTab() {
 
 function Loading() {
   return <div className="dashboard-card p-8 text-center text-white/50">Carregando dados oficiais...</div>;
+}
+
+function ProximosTab() {
+  const q = useQuery({
+    queryKey: ["mega-proximos"],
+    queryFn: () => getMegaNextDraws(),
+    refetchInterval: 60_000,
+    refetchOnWindowFocus: true,
+  });
+  const d = q.data;
+
+  if (!d) {
+    return <div className="dashboard-card p-8 text-center text-white/60">Consultando a fonte oficial da CAIXA...</div>;
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="dashboard-card p-6">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-black uppercase tracking-widest text-white/40">Próximo concurso</p>
+            <p className="text-3xl font-black tabular-nums text-emerald-400">{d.proximoConcurso ?? "—"}</p>
+            <p className="mt-1 text-sm font-bold text-white">{dataBR(d.dataProximo)}</p>
+          </div>
+          <button
+            onClick={() => q.refetch()}
+            className="inline-flex items-center gap-2 rounded-xl bg-white/[0.06] px-3 py-1.5 text-[11px] font-black uppercase tracking-wide text-white/70 hover:bg-white/10"
+          >
+            <RefreshCw className={`h-3.5 w-3.5 ${q.isFetching ? "animate-spin" : ""}`} /> Atualizar
+          </button>
+        </div>
+
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <Info2 label="Estimativa de prêmio" value={brl(d.estimativa)} highlight />
+          <Info2 label="Acumulado para o próximo" value={brl(d.acumulado)} />
+          <Info2
+            label="Último sorteio realizado"
+            value={d.ultimo ? `${d.ultimo.concurso} · ${dataBR(d.ultimo.data)}` : "—"}
+          />
+          <Info2 label="Situação" value={d.ultimo?.acumulou ? "Acumulou!" : "Houve ganhador"} />
+        </div>
+
+        <p className="mt-4 flex items-start gap-2 rounded-xl bg-white/[0.04] p-3 text-[11px] leading-relaxed text-white/60">
+          <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" />
+          Origem: {d.origem === "oficial" ? "Portal Loterias da CAIXA (consulta ao vivo)" : "último dado confirmado guardado aqui"}
+          {d.erroFonte ? ` · fonte indisponível agora (${d.erroFonte})` : ""} · verificado em {dataHoraBR(d.consultadoEm)} ·
+          atualização automática a cada 1 minuto.
+        </p>
+      </div>
+
+      <div className="dashboard-card p-6">
+        <h3 className="flex items-center gap-2 text-sm font-black uppercase tracking-wide text-white/80">
+          <CalendarDays className="h-5 w-5 text-emerald-400" /> Agenda dos próximos sorteios
+        </h3>
+        <div className="mt-4 space-y-2">
+          {d.proximos.map((p, i) => (
+            <div
+              key={`${p.concurso}-${p.data}`}
+              className={`flex flex-wrap items-center justify-between gap-3 rounded-xl p-3 ${
+                i === 0 ? "bg-emerald-500/10" : "bg-white/[0.04]"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <span className="inline-flex h-10 min-w-10 items-center justify-center rounded-xl bg-white/10 px-2 text-sm font-black tabular-nums text-white">
+                  {p.concurso ?? "—"}
+                </span>
+                <div>
+                  <p className="text-sm font-bold text-white">{dataBR(p.data)}</p>
+                  <p className="text-[11px] uppercase tracking-wide text-white/50">{p.diaSemana}</p>
+                </div>
+              </div>
+              <p className="text-sm font-black tabular-nums text-emerald-300">
+                {p.estimado !== null ? brl(p.estimado) : i === 0 ? "—" : "estimativa divulgada após o sorteio anterior"}
+              </p>
+            </div>
+          ))}
+        </div>
+        <p className="mt-3 text-[11px] text-white/40">
+          As datas seguem o calendário oficial (terças, quintas e sábados) e podem mudar em feriados ou sorteios especiais
+          anunciados pela CAIXA.
+        </p>
+      </div>
+    </div>
+  );
 }
