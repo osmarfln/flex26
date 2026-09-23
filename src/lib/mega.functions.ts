@@ -369,8 +369,9 @@ export const getMegaNextDraws = createServerFn({ method: "GET" }).handler(async 
 
   let cursor: Date;
   if (dataProximo) {
-    const [y, m, dd] = dataProximo.split("-").map(Number);
+    const [y = 1970, m = 1, dd = 1] = dataProximo.split("-").map(Number);
     cursor = new Date(Date.UTC(y, m - 1, dd));
+
   } else {
     const hoje = new Date();
     cursor = new Date(Date.UTC(hoje.getUTCFullYear(), hoje.getUTCMonth(), hoje.getUTCDate()));
