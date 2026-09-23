@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 
 const CAIXA_API = 'https://servicebus2.caixa.gov.br/portaldeloterias/api/megasena'
+const FALLBACK_API = 'https://api.guidi.dev.br/loteria/megasena'
 
 type CaixaDraw = {
   numero: number
@@ -27,18 +28,23 @@ function toISO(date: string | null): string | null {
 }
 
 async function fetchDraw(concurso?: number): Promise<CaixaDraw | null> {
-  const url = concurso ? `${CAIXA_API}/${concurso}` : CAIXA_API
-  try {
-    const res = await fetch(url, {
-      headers: { 'User-Agent': 'Mozilla/5.0', Accept: 'application/json' },
-    })
-    if (!res.ok) return null
-    const json = (await res.json()) as CaixaDraw
-    if (!json || typeof json.numero !== 'number' || !Array.isArray(json.listaDezenas)) return null
-    return json
-  } catch {
-    return null
+  const urls = [
+    concurso ? `${CAIXA_API}/${concurso}` : CAIXA_API,
+    concurso ? `${FALLBACK_API}/${concurso}` : `${FALLBACK_API}/ultimo`,
+  ]
+  for (const url of urls) {
+    try {
+      const res = await fetch(url, {
+        headers: { 'User-Agent': 'Mozilla/5.0', Accept: 'application/json' },
+      })
+      if (!res.ok) continue
+      const json = (await res.json()) as CaixaDraw
+      if (json && typeof json.numero === 'number' && Array.isArray(json.listaDezenas)) return json
+    } catch {
+      // tenta a próxima fonte
+    }
   }
+  return null
 }
 
 function toRow(d: CaixaDraw) {
