@@ -24,6 +24,28 @@ export type MegaDraw = {
 
 const PRIMES = new Set([2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59]);
 
+const MEGA_SOURCES = [
+  "https://servicebus2.caixa.gov.br/portaldeloterias/api/megasena",
+  "https://api.guidi.dev.br/loteria/megasena",
+];
+
+async function fetchMegaDraw(concurso?: number): Promise<any> {
+  const urls = MEGA_SOURCES.map((base) => concurso
+    ? `${base}/${concurso}`
+    : base.includes("guidi.dev.br") ? `${base}/ultimo` : base);
+  for (const url of urls) {
+    try {
+      const response = await fetch(url, { headers: { accept: "application/json" } });
+      if (!response.ok) continue;
+      const data = await response.json();
+      if (data && Number.isFinite(Number(data.numero)) && Array.isArray(data.listaDezenas)) return data;
+    } catch {
+      // tenta a próxima fonte
+    }
+  }
+  return null;
+}
+
 async function loadDraws(limit: number): Promise<MegaDraw[]> {
   const { data, error } = await supabase
     .from("mega_sena_results" as any)
@@ -229,6 +251,7 @@ export const getMegaHistory = createServerFn({ method: "GET" })
  */
 export const getMegaRobotStatus = createServerFn({ method: "GET" }).handler(async () => {
   const fonte = "https://servicebus2.caixa.gov.br/portaldeloterias/api/megasena";
+  const fonteFallback = "https://api.guidi.dev.br/loteria/megasena/ultimo";
   const site = "https://loterias.caixa.gov.br/Paginas/Mega-Sena.aspx";
   const checadoEm = new Date().toISOString();
 
@@ -259,22 +282,20 @@ export const getMegaRobotStatus = createServerFn({ method: "GET" }).handler(asyn
   };
 
   try {
-    const res = await fetch(fonte, { headers: { accept: "application/json" } });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    let d: any = await res.json();
+    const d = await fetchMegaDraw();
+    if (!d) throw new Error("CAIXA indisponível e fonte alternativa sem resposta");
+    let current: any = d;
     // o endpoint "último" da CAIXA fica em cache: sondamos os próximos números
-    for (let n = Number(d.numero) + 1; n <= Number(d.numero) + 8; n++) {
-      const r = await fetch(`${fonte}/${n}`, { headers: { accept: "application/json" } });
-      if (!r.ok) break;
-      const nd: any = await r.json().catch(() => null);
-      if (!nd || Number(nd.numero) !== n || !Array.isArray(nd.listaDezenas)) break;
-      d = nd;
+    for (let n = Number(current.numero) + 1; n <= Number(current.numero) + 8; n++) {
+      const nd = await fetchMegaDraw(n);
+      if (!nd || Number(nd.numero) !== n) break;
+      current = nd;
     }
     oficial = {
-      concurso: Number(d.numero),
-      data: iso(d.dataApuracao),
-      proximoConcurso: d.numeroConcursoProximo ? Number(d.numeroConcursoProximo) : null,
-      dataProximo: iso(d.dataProximoConcurso),
+      concurso: Number(current.numero),
+      data: iso(current.dataApuracao),
+      proximoConcurso: current.numeroConcursoProximo ? Number(current.numeroConcursoProximo) : null,
+      dataProximo: iso(current.dataProximoConcurso),
     };
   } catch (e: any) {
     erroFonte = String(e?.message ?? e);
@@ -285,7 +306,7 @@ export const getMegaRobotStatus = createServerFn({ method: "GET" }).handler(asyn
     oficial && local ? Math.max(0, oficial.concurso - Number(local.concurso)) : null;
 
   return {
-    fonte,
+    fonte: erroFonte ? fonteFallback : fonte,
     site,
     checadoEm,
     erroFonte,
@@ -340,24 +361,22 @@ export const getMegaNextDraws = createServerFn({ method: "GET" }).handler(async 
   let acumulou: boolean = !!local?.acumulou;
 
   try {
-    const res = await fetch(fonte, { headers: { accept: "application/json" } });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    let d: any = await res.json();
-    for (let n = Number(d.numero) + 1; n <= Number(d.numero) + 8; n++) {
-      const r = await fetch(`${fonte}/${n}`, { headers: { accept: "application/json" } });
-      if (!r.ok) break;
-      const nd: any = await r.json().catch(() => null);
-      if (!nd || Number(nd.numero) !== n || !Array.isArray(nd.listaDezenas)) break;
-      d = nd;
+    const d = await fetchMegaDraw();
+    if (!d) throw new Error("CAIXA indisponível e fonte alternativa sem resposta");
+    let current: any = d;
+    for (let n = Number(current.numero) + 1; n <= Number(current.numero) + 8; n++) {
+      const nd = await fetchMegaDraw(n);
+      if (!nd || Number(nd.numero) !== n) break;
+      current = nd;
     }
     origem = "oficial";
-    ultimoConcurso = Number(d.numero);
-    ultimaData = iso(d.dataApuracao);
-    acumulou = !!d.acumulado;
-    proximoConcurso = d.numeroConcursoProximo ? Number(d.numeroConcursoProximo) : Number(d.numero) + 1;
-    dataProximo = iso(d.dataProximoConcurso);
-    estimativa = d.valorEstimadoProximoConcurso ?? null;
-    acumulado = d.valorAcumuladoProximoConcurso ?? d.valorAcumuladoConcurso_0_5 ?? null;
+    ultimoConcurso = Number(current.numero);
+    ultimaData = iso(current.dataApuracao);
+    acumulou = !!current.acumulado;
+    proximoConcurso = current.numeroConcursoProximo ? Number(current.numeroConcursoProximo) : Number(current.numero) + 1;
+    dataProximo = iso(current.dataProximoConcurso);
+    estimativa = current.valorEstimadoProximoConcurso ?? null;
+    acumulado = current.valorAcumuladoProximoConcurso ?? current.valorAcumuladoConcurso_0_5 ?? null;
   } catch (e: any) {
     erroFonte = String(e?.message ?? e);
   }
