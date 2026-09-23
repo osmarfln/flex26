@@ -212,7 +212,7 @@ function RoboMega({ onSynced }: { onSynced: () => void }) {
         </button>
       </div>
 
-      {!st ? (
+              {!st ? (
         <p className="mt-4 text-sm text-white/50">Consultando a fonte oficial...</p>
       ) : (
         <>
@@ -224,7 +224,7 @@ function RoboMega({ onSynced }: { onSynced: () => void }) {
             )}
             <p className={`text-sm font-bold ${tone}`}>
               {st.erroFonte
-                ? `Fonte oficial indisponível no momento (${st.erroFonte}). Os números exibidos são os últimos confirmados.`
+                ? `As fontes de resultados estão indisponíveis no momento (${st.erroFonte}). Os números exibidos são os últimos confirmados.`
                 : ok
                   ? "Resultados conferidos e iguais aos da fonte oficial da CAIXA."
                   : `A fonte oficial já publicou ${st.atrasoConcursos} concurso(s) à frente — importando automaticamente.`}
@@ -232,7 +232,7 @@ function RoboMega({ onSynced }: { onSynced: () => void }) {
           </div>
 
           <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <Info2 label="Origem dos resultados" value="CAIXA Econômica Federal — Portal Loterias (API oficial)" />
+            <Info2 label="Origem dos resultados" value="CAIXA Econômica Federal — com fontes públicas de contingência" />
             <Info2
               label="Último concurso na fonte oficial"
               value={st.oficial ? `${st.oficial.concurso} · ${dataBR(st.oficial.data)}` : "indisponível"}
