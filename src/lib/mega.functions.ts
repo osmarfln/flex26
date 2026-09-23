@@ -304,3 +304,107 @@ export const getMegaRobotStatus = createServerFn({ method: "GET" }).handler(asyn
     emDia: erroFonte === null && atrasoConcursos === 0,
   };
 });
+
+/**
+ * Próximos sorteios da Mega-Sena.
+ * Base real: concurso/data/estimativa publicados pela CAIXA (com fallback no banco).
+ * Os sorteios seguintes seguem o calendário oficial: terças, quintas e sábados.
+ */
+export const getMegaNextDraws = createServerFn({ method: "GET" }).handler(async () => {
+  const fonte = "https://servicebus2.caixa.gov.br/portaldeloterias/api/megasena";
+  const consultadoEm = new Date().toISOString();
+
+  const iso = (br: string | null | undefined) => {
+    if (!br || !/^\d{2}\/\d{2}\/\d{4}$/.test(br)) return null;
+    const [dd, mm, yyyy] = br.split("/");
+    return `${yyyy}-${mm}-${dd}`;
+  };
+
+  const { data: rows } = await supabase
+    .from("mega_sena_results" as any)
+    .select(
+      "concurso, data_apuracao, acumulou, proximo_concurso, data_proximo_concurso, valor_estimado_proximo, valor_acumulado, updated_at",
+    )
+    .order("concurso", { ascending: false })
+    .limit(1);
+  const local = (rows ?? [])[0] as any | undefined;
+
+  let origem: "oficial" | "banco" = "banco";
+  let erroFonte: string | null = null;
+  let proximoConcurso: number | null = local?.proximo_concurso ?? null;
+  let dataProximo: string | null = local?.data_proximo_concurso ?? null;
+  let estimativa: number | null = local?.valor_estimado_proximo ?? null;
+  let acumulado: number | null = local?.valor_acumulado ?? null;
+  let ultimoConcurso: number | null = local ? Number(local.concurso) : null;
+  let ultimaData: string | null = local?.data_apuracao ?? null;
+  let acumulou: boolean = !!local?.acumulou;
+
+  try {
+    const res = await fetch(fonte, { headers: { accept: "application/json" } });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    let d: any = await res.json();
+    for (let n = Number(d.numero) + 1; n <= Number(d.numero) + 8; n++) {
+      const r = await fetch(`${fonte}/${n}`, { headers: { accept: "application/json" } });
+      if (!r.ok) break;
+      const nd: any = await r.json().catch(() => null);
+      if (!nd || Number(nd.numero) !== n || !Array.isArray(nd.listaDezenas)) break;
+      d = nd;
+    }
+    origem = "oficial";
+    ultimoConcurso = Number(d.numero);
+    ultimaData = iso(d.dataApuracao);
+    acumulou = !!d.acumulado;
+    proximoConcurso = d.numeroConcursoProximo ? Number(d.numeroConcursoProximo) : Number(d.numero) + 1;
+    dataProximo = iso(d.dataProximoConcurso);
+    estimativa = d.valorEstimadoProximoConcurso ?? null;
+    acumulado = d.valorAcumuladoProximoConcurso ?? d.valorAcumuladoConcurso_0_5 ?? null;
+  } catch (e: any) {
+    erroFonte = String(e?.message ?? e);
+  }
+
+  // Calendário oficial: terça (2), quinta (4) e sábado (6)
+  const DIAS = [2, 4, 6];
+  const nomeDia = ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"];
+  const proximos: Array<{ concurso: number | null; data: string; diaSemana: string; estimado: number | null }> = [];
+
+  let cursor: Date;
+  if (dataProximo) {
+    const [y = 1970, m = 1, dd = 1] = dataProximo.split("-").map(Number);
+    cursor = new Date(Date.UTC(y, m - 1, dd));
+
+  } else {
+    const hoje = new Date();
+    cursor = new Date(Date.UTC(hoje.getUTCFullYear(), hoje.getUTCMonth(), hoje.getUTCDate()));
+    while (!DIAS.includes(cursor.getUTCDay())) cursor.setUTCDate(cursor.getUTCDate() + 1);
+  }
+
+  let numero = proximoConcurso;
+  for (let i = 0; i < 6; i++) {
+    if (i > 0) {
+      do {
+        cursor.setUTCDate(cursor.getUTCDate() + 1);
+      } while (!DIAS.includes(cursor.getUTCDay()));
+      if (numero !== null) numero += 1;
+    }
+    proximos.push({
+      concurso: numero,
+      data: cursor.toISOString().slice(0, 10),
+      diaSemana: nomeDia[cursor.getUTCDay()]!,
+      estimado: i === 0 ? estimativa : null,
+    });
+  }
+
+  return {
+    fonte,
+    origem,
+    erroFonte,
+    consultadoEm,
+    atualizadoEm: (local?.updated_at as string | null) ?? null,
+    ultimo: ultimoConcurso ? { concurso: ultimoConcurso, data: ultimaData, acumulou } : null,
+    proximoConcurso,
+    dataProximo,
+    estimativa,
+    acumulado,
+    proximos,
+  };
+});
