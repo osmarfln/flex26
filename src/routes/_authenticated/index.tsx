@@ -394,7 +394,7 @@ function Index() {
                       <CardHeader className="p-5 pb-2">
                         <div className="flex justify-between items-start mb-4">
                           <CardTitle className="text-lg font-bold group-hover:text-primary transition-colors flex items-baseline gap-2">
-                            {location === 'capital' ? `${schedule.label} h` : location === 'federal' ? `${schedule.label} h${schedule.dateLabel ? ` — ${schedule.dateLabel}` : ''}` : `${schedule.label} h`}
+                            {location === 'capital' ? `${schedule.timeType === 'L-09' ? 'LCAP 9:00' : schedule.label} h` : location === 'federal' ? `${schedule.label} h${schedule.dateLabel ? ` — ${schedule.dateLabel}` : ''}` : `${schedule.label} h`}
                             {location === 'rio' && <span className="text-[11px] font-bold not-italic normal-case text-white/40 tracking-normal">Rio</span>}
                           </CardTitle>
                           {isLatest && (
