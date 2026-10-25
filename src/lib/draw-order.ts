@@ -81,6 +81,22 @@ export const DRAW_SCHEDULE_FEDERAL: { timeType: string; timeValue: string; label
   { timeType: "FED-20", timeValue: "20:30", label: "FEDERAL 20:30" },
 ];
 
+/**
+ * Extrações ESPECIAIS da Loteria Federal fora do cronograma fixo
+ * (datas pontuais com horário diferente). O cronograma oficial
+ * continua o mesmo: quarta 20:30 e domingo 11:00.
+ */
+export const FEDERAL_SPECIAL_DRAWS: Record<string, { timeType: string; timeValue: string; label: string }> = {
+  "2026-10-03": { timeType: "FED-20", timeValue: "21:00", label: "FEDERAL 21:00" },
+  "2026-10-24": { timeType: "FED-20", timeValue: "21:00", label: "FEDERAL 21:00" },
+};
+
+/** Devolve a extração especial da Federal para a data, se existir. */
+export function specialFederalDraw(dateISO?: string | null) {
+  if (!dateISO) return null;
+  return FEDERAL_SPECIAL_DRAWS[dateISO] ?? null;
+}
+
 /** Data de hoje no fuso de Brasília (UTC-3) no formato YYYY-MM-DD. */
 export function brasiliaDateISO(d: Date = new Date()): string {
   return new Date(d.getTime() - 3 * 60 * 60 * 1000).toISOString().split("T")[0]!;
@@ -112,6 +128,9 @@ export function getScheduleForDate(
 ) {
   const weekday = weekdayOfISO(dateISO);
   if (location === 'federal') {
+    // Extração especial pontual (ex.: sábado 24/10/2026 às 21:00)
+    const special = specialFederalDraw(dateISO);
+    if (special) return [special];
     // Quarta-feira (3) -> 20:30 | Domingo (0) -> 11:00 | demais dias sem extração
     if (weekday === 3) return DRAW_SCHEDULE_FEDERAL.filter((s) => s.timeType === 'FED-20');
     if (weekday === 0) return DRAW_SCHEDULE_FEDERAL.filter((s) => s.timeType === 'FED-11');
