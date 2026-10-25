@@ -56,6 +56,9 @@ const RIO_MAP: Record<string, string> = {
  */
 function federalDraw(dateISO: string): { time_type: string; time_value: string } | null {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(String(dateISO ?? ''))) return null;
+  // Extração especial pontual (ex.: 24/10/2026 às 21:00)
+  const special = specialFederalDraw(dateISO);
+  if (special) return { time_type: special.timeType, time_value: special.timeValue };
   const weekday = new Date(`${dateISO}T12:00:00`).getDay();
   if (weekday === 0) return { time_type: 'FED-11', time_value: '11:00' };
   return { time_type: 'FED-20', time_value: '20:30' };

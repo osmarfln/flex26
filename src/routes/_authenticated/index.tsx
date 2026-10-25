@@ -191,7 +191,7 @@ function Index() {
         key: `${row.date}-${row.time_type}`,
         schedule: {
           timeType: row.time_type,
-          timeValue: drawTimeValue('federal', row.time_type),
+          timeValue: row.time_value || drawTimeValue('federal', row.time_type),
           label: drawLabel('federal', row.time_type, row.date),
           dateLabel: `${d}/${m}/${y}`,
         },
