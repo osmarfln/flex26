@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { specialFederalDraw } from '@/lib/draw-order';
 
 const EXTERNAL_REST_URL = 'https://tembxrechkrpabvrfrmk.supabase.co/rest/v1';
 const EXTERNAL_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRlbWJ4cmVjaGtycGFidnJmcm1rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzMzkzODYsImV4cCI6MjA5NjkxNTM4Nn0.-GjcGBLvDHqng5Rtgj32o2IVJOetcr_a9smJUity_Mc';
@@ -56,6 +57,9 @@ const RIO_MAP: Record<string, string> = {
  */
 function federalDraw(dateISO: string): { time_type: string; time_value: string } | null {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(String(dateISO ?? ''))) return null;
+  // Extração especial pontual (ex.: 24/10/2026 às 21:00)
+  const special = specialFederalDraw(dateISO);
+  if (special) return { time_type: special.timeType, time_value: special.timeValue };
   const weekday = new Date(`${dateISO}T12:00:00`).getDay();
   if (weekday === 0) return { time_type: 'FED-11', time_value: '11:00' };
   return { time_type: 'FED-20', time_value: '20:30' };
